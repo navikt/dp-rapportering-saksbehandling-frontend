@@ -1,0 +1,75 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: dp-rapportering-saksbehandling-frontend
+  namespace: teamdagpenger
+  labels:
+    team: teamdagpenger
+    app: dp-rapportering-saksbehandling-frontend
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "64M"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+spec:
+  image: {{image}}
+  port: 3000
+  liveness:
+    path: "{{base_path}}/api/internal/isalive"
+    initialDelay: 10
+  readiness:
+    path: "{{base_path}}/api/internal/isready"
+    initialDelay: 10
+  replicas:
+    min: {{replicas.min}}
+    max: {{replicas.max}}
+    cpuThresholdPercentage: 75
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 256Mi
+  ingresses:
+    {{#each ingresses as |url|}}
+    - {{url}}
+    {{/each}}
+  secureLogs:
+    enabled: true
+  env:
+    - name: SELF_URL
+      value: {{ingress}}
+    - name: BASE_PATH
+      value: {{base_path}}
+    - name: DEKORATOR_URL
+      value: {{dekorator.url}}
+    - name: DEKORATOR_ENV
+      value: {{dekorator.env}}
+    - name: GITHUB_SHA
+      value: {{githubSha}}
+    - name: FARO_URL
+      value: {{faro_url}}
+    - name: SANITY_DATASETT
+      value: {{sanity_datasett}}
+    - name: UMAMI_ID
+      value: {{umami_id}}
+    - name: SKAL_LOGGE
+      value: "{{skal_logge}}"
+  accessPolicy:
+    outbound:
+      external:
+        - host: rt6o382n.apicdn.sanity.io
+        - host: www.nav.no
+        - host: amplitude.nav.no
+        - host: dekoratoren.dev.nav.no
+      rules:
+        - application: nav-dekoratoren
+          namespace: personbruker
+  idporten:
+    enabled: true
+    sidecar:
+      enabled: true
+      level: {{idporten.level}}
+      autoLogin: true
+      autoLoginIgnorePaths:
+        - {{base_path}}/api/internal/info
+  tokenx:
+    enabled: true
