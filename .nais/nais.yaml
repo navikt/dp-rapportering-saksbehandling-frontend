@@ -39,10 +39,6 @@ spec:
       value: {{ingress}}
     - name: BASE_PATH
       value: {{base_path}}
-    - name: DEKORATOR_URL
-      value: {{dekorator.url}}
-    - name: DEKORATOR_ENV
-      value: {{dekorator.env}}
     - name: GITHUB_SHA
       value: {{githubSha}}
     - name: FARO_URL
@@ -59,9 +55,7 @@ spec:
         - host: rt6o382n.apicdn.sanity.io
         - host: www.nav.no
         - host: amplitude.nav.no
-        - host: dekoratoren.dev.nav.no
       rules:
-        - application: nav-dekoratoren
           namespace: personbruker
   idporten:
     enabled: true

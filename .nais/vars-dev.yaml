@@ -4,9 +4,6 @@ ingresses:
 base_path: "/arbeid/dagpenger/rapportering/saksbehandling"
 idporten:
   level: idporten-loa-substantial
-dekorator:
-  url: https://dekoratoren.dev.nav.no/
-  env: dev
 faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
 sanity_datasett: "development"
 umami_id: "ccee3ffe-f3c3-4ef6-8e01-742756847782"
