@@ -1,6 +1,6 @@
 ingresses: 
-  - https://arbeid.intern.dev.nav.no/arbeid/dagpenger/rapportering/saksbehandling
-  - https://arbeid.ansatt.dev.nav.no/arbeid/dagpenger/rapportering/saksbehandling
+  - https://arbeid.intern.dev.nav.no/rapportering
+  - https://arbeid.ansatt.dev.nav.no/rapportering
 base_path: "/arbeid/dagpenger/rapportering/saksbehandling"
 idporten:
   level: idporten-loa-substantial
