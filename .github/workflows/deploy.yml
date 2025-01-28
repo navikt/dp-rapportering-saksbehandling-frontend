@@ -54,6 +54,10 @@ jobs:
   deploy-dev:
     needs: [build, test]
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
