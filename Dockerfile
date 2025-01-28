@@ -9,7 +9,6 @@ FROM node AS app-build
 WORKDIR /app
 
 COPY ./app ./app
-COPY ./mocks ./mocks
 COPY ./public ./public
 COPY ./vite.config.ts ./
 COPY ./package.json ./
