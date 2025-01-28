@@ -11,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
 spec:
   image: {{image}}
-  port: 3000
+  port: 5173
   liveness:
     path: "{{base_path}}/api/internal/isalive"
     initialDelay: 10
