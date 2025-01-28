@@ -1,8 +1,6 @@
-node_modules
-
-/.cache
-/build
-.env
-
-secure.log
 .DS_Store
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
