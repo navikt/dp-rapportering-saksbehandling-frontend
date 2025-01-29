@@ -1,3 +1,6 @@
-export async function loader() {
-  return { status: 200, statusText: "Ready" };
+export function loader() {
+  return new Response("isReady", {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 }
