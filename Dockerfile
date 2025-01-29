@@ -21,10 +21,11 @@
 # WORKDIR /app
 # CMD ["npm", "run", "start"]
 
-# FROM node:22-alpine AS node
-# RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
-#     npm config set //npm.pkg.github.com/:_authToken=$(cat /run/secrets/NODE_AUTH_TOKEN)
-# RUN npm config set @navikt:registry=https://npm.pkg.github.com
+FROM node:22-alpine AS node
+
+RUN --mount=type=secret,id=NODE_AUTH_TOKEN sh -c \
+    'npm config set //npm.pkg.github.com/:_authToken=$(cat /run/secrets/NODE_AUTH_TOKEN)'
+RUN npm config set @navikt:registry=https://npm.pkg.github.com
 
 
 # build app
@@ -69,4 +70,4 @@ COPY ./package.json ./package.json
 COPY --from=app-build /app/build/ ./build/
 COPY --from=app-dependencies /app/node_modules ./node_modules
 
-CMD ["npm", "run", "start"]
+CMD ["react-router-serve, ./build/server/index.js"]
