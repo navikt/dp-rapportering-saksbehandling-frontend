@@ -13,10 +13,10 @@ spec:
   image: {{image}}
   port: 5173
   liveness:
-    path: "{{base_path}}/isalive"
+    path: "/isalive"
     initialDelay: 10
   readiness:
-    path: "{{base_path}}/isready"
+    path: "/isready"
     initialDelay: 10
   replicas:
     min: {{replicas.min}}
