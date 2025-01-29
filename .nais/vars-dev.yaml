@@ -1,7 +1,7 @@
 ingresses: 
-  - https://arbeid.intern.dev.nav.no/rapportering
-  - https://arbeid.ansatt.dev.nav.no/rapportering
-base_path: "rapportering/"
+  - https://arbeid.intern.dev.nav.no/rapportering-saksbehandling-frontend
+  - https://arbeid.ansatt.dev.nav.no/rapportering-saksbehandling-frontend
+base_path: "rapportering"
 idporten:
   level: idporten-loa-substantial
 faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
