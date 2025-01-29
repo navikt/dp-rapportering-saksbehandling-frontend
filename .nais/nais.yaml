@@ -37,18 +37,8 @@ spec:
   env:
     - name: SELF_URL
       value: {{ingress}}
-    - name: BASE_PATH
+    - name: VITE_BASE_PATH
       value: {{base_path}}
-    - name: GITHUB_SHA
-      value: {{githubSha}}
-    - name: FARO_URL
-      value: {{faro_url}}
-    - name: SANITY_DATASETT
-      value: {{sanity_datasett}}
-    - name: UMAMI_ID
-      value: {{umami_id}}
-    - name: SKAL_LOGGE
-      value: "{{skal_logge}}"
   accessPolicy:
     outbound:
       external:
