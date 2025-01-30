@@ -1,8 +1,10 @@
-import { type RouteConfig, index, route } from "@react-router/dev/routes";
+import { type RouteConfig, index, prefix, route } from "@react-router/dev/routes";
 
 export default [
-  index("routes/index.tsx"),
-  route("rapportering/isalive", "routes/api.internal.isalive.ts"),
-  route("rapportering/isready", "routes/api.internal.isready.ts"),
-  route("rapportering/", "routes/home.tsx"),
+  route("", "routes/home.tsx"),
+  ...prefix("rapportering", [
+    index("routes/index.tsx"),
+    route("isalive", "routes/api.internal.isalive.ts"),
+    route("isready", "routes/api.internal.isready.ts"),
+  ]),
 ] satisfies RouteConfig;
