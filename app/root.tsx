@@ -9,6 +9,9 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { HeaderMeny } from "app/components/header-meny/HeaderMeny";
+
+import "@navikt/ds-css";
 
 export async function loader({ request }: Route.LoaderArgs) {
   console.log("loader", import.meta.env);
@@ -37,6 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <HeaderMeny saksbehandler={"saksbehandlerNavn"} antallOppgaverJegHarTilBehandling={2} />
         {children}
         <ScrollRestoration />
         <Scripts />
