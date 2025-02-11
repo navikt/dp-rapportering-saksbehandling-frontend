@@ -13,8 +13,10 @@ import { HeaderMeny } from "app/components/header-meny/HeaderMeny";
 
 import "@navikt/ds-css";
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   console.log("loader", import.meta.env);
+
+  return {};
 }
 
 export const links: Route.LinksFunction = () => [
