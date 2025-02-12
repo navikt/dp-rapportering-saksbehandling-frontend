@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Checkbox, Table } from "@navikt/ds-react";
 import type { IRapporteringsperiode } from "~/utils/types";
 import { TypeAktivitet } from "./TypeAktivitet";
+import { FormattertDato } from "./FormattertDato"; // Importer FormattertDato
 
 export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[] }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -53,13 +54,16 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
               </Table.DataCell>
               <Table.DataCell scope="row"></Table.DataCell>
               <Table.DataCell scope="row">
-                {periode.periode.fraOgMed} - {periode.periode.tilOgMed}
+                <FormattertDato dato={periode.periode.fraOgMed} /> -{" "}
+                <FormattertDato dato={periode.periode.tilOgMed} />
               </Table.DataCell>
               <Table.DataCell>{periode.status}</Table.DataCell>
               <Table.DataCell>
                 <TypeAktivitet periode={periode} />
               </Table.DataCell>
-              <Table.DataCell>{periode.mottattDato}</Table.DataCell>
+              <Table.DataCell>
+                <FormattertDato dato={periode.mottattDato ?? ""} />
+              </Table.DataCell>
             </Table.Row>
           );
         })}
