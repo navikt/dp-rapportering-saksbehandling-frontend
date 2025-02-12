@@ -1,5 +1,5 @@
 import { Search } from "@navikt/ds-react";
-import styles from "app/components/person-sok/PersokSok.module.css";
+import styles from "~/components/person-sok/PersokSok.module.css";
 
 export function PersonSok() {
   return (

@@ -9,7 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { HeaderMeny } from "app/components/header-meny/HeaderMeny";
+import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 
 import "@navikt/ds-css";
 

@@ -1,9 +1,9 @@
 import { NavLink } from "react-router";
 import classnames from "classnames";
 
-import { PersonSok } from "app/components/person-sok/PersonSok";
-import { HeaderUtloggingMeny } from "app/components/header-meny/HeaderUtloggingMeny";
-import styles from "app/components/header-meny/HeaderMeny.module.css";
+import { PersonSok } from "~/components/person-sok/PersonSok";
+import { HeaderUtloggingMeny } from "~/components/header-meny/HeaderUtloggingMeny";
+import styles from "~/components/header-meny/HeaderMeny.module.css";
 
 interface IProps {
   saksbehandler: any; // Bruk riktig type hvis du har den
