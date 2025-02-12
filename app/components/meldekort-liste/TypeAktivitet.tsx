@@ -1,6 +1,6 @@
 import type { IRapporteringsperiode } from "~/utils/types";
 import { EAktivitetType } from "~/utils/types";
-import styles from "./MeldekortListe.module.css";
+import styles from "./TypeAktivitet.module.css";
 
 const aktivitetMapping: { [key in EAktivitetType]: { label: string; color: string } } = {
   [EAktivitetType.Arbeid]: { label: "J", color: styles.arbeid },
