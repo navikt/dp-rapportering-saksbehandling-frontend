@@ -16,12 +16,12 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
         <Table.Row>
           <Table.DataCell>
             <Checkbox
-              checked={selectedRows.length === data.length}
-              indeterminate={selectedRows.length > 0 && selectedRows.length !== data.length}
+              checked={selectedRows.length === perioder.length}
+              indeterminate={selectedRows.length > 0 && selectedRows.length !== perioder.length}
               onChange={() => {
                 selectedRows.length
                   ? setSelectedRows([])
-                  : setSelectedRows(data.map(({ ukeDato }) => ukeDato));
+                  : setSelectedRows(perioder.map(({ id }) => id));
               }}
               hideLabel
             >
@@ -64,36 +64,3 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
     </Table>
   );
 };
-
-const data = [
-  {
-    ukeDato: "9-10 | 24.februar - 9.mars",
-    status: "Beregning utført",
-    typeAktivitet: "jobb, syk, ferie",
-    innsendtDato: "13. mars 2025",
-  },
-  {
-    ukeDato: "9-10 | 24.februar - 9.mars",
-    status: "Skal ikke beregnes",
-    typeAktivitet: "syk, ferie",
-    innsendtDato: "11. mars 2025",
-  },
-  {
-    ukeDato: "7-8 | 10.februar - 23.februar",
-    status: "Beregning utført",
-    typeAktivitet: "jobb, syk, ferie, utdanning",
-    innsendtDato: "23. februar 2025",
-  },
-  {
-    ukeDato: "5-6 | 27.januar - 9.februar",
-    status: "Beregning utført",
-    typeAktivitet: "",
-    innsendtDato: "8. februar 2025",
-  },
-  {
-    ukeDato: "3-4 | 13.januar - 26.januar",
-    status: "Meldekort opprettet",
-    typeAktivitet: "jobb",
-    innsendtDato: "25. januar 2025",
-  },
-];
