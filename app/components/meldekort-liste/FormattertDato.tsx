@@ -14,6 +14,4 @@ export function FormattertDato(props: IProps) {
   const formattertDato = new Date(props.dato).toLocaleDateString(locale, options);
 
   return <>{formattertDato}</>;
-
-  //d san
 }
