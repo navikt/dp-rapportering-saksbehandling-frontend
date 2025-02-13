@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Checkbox, Table } from "@navikt/ds-react";
 import type { IRapporteringsperiode } from "~/utils/types";
 import { TypeAktivitet } from "./TypeAktivitet";
-import { FormattertDato } from "./FormattertDato"; // Importer FormattertDato
+import { FormattertDato } from "./FormattertDato";
+import { formaterPeriodeTilUkenummer } from "~/utils/dato.utils";
 
 export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[] }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -39,7 +40,11 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {perioder.map((periode, i) => {
+        {perioder.map((periode) => {
+          const ukenummer = formaterPeriodeTilUkenummer(
+            periode.periode.fraOgMed,
+            periode.periode.tilOgMed
+          );
           return (
             <Table.Row key={periode.id} selected={selectedRows.includes(periode.id)}>
               <Table.DataCell>
@@ -52,7 +57,7 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
                   {" "}
                 </Checkbox>
               </Table.DataCell>
-              <Table.DataCell scope="row"></Table.DataCell>
+              <Table.DataCell scope="row">{ukenummer}</Table.DataCell>
               <Table.DataCell scope="row">
                 <FormattertDato dato={periode.periode.fraOgMed} /> -{" "}
                 <FormattertDato dato={periode.periode.tilOgMed} />

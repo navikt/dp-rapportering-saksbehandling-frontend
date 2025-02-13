@@ -174,8 +174,8 @@ const periode2: IRapporteringsperiode = {
 const periode3: IRapporteringsperiode = {
   id: "0194f457-9b33-765a-9ef9-4db728c5a239",
   periode: {
-    fraOgMed: "2025-01-27",
-    tilOgMed: "2025-02-09",
+    fraOgMed: "2025-02-17",
+    tilOgMed: "2025-03-02",
   },
   dager: [
     {
@@ -304,7 +304,7 @@ const periode3: IRapporteringsperiode = {
   bruttoBelop: null,
   begrunnelseEndring: "",
   status: ERapporteringsperiodeStatus.Innsendt,
-  mottattDato: "2025-02-10",
+  mottattDato: "2025-03-03",
   registrertArbeidssoker: false,
   originalId: null,
   html: null,
