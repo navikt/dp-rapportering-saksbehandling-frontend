@@ -5,6 +5,7 @@ import { TypeAktivitet } from "./TypeAktivitet";
 import { FormattertDato } from "./FormattertDato";
 import { formaterPeriodeTilUkenummer } from "~/utils/dato.utils";
 import { InnsendtDato } from "./InnsendtDato";
+import { Status } from "./Status";
 
 export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[] }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -63,7 +64,9 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
                 <FormattertDato dato={periode.periode.fraOgMed} /> -{" "}
                 <FormattertDato dato={periode.periode.tilOgMed} />
               </Table.DataCell>
-              <Table.DataCell>{periode.status}</Table.DataCell>
+              <Table.DataCell>
+                <Status status={periode.status} />
+              </Table.DataCell>
               <Table.DataCell>
                 <TypeAktivitet periode={periode} />
               </Table.DataCell>
