@@ -11,7 +11,7 @@
   height: var(--a-spacing-8);
   align-items: center;
   justify-content: center;
-  margin: var(--a-spacing-1);
+  margin: 0 var(--a-spacing-1);
 }
 
 .arbeid {
