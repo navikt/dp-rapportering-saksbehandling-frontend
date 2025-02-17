@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Checkbox, Table } from "@navikt/ds-react";
 import type { IRapporteringsperiode } from "~/utils/types";
 import { TypeAktivitet } from "./TypeAktivitet";
@@ -10,10 +10,28 @@ import { Status } from "./Status";
 export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[] }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-  const toggleSelectedRow = (value: string) =>
-    setSelectedRows((list) =>
-      list.includes(value) ? list.filter((id) => id !== value) : [...list, value]
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    selectedRows.length > 0
+      ? params.set("rapporteringsid", selectedRows.join(","))
+      : params.delete("rapporteringsid");
+
+    window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+  }, [selectedRows]);
+
+  const toggleSelectedRow = useCallback((value: string) => {
+    setSelectedRows((prev) =>
+      prev.includes(value)
+        ? prev.filter((id) => id !== value)
+        : prev.length < 3
+        ? [...prev, value]
+        : prev
     );
+  }, []);
+
+  const toggleSelectAll = () => {
+    setSelectedRows((prev) => (prev.length ? [] : perioder.slice(0, 3).map(({ id }) => id)));
+  };
 
   return (
     <Table>
@@ -23,11 +41,7 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
             <Checkbox
               checked={selectedRows.length === perioder.length}
               indeterminate={selectedRows.length > 0 && selectedRows.length !== perioder.length}
-              onChange={() => {
-                selectedRows.length
-                  ? setSelectedRows([])
-                  : setSelectedRows(perioder.map(({ id }) => id));
-              }}
+              onChange={toggleSelectAll}
               hideLabel
             >
               Velg alle rader
