@@ -19,9 +19,5 @@ export async function clientLoader({
 export default function Index({ loaderData }: Route.ComponentProps) {
   const perioder = loaderData as unknown as IRapporteringsperiode[];
 
-  return (
-    <div>
-      <MeldekortListe perioder={perioder} />
-    </div>
-  );
+  return <MeldekortListe perioder={perioder} />;
 }
