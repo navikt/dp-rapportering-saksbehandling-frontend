@@ -1,0 +1,21 @@
+html,
+body {
+  height: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  height: 66%;
+  padding: var(--a-spacing-6);
+  background-color: var(--a-surface-subtle);
+  gap: var(--a-spacing-6);
+}
+
+.visning {
+  background-color: lightblue;
+}
+
+.detaljer {
+  background-color: lightpink;
+}
