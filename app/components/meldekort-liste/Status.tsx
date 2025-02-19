@@ -1,4 +1,3 @@
-import React from "react";
 import { Tag } from "@navikt/ds-react";
 import { ERapporteringsperiodeStatus } from "../../utils/types";
 
@@ -10,13 +9,15 @@ const getStatus = (
   status: ERapporteringsperiodeStatus
 ): "info" | "success" | "warning" | "error" | "neutral" => {
   switch (status) {
-    case ERapporteringsperiodeStatus.MeldekortOpprettet:
-      return "warning";
-    case ERapporteringsperiodeStatus.SkalIkkeBeregnes:
+    case ERapporteringsperiodeStatus.TilUtfylling:
       return "info";
-    case ERapporteringsperiodeStatus.BeregningUtført:
+    case ERapporteringsperiodeStatus.Innsendt:
       return "success";
-    case ERapporteringsperiodeStatus.FeilVedBeregning:
+    case ERapporteringsperiodeStatus.Endret:
+      return "warning";
+    case ERapporteringsperiodeStatus.Ferdig:
+      return "success";
+    case ERapporteringsperiodeStatus.Feilet:
       return "error";
     default:
       return "neutral";
