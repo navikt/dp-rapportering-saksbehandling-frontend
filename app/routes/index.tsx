@@ -20,12 +20,12 @@ export default function Index({ loaderData }: Route.ComponentProps) {
   const perioder = loaderData as unknown as IRapporteringsperiode[];
 
   return (
-    <>
-      <MeldekortListe perioder={perioder} />
-      <div className="grid">
-        <div className="visning">visning</div>
-        <div className="detaljer">detaljer</div>
+    <main className="grid scalable">
+      <div className="meldekort-liste">
+        <MeldekortListe perioder={perioder} />
       </div>
-    </>
+      <div className="visning">visning</div>
+      <div className="detaljer">detaljer</div>
+    </main>
   );
 }
