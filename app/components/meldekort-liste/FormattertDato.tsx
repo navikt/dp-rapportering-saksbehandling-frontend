@@ -3,15 +3,15 @@ interface IProps {
   kort?: boolean;
 }
 
-export function FormattertDato(props: IProps) {
+export function FormattertDato({ dato, kort }: IProps) {
   const locale = "nb-NO";
 
   const options: Intl.DateTimeFormatOptions = {
-    month: props.kort ? "2-digit" : "long",
-    day: props.kort ? "2-digit" : "numeric",
+    month: kort ? "2-digit" : "long",
+    day: kort ? "2-digit" : "numeric",
   };
 
-  const formattertDato = new Date(props.dato).toLocaleDateString(locale, options);
+  const formattertDato = new Date(dato).toLocaleDateString(locale, options);
 
   return <>{formattertDato}</>;
 }

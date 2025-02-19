@@ -8,7 +8,11 @@ import { InnsendtDato } from "./InnsendtDato";
 import { Status } from "./Status";
 import styles from "./MeldekortListe.module.css";
 
-export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[] }) => {
+interface IProps {
+  perioder: IRapporteringsperiode[];
+}
+
+export function MeldekortListe({ perioder }: IProps) {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   useEffect(() => {
@@ -46,7 +50,7 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
                 onChange={toggleSelectAll}
                 hideLabel
               >
-                Velg alle rader
+                Velg de 3 første meldekortene
               </Checkbox>
             </Table.DataCell>
 
@@ -72,7 +76,7 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
                     onChange={() => toggleSelectedRow(periode.id)}
                     aria-labelledby={`id-${periode.id}`}
                   >
-                    {" "}
+                    Velg meldekort
                   </Checkbox>
                 </Table.DataCell>
                 <Table.DataCell scope="row">{ukenummer}</Table.DataCell>
@@ -99,4 +103,4 @@ export const MeldekortListe = ({ perioder }: { perioder: IRapporteringsperiode[]
       </Table>
     </div>
   );
-};
+}

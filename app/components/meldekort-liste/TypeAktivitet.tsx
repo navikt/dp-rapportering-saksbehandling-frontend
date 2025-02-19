@@ -2,6 +2,10 @@ import type { IRapporteringsperiode } from "~/utils/types";
 import { EAktivitetType } from "~/utils/types";
 import styles from "./TypeAktivitet.module.css";
 
+interface IProps {
+  periode: IRapporteringsperiode;
+}
+
 const aktivitetMapping: { [key in EAktivitetType]: { label: string; color: string } } = {
   [EAktivitetType.Arbeid]: { label: "J", color: styles.arbeid },
   [EAktivitetType.Syk]: { label: "S", color: styles.syk },
@@ -16,7 +20,7 @@ const sortOrder = [
   EAktivitetType.Utdanning,
 ];
 
-export const TypeAktivitet = ({ periode }: { periode: IRapporteringsperiode }) => {
+export function TypeAktivitet({ periode }: IProps) {
   const aktiviteter: Set<EAktivitetType> = new Set();
 
   periode.dager.forEach((dag) => {
@@ -38,4 +42,4 @@ export const TypeAktivitet = ({ periode }: { periode: IRapporteringsperiode }) =
       ))}
     </ul>
   );
-};
+}
