@@ -2,7 +2,7 @@ import React from "react";
 import { Tag } from "@navikt/ds-react";
 import { ERapporteringsperiodeStatus } from "../../utils/types";
 
-interface StatusProps {
+interface IProps {
   status: ERapporteringsperiodeStatus;
 }
 
@@ -23,6 +23,6 @@ const getStatus = (
   }
 };
 
-export const Status: React.FC<StatusProps> = ({ status }) => {
+export function Status({ status }: IProps) {
   return <Tag variant={getStatus(status)}>{status}</Tag>;
-};
+}
