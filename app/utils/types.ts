@@ -23,20 +23,20 @@ export interface IRapporteringsperiodeDag {
   aktiviteter: IAktivitet[];
 }
 
-// export enum ERapporteringsperiodeStatus {
-//   TilUtfylling = "TilUtfylling",
-//   Innsendt = "Innsendt",
-//   Endret = "Endret",
-//   Ferdig = "Ferdig",
-//   Feilet = "Feilet",
-// }
-
 export enum ERapporteringsperiodeStatus {
-  MeldekortOpprettet = "Meldekort opprettet",
-  BeregningUtført = "Beregning utført",
-  FeilVedBeregning = "Feil med beregning",
-  SkalIkkeBeregnes = "Skal ikke beregnes",
+  TilUtfylling = "TilUtfylling",
+  Innsendt = "Innsendt",
+  Endret = "Endret",
+  Ferdig = "Ferdig",
+  Feilet = "Feilet",
 }
+
+// export enum ERapporteringsperiodeStatus {
+//   MeldekortOpprettet = "Meldekort opprettet",
+//   BeregningUtført = "Beregning utført",
+//   FeilVedBeregning = "Feil med beregning",
+//   SkalIkkeBeregnes = "Skal ikke beregnes",
+// }
 
 export enum ERapporteringstype {
   harAktivitet = "harAktivitet",
