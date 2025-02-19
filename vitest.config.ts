@@ -4,7 +4,8 @@ import { configDefaults, defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     exclude: [...configDefaults.exclude],
-    setupFiles: ["tests/helpers/setup.ts"],
+    setupFiles: ["tests/vitest/helpers/setup.ts"],
+    dir: "./tests/vitest",
     watch: false,
     coverage: {
       provider: "istanbul",
