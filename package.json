@@ -8,8 +8,8 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "test:unit": "vitest run",
-    "test:e2e": "playwright test",
-    "test": "npm run test:unit && npm run test:e2e"
+    "test:pw": "playwright test",
+    "test": "npm run test:unit && npm run test:pw"
   },
   "dependencies": {
     "@navikt/ds-css": "^7.14.0",

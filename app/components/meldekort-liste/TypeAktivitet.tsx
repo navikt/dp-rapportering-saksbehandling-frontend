@@ -6,7 +6,7 @@ interface IProps {
   periode: IRapporteringsperiode;
 }
 
-const aktivitetMapping: { [key in EAktivitetType]: { label: string; color: string } } = {
+export const aktivitetMapping: { [key in EAktivitetType]: { label: string; color: string } } = {
   [EAktivitetType.Arbeid]: { label: "J", color: styles.arbeid },
   [EAktivitetType.Syk]: { label: "S", color: styles.syk },
   [EAktivitetType.Fravaer]: { label: "F", color: styles.fravaer },
