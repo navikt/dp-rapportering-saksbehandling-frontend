@@ -1,22 +1,46 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
-
+import styles from "~/route-styles/root.module.css";
 import "@navikt/ds-css";
+import { InternalHeader } from "@navikt/ds-react";
 
-export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  console.log("loader", import.meta.env);
+export async function loader({}: Route.LoaderArgs) {
+  return {
+    env: {},
+  };
+}
 
-  return {};
+export function meta() {
+  return [
+    {
+      charset: "utf-8",
+    },
+    {
+      name: "viewport",
+      content: "width=device-width,initial-scale=1",
+    },
+    { title: "Dagpenger saksbehandling" },
+    {
+      property: "og:title",
+      content: "Dagpenger saksbehandling",
+    },
+    {
+      name: "description",
+      content: "Saksbehandlingløsning for dagpenger",
+    },
+  ];
 }
 
 export const links: Route.LinksFunction = () => [
@@ -33,27 +57,37 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { env } = useLoaderData<typeof loader>();
+
   return (
     <html lang="en">
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
       <body>
-        <HeaderMeny saksbehandler={"saksbehandlerNavn"} antallOppgaverJegHarTilBehandling={2} />
-        {children}
+        <InternalHeader>
+          <Link to={"/"} className={styles.headerLogo}>
+            <InternalHeader.Title as="h1" className={styles.pageHeader}>
+              Dagpenger
+            </InternalHeader.Title>
+          </Link>
+          <HeaderMeny saksbehandler={"saksbehandlerNavn"} antallOppgaverJegHarTilBehandling={0} />
+        </InternalHeader>
+        <main>{children}</main>
         <ScrollRestoration />
         <Scripts />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.env = ${JSON.stringify(env)}`,
+          }}
+        />
       </body>
     </html>
   );
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-  console.log(import.meta.env);
-
   return <Outlet />;
 }
 

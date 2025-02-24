@@ -14,16 +14,16 @@ export function HeaderMeny({ saksbehandler, antallOppgaverJegHarTilBehandling }:
   return (
     <div className={styles.container}>
       <div className={styles.linkContainer}>
-        <NavLink
+        {/* <NavLink
           to="/"
           className={({ isActive }) =>
             classnames(styles.linkItem, { [styles.linkItemActive]: isActive })
           }
         >
           Oppgaver til behandling
-        </NavLink>
+        </NavLink> */}
 
-        <NavLink
+        {/* <NavLink
           to="/mine-oppgaver"
           className={({ isActive }) =>
             classnames(styles.linkItem, { [styles.linkItemActive]: isActive })
@@ -35,16 +35,16 @@ export function HeaderMeny({ saksbehandler, antallOppgaverJegHarTilBehandling }:
               {antallOppgaverJegHarTilBehandling}
             </span>
           )}
-        </NavLink>
+        </NavLink> */}
 
-        <NavLink
+        {/* <NavLink
           to="/alle-oppgaver"
           className={({ isActive }) =>
             classnames(styles.linkItem, { [styles.linkItemActive]: isActive })
           }
         >
           Alle oppgaver
-        </NavLink>
+        </NavLink> */}
       </div>
 
       <div className={styles.searchAndSaksbehandlerContainer}>
