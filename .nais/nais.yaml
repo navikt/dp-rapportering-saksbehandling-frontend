@@ -39,6 +39,8 @@ spec:
       value: {{ingress}}
     - name: VITE_BASE_PATH
       value: {{base_path}}
+    -name: DP_RAPPORTERING_URL
+      value: http://dp-rapportering
   accessPolicy:
     outbound:
       external:

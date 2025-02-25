@@ -1,5 +1,4 @@
-import { format, getISOWeek } from "date-fns";
-import { nb } from "date-fns/locale";
+import { getISOWeek } from "date-fns";
 
 export function formaterPeriodeTilUkenummer(fraOgMed: string, tilOgMed: string) {
   const startUkenummer = getISOWeek(new Date(fraOgMed));

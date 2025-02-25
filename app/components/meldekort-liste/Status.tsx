@@ -1,23 +1,24 @@
 import { Tag } from "@navikt/ds-react";
-import { ERapporteringsperiodeStatus } from "../../utils/types";
+import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import type { TRapporteringsperiodeStatus } from "~/utils/types";
 
 interface IProps {
-  status: ERapporteringsperiodeStatus;
+  status: TRapporteringsperiodeStatus;
 }
 
 const getStatus = (
-  status: ERapporteringsperiodeStatus
+  status: TRapporteringsperiodeStatus
 ): "info" | "success" | "warning" | "error" | "neutral" => {
   switch (status) {
-    case ERapporteringsperiodeStatus.TilUtfylling:
+    case RAPPORTERINGSPERIODE_STATUS.TilUtfylling:
       return "info";
-    case ERapporteringsperiodeStatus.Innsendt:
+    case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "success";
-    case ERapporteringsperiodeStatus.Endret:
+    case RAPPORTERINGSPERIODE_STATUS.Endret:
       return "warning";
-    case ERapporteringsperiodeStatus.Ferdig:
+    case RAPPORTERINGSPERIODE_STATUS.Ferdig:
       return "success";
-    case ERapporteringsperiodeStatus.Feilet:
+    case RAPPORTERINGSPERIODE_STATUS.Feilet:
       return "error";
     default:
       return "neutral";

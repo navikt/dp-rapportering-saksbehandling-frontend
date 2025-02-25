@@ -15,10 +15,17 @@ import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 import styles from "~/route-styles/root.module.css";
 import "@navikt/ds-css";
 import { InternalHeader } from "@navikt/ds-react";
+import type { IEnv, TrueOrFalse } from "./utils/types";
+import { getEnv } from "./utils/env.utils";
 
-export async function loader({}: Route.LoaderArgs) {
+export async function loader({}: Route.LoaderArgs): Promise<{ env: IEnv }> {
   return {
-    env: {},
+    env: {
+      VITE_BASE_PATH: getEnv("VITE_BASE_PATH"),
+      DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
+      IS_LOCALHOST: getEnv("IS_LOCALHOST"),
+      USE_MSW: getEnv("USE_MSW"),
+    },
   };
 }
 
