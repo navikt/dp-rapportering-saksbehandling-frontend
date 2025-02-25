@@ -10,7 +10,7 @@
   flex-direction: row;
 }
 
-.linkContainer {
+.link-container {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
