@@ -54,7 +54,7 @@ const boolskeVerdier = ["true", "false"] as const;
 export type TrueOrFalse = (typeof boolskeVerdier)[number];
 
 export interface IEnv {
-  VITE_BASE_PATH: string;
+  BASE_PATH: string;
   DP_RAPPORTERING_URL: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;

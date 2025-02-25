@@ -21,7 +21,7 @@ import { getEnv } from "./utils/env.utils";
 export async function loader({}: Route.LoaderArgs): Promise<{ env: IEnv }> {
   return {
     env: {
-      VITE_BASE_PATH: getEnv("VITE_BASE_PATH"),
+      BASE_PATH: getEnv("BASE_PATH"),
       DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
