@@ -4,11 +4,9 @@ ingresses:
 base_path: "rapportering"
 idporten:
   level: idporten-loa-substantial
-faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
-sanity_datasett: "development"
-umami_id: "ccee3ffe-f3c3-4ef6-8e01-742756847782"
 replicas:
   min: 2
   max: 2
 skal_logge: "true"
+use_msw: "true"
   

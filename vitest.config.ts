@@ -1,9 +1,12 @@
 import path from "path";
+import { loadEnv } from "vite";
 import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     exclude: [...configDefaults.exclude],
+    setupFiles: ["./vitest/helpers/setup.ts"],
+    dir: "./vitest",
     watch: false,
     coverage: {
       provider: "istanbul",

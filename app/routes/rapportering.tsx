@@ -1,20 +1,25 @@
 import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
 import type { Route } from "./+types/rapportering";
-import rapporteringsperioder from "~/mocks/responses/rapporteringsperioder";
 import type { IRapporteringsperiode } from "~/utils/types";
 import styles from "~/route-styles/rapportering.module.css";
+import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 
-export async function loader({}: Route.LoaderArgs): Promise<IRapporteringsperiode[]> {
-  return rapporteringsperioder;
+export async function loader({
+  request,
+}: Route.LoaderArgs): Promise<{ rapporteringsperioder: IRapporteringsperiode[] }> {
+  const rapporteringsperioder = await hentRapporteringsperioder(request);
+
+  // TODO: Håndter feil i hentRapporteringsperioder
+  return { rapporteringsperioder };
 }
 
 export default function Index({ loaderData }: Route.ComponentProps) {
-  const perioder = loaderData as unknown as IRapporteringsperiode[];
+  const { rapporteringsperioder } = loaderData;
 
   return (
     <div className={styles.grid}>
       <div className={styles.meldekortListe}>
-        <MeldekortListe perioder={perioder} />
+        <MeldekortListe perioder={rapporteringsperioder} />
       </div>
       <div className={styles.visning}>visning</div>
       <div className={styles.detaljer}>detaljer</div>

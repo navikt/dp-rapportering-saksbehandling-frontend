@@ -1,9 +1,5 @@
-import {
-  EAktivitetType,
-  ERapporteringsperiodeStatus,
-  ERapporteringstype,
-  type IRapporteringsperiode,
-} from "~/utils/types";
+import type { IRapporteringsperiode } from "~/utils/types";
+import { AKTIVITET_TYPE, RAPPORTERING_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 
 const periode1: IRapporteringsperiode = {
   id: "0194f44e-befd-7974-b48f-250353c1ff09",
@@ -30,12 +26,12 @@ const periode1: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.TilUtfylling,
+  status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
   mottattDato: "2025-02-10",
   registrertArbeidssoker: true,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harIngenAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harIngenAktivitet,
 };
 
 const periode2: IRapporteringsperiode = {
@@ -56,7 +52,7 @@ const periode2: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f454-4cbb-7040-af1c-79db5529197c",
-          type: EAktivitetType.Arbeid,
+          type: AKTIVITET_TYPE.Arbeid,
           dato: "2025-01-28",
           timer: "PT2H",
         },
@@ -68,17 +64,17 @@ const periode2: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f454-6d3f-777a-9efd-6146d4d41189",
-          type: EAktivitetType.Syk,
+          type: AKTIVITET_TYPE.Syk,
           dato: "2025-01-29",
         },
         {
           id: "0194f454-6d3f-777a-9efd-61475f2e60ad",
-          type: EAktivitetType.Fravaer,
+          type: AKTIVITET_TYPE.Fravaer,
           dato: "2025-01-29",
         },
         {
           id: "0194f454-6d3f-777a-9efd-614898dd12e2",
-          type: EAktivitetType.Utdanning,
+          type: AKTIVITET_TYPE.Utdanning,
           dato: "2025-01-29",
         },
       ],
@@ -104,7 +100,7 @@ const periode2: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f454-9761-7f51-b9c4-fc251615888c",
-          type: EAktivitetType.Fravaer,
+          type: AKTIVITET_TYPE.Fravaer,
           dato: "2025-02-02",
         },
       ],
@@ -130,13 +126,13 @@ const periode2: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f454-8680-70d5-bfea-edbfd36bed91",
-          type: EAktivitetType.Arbeid,
+          type: AKTIVITET_TYPE.Arbeid,
           dato: "2025-02-06",
           timer: "PT1H",
         },
         {
           id: "0194f454-8680-70d5-bfea-edc05e0444cf",
-          type: EAktivitetType.Utdanning,
+          type: AKTIVITET_TYPE.Utdanning,
           dato: "2025-02-06",
         },
       ],
@@ -163,12 +159,12 @@ const periode2: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.Feilet,
+  status: RAPPORTERINGSPERIODE_STATUS.Feilet,
   mottattDato: "2025-02-20",
   registrertArbeidssoker: true,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harAktivitet,
 };
 
 const periode3: IRapporteringsperiode = {
@@ -194,7 +190,7 @@ const periode3: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f458-06e4-7bc6-87d3-b509a73d154c",
-          type: EAktivitetType.Arbeid,
+          type: AKTIVITET_TYPE.Arbeid,
           dato: "2025-01-29",
           timer: "PT5H",
         },
@@ -206,7 +202,7 @@ const periode3: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f458-0ed2-7f92-a300-68d834abec47",
-          type: EAktivitetType.Utdanning,
+          type: AKTIVITET_TYPE.Utdanning,
           dato: "2025-01-30",
         },
       ],
@@ -217,12 +213,12 @@ const periode3: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f458-21d6-7754-b776-700225f6ccc7",
-          type: EAktivitetType.Syk,
+          type: AKTIVITET_TYPE.Syk,
           dato: "2025-01-31",
         },
         {
           id: "0194f458-21d6-7754-b776-7003d55d0ebc",
-          type: EAktivitetType.Fravaer,
+          type: AKTIVITET_TYPE.Fravaer,
           dato: "2025-01-31",
         },
       ],
@@ -248,7 +244,7 @@ const periode3: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f457-f7ad-7526-b684-ea7a32f2e2ea",
-          type: EAktivitetType.Syk,
+          type: AKTIVITET_TYPE.Syk,
           dato: "2025-02-04",
         },
       ],
@@ -259,7 +255,7 @@ const periode3: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f457-e2f9-7126-abc9-b0c6c460bdd3",
-          type: EAktivitetType.Syk,
+          type: AKTIVITET_TYPE.Syk,
           dato: "2025-02-05",
         },
       ],
@@ -270,7 +266,7 @@ const periode3: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f457-ed10-7011-85b2-2687eed84e94",
-          type: EAktivitetType.Syk,
+          type: AKTIVITET_TYPE.Syk,
           dato: "2025-02-06",
         },
       ],
@@ -291,7 +287,7 @@ const periode3: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f458-3048-73d1-b773-3a9933d2c60c",
-          type: EAktivitetType.Fravaer,
+          type: AKTIVITET_TYPE.Fravaer,
           dato: "2025-02-09",
         },
       ],
@@ -303,12 +299,12 @@ const periode3: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.Innsendt,
+  status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
   mottattDato: "2025-03-03",
   registrertArbeidssoker: false,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harAktivitet,
 };
 
 const periode4: IRapporteringsperiode = {
@@ -339,7 +335,7 @@ const periode4: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f45a-dac9-7da0-bbe3-77df36751b0d",
-          type: EAktivitetType.Syk,
+          type: AKTIVITET_TYPE.Syk,
           dato: "2025-01-30",
         },
       ],
@@ -350,7 +346,7 @@ const periode4: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f45a-e446-7901-b500-b215a8e29ad9",
-          type: EAktivitetType.Syk,
+          type: AKTIVITET_TYPE.Syk,
           dato: "2025-01-31",
         },
       ],
@@ -376,7 +372,7 @@ const periode4: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f45a-ed86-771d-82f7-b8cbe98d3a5a",
-          type: EAktivitetType.Fravaer,
+          type: AKTIVITET_TYPE.Fravaer,
           dato: "2025-02-04",
         },
       ],
@@ -413,12 +409,12 @@ const periode4: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.Innsendt,
+  status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
   mottattDato: "2025-02-10",
   registrertArbeidssoker: true,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harAktivitet,
 };
 
 const periode5: IRapporteringsperiode = {
@@ -439,7 +435,7 @@ const periode5: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f459-a3f6-770f-ad89-32be817eabb0",
-          type: EAktivitetType.Arbeid,
+          type: AKTIVITET_TYPE.Arbeid,
           dato: "2025-01-28",
           timer: "PT2H",
         },
@@ -451,7 +447,7 @@ const periode5: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f459-b547-7605-8774-d65ad94d93b3",
-          type: EAktivitetType.Arbeid,
+          type: AKTIVITET_TYPE.Arbeid,
           dato: "2025-01-29",
           timer: "PT2H",
         },
@@ -463,7 +459,7 @@ const periode5: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f459-e08e-7eb5-b05f-c6c832b456b5",
-          type: EAktivitetType.Arbeid,
+          type: AKTIVITET_TYPE.Arbeid,
           dato: "2025-01-30",
           timer: "PT6H",
         },
@@ -500,7 +496,7 @@ const periode5: IRapporteringsperiode = {
       aktiviteter: [
         {
           id: "0194f45a-11c6-757a-a587-e8fca909e140",
-          type: EAktivitetType.Arbeid,
+          type: AKTIVITET_TYPE.Arbeid,
           dato: "2025-02-05",
           timer: "PT6H",
         },
@@ -533,11 +529,11 @@ const periode5: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.TilUtfylling,
+  status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
   mottattDato: "2025-02-10",
   registrertArbeidssoker: true,
   originalId: null,
-  rapporteringstype: ERapporteringstype.harAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harAktivitet,
   html: null,
 };
 
@@ -569,12 +565,12 @@ const periode6: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.Innsendt,
+  status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
   mottattDato: "2025-02-24",
   registrertArbeidssoker: true,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harIngenAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harIngenAktivitet,
 };
 
 const periode7: IRapporteringsperiode = {
@@ -605,12 +601,12 @@ const periode7: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.Innsendt,
+  status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
   mottattDato: "2025-02-24",
   registrertArbeidssoker: true,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harIngenAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harIngenAktivitet,
 };
 
 const periode8: IRapporteringsperiode = {
@@ -641,12 +637,12 @@ const periode8: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.Endret,
+  status: RAPPORTERINGSPERIODE_STATUS.Endret,
   mottattDato: "2025-02-24",
   registrertArbeidssoker: true,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harIngenAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harIngenAktivitet,
 };
 
 const periode9: IRapporteringsperiode = {
@@ -677,12 +673,12 @@ const periode9: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.Innsendt,
+  status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
   mottattDato: "2025-02-24",
   registrertArbeidssoker: true,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harIngenAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harIngenAktivitet,
 };
 
 const periode10: IRapporteringsperiode = {
@@ -713,12 +709,12 @@ const periode10: IRapporteringsperiode = {
   kanEndres: true,
   bruttoBelop: null,
   begrunnelseEndring: "",
-  status: ERapporteringsperiodeStatus.Innsendt,
+  status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
   mottattDato: "2025-02-24",
   registrertArbeidssoker: true,
   originalId: null,
   html: null,
-  rapporteringstype: ERapporteringstype.harIngenAktivitet,
+  rapporteringstype: RAPPORTERING_TYPE.harIngenAktivitet,
 };
 
 export default [
