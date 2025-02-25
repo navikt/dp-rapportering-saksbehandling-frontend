@@ -48,6 +48,7 @@ jobs:
         if: steps.node_modules.outputs.cache-hit != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+          VARS: .nais/vars-dev.yaml
 
       - run: npm run test
 
