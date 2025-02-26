@@ -7,7 +7,7 @@ interface IProps {
   tilOgMed: string;
 }
 
-const SISTE_FRIST = 10; // Endre til hvor mange dager det skal være for sent
+export const SISTE_FRIST = 10; // Endre til hvor mange dager det skal være for sent
 
 export function InnsendtDato({ mottattDato, tilOgMed }: IProps) {
   const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
