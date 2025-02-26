@@ -6,15 +6,19 @@ import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server"
 
 export async function loader({
   request,
+  params,
 }: Route.LoaderArgs): Promise<{ rapporteringsperioder: IRapporteringsperiode[] }> {
   const rapporteringsperioder = await hentRapporteringsperioder(request);
+  console.log(params);
 
   // TODO: Håndter feil i hentRapporteringsperioder
   return { rapporteringsperioder };
 }
 
-export default function Index({ loaderData }: Route.ComponentProps) {
+export default function Index({ loaderData, params }: Route.ComponentProps) {
   const { rapporteringsperioder } = loaderData;
+
+  console.log("params", params);
 
   return (
     <div className={styles.grid}>

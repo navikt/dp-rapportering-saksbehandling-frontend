@@ -7,6 +7,7 @@ import { formaterPeriodeTilUkenummer } from "~/utils/dato.utils";
 import { InnsendtDato } from "./InnsendtDato";
 import { Status } from "./Status";
 import styles from "./MeldekortListe.module.css";
+import { useSearchParams } from "react-router";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
@@ -14,14 +15,18 @@ interface IProps {
 
 export function MeldekortListe({ perioder }: IProps) {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [currentQueryParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    selectedRows.length > 0
-      ? params.set("rapporteringsid", selectedRows.join(","))
-      : params.delete("rapporteringsid");
 
-    window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+    params.set("rapporteringsid", selectedRows.join(","));
+    setSearchParams(params);
+
+    if (!selectedRows.length) {
+      params.delete("rapporteringsid");
+      setSearchParams(params);
+    }
   }, [selectedRows]);
 
   const toggleSelectedRow = useCallback((value: string) => {

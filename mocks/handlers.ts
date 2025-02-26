@@ -6,4 +6,16 @@ export const handlers = [
   http.get(`${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperioder`, () => {
     return HttpResponse.json(rapporteringsperioder);
   }),
+
+  http.get(
+    `${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
+    ({ params }) => {
+      const rapporteringsperiodeId = params.rapporteringsperiodeId;
+      const rapporteringsperiode = rapporteringsperioder.find(
+        (r) => r.id === rapporteringsperiodeId
+      );
+
+      return HttpResponse.json(rapporteringsperiode);
+    }
+  ),
 ];
