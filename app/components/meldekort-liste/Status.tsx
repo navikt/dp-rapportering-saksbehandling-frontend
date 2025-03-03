@@ -6,7 +6,7 @@ interface IProps {
   status: TRapporteringsperiodeStatus;
 }
 
-const getStatus = (
+const getVariant = (
   status: TRapporteringsperiodeStatus
 ): "info" | "success" | "warning" | "error" | "neutral" => {
   switch (status) {
@@ -26,5 +26,5 @@ const getStatus = (
 };
 
 export function Status({ status }: IProps) {
-  return <Tag variant={getStatus(status)}>{status}</Tag>;
+  return <Tag variant={getVariant(status)}>{RAPPORTERINGSPERIODE_STATUS[status]}</Tag>;
 }

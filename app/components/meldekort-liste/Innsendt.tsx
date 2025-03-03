@@ -1,6 +1,6 @@
 import { Tag } from "@navikt/ds-react";
-import { FormattertDato } from "./FormattertDato";
 import { differenceInDays, parseISO } from "date-fns";
+import { formatterDato } from "~/utils/dato.utils";
 
 interface IProps {
   mottattDato: string;
@@ -9,17 +9,13 @@ interface IProps {
 
 export const SISTE_FRIST = 10; // Endre til hvor mange dager det skal være for sent
 
-export function InnsendtDato({ mottattDato, tilOgMed }: IProps) {
+export function Innsendt({ mottattDato, tilOgMed }: IProps) {
   const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
   const forSent = dagerForskjell >= SISTE_FRIST;
 
   if (forSent) {
-    return (
-      <Tag variant="error">
-        <FormattertDato dato={mottattDato} />
-      </Tag>
-    );
+    return <Tag variant="error">{formatterDato({ dato: mottattDato })}</Tag>;
   }
 
-  return <FormattertDato dato={mottattDato} />;
+  return <Tag variant="neutral">{formatterDato({ dato: mottattDato })}</Tag>;
 }

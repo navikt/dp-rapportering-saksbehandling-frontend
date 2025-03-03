@@ -4,7 +4,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
 export default defineConfig({
-  base: "/rapportering",
+  base: "",
   plugins: [reactRouter(), tsconfigPaths()],
   build: {
     cssMinify: true,
