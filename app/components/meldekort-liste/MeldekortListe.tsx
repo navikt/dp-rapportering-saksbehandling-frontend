@@ -18,18 +18,17 @@ export function MeldekortListe({ perioder }: IProps) {
 
   function toggleRow(event: React.ChangeEvent<HTMLInputElement>) {
     const id = event.target.dataset.id;
-
     if (!id) return;
 
     const params = new URLSearchParams(window.location.search);
     const _ids = [...ids].filter((value) => value);
 
-    if (_ids.includes(id) && _ids.length > 1) {
+    if (_ids.includes(id)) {
       params.set("rapporteringsid", _ids.filter((i) => i !== id).join(","));
-    } else if (_ids.includes(id)) {
-      params.delete("rapporteringsid");
     } else {
-      params.set("rapporteringsid", [..._ids, id].join(","));
+      if (_ids.length < 3) {
+        params.set("rapporteringsid", [..._ids, id].join(","));
+      }
     }
 
     setSearchParams(params);
@@ -58,6 +57,7 @@ export function MeldekortListe({ perioder }: IProps) {
                     data-id={periode.id}
                     checked={ids.includes(periode.id)}
                     onChange={toggleRow}
+                    disabled={!ids.includes(periode.id) && ids.length >= 3}
                     aria-labelledby={`id-${periode.id}`}
                   >
                     Velg meldekort
