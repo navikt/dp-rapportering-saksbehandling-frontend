@@ -1,88 +1,71 @@
-import { useState, useEffect, useCallback } from "react";
 import { Checkbox, Table } from "@navikt/ds-react";
 import type { IRapporteringsperiode } from "~/utils/types";
 import { TypeAktivitet } from "./TypeAktivitet";
-import { FormattertDato } from "./FormattertDato";
-import { formaterPeriodeTilUkenummer } from "~/utils/dato.utils";
-import { InnsendtDato } from "./InnsendtDato";
+import { ukenummer } from "~/utils/dato.utils";
+import { Innsendt } from "./Innsendt";
 import { Status } from "./Status";
 import styles from "./MeldekortListe.module.css";
+import { useSearchParams } from "react-router";
+import { Dato } from "./Dato";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
 }
 
 export function MeldekortListe({ perioder }: IProps) {
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const ids = searchParams.get("rapporteringsid")?.split(",") ?? [];
 
-  useEffect(() => {
+  function toggleRow(event: React.ChangeEvent<HTMLInputElement>) {
+    const id = event.target.dataset.id;
+
+    if (!id) return;
+
     const params = new URLSearchParams(window.location.search);
-    selectedRows.length > 0
-      ? params.set("rapporteringsid", selectedRows.join(","))
-      : params.delete("rapporteringsid");
+    const _ids = [...ids].filter((value) => value);
 
-    window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
-  }, [selectedRows]);
+    if (_ids.includes(id) && _ids.length > 1) {
+      params.set("rapporteringsid", _ids.filter((i) => i !== id).join(","));
+    } else if (_ids.includes(id)) {
+      params.delete("rapporteringsid");
+    } else {
+      params.set("rapporteringsid", [..._ids, id].join(","));
+    }
 
-  const toggleSelectedRow = useCallback((value: string) => {
-    setSelectedRows((prev) =>
-      prev.includes(value)
-        ? prev.filter((id) => id !== value)
-        : prev.length < 3
-        ? [...prev, value]
-        : prev
-    );
-  }, []);
-
-  const toggleSelectAll = () => {
-    setSelectedRows((prev) => (prev.length ? [] : perioder.slice(0, 3).map(({ id }) => id)));
-  };
+    setSearchParams(params);
+  }
 
   return (
     <div className={styles.tabell}>
       <Table>
         <Table.Header>
           <Table.Row>
-            <Table.DataCell>
-              <Checkbox
-                checked={selectedRows.length === perioder.length}
-                indeterminate={selectedRows.length > 0 && selectedRows.length !== perioder.length}
-                onChange={toggleSelectAll}
-                hideLabel
-              >
-                Velg de 3 første meldekortene
-              </Checkbox>
-            </Table.DataCell>
-
+            <Table.HeaderCell scope="col"></Table.HeaderCell>
             <Table.HeaderCell scope="col">Uke</Table.HeaderCell>
             <Table.HeaderCell scope="col">Dato</Table.HeaderCell>
             <Table.HeaderCell scope="col">Status</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Type aktivitet</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Innsendt dato</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Aktiviteter</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Innsendt</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {perioder.map((periode) => {
-            const ukenummer = formaterPeriodeTilUkenummer(
-              periode.periode.fraOgMed,
-              periode.periode.tilOgMed
-            );
             return (
-              <Table.Row key={periode.id} selected={selectedRows.includes(periode.id)}>
+              <Table.Row key={periode.id} selected={ids.includes(periode.id)}>
                 <Table.DataCell>
                   <Checkbox
                     hideLabel
-                    checked={selectedRows.includes(periode.id)}
-                    onChange={() => toggleSelectedRow(periode.id)}
+                    data-id={periode.id}
+                    checked={ids.includes(periode.id)}
+                    onChange={toggleRow}
                     aria-labelledby={`id-${periode.id}`}
                   >
                     Velg meldekort
                   </Checkbox>
                 </Table.DataCell>
-                <Table.DataCell scope="row">{ukenummer}</Table.DataCell>
+                <Table.DataCell scope="row">{ukenummer(periode)}</Table.DataCell>
                 <Table.DataCell scope="row">
-                  <FormattertDato dato={periode.periode.fraOgMed} /> -{" "}
-                  <FormattertDato dato={periode.periode.tilOgMed} />
+                  <Dato periode={periode} />
                 </Table.DataCell>
                 <Table.DataCell>
                   <Status status={periode.status} />
@@ -91,7 +74,7 @@ export function MeldekortListe({ perioder }: IProps) {
                   <TypeAktivitet periode={periode} />
                 </Table.DataCell>
                 <Table.DataCell>
-                  <InnsendtDato
+                  <Innsendt
                     mottattDato={periode.mottattDato ?? ""}
                     tilOgMed={periode.periode.tilOgMed}
                   />

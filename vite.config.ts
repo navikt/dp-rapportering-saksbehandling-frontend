@@ -4,11 +4,19 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
 export default defineConfig({
-  base: "/rapportering",
+  base: "",
   plugins: [reactRouter(), tsconfigPaths()],
   build: {
     cssMinify: true,
-    ssr: false,
+    ssr: true,
+  },
+  css: {
+    modules: {
+      localsConvention: "camelCase",
+    },
+  },
+  server: {
+    port: 5173,
   },
   resolve: {
     alias: {
