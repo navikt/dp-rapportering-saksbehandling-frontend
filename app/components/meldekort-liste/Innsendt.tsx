@@ -17,5 +17,9 @@ export function Innsendt({ mottattDato, tilOgMed }: IProps) {
     return <Tag variant="error">{formatterDato({ dato: mottattDato })}</Tag>;
   }
 
-  return <Tag variant="neutral">{formatterDato({ dato: mottattDato })}</Tag>;
+  return (
+    <div className="neutralTag">
+      <Tag variant="neutral">{formatterDato({ dato: mottattDato })}</Tag>
+    </div>
+  );
 }

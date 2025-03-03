@@ -9,3 +9,7 @@ main {
   padding: var(--a-spacing-6);
 }
 
+.neutralTag .navds-tag--neutral {
+  background-color: transparent;
+  border-color: transparent;
+}
