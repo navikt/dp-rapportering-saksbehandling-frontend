@@ -12,15 +12,32 @@ export function ukenummer(periode: IRapporteringsperiode) {
   return formaterPeriodeTilUkenummer(periode.periode.fraOgMed, periode.periode.tilOgMed);
 }
 
+export function formatterDag(dato: string) {
+  const locale = "nb-NO";
+  const options: Intl.DateTimeFormatOptions = { day: "2-digit" };
+  return new Date(dato).toLocaleDateString(locale, options);
+}
+
 export function formatterDato({ dato, kort }: { dato: string; kort?: boolean }) {
   const locale = "nb-NO";
 
-  const options: Intl.DateTimeFormatOptions = {
-    month: kort ? "2-digit" : "long",
-    day: kort ? "2-digit" : "numeric",
-  };
+  const options: Intl.DateTimeFormatOptions = kort
+    ? { year: "2-digit", month: "2-digit", day: "2-digit" }
+    : { month: "long", day: "numeric" };
 
   const formattertDato = new Date(dato).toLocaleDateString(locale, options);
 
   return formattertDato;
+}
+
+export function getWeekDays(): { kort: string; lang: string }[] {
+  const weekDays = new Array(7).fill(null).map((_, index) => {
+    const date = new Date(Date.UTC(2017, 0, 2 + index)); // 2017-01-02 is just a random Monday
+    return {
+      kort: date.toLocaleDateString("nb-NO", { weekday: "short" }).replace(".", ""),
+      lang: date.toLocaleDateString("nb-NO", { weekday: "long" }),
+    };
+  });
+
+  return weekDays;
 }
