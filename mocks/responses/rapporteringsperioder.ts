@@ -176,119 +176,119 @@ const periode3: IRapporteringsperiode = {
   dager: [
     {
       dagIndex: 0,
-      dato: "2025-01-27",
+      dato: "2025-02-17",
       aktiviteter: [],
     },
     {
       dagIndex: 1,
-      dato: "2025-01-28",
+      dato: "2025-02-18",
       aktiviteter: [],
     },
     {
       dagIndex: 2,
-      dato: "2025-01-29",
+      dato: "2025-02-19",
       aktiviteter: [
         {
           id: "0194f458-06e4-7bc6-87d3-b509a73d154c",
           type: AKTIVITET_TYPE.Arbeid,
-          dato: "2025-01-29",
+          dato: "2025-02-19",
           timer: "PT5H",
         },
       ],
     },
     {
       dagIndex: 3,
-      dato: "2025-01-30",
+      dato: "2025-02-20",
       aktiviteter: [
         {
           id: "0194f458-0ed2-7f92-a300-68d834abec47",
           type: AKTIVITET_TYPE.Utdanning,
-          dato: "2025-01-30",
+          dato: "2025-02-20",
         },
       ],
     },
     {
       dagIndex: 4,
-      dato: "2025-01-31",
+      dato: "2025-02-21",
       aktiviteter: [
         {
           id: "0194f458-21d6-7754-b776-700225f6ccc7",
           type: AKTIVITET_TYPE.Syk,
-          dato: "2025-01-31",
+          dato: "2025-02-21",
         },
         {
           id: "0194f458-21d6-7754-b776-7003d55d0ebc",
           type: AKTIVITET_TYPE.Fravaer,
-          dato: "2025-01-31",
+          dato: "2025-02-21",
         },
       ],
     },
     {
       dagIndex: 5,
-      dato: "2025-02-01",
+      dato: "2025-02-22",
       aktiviteter: [],
     },
     {
       dagIndex: 6,
-      dato: "2025-02-02",
+      dato: "2025-02-23",
       aktiviteter: [],
     },
     {
       dagIndex: 7,
-      dato: "2025-02-03",
+      dato: "2025-02-24",
       aktiviteter: [],
     },
     {
       dagIndex: 8,
-      dato: "2025-02-04",
+      dato: "2025-02-25",
       aktiviteter: [
         {
           id: "0194f457-f7ad-7526-b684-ea7a32f2e2ea",
           type: AKTIVITET_TYPE.Syk,
-          dato: "2025-02-04",
+          dato: "2025-02-25",
         },
       ],
     },
     {
       dagIndex: 9,
-      dato: "2025-02-05",
+      dato: "2025-02-26",
       aktiviteter: [
         {
           id: "0194f457-e2f9-7126-abc9-b0c6c460bdd3",
           type: AKTIVITET_TYPE.Syk,
-          dato: "2025-02-05",
+          dato: "2025-02-26",
         },
       ],
     },
     {
       dagIndex: 10,
-      dato: "2025-02-06",
+      dato: "2025-02-27",
       aktiviteter: [
         {
           id: "0194f457-ed10-7011-85b2-2687eed84e94",
           type: AKTIVITET_TYPE.Syk,
-          dato: "2025-02-06",
+          dato: "2025-02-27",
         },
       ],
     },
     {
       dagIndex: 11,
-      dato: "2025-02-07",
+      dato: "2025-02-28",
       aktiviteter: [],
     },
     {
       dagIndex: 12,
-      dato: "2025-02-08",
+      dato: "2025-03-01",
       aktiviteter: [],
     },
     {
       dagIndex: 13,
-      dato: "2025-02-09",
+      dato: "2025-03-02",
       aktiviteter: [
         {
           id: "0194f458-3048-73d1-b773-3a9933d2c60c",
           type: AKTIVITET_TYPE.Fravaer,
-          dato: "2025-02-09",
+          dato: "2025-03-02",
         },
       ],
     },
