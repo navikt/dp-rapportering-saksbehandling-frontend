@@ -58,4 +58,5 @@ export interface IEnv {
   DP_RAPPORTERING_URL: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
+  NODE_ENV?: "development" | "test" | "production";
 }
