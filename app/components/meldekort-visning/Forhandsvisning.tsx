@@ -8,7 +8,6 @@ interface IProps {
 
 export function Forhandsvisning({ periode }: IProps) {
   if (!periode) return null;
-  console.log(periode);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
