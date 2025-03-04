@@ -1,7 +1,7 @@
 import { formatterDag } from "~/utils/dato.utils";
 import type { IRapporteringsperiodeDag } from "~/utils/types";
 import { aktivitetMapping } from "~/components/meldekort-liste/utils";
-import styles from "./uke.module.css";
+import styles from "./Uke.module.css";
 import classNames from "classnames";
 
 type AktivitetType = keyof typeof aktivitetMapping;
