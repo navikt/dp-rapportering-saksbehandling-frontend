@@ -25,6 +25,18 @@ const dagKnappStyle = (dag: IRapporteringsperiodeDag) => ({
   [styles.sykFravaerOgUtdanning]: erAktivStil(dag, ["Syk", "Fravaer", "Utdanning"]),
 });
 
+const getArbeidTimer = (dag: IRapporteringsperiodeDag) => {
+  const arbeidAktivitet = dag.aktiviteter.find((a) => a.type === "Arbeid");
+  if (!arbeidAktivitet || !arbeidAktivitet.timer) return null;
+
+  const match = arbeidAktivitet.timer.match(/PT(\d+H)?/);
+  if (!match) return null;
+
+  const timer = match[1] ? parseInt(match[1].replace("H", "")) : 0;
+
+  return `${timer}t`;
+};
+
 export function Uke({ uke }: IProps) {
   if (!uke?.length) return null;
 
@@ -36,6 +48,7 @@ export function Uke({ uke }: IProps) {
             <span className={classNames(styles.aktivitet, styles.dato, dagKnappStyle(dag))}>
               {formatterDag(dag.dato)}
             </span>
+            {getArbeidTimer(dag) && <span className={styles.timer}>{getArbeidTimer(dag)}</span>}
           </div>
         </td>
       ))}
