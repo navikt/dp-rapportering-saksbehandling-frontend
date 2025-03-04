@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/experimental-ct-react";
 import { differenceInDays, parseISO } from "date-fns";
 
-import { InnsendtDato } from "~/components/meldekort-liste/Innsendt";
+import { Innsendt } from "~/components/meldekort-liste/Innsendt";
 import { SISTE_FRIST } from "~/components/meldekort-liste/Innsendt";
 
 test.describe("InnsendtDato", () => {
@@ -11,7 +11,7 @@ test.describe("InnsendtDato", () => {
     const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
     const forSent = dagerForskjell >= SISTE_FRIST;
 
-    const component = await mount(<InnsendtDato mottattDato={mottattDato} tilOgMed={tilOgMed} />);
+    const component = await mount(<Innsendt mottattDato={mottattDato} tilOgMed={tilOgMed} />);
     await expect(component).toHaveClass(/(^|\s)navds-tag--error(\s|$)/g);
 
     expect(forSent).toBeTruthy();
@@ -23,7 +23,7 @@ test.describe("InnsendtDato", () => {
     const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
     const forSent = dagerForskjell >= SISTE_FRIST;
 
-    const component = await mount(<InnsendtDato mottattDato={mottattDato} tilOgMed={tilOgMed} />);
+    const component = await mount(<Innsendt mottattDato={mottattDato} tilOgMed={tilOgMed} />);
 
     await expect(component.locator("[data-testid='error-tag']")).not.toBeVisible();
     expect(forSent).toBeFalsy();

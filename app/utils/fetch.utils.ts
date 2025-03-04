@@ -3,7 +3,7 @@
 import { uuidv7 } from "uuidv7";
 import { getRapporteringOboToken } from "./auth.utils.server";
 import { isLocalhost } from "./env.utils";
-import { getSessionId } from "../../mocks/session";
+import { getSessionId } from "../mocks/session";
 
 function generateCorralationId() {
   // https://github.com/navikt/dp-rapportering-frontend/pull/242#pullrequestreview-2403834306
