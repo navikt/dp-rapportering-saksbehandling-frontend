@@ -1,9 +1,14 @@
+:root {
+  --dato-strl: 33px;
+}
+
 .aktivitetContainer {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--a-spacing-4);
+  margin-bottom: var(--a-spacing-8);
 }
 
 .aktivitet {
@@ -17,11 +22,25 @@
   position: relative;
 }
 
-/**/
-
-:root {
-  --dato-strl: 33px;
+.timer {
+  position: absolute;
+  top: calc(var(--dato-strl) * 1.5);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  border-radius: 0 0 5px 5px;
+  padding-top: calc(var(--dato-strl) * 0.6);
+  justify-content: center;
+  align-items: center;
+  background-color: var(--a-surface-selected);
+  width: calc(var(--dato-strl) - 1px);
+  height: calc(calc(var(--dato-strl) * 1.15));
+  font-size: var(--a-font-size-small);
+  color: var(--a-text-subtle);
+  z-index: -1;
 }
+
+/**/
 
 .dato {
   padding-right: 4px;
