@@ -7,6 +7,6 @@ idporten:
 replicas:
   min: 2
   max: 2
-skal_logge: "true"
 use_msw: "true"
+is_localhost: "false"
   

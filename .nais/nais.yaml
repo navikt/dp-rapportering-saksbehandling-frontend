@@ -43,6 +43,8 @@ spec:
       value: http://dp-rapportering
     -name: VITE_USE_MSW
       value: {{use_msw}}
+    -name: VITE_IS_LOCALHOST
+      value: {{is_localhost}}
   accessPolicy:
     outbound:
       external:
