@@ -2,6 +2,8 @@ import type { IRapporteringsperiode } from "~/utils/types";
 import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
 import { Uke } from "./Uke";
 
+import styles from "./Forhandsvisning.module.css";
+
 interface IProps {
   periode: IRapporteringsperiode;
 }
@@ -19,16 +21,16 @@ export function Forhandsvisning({ periode }: IProps) {
   const ukedager = getWeekDays();
 
   return (
-    <div className="kalender">
+    <>
       <div>
-        <p>
+        <p className={styles.header}>
           Uke {ukenummer(periode)}
           <span style={{ display: "block" }}>
             {formattertFraOgMed} - {formattertTilOgMed}
           </span>
         </p>
       </div>
-      <table>
+      <table className={styles.meldekortTabell}>
         <thead>
           <tr>
             {ukedager.map((ukedag, index) => (
@@ -43,6 +45,6 @@ export function Forhandsvisning({ periode }: IProps) {
           <Uke uke={andreUke} />
         </tbody>
       </table>
-    </div>
+    </>
   );
 }

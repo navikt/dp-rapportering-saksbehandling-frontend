@@ -9,7 +9,7 @@ export function MeldekortVisning({ perioder }: IProps) {
   return (
     <div>
       {perioder.map((periode) => (
-        <div key={periode.id}>
+        <div key={periode.id} className="meldekort">
           <Forhandsvisning periode={periode} />
         </div>
       ))}
