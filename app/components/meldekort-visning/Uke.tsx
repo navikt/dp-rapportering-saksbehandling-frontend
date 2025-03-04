@@ -1,29 +1,19 @@
-import type { IRapporteringsperiode } from "~/utils/types";
 import { formatterDag } from "~/utils/dato.utils";
+import type { IRapporteringsperiodeDag } from "~/utils/types";
 
 interface IProps {
-  periode: IRapporteringsperiode;
-  ukeNummer: number;
+  uke: IRapporteringsperiodeDag[];
 }
 
-export function Uke({ periode, ukeNummer }: IProps) {
-  if (!periode) return null;
-
-  const startDato = new Date(periode.periode.fraOgMed);
-  const sluttDato = new Date(periode.periode.tilOgMed);
-  const dagerIMellom = (sluttDato.getTime() - startDato.getTime()) / (1000 * 3600 * 24);
-
-  const datoer = Array.from(
-    { length: dagerIMellom + 1 },
-    (_, i) => new Date(startDato.setDate(startDato.getDate() + i))
-  );
-
-  const [startIndex, endIndex] = ukeNummer === 1 ? [0, 7] : [7, 14];
+export function Uke({ uke }: IProps) {
+  if (!uke || uke.length === 0) return null;
 
   return (
     <tr>
-      {datoer.slice(startIndex, endIndex).map((dato, index) => (
-        <td key={`${periode.id}-${index}`}>{formatterDag(dato.toISOString())}</td>
+      {uke.map((dag) => (
+        <td key={dag.dato}>
+          <span>{formatterDag(dag.dato)}</span>
+        </td>
       ))}
     </tr>
   );
