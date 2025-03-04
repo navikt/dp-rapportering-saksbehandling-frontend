@@ -50,6 +50,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
           RESOURCE: .nais/nais.yaml
           VARS: .nais/vars-dev.yaml
+          VITE_BASE_PATH: 'rapportering'
+          VITE_DP_RAPPORTERING_URL: 'https://dp-rapportering.intern.dev.navn.no'
+          VITE_IS_LOCALHOST: 'false'
+          VITE_USE_MSW: 'true'
 
       - run: npm run test
 
