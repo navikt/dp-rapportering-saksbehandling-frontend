@@ -69,6 +69,24 @@ jobs:
 
       - run: npm run test:vitest
 
+  deploy-demo:
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          VAR: image=${{ needs.build.outputs.image }},githubSha=${{ github.sha }}
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/nais.yaml
+          VARS: .nais/vars-demo.yaml
+          PRINT_PAYLOAD: true
+
   deploy-dev:
     needs: [build, test]
     runs-on: ubuntu-latest
