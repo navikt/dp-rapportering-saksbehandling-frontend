@@ -1,9 +1,18 @@
-import { type RouteConfig, index, prefix, route } from "@react-router/dev/routes";
+import { type RouteConfig, route } from "@react-router/dev/routes";
 
-export default [
-  route("/rapportering", "routes/index.tsx"),
-  route("/rapportering/behandling", "routes/behandling.tsx"),
-  route("/rapportering/behandling/:id", "routes/behandling.$id.tsx"),
-  route("/rapportering/api/internal/isalive", "routes/api.internal.isalive.ts"),
-  route("/rapportering/api/internal/isready", "routes/api.internal.isready.ts"),
-] satisfies RouteConfig;
+const routes = [
+  { file: "", path: "routes/index.tsx" },
+  { file: "behandling", path: "routes/behandling.tsx" },
+  { file: "behandling/:id", path: "routes/behandling.$id.tsx" },
+  { file: "api/internal/isalive", path: "routes/api.internal.isalive.ts" },
+  { file: "api/internal/isready", path: "routes/api.internal.isready.ts" },
+];
+
+if (process.env.NODE_ENV !== "development") {
+  routes.map((route) => ({
+    ...route,
+    file: `/rapportering/${route.file}`,
+  }));
+}
+
+export default routes.map((r) => route(r.file, r.path)) satisfies RouteConfig;
