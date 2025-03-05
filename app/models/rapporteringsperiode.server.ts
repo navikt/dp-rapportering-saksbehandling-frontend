@@ -14,14 +14,18 @@ export async function hentRapporteringsperioder(
     });
 
     if (!response.ok) {
-      // TODO: Logg feilmelding
+      console.log(response.status, response.statusText);
       throw "rapportering-feilmelding-hent-perioder";
+      // TODO: Logg feilmelding
     }
 
     const rapporteringsperioder: IRapporteringsperiode[] = await response.json();
 
     return rapporteringsperioder;
   } catch (error) {
-    throw new Response(`rapportering-feilmelding-hent-perioder`, { status: 500 });
+    throw new Response("", {
+      status: 500,
+      statusText: "rapportering-feilmelding-hent-perioder",
+    });
   }
 }

@@ -100,6 +100,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  console.log(error);
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;

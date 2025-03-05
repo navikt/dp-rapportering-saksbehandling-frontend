@@ -4,6 +4,8 @@ import rapporteringsperioder from "./responses/rapporteringsperioder";
 
 export const handlers = [
   http.get(`${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperioder`, () => {
+    console.log("Henter", rapporteringsperioder.length, "rapporteringsperioder");
+
     return HttpResponse.json(rapporteringsperioder);
   }),
 
@@ -14,6 +16,12 @@ export const handlers = [
       const rapporteringsperiode = rapporteringsperioder.find(
         (r) => r.id === rapporteringsperiodeId
       );
+
+      if (!rapporteringsperiode?.id) {
+        console.log("Fant ikke rapporteringsperiode", rapporteringsperiodeId);
+      } else {
+        console.log("Henter rapporteringsperiode", rapporteringsperiode?.id);
+      }
 
       return HttpResponse.json(rapporteringsperiode);
     }
