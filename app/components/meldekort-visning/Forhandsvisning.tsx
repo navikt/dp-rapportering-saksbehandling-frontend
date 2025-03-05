@@ -22,11 +22,9 @@ export function Forhandsvisning({ periode }: IProps) {
 
   return (
     <div className="meldekort">
-      <div>
-        <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
-        <span className={styles.periode}>
-          {formattertFraOgMed} - {formattertTilOgMed}
-        </span>
+      <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
+      <div className={styles.periode}>
+        {formattertFraOgMed} - {formattertTilOgMed}
       </div>
       <table className={styles.meldekortTabell}>
         <thead>
