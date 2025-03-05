@@ -1,4 +1,5 @@
 import { getISOWeek } from "date-fns";
+import { parse, serialize } from "tinyduration";
 import type { IRapporteringsperiode } from "./types";
 
 export function formaterPeriodeTilUkenummer(fraOgMed: string, tilOgMed: string) {
@@ -40,4 +41,27 @@ export function getWeekDays(): { kort: string; lang: string }[] {
   });
 
   return weekDays;
+}
+
+export function konverterTilISO8601Varighet(varighet: string): string {
+  const delt = varighet.trim().replace(/\./g, ",").split(",");
+  const timer = delt[0] || 0;
+  const minutter = delt[1] || 0;
+  const minutterProsent = parseFloat(`0.${minutter}`);
+
+  return serialize({
+    hours: timer as number,
+    minutes: Math.round(minutterProsent * 60),
+  });
+}
+
+export function konverterFraISO8601Varighet(periode?: string): number | undefined {
+  if (!periode) return undefined;
+
+  periode = periode.replace(/\s/g, "");
+
+  const parsed = parse(periode);
+  const timer = parsed.hours || 0;
+  const minutt = parsed.minutes || 0;
+  return timer + minutt / 60;
 }

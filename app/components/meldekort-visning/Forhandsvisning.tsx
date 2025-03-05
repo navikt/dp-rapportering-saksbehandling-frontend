@@ -21,14 +21,12 @@ export function Forhandsvisning({ periode }: IProps) {
   const ukedager = getWeekDays();
 
   return (
-    <>
+    <div className="meldekort">
       <div>
-        <p className={styles.header}>
-          Uke {ukenummer(periode)}
-          <span style={{ display: "block" }}>
-            {formattertFraOgMed} - {formattertTilOgMed}
-          </span>
-        </p>
+        <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
+        <span className={styles.periode}>
+          {formattertFraOgMed} - {formattertTilOgMed}
+        </span>
       </div>
       <table className={styles.meldekortTabell}>
         <thead>
@@ -45,6 +43,6 @@ export function Forhandsvisning({ periode }: IProps) {
           <Uke uke={andreUke} />
         </tbody>
       </table>
-    </>
+    </div>
   );
 }

@@ -1,41 +1,9 @@
-import { formatterDag } from "~/utils/dato.utils";
 import type { IRapporteringsperiodeDag } from "~/utils/types";
-import { aktivitetMapping } from "~/components/meldekort-liste/utils";
-import styles from "./Uke.module.css";
-import classNames from "classnames";
-
-type AktivitetType = keyof typeof aktivitetMapping;
+import { Dag } from "./Dag";
 
 interface IProps {
   uke: IRapporteringsperiodeDag[];
 }
-
-const erAktivStil = (dag: IRapporteringsperiodeDag, typer: AktivitetType[]) =>
-  typer.every((type) => dag.aktiviteter.some((a) => a.type === type));
-
-const dagKnappStyle = (dag: IRapporteringsperiodeDag) => ({
-  [styles.arbeid]: erAktivStil(dag, ["Arbeid"]),
-  [styles.sykdom]: erAktivStil(dag, ["Syk"]),
-  [styles.fravaer]: erAktivStil(dag, ["Fravaer"]),
-  [styles.utdanning]: erAktivStil(dag, ["Utdanning"]),
-  [styles.arbeidOgUtdanning]: erAktivStil(dag, ["Arbeid", "Utdanning"]),
-  [styles.sykOgUtdanning]: erAktivStil(dag, ["Syk", "Utdanning"]),
-  [styles.fravaerOgUtdanning]: erAktivStil(dag, ["Fravaer", "Utdanning"]),
-  [styles.sykOgFravaer]: erAktivStil(dag, ["Syk", "Fravaer"]),
-  [styles.sykFravaerOgUtdanning]: erAktivStil(dag, ["Syk", "Fravaer", "Utdanning"]),
-});
-
-const getArbeidTimer = (dag: IRapporteringsperiodeDag) => {
-  const arbeidAktivitet = dag.aktiviteter.find((a) => a.type === "Arbeid");
-  if (!arbeidAktivitet || !arbeidAktivitet.timer) return null;
-
-  const match = arbeidAktivitet.timer.match(/PT(\d+H)?/);
-  if (!match) return null;
-
-  const timer = match[1] ? parseInt(match[1].replace("H", "")) : 0;
-
-  return `${timer}t`;
-};
 
 export function Uke({ uke }: IProps) {
   if (!uke?.length) return null;
@@ -43,14 +11,7 @@ export function Uke({ uke }: IProps) {
   return (
     <tr>
       {uke.map((dag) => (
-        <td key={dag.dato}>
-          <div className={styles.aktivitetContainer}>
-            <span className={classNames(styles.aktivitet, styles.dato, dagKnappStyle(dag))}>
-              {formatterDag(dag.dato)}
-            </span>
-            {getArbeidTimer(dag) && <span className={styles.timer}>{getArbeidTimer(dag)}</span>}
-          </div>
-        </td>
+        <Dag key={dag.dato} dag={dag} />
       ))}
     </tr>
   );

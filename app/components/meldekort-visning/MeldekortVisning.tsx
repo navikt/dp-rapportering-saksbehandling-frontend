@@ -8,10 +8,9 @@ interface IProps {
 export function MeldekortVisning({ perioder }: IProps) {
   return (
     <div>
+      <h2>Forhåndsvisning</h2>
       {perioder.map((periode) => (
-        <div key={periode.id} className="meldekort">
-          <Forhandsvisning periode={periode} />
-        </div>
+        <Forhandsvisning key={periode.id} periode={periode} />
       ))}
     </div>
   );
