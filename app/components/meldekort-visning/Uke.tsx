@@ -1,4 +1,4 @@
-import { formatterDag } from "~/utils/dato.utils";
+import { formatterDag, konverterFraISO8601Varighet } from "~/utils/dato.utils";
 import type { IRapporteringsperiodeDag } from "~/utils/types";
 import { aktivitetMapping } from "~/components/meldekort-liste/utils";
 import styles from "./Uke.module.css";
@@ -25,18 +25,6 @@ const dagKnappStyle = (dag: IRapporteringsperiodeDag) => ({
   [styles.sykFravaerOgUtdanning]: erAktivStil(dag, ["Syk", "Fravaer", "Utdanning"]),
 });
 
-const getArbeidTimer = (dag: IRapporteringsperiodeDag) => {
-  const arbeidAktivitet = dag.aktiviteter.find((a) => a.type === "Arbeid");
-  if (!arbeidAktivitet || !arbeidAktivitet.timer) return null;
-
-  const match = arbeidAktivitet.timer.match(/PT(\d+H)?/);
-  if (!match) return null;
-
-  const timer = match[1] ? parseInt(match[1].replace("H", "")) : 0;
-
-  return `${timer}t`;
-};
-
 export function Uke({ uke }: IProps) {
   if (!uke?.length) return null;
 
@@ -44,11 +32,21 @@ export function Uke({ uke }: IProps) {
     <tr>
       {uke.map((dag) => (
         <td key={dag.dato}>
+          {" "}
+          {/* TODO: være egen komponent */}
           <div className={styles.aktivitetContainer}>
             <span className={classNames(styles.aktivitet, styles.dato, dagKnappStyle(dag))}>
               {formatterDag(dag.dato)}
             </span>
-            {getArbeidTimer(dag) && <span className={styles.timer}>{getArbeidTimer(dag)}</span>}
+            {konverterFraISO8601Varighet(
+              dag.aktiviteter?.find((aktivitet) => aktivitet.type === "Arbeid")?.timer ?? ""
+            ) && (
+              <span className={styles.timer}>
+                {konverterFraISO8601Varighet(
+                  dag.aktiviteter?.find((aktivitet) => aktivitet.type === "Arbeid")?.timer ?? ""
+                )}
+              </span>
+            )}
           </div>
         </td>
       ))}

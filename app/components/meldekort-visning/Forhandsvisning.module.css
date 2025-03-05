@@ -10,7 +10,7 @@
   margin: 0;
 }
 
-.header span {
+.periode {
   color: var(--a-text-subtle);
   font-size: var(--a-font-size-medium);
   font-weight: var(--a-font-weight-regular);

@@ -24,6 +24,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.2.0",
+    "tinyduration": "^3.4.1",
     "uuidv7": "^1.0.2"
   },
   "devDependencies": {
