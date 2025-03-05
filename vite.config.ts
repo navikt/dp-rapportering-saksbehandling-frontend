@@ -2,11 +2,10 @@ import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
-import { reactRouterDevTools } from "react-router-devtools";
 
 export default defineConfig({
-  base: "/rapportering",
-  plugins: [reactRouterDevTools(), reactRouter(), tsconfigPaths()],
+  base: "",
+  plugins: [reactRouter(), tsconfigPaths()],
   build: {
     cssMinify: true,
     ssr: true,
