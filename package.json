@@ -25,7 +25,8 @@
     "react-dom": "^19.0.0",
     "react-router": "^7.3.0-pre.0",
     "tinyduration": "^3.4.1",
-    "uuidv7": "^1.0.2"
+    "uuidv7": "^1.0.2",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@playwright/experimental-ct-react": "^1.50.1",

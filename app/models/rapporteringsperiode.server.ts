@@ -1,6 +1,7 @@
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
+import { logger } from "./logger.server";
 
 export async function hentRapporteringsperioder(
   request: Request
@@ -14,7 +15,10 @@ export async function hentRapporteringsperioder(
     });
 
     if (!response.ok) {
-      console.log(response.status, response.statusText);
+      logger.error(
+        `Feil ved henting av rapporteringsperioder, status: ${response.status}, statusText: ${response.statusText}`
+      );
+
       throw "rapportering-feilmelding-hent-perioder";
       // TODO: Logg feilmelding
     }

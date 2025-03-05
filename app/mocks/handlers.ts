@@ -1,10 +1,11 @@
 import { http, HttpResponse } from "msw";
 import { getEnv } from "~/utils/env.utils";
 import rapporteringsperioder from "./responses/rapporteringsperioder";
+import { logger } from "~/models/logger.server";
 
 export const handlers = [
   http.get(`${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperioder`, () => {
-    console.log("Henter", rapporteringsperioder.length, "rapporteringsperioder");
+    logger.info(`Henter ${rapporteringsperioder.length} rapporteringsperioder`);
 
     return HttpResponse.json(rapporteringsperioder);
   }),
@@ -18,9 +19,9 @@ export const handlers = [
       );
 
       if (!rapporteringsperiode?.id) {
-        console.log("Fant ikke rapporteringsperiode", rapporteringsperiodeId);
+        logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId}`);
       } else {
-        console.log("Henter rapporteringsperiode", rapporteringsperiode?.id);
+        logger.info(`Henter rapporteringsperiode ${rapporteringsperiodeId}`);
       }
 
       return HttpResponse.json(rapporteringsperiode);
