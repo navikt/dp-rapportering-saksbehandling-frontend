@@ -1,6 +1,7 @@
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
+import { logger } from "./logger.server";
 
 export async function hentRapporteringsperioder(
   request: Request
@@ -14,14 +15,21 @@ export async function hentRapporteringsperioder(
     });
 
     if (!response.ok) {
-      // TODO: Logg feilmelding
+      logger.error(
+        `Feil ved henting av rapporteringsperioder, status: ${response.status}, statusText: ${response.statusText}`
+      );
+
       throw "rapportering-feilmelding-hent-perioder";
+      // TODO: Logg feilmelding
     }
 
     const rapporteringsperioder: IRapporteringsperiode[] = await response.json();
 
     return rapporteringsperioder;
   } catch (error) {
-    throw new Response(`rapportering-feilmelding-hent-perioder`, { status: 500 });
+    throw new Response("", {
+      status: 500,
+      statusText: "rapportering-feilmelding-hent-perioder",
+    });
   }
 }

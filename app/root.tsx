@@ -25,6 +25,7 @@ export async function loader({}: Route.LoaderArgs): Promise<{ env: IEnv }> {
       DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
+      NODE_ENV: getEnv("NODE_ENV"),
     },
   };
 }
@@ -99,6 +100,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  console.log(error);
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;

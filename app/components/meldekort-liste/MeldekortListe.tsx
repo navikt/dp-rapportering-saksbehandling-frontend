@@ -23,12 +23,12 @@ export function MeldekortListe({ perioder }: IProps) {
     const params = new URLSearchParams(window.location.search);
     const _ids = [...ids].filter((value) => value);
 
-    if (_ids.includes(id)) {
+    if (_ids.includes(id) && _ids.length > 1) {
       params.set("rapporteringsid", _ids.filter((i) => i !== id).join(","));
+    } else if (_ids.includes(id)) {
+      params.delete("rapporteringsid");
     } else {
-      if (_ids.length < 3) {
-        params.set("rapporteringsid", [..._ids, id].join(","));
-      }
+      params.set("rapporteringsid", [..._ids, id].join(","));
     }
 
     setSearchParams(params);
