@@ -1,18 +1,18 @@
 import { type RouteConfig, route } from "@react-router/dev/routes";
 
-const routes = [
-  { file: "/rapportering/", path: "routes/index.tsx" },
-  { file: "/rapportering/behandling", path: "routes/behandling.tsx" },
-  { file: "/rapportering/behandling/:id", path: "routes/behandling.$id.tsx" },
-  { file: "/rapportering/api/internal/isalive", path: "routes/api.internal.isalive.ts" },
-  { file: "/rapportering/api/internal/isready", path: "routes/api.internal.isready.ts" },
+let routes = [
+  { path: "/rapportering/", file: "routes/index.tsx" },
+  { path: "/rapportering/behandling", file: "routes/behandling.tsx" },
+  { path: "/rapportering/behandling/:id", file: "routes/behandling.$id.tsx" },
+  { path: "/rapportering/api/internal/isalive", file: "routes/api.internal.isalive.ts" },
+  { path: "/rapportering/api/internal/isready", file: "routes/api.internal.isready.ts" },
 ];
 
-// if (process.env.NODE_ENV !== "development") {
-//   routes.map((route) => ({
-//     ...route,
-//     file: `/rapportering/${route.file}`,
-//   }));
-// }
+if (process.env.NODE_ENV === "development") {
+  routes = routes.map((route) => ({
+    ...route,
+    path: route.path.replace(/^\/rapportering/, ""),
+  }));
+}
 
-export default routes.map((r) => route(r.file, r.path)) satisfies RouteConfig;
+export default routes.map(({ path, file }) => route(path, file)) satisfies RouteConfig;
