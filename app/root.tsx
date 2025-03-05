@@ -25,6 +25,7 @@ export async function loader({}: Route.LoaderArgs): Promise<{ env: IEnv }> {
       DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
+      NODE_ENV: getEnv("NODE_ENV"),
     },
   };
 }
