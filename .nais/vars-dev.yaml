@@ -1,3 +1,4 @@
+name: dp-rapportering-saksbehandling-frontend-dev
 ingresses: 
   - https://arbeid.intern.dev.nav.no/rapportering
 idporten:

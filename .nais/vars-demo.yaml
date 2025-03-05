@@ -1,3 +1,4 @@
+name: dp-rapportering-saksbehandling-frontend-demo
 ingresses: 
   - https://arbeid.ekstern.dev.nav.no/rapportering
 replicas:
