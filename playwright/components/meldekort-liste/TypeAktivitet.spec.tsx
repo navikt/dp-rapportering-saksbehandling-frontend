@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/experimental-ct-react";
 
-import { TypeAktivitet } from "~/components/meldekort-liste/TypeAktivitet";
-import { aktivitetMapping } from "~/components/meldekort-liste/utils";
+import { TypeAktivitet } from "~/components/rapporteringsperiode-liste/TypeAktivitet";
+import { aktivitetMapping } from "~/components/rapporteringsperiode-liste/utils";
 import periode from "~/mocks/data/mock-rapporteringsperioder";
 
 test.describe("TypeAktivitet", () => {

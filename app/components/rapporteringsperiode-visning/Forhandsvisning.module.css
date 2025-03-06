@@ -1,4 +1,4 @@
-.meldekortTabell {
+.rapporteringsperiodeTabell {
   width: 100%;
   border-collapse: collapse;
 }
@@ -10,8 +10,13 @@
   margin: 0;
 }
 
+.header:hover {
+  cursor: pointer;
+}
+
 .periode {
   color: var(--a-text-subtle);
   font-size: var(--a-font-size-medium);
   font-weight: var(--a-font-weight-regular);
+  padding-bottom: var(--a-spacing-2);
 }

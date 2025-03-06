@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/experimental-ct-react";
 
-import { Dato } from "~/components/meldekort-liste/Dato";
+import { Dato } from "~/components/rapporteringsperiode-liste/Dato";
 import perioder from "~/mocks/data/mock-rapporteringsperioder";
 
 test.describe("FormattertDato", () => {

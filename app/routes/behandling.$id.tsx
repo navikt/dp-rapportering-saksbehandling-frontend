@@ -1,7 +1,8 @@
 import { useLoaderData, useSearchParams } from "react-router";
 
-import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
-import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
+import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
+import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-liste/PeriodeListe";
+import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
 import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/rapportering.module.css";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -19,22 +20,27 @@ export async function loader({
 export default function Rapportering() {
   const { perioder } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const valgteMeldekort =
+  const valgteRapporteringsperiode =
     searchParams
       .get("rapporteringsid")
       ?.split(",")
       .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
       .filter((periode) => periode) ?? [];
 
+  const valgtId = searchParams.get("valgtId");
+  const valgtPeriode = perioder.find((periode) => periode.id === valgtId);
+
   return (
     <div className={styles.grid}>
-      <div className={styles.meldekortListe}>
-        <MeldekortListe perioder={perioder} />
+      <div className={styles.rapporteringsperiodeListe}>
+        <RapporteringsperiodeListe perioder={perioder} />
       </div>
       <div className={styles.visning}>
-        <MeldekortVisning perioder={valgteMeldekort} />
+        <RapporteringsperiodeVisning perioder={valgteRapporteringsperiode} />
       </div>
-      <div className={styles.detaljer}>detaljer</div>
+      <div className={styles.detaljer}>
+        {valgtPeriode && <PeriodeDetaljer periode={valgtPeriode} />}
+      </div>
     </div>
   );
 }

@@ -1,3 +1,6 @@
+import { Button } from "@navikt/ds-react";
+import { useSearchParams } from "react-router";
+
 import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -20,15 +23,23 @@ export function Forhandsvisning({ periode }: IProps) {
 
   const ukedager = getWeekDays();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const byttAktivRapporteringsperiode = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set("valgtId", periode.id);
+    setSearchParams(params);
+  };
+
   return (
-    <div className="meldekort">
-      <div>
+    <div className="rapporteringsperiode">
+      <Button onClick={byttAktivRapporteringsperiode}>
         <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
-        <span className={styles.periode}>
+        <div className={styles.periode}>
           {formattertFraOgMed} - {formattertTilOgMed}
-        </span>
-      </div>
-      <table className={styles.meldekortTabell}>
+        </div>
+      </Button>
+      <table className={styles.rapporteringsperiodeTabell}>
         <thead>
           <tr>
             {ukedager.map((ukedag, index) => (

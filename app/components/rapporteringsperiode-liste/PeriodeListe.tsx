@@ -6,7 +6,7 @@ import type { IRapporteringsperiode } from "~/utils/types";
 
 import { Dato } from "./Dato";
 import { Innsendt } from "./Innsendt";
-import styles from "./MeldekortListe.module.css";
+import styles from "./PeriodeListe.module.css";
 import { Status } from "./Status";
 import { TypeAktivitet } from "./TypeAktivitet";
 
@@ -14,7 +14,7 @@ interface IProps {
   perioder: IRapporteringsperiode[];
 }
 
-export function MeldekortListe({ perioder }: IProps) {
+export function RapporteringsperiodeListe({ perioder }: IProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const ids = searchParams.get("rapporteringsid")?.split(",") ?? [];
 
@@ -32,6 +32,9 @@ export function MeldekortListe({ perioder }: IProps) {
     } else {
       params.set("rapporteringsid", [..._ids, id].join(","));
     }
+
+    const firstSelectedId = params.get("rapporteringsid")?.split(",")[0] ?? "";
+    params.set("valgtId", firstSelectedId);
 
     setSearchParams(params);
   }
@@ -62,7 +65,7 @@ export function MeldekortListe({ perioder }: IProps) {
                     disabled={!ids.includes(periode.id) && ids.length >= 3}
                     aria-labelledby={`id-${periode.id}`}
                   >
-                    Velg meldekort
+                    Velg rapporteringsperiode
                   </Checkbox>
                 </Table.DataCell>
                 <Table.DataCell scope="row">{ukenummer(periode)}</Table.DataCell>
