@@ -9,7 +9,12 @@ export const setup = () => {
 };
 
 export const start = (server: SetupServerApi) => {
-  server.listen({ onUnhandledRequest: "warn" });
+  server.listen({
+    onUnhandledRequest(request, print) {
+      logger.warn(`Unhandled request: ${request.url}`);
+      print.warning();
+    },
+  });
 
   process.once("SIGINT", () => server.close());
   process.once("SIGTERM", () => server.close());

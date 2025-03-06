@@ -8,6 +8,8 @@ export async function hentRapporteringsperioder(
 ): Promise<IRapporteringsperiode[]> {
   const url = `${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperioder`;
 
+  logger.info(`Henter rapporteringsperioder fra ${url}`);
+
   try {
     const response = await fetch(url, {
       method: "GET",
