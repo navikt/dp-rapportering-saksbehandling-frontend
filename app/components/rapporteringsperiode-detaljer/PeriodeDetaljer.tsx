@@ -26,19 +26,19 @@ export function PeriodeDetaljer({ periode }: IProps) {
       <div className={styles.detaljer}>
         <div>
           <p>Arbeidssøkerstatus:</p>
-          {renderTag(periode.registrertArbeidssoker ?? false)}
+          <span>{renderTag(periode.registrertArbeidssoker ?? false)}</span>
         </div>
         <div>
           <p>Korrigering av meldekort:</p>
-          {renderTag(periode.originalId !== undefined)}
+          <span>{renderTag(periode.originalId !== undefined)}</span>
         </div>
         <div>
           <p>Grunn til endring: </p>
-          <div>{periode.begrunnelseEndring}</div>
+          <span>{periode.begrunnelseEndring}</span>
         </div>
         <div>
           <p>Utbetaling av dagpenger:</p>
-          {utbetaling(periode)}
+          <span>{utbetaling(periode)}</span>
         </div>
       </div>
     </div>
