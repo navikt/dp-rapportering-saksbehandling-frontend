@@ -41,6 +41,7 @@ export function PeriodeDetaljer({ periode }: IProps) {
           <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
         </tr>
       </table>
+      <Button className={styles.korrigerKnapp}>Korriger meldekort</Button>
     </>
   );
 }
