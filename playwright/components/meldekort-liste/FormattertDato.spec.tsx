@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import { Dato } from "~/components/meldekort-liste/Dato";
+import { Dato } from "~/components/rapporteringsperiode-liste/Dato";
 import perioder from "~/mocks/responses/rapporteringsperioder";
 
 test.describe("FormattertDato", () => {

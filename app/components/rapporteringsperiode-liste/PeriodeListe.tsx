@@ -4,7 +4,7 @@ import { TypeAktivitet } from "./TypeAktivitet";
 import { ukenummer } from "~/utils/dato.utils";
 import { Innsendt } from "./Innsendt";
 import { Status } from "./Status";
-import styles from "./MeldekortListe.module.css";
+import styles from "./PeriodeListe.module.css";
 import { useSearchParams } from "react-router";
 import { Dato } from "./Dato";
 
@@ -12,7 +12,7 @@ interface IProps {
   perioder: IRapporteringsperiode[];
 }
 
-export function MeldekortListe({ perioder }: IProps) {
+export function RapporteringsperiodeListe({ perioder }: IProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const ids = searchParams.get("rapporteringsid")?.split(",") ?? [];
 
@@ -60,7 +60,7 @@ export function MeldekortListe({ perioder }: IProps) {
                     disabled={!ids.includes(periode.id) && ids.length >= 3}
                     aria-labelledby={`id-${periode.id}`}
                   >
-                    Velg meldekort
+                    Velg rapporteringsperiode
                   </Checkbox>
                 </Table.DataCell>
                 <Table.DataCell scope="row">{ukenummer(periode)}</Table.DataCell>

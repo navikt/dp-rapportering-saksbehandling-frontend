@@ -1,12 +1,12 @@
 import type { IRapporteringsperiode } from "~/utils/types";
 import { Forhandsvisning } from "./Forhandsvisning";
-import styles from "./MeldekortVisning.module.css";
+import styles from "./PeriodeVisning.module.css";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
 }
 
-export function MeldekortVisning({ perioder }: IProps) {
+export function RapporteringsperiodeVisning({ perioder }: IProps) {
   return (
     <div className={styles.container}>
       <h2>Forhåndsvisning</h2>

@@ -1,10 +1,10 @@
-import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
+import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-liste/PeriodeListe";
 import type { Route } from "./+types/rapportering";
 import type { IRapporteringsperiode } from "~/utils/types";
 import styles from "~/route-styles/rapportering.module.css";
 import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 import { useLoaderData, useSearchParams } from "react-router";
-import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
+import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
 
 export async function loader({
   request,
@@ -18,7 +18,7 @@ export async function loader({
 export default function Rapportering({ params }: Route.ComponentProps) {
   const { perioder } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const valgteMeldekort =
+  const valgteRapporteringsperiode =
     searchParams
       .get("rapporteringsid")
       ?.split(",")
@@ -27,11 +27,11 @@ export default function Rapportering({ params }: Route.ComponentProps) {
 
   return (
     <div className={styles.grid}>
-      <div className={styles.meldekortListe}>
-        <MeldekortListe perioder={perioder} />
+      <div className={styles.rapporteringsperiodeListe}>
+        <RapporteringsperiodeListe perioder={perioder} />
       </div>
       <div className={styles.visning}>
-        <MeldekortVisning perioder={valgteMeldekort} />
+        <RapporteringsperiodeVisning perioder={valgteRapporteringsperiode} />
       </div>
       <div className={styles.detaljer}>detaljer</div>
     </div>

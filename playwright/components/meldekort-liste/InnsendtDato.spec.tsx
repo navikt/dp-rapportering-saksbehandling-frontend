@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/experimental-ct-react";
 import { differenceInDays, parseISO } from "date-fns";
 
-import { Innsendt } from "~/components/meldekort-liste/Innsendt";
-import { SISTE_FRIST } from "~/components/meldekort-liste/Innsendt";
+import { Innsendt } from "~/components/rapporteringsperiode-liste/Innsendt";
+import { SISTE_FRIST } from "~/components/rapporteringsperiode-liste/Innsendt";
 
 test.describe("InnsendtDato", () => {
   test("skal vise error tag hvis SISTE_FRIST er passert", async ({ mount }) => {

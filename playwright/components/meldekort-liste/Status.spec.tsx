@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import { Status } from "~/components/meldekort-liste/Status";
+import { Status } from "~/components/rapporteringsperiode-liste/Status";
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 
 test.describe("Status", () => {
