@@ -11,6 +11,11 @@ function renderTag(condition: boolean) {
   return condition ? <Tag variant="success">Ja</Tag> : <Tag variant="error">Nei</Tag>;
 }
 
+const utbetaling = (periode: IRapporteringsperiode) => {
+  if (!periode.bruttoBelop) return;
+  return <div>{periode.bruttoBelop} kr</div>;
+};
+
 export function PeriodeDetaljer({ periode }: IProps) {
   return (
     <div>
@@ -26,6 +31,14 @@ export function PeriodeDetaljer({ periode }: IProps) {
         <div>
           <p>Korrigering av meldekort:</p>
           {renderTag(periode.originalId !== undefined)}
+        </div>
+        <div>
+          <p>Grunn til endring</p>
+          <div>{periode.begrunnelseEndring}</div>
+        </div>
+        <div>
+          <p>Utbetaling av dagpenger:</p>
+          {utbetaling(periode)}
         </div>
       </div>
     </div>
