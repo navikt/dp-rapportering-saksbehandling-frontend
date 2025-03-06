@@ -33,7 +33,7 @@ export function PeriodeDetaljer({ periode }: IProps) {
           {renderTag(periode.originalId !== undefined)}
         </div>
         <div>
-          <p>Grunn til endring</p>
+          <p>Grunn til endring: </p>
           <div>{periode.begrunnelseEndring}</div>
         </div>
         <div>
