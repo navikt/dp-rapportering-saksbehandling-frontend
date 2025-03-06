@@ -51,11 +51,19 @@ spec:
         - host: rt6o382n.apicdn.sanity.io
         - host: www.nav.no
         - host: amplitude.nav.no
-  idporten:
-    enabled: true
+        - host: graph.microsoft.com
+        - host: login.microsoftonline.com
+
+  azure:
+    application:
+      tenant: {{azure.tenant}}
+      enabled: true
+      claims:
+        groups:
+          - id: {{azure.grupper.saksbehandler}}
+          - id: {{azure.grupper.beslutter}}
+        extra:
+          - NAVident
     sidecar:
       enabled: true
-      level: {{idporten.level}}
       autoLogin: true
-  tokenx:
-    enabled: true
