@@ -1,5 +1,6 @@
 import { setupServer, type SetupServerApi } from "msw/node";
 import { handlers } from "./handlers";
+import { logger } from "~/models/logger.server";
 
 export const server = setupServer(...handlers);
 
@@ -13,5 +14,5 @@ export const start = (server: SetupServerApi) => {
   process.once("SIGINT", () => server.close());
   process.once("SIGTERM", () => server.close());
 
-  console.info("🤫 Mock server");
+  logger.info("MSW server startet");
 };
