@@ -31,7 +31,7 @@ export function sessionExpiresIn(request: Request) {
 }
 
 export async function getMicrosoftOboToken(request: Request) {
-  if (process.env.IS_LOCALHOST === "true") {
+  if (isLocalhost || getEnv("USE_MSW") === "true") {
     return process.env.MICROSOFT_TOKEN as string;
   }
 
