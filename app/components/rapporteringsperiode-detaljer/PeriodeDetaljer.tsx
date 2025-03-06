@@ -7,19 +7,11 @@ interface IProps {
   periode: IRapporteringsperiode;
 }
 
+function renderTag(condition: boolean) {
+  return condition ? <Tag variant="success">Ja</Tag> : <Tag variant="error">Nei</Tag>;
+}
+
 export function PeriodeDetaljer({ periode }: IProps) {
-  const arbeidssokerStatus = periode.registrertArbeidssoker ? (
-    <Tag variant="success">Ja</Tag>
-  ) : (
-    <Tag variant="error">Nei</Tag>
-  );
-
-  const korrigeringAvMeldekort = periode.originalId ? (
-    <Tag variant="success">Ja</Tag>
-  ) : (
-    <Tag variant="error">Nei</Tag>
-  );
-
   return (
     <div>
       <h2>Detaljer</h2>
@@ -29,11 +21,11 @@ export function PeriodeDetaljer({ periode }: IProps) {
       <div className={styles.detaljer}>
         <div>
           <p>Arbeidssøkerstatus:</p>
-          {arbeidssokerStatus}
+          {renderTag(periode.registrertArbeidssoker ?? false)}
         </div>
         <div>
           <p>Korrigering av meldekort:</p>
-          {korrigeringAvMeldekort}
+          {renderTag(periode.originalId !== undefined)}
         </div>
       </div>
     </div>
