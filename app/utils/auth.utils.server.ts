@@ -11,7 +11,10 @@ const localToken = process.env.DP_RAPPORTERING_TOKEN ?? fallbackToken;
 const audienceDPRapportering = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-rapportering`;
 
 export function sessionExpiresIn(request: Request) {
-  const token = getEnv("IS_LOCALHOST") === "true" ? localToken : getToken(request);
+  const token =
+    getEnv("IS_LOCALHOST") === "true" || getEnv("USE_MSW") === "true"
+      ? localToken
+      : getToken(request);
   if (!token) {
     return 0;
   }
