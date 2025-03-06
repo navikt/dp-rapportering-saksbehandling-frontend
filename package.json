@@ -7,8 +7,11 @@
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
+    "lint": "eslint",
     "test": "npm run test:vitest && npm run test:playwright",
+    "prepare": "husky",
     "test:vitest": "vitest run",
+    "pre-commit": "lint-staged && npm run typecheck",
     "test:playwright": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
@@ -29,6 +32,7 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.21.0",
     "@playwright/experimental-ct-react": "^1.50.1",
     "@playwright/test": "^1.50.1",
     "@react-router/dev": "^7.3.0-pre.0",
@@ -36,9 +40,30 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/react-router-dom": "^5.3.3",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.4.2",
+    "lint-staged": "^15.4.3",
     "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0",
     "vite": "^6.2.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.7"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --list-different",
+      "eslint --max-warnings 0",
+      "bash -c tsc",
+      "bash -c 'npm run lint'"
+    ]
   }
 }
