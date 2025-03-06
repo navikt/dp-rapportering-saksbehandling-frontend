@@ -67,7 +67,7 @@ jobs:
           VITE_IS_LOCALHOST: 'false'
           VITE_USE_MSW: 'true'
 
-      - run: npm run test:vitest
+      - run: npm run test
 
   deploy-demo:
     needs: [build, test]
