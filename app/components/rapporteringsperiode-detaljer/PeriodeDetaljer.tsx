@@ -1,4 +1,4 @@
-import { Tag } from "@navikt/ds-react";
+import { Button, Tag } from "@navikt/ds-react";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 import styles from "./PeriodeDetaljer.module.css";
@@ -11,36 +11,36 @@ function renderTag(condition: boolean) {
   return condition ? <Tag variant="success">Ja</Tag> : <Tag variant="error">Nei</Tag>;
 }
 
-const utbetaling = (periode: IRapporteringsperiode) => {
-  if (!periode.bruttoBelop) return;
-  return <div>{periode.bruttoBelop} kr</div>;
-};
+const numberFormat = new Intl.NumberFormat("nb-NO", {
+  style: "currency",
+  currency: "NOK",
+});
 
 export function PeriodeDetaljer({ periode }: IProps) {
   return (
-    <div>
+    <>
       <h2>Detaljer</h2>
       <h3>
         Uke {ukenummer(periode)} | {formatterDato({ dato: periode.periode.tilOgMed, kort: true })}
       </h3>
-      <div className={styles.detaljer}>
-        <div>
-          <p>Arbeidssøkerstatus:</p>
-          <span>{renderTag(periode.registrertArbeidssoker ?? false)}</span>
-        </div>
-        <div>
-          <p>Korrigering av meldekort:</p>
-          <span>{renderTag(periode.originalId !== undefined)}</span>
-        </div>
-        <div>
-          <p>Grunn til endring: </p>
-          <span>{periode.begrunnelseEndring}</span>
-        </div>
-        <div>
-          <p>Utbetaling av dagpenger:</p>
-          <span>{utbetaling(periode)}</span>
-        </div>
-      </div>
-    </div>
+      <table className={styles.tabell}>
+        <tr>
+          <th>Arbeidssøkerstatus:</th>
+          <td>{renderTag(periode.registrertArbeidssoker ?? false)}</td>
+        </tr>
+        <tr>
+          <th>Korrigering av meldekort:</th>
+          <td>{renderTag(periode.originalId !== undefined)}</td>
+        </tr>
+        <tr>
+          <th>Grunn til endring: </th>
+          <td>{periode.begrunnelseEndring}</td>
+        </tr>
+        <tr>
+          <th>Utbetaling av dagpenger:</th>
+          <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
+        </tr>
+      </table>
+    </>
   );
 }
