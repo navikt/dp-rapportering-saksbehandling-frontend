@@ -10,6 +10,10 @@
   margin: 0;
 }
 
+.header:hover {
+  cursor: pointer;
+}
+
 .periode {
   color: var(--a-text-subtle);
   font-size: var(--a-font-size-medium);

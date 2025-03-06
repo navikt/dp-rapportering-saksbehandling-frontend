@@ -1,7 +1,7 @@
 import type { IRapporteringsperiode } from "~/utils/types";
 import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
 import { Uke } from "./Uke";
-
+import { useSearchParams } from "react-router";
 import styles from "./Forhandsvisning.module.css";
 
 interface IProps {
@@ -20,9 +20,19 @@ export function Forhandsvisning({ periode }: IProps) {
 
   const ukedager = getWeekDays();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const byttAktivRapporteringsperiode = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set("valgtId", periode.id);
+    setSearchParams(params);
+  };
+
   return (
     <div className="rapporteringsperiode">
-      <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
+      <h3 className={styles.header} onClick={byttAktivRapporteringsperiode}>
+        Uke {ukenummer(periode)}
+      </h3>
       <div className={styles.periode}>
         {formattertFraOgMed} - {formattertTilOgMed}
       </div>
