@@ -4,6 +4,7 @@ import {
   Links,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
   useLoaderData,
@@ -15,10 +16,19 @@ import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 import styles from "~/route-styles/root.module.css";
 import "@navikt/ds-css";
 import { InternalHeader } from "@navikt/ds-react";
-import type { IEnv } from "./utils/types";
 import { getEnv } from "./utils/env.utils";
+import { hasSession } from "./mocks/session";
+import { uuidv7 } from "uuidv7";
 
-export async function loader({}: Route.LoaderArgs): Promise<{ env: IEnv }> {
+export async function loader({ request }: Route.LoaderArgs) {
+  if (getEnv("USE_MSW") === "true" && !hasSession(request)) {
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": `sessionId=${uuidv7()}`,
+      },
+    });
+  }
+
   return {
     env: {
       BASE_PATH: getEnv("BASE_PATH"),

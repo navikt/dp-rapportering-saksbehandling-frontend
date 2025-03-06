@@ -4,11 +4,11 @@ import { logger } from "~/models/logger.server";
 
 export const server = setupServer(...handlers);
 
-export const setup = () => {
-  return setupServer(...handlers) as SetupServerApi;
-};
+export const setup = () => {};
 
-export const start = (server: SetupServerApi) => {
+export function startMockServer() {
+  const server = setupServer(...handlers) as SetupServerApi;
+
   server.listen({
     onUnhandledRequest(request, print) {
       logger.warn(`Unhandled request: ${request.url}`);
@@ -20,4 +20,4 @@ export const start = (server: SetupServerApi) => {
   process.once("SIGTERM", () => server.close());
 
   logger.info("MSW server startet");
-};
+}

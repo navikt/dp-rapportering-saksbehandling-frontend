@@ -6,6 +6,23 @@ declare global {
   }
 }
 
+interface INetworkResponseSuccess<T> {
+  status: "success";
+  data?: T;
+  id?: string;
+}
+
+interface INetworkResponseError {
+  status: "error";
+  error: {
+    statusCode: number;
+    statusText: string;
+  };
+  id?: string;
+}
+
+export type INetworkResponse<T = void> = INetworkResponseSuccess<T> | INetworkResponseError;
+
 export type TAktivitetType = (typeof AKTIVITET_TYPE)[keyof typeof AKTIVITET_TYPE];
 
 export type TRapporteringsperiodeStatus =
@@ -59,4 +76,5 @@ export interface IEnv {
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";
+  DP_RAPPORTERING_TOKEN?: string;
 }

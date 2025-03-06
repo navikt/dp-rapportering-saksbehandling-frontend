@@ -15,6 +15,7 @@ export function sessionExpiresIn(request: Request) {
     getEnv("IS_LOCALHOST") === "true" || getEnv("USE_MSW") === "true"
       ? localToken
       : getToken(request);
+
   if (!token) {
     return 0;
   }
@@ -28,7 +29,7 @@ export function sessionExpiresIn(request: Request) {
 }
 
 export async function getRapporteringOboToken(request: Request) {
-  if (isLocalhost) {
+  if (isLocalhost || getEnv("USE_MSW") === "true") {
     return localToken;
   }
 

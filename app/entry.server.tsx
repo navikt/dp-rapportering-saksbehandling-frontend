@@ -7,17 +7,15 @@ import { isbot } from "isbot";
 import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import { renderToPipeableStream } from "react-dom/server";
 
-import { setup, start } from "./mocks/server";
 import { getEnv } from "./utils/env.utils";
 import { logger } from "./models/logger.server";
 
 export const streamTimeout = 5_000;
 
-logger.info(`USE_MSW: ${getEnv("USE_MSW")}`);
-
 if (getEnv("USE_MSW") === "true") {
-  const server = setup();
-  start(server);
+  import("./mocks/server").then(({ startMockServer }) => {
+    startMockServer();
+  });
 }
 
 export default function handleRequest(
