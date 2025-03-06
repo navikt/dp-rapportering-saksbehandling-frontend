@@ -5,6 +5,7 @@ import styles from "~/route-styles/rapportering.module.css";
 import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 import { useLoaderData, useSearchParams } from "react-router";
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
+import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
 
 export async function loader({
   request,
@@ -25,6 +26,9 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
       .filter((periode) => periode) ?? [];
 
+  const valgtId = searchParams.get("valgtId");
+  const valgtPeriode = perioder.find((periode) => periode.id === valgtId);
+
   return (
     <div className={styles.grid}>
       <div className={styles.rapporteringsperiodeListe}>
@@ -33,7 +37,9 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       <div className={styles.visning}>
         <RapporteringsperiodeVisning perioder={valgteRapporteringsperiode} />
       </div>
-      <div className={styles.detaljer}>detaljer</div>
+      <div className={styles.detaljer}>
+        {valgtPeriode && <PeriodeDetaljer periode={valgtPeriode} />}
+      </div>
     </div>
   );
 }

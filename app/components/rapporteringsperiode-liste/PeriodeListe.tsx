@@ -31,6 +31,9 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
       }
     }
 
+    const firstSelectedId = params.get("rapporteringsid")?.split(",")[0] ?? "";
+    params.set("valgtId", firstSelectedId);
+
     setSearchParams(params);
   }
 

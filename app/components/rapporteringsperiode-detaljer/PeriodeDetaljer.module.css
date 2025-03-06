@@ -1,0 +1,21 @@
+.detaljer {
+  display: flex;
+  flex-direction: column;
+}
+
+.detaljer > div:first-child {
+  border-top: 3px solid var(--a-surface-subtle);
+}
+
+.detaljer > div {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: var(--a-spacing-3);
+  border-bottom: 3px solid var(--a-surface-subtle);
+}
+
+.detaljer p {
+  margin: 0;
+  width: 50%;
+}
