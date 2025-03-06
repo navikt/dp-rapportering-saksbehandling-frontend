@@ -1,14 +1,19 @@
 import { setupServer, type SetupServerApi } from "msw/node";
-import { handlers } from "./handlers";
+
 import { logger } from "~/models/logger.server";
+
+import { mockAzure } from "./mock-azure";
+import { mockMeldekortregister } from "./mock-meldekortregister";
+
+const handlers = [...mockAzure, ...mockMeldekortregister];
 
 export const server = setupServer(...handlers);
 
-export const setup = () => {};
+export function setup() {
+  return setupServer(...handlers) as SetupServerApi;
+}
 
-export function startMockServer() {
-  const server = setupServer(...handlers) as SetupServerApi;
-
+export function startMockServer(server: SetupServerApi) {
   server.listen({
     onUnhandledRequest(request, print) {
       logger.warn(`Unhandled request: ${request.url}`);

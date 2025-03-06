@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/experimental-ct-react";
+import { expect, test } from "@playwright/experimental-ct-react";
 import { differenceInDays, parseISO } from "date-fns";
 
 import { Innsendt } from "~/components/meldekort-liste/Innsendt";

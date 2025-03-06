@@ -66,7 +66,7 @@ export interface IRapporteringsperiode {
   rapporteringstype: TRapporteringstype | null;
 }
 
-const boolskeVerdier = ["true", "false"] as const;
+export const boolskeVerdier = ["true", "false"] as const;
 
 export type TrueOrFalse = (typeof boolskeVerdier)[number];
 
@@ -77,4 +77,11 @@ export interface IEnv {
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";
   DP_RAPPORTERING_TOKEN?: string;
+}
+
+export interface ISaksbehandler {
+  onPremisesSamAccountName: string; // Dette er saksbehandlerIdent
+  givenName: string;
+  displayName: string;
+  mail: string;
 }

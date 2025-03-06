@@ -1,7 +1,8 @@
-import { test, expect } from "@playwright/experimental-ct-react";
+import { expect, test } from "@playwright/experimental-ct-react";
+
 import { TypeAktivitet } from "~/components/meldekort-liste/TypeAktivitet";
 import { aktivitetMapping } from "~/components/meldekort-liste/utils";
-import periode from "../../../app/mocks/responses/rapporteringsperioder";
+import periode from "~/mocks/data/mock-rapporteringsperioder";
 
 test.describe("TypeAktivitet", () => {
   test("skal vise alle aktivitetstypene", async ({ mount }) => {

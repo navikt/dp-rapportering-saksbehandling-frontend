@@ -1,6 +1,7 @@
-import { test, expect } from "@playwright/experimental-ct-react";
+import { expect, test } from "@playwright/experimental-ct-react";
+
 import { Dato } from "~/components/meldekort-liste/Dato";
-import perioder from "~/mocks/responses/rapporteringsperioder";
+import perioder from "~/mocks/data/mock-rapporteringsperioder";
 
 test.describe("FormattertDato", () => {
   test("skal formatere dato i lang format", async ({ mount }) => {

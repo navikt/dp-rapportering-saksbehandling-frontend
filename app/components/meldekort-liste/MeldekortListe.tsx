@@ -1,12 +1,14 @@
 import { Checkbox, Table } from "@navikt/ds-react";
-import type { IRapporteringsperiode } from "~/utils/types";
-import { TypeAktivitet } from "./TypeAktivitet";
-import { ukenummer } from "~/utils/dato.utils";
-import { Innsendt } from "./Innsendt";
-import { Status } from "./Status";
-import styles from "./MeldekortListe.module.css";
 import { useSearchParams } from "react-router";
+
+import { ukenummer } from "~/utils/dato.utils";
+import type { IRapporteringsperiode } from "~/utils/types";
+
 import { Dato } from "./Dato";
+import { Innsendt } from "./Innsendt";
+import styles from "./MeldekortListe.module.css";
+import { Status } from "./Status";
+import { TypeAktivitet } from "./TypeAktivitet";
 
 interface IProps {
   perioder: IRapporteringsperiode[];

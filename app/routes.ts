@@ -1,4 +1,4 @@
-import { type RouteConfig, route } from "@react-router/dev/routes";
+import { route, type RouteConfig } from "@react-router/dev/routes";
 
 let routes = [
   { path: "/rapportering/", file: "routes/index.tsx" },

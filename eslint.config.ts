@@ -11,8 +11,8 @@ export default [
   {
     name: "ignore",
     ignores: [
-      "test-results",
-      ".react-router",
+      "test-results/",
+      ".react-router/**",
       "build/",
       "coverage/",
       "server/build/",

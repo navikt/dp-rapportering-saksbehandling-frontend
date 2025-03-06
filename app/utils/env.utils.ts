@@ -10,7 +10,7 @@ export function getEnv<T>(value: keyof IEnv): T {
     BASE_PATH: "/rapportering",
   };
 
-  // @ts-ignore
+  // @ts-expect-error IEnv inneholder ikke VITE_ prefix
   return (env[value] || env[`VITE_${value}`] || defaultEnv[value] || "") as unknown as T;
 }
 

@@ -1,4 +1,5 @@
 import { Tag } from "@navikt/ds-react";
+
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { TRapporteringsperiodeStatus } from "~/utils/types";
 

@@ -1,8 +1,8 @@
-import type { IRapporteringsperiode } from "~/utils/types";
 import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
-import { Uke } from "./Uke";
+import type { IRapporteringsperiode } from "~/utils/types";
 
 import styles from "./Forhandsvisning.module.css";
+import { Uke } from "./Uke";
 
 interface IProps {
   periode: IRapporteringsperiode;

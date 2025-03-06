@@ -1,35 +1,30 @@
+import "./app.css";
+import "@navikt/ds-css";
+
+import { InternalHeader } from "@navikt/ds-react";
 import {
   isRouteErrorResponse,
   Link,
   Links,
   Meta,
   Outlet,
-  redirect,
   Scripts,
   ScrollRestoration,
   useLoaderData,
 } from "react-router";
 
-import type { Route } from "./+types/root";
-import "./app.css";
 import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 import styles from "~/route-styles/root.module.css";
-import "@navikt/ds-css";
-import { InternalHeader } from "@navikt/ds-react";
+
+import type { Route } from "./+types/root";
+import { getSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv } from "./utils/env.utils";
-import { hasSession } from "./mocks/session";
-import { uuidv7 } from "uuidv7";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  if (getEnv("USE_MSW") === "true" && !hasSession(request)) {
-    return redirect("/", {
-      headers: {
-        "Set-Cookie": `sessionId=${uuidv7()}`,
-      },
-    });
-  }
+  const saksbehandler = await getSaksbehandler(request);
 
   return {
+    saksbehandler,
     env: {
       BASE_PATH: getEnv("BASE_PATH"),
       DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
@@ -75,7 +70,7 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { env } = useLoaderData<typeof loader>();
+  const { env, saksbehandler } = useLoaderData<typeof loader>();
 
   return (
     <html lang="en">
@@ -90,7 +85,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               Dagpenger
             </InternalHeader.Title>
           </Link>
-          <HeaderMeny saksbehandler={"saksbehandlerNavn"} antallOppgaverJegHarTilBehandling={0} />
+          <HeaderMeny saksbehandler={saksbehandler} antallOppgaverJegHarTilBehandling={0} />
         </InternalHeader>
         <main>{children}</main>
         <ScrollRestoration />
@@ -105,7 +100,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App({ loaderData }: Route.ComponentProps) {
+export default function App() {
   return <Outlet />;
 }
 

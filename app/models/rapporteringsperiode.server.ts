@@ -1,6 +1,7 @@
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
+
 import { logger } from "./logger.server";
 
 export async function hentRapporteringsperioder(
@@ -29,6 +30,8 @@ export async function hentRapporteringsperioder(
 
     return rapporteringsperioder;
   } catch (error) {
+    logger.error(`Feil ved henting av rapporteringsperioder: ${error}`);
+
     throw new Response("", {
       status: 500,
       statusText: "rapportering-feilmelding-hent-perioder",

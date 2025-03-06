@@ -1,9 +1,10 @@
 // Fra https://github.com/navikt/dp-rapportering-frontend/blob/main/app/utils/fetch.utils.ts
 
 import { uuidv7 } from "uuidv7";
-import { getRapporteringOboToken } from "./auth.utils.server";
-import { isLocalhost } from "./env.utils";
+
 import { getSessionId } from "../mocks/session";
+import { audienceDPMeldekortregister, getOnBehalfOfToken } from "./auth.utils.server";
+import { isLocalhost } from "./env.utils";
 
 function generateCorralationId() {
   // https://github.com/navikt/dp-rapportering-frontend/pull/242#pullrequestreview-2403834306
@@ -12,7 +13,7 @@ function generateCorralationId() {
 }
 
 export async function getHeaders(request: Request, customHeaders = {}) {
-  const onBehalfOfToken = await getRapporteringOboToken(request);
+  const onBehalfOfToken = await getOnBehalfOfToken(request, audienceDPMeldekortregister);
 
   const headers = {
     "Content-Type": "application/json",
