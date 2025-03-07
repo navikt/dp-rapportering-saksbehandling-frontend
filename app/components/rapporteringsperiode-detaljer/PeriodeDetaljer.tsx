@@ -24,22 +24,24 @@ export function PeriodeDetaljer({ periode }: IProps) {
         Uke {ukenummer(periode)} | {formatterDato({ dato: periode.periode.tilOgMed, kort: true })}
       </h3>
       <table className={styles.tabell}>
-        <tr>
-          <th>Arbeidssøkerstatus:</th>
-          <td>{renderTag(periode.registrertArbeidssoker ?? false)}</td>
-        </tr>
-        <tr>
-          <th>Korrigering av meldekort:</th>
-          <td>{renderTag(periode.originalId !== undefined)}</td>
-        </tr>
-        <tr>
-          <th>Grunn til endring: </th>
-          <td>{periode.begrunnelseEndring}</td>
-        </tr>
-        <tr>
-          <th>Utbetaling av dagpenger:</th>
-          <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
-        </tr>
+        <tbody>
+          <tr>
+            <th>Arbeidssøkerstatus:</th>
+            <td>{renderTag(periode.registrertArbeidssoker ?? false)}</td>
+          </tr>
+          <tr>
+            <th>Korrigering av meldekort:</th>
+            <td>{renderTag(periode.originalId !== undefined)}</td>
+          </tr>
+          <tr>
+            <th>Grunn til endring: </th>
+            <td>{periode.begrunnelseEndring}</td>
+          </tr>
+          <tr>
+            <th>Utbetaling av dagpenger:</th>
+            <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
+          </tr>
+        </tbody>
       </table>
       <Button className={styles.korrigerKnapp}>Korriger meldekort</Button>
     </>
