@@ -14,3 +14,6 @@ azure:
   grupper:
     saksbehandler: ""
     beslutter: ""
+  sidecar:
+    enabled: false
+    autoLogin: false
