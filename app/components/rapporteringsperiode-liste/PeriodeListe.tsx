@@ -1,5 +1,5 @@
 import { Checkbox, Table } from "@navikt/ds-react";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 import { ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -14,8 +14,11 @@ interface IProps {
   perioder: IRapporteringsperiode[];
 }
 
+const MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER = 3;
+
 export function RapporteringsperiodeListe({ perioder }: IProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const ids = searchParams.get("rapporteringsid")?.split(",") ?? [];
 
   function toggleRow(event: React.ChangeEvent<HTMLInputElement>) {
@@ -44,7 +47,8 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
       params.delete("rapporteringsid");
     }
 
-    setSearchParams(params);
+    navigate(window.location.pathname.replace("/rapportering", "") + "?" + params.toString());
+    // setSearchParams(params);
   }
 
   return (
@@ -70,7 +74,10 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     data-id={periode.id}
                     checked={ids.includes(periode.id)}
                     onChange={toggleRow}
-                    disabled={!ids.includes(periode.id) && ids.length >= 3}
+                    disabled={
+                      !ids.includes(periode.id) &&
+                      ids.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER
+                    }
                     aria-labelledby={`id-${periode.id}`}
                   >
                     Velg rapporteringsperiode
