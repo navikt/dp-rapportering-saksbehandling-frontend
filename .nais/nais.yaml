@@ -57,7 +57,7 @@ spec:
   azure:
     application:
       tenant: {{azure.tenant}}
-      enabled: {{azure.enabled}}
+      enabled: "{{azure.enabled}}"
       claims:
         groups:
           - id: {{azure.grupper.saksbehandler}}
