@@ -8,3 +8,9 @@ base_path: "/rapportering"
 use_msw: true
 is_localhost: false
   
+azure:
+  tenant: trygdeetaten.no
+  enabled: false
+  grupper:
+    saksbehandler: ""
+    beslutter: ""
