@@ -47,7 +47,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
       params.delete("rapporteringsid");
     }
 
-    navigate(window.location.pathname.replace("/rapportering", "") + "?" + params.toString());
+    navigate(window.location.pathname + "?" + params.toString());
     // setSearchParams(params);
   }
 
