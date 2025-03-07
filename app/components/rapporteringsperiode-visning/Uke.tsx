@@ -1,4 +1,5 @@
 import type { IRapporteringsperiodeDag } from "~/utils/types";
+
 import { Dag } from "./Dag";
 
 interface IProps {

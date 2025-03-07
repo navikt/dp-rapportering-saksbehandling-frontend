@@ -1,5 +1,6 @@
 import { getISOWeek } from "date-fns";
 import { parse, serialize } from "tinyduration";
+
 import type { IRapporteringsperiode } from "./types";
 
 export function formaterPeriodeTilUkenummer(fraOgMed: string, tilOgMed: string) {

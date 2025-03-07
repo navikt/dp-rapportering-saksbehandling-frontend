@@ -1,11 +1,23 @@
-import { type RouteConfig, index, prefix, route } from "@react-router/dev/routes";
+// import { route, type RouteConfig } from "@react-router/dev/routes";
 
-export default [
-  route("", "routes/index.tsx"),
-  ...prefix("rapportering", [
-    index("routes/rapportering.tsx"),
-    route("isalive", "routes/api.internal.isalive.ts"),
-    route("isready", "routes/api.internal.isready.ts"),
-    route(":id", "routes/rapportering.$id.tsx"),
-  ]),
-] satisfies RouteConfig;
+// const routes = [
+//   { path: "/", file: "routes/index.tsx" },
+//   { path: "/behandling", file: "routes/behandling.tsx" },
+//   { path: "/behandling/:id", file: "routes/behandling.$id.tsx" },
+//   { path: "/api/internal/isalive", file: "routes/api.internal.isalive.ts" },
+//   { path: "/api/internal/isready", file: "routes/api.internal.isready.ts" },
+// ];
+
+// // if (process.env.NODE_ENV === "development") {
+// //   routes = routes.map((route) => ({
+// //     ...route,
+// //     path: route.path.replace(/^\/rapportering/, ""),
+// //   }));
+// // }
+
+// export default routes.map(({ path, file }) => route(path, file)) satisfies RouteConfig;
+
+import type { RouteConfig } from "@react-router/dev/routes";
+import { flatRoutes } from "@react-router/fs-routes";
+
+export default [...(await flatRoutes())] satisfies RouteConfig;

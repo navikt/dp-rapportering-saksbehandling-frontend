@@ -1,6 +1,8 @@
 import classNames from "classnames";
+
 import { formatterDag, konverterFraISO8601Varighet } from "~/utils/dato.utils";
 import type { IRapporteringsperiodeDag } from "~/utils/types";
+
 import styles from "./Uke.module.css";
 
 interface DagProps {

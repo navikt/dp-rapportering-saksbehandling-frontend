@@ -1,5 +1,4 @@
 import path from "path";
-import { loadEnv } from "vite";
 import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({

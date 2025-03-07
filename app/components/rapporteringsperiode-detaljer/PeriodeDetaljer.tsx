@@ -1,6 +1,8 @@
 import { Button, Tag } from "@navikt/ds-react";
+
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
+
 import styles from "./PeriodeDetaljer.module.css";
 
 interface IProps {

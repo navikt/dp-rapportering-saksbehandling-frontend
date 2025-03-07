@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/experimental-ct-react";
+import { expect, test } from "@playwright/experimental-ct-react";
 
 test("basic navigation", async ({ page }) => {
   await page.goto("http://localhost:5173/rapportering");

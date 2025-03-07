@@ -1,5 +1,5 @@
-import type { IRapporteringsperiode } from "~/utils/types";
 import { AKTIVITET_TYPE, RAPPORTERING_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import type { IRapporteringsperiode } from "~/utils/types";
 
 const periode1: IRapporteringsperiode = {
   id: "0194f44e-befd-7974-b48f-250353c1ff09",

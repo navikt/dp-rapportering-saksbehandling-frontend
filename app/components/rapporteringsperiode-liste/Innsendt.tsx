@@ -1,5 +1,6 @@
 import { Tag } from "@navikt/ds-react";
 import { differenceInDays, parseISO } from "date-fns";
+
 import { formatterDato } from "~/utils/dato.utils";
 
 interface IProps {
