@@ -17,14 +17,15 @@ import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 import styles from "~/route-styles/root.module.css";
 
 import type { Route } from "./+types/root";
-import { getSaksbehandler } from "./models/saksbehandler.server";
+import { mockSaksbehandler } from "./mocks/data/mock-saksbehandler";
+// import { getSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv } from "./utils/env.utils";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const saksbehandler = await getSaksbehandler(request);
+export async function loader() {
+  // const saksbehandler = await getSaksbehandler(request);
 
   return {
-    saksbehandler,
+    // saksbehandler,
     env: {
       BASE_PATH: getEnv("BASE_PATH"),
       DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
@@ -70,7 +71,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { env, saksbehandler } = useLoaderData<typeof loader>();
+  const { env } = useLoaderData<typeof loader>();
+  const saksbehandler = mockSaksbehandler;
 
   return (
     <html lang="en">

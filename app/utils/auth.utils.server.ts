@@ -10,7 +10,7 @@ const fallbackToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
 const localToken = process.env.DP_RAPPORTERING_TOKEN ?? fallbackToken;
-export const audienceDPMeldekortregister = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-rapportering-meldekortregister`;
+export const audienceDPRapportering = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-rapportering`;
 
 export function sessionExpiresIn(request: Request) {
   const token =
