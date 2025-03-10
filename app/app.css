@@ -5,6 +5,10 @@ body {
   margin: 0;
 }
 
+p {
+  margin: 0;
+}
+
 .neutralTag .navds-tag--neutral {
   background-color: transparent;
   border-color: transparent;
