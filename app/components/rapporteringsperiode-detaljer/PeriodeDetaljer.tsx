@@ -17,11 +17,16 @@ const numberFormat = new Intl.NumberFormat("nb-NO", {
 });
 
 export function PeriodeDetaljer({ periode }: IProps) {
+  const { fraOgMed, tilOgMed } = periode.periode;
+  const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
+  const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
+
   return (
-    <>
-      <h3>
-        Uke {ukenummer(periode)} | {formatterDato({ dato: periode.periode.tilOgMed, kort: true })}
-      </h3>
+    <div className={styles.detaljer}>
+      <h3>Uke {ukenummer(periode)}</h3>
+      <div className={styles.periode}>
+        {formattertFraOgMed} - {formattertTilOgMed}
+      </div>
       <table className={styles.tabell}>
         <tbody>
           <tr>
@@ -43,6 +48,6 @@ export function PeriodeDetaljer({ periode }: IProps) {
         </tbody>
       </table>
       <Button className={styles.korrigerKnapp}>Korriger meldekort</Button>
-    </>
+    </div>
   );
 }
