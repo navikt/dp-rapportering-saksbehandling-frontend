@@ -21,7 +21,7 @@ export function Forhandsvisning({ periode }: IProps) {
   const ukedager = getWeekDays();
 
   return (
-    <div className="rapporteringsperiode">
+    <div>
       <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
       <div className={styles.periode}>
         {formattertFraOgMed} - {formattertTilOgMed}
