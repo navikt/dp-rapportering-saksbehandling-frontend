@@ -18,12 +18,14 @@
   grid-column: 1 / 2;
   grid-row: 2 / 3;
   background-color: var(--a-surface-default);
+  margin-left: var(--a-spacing-6);
 }
 
 .detaljer {
   grid-column: 2 / 3;
   grid-row: 2 / 3;
   background-color: var(--a-surface-default);
+  margin-right: var(--a-spacing-6);
 }
 
 .visning,

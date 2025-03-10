@@ -6,6 +6,10 @@ main {
   margin: 0;
 }
 
+html {
+  background-color: var(--a-surface-subtle);
+}
+
 h1,
 h2,
 h4,
