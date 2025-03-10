@@ -10,7 +10,8 @@ const base =
 
 export default defineConfig({
   base,
-  plugins: [reactRouter(), tsconfigPaths()],
+  //@ts-expect-error - vite-plugin-react-router does not have types
+  plugins: [reactRouter({ basename: "/rapportering" }), tsconfigPaths()],
   build: {
     cssMinify: true,
     ssr: true,
