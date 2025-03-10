@@ -9,3 +9,7 @@ export function getSessionId(request: Request) {
   }
   return null;
 }
+
+export function hasSession(request: Request) {
+  return request.headers.get("Cookie")?.includes("sessionId");
+}

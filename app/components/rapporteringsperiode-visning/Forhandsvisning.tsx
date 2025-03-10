@@ -1,8 +1,11 @@
-import type { IRapporteringsperiode } from "~/utils/types";
-import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
-import { Uke } from "./Uke";
+import { Button } from "@navikt/ds-react";
 import { useSearchParams } from "react-router";
+
+import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
+import type { IRapporteringsperiode } from "~/utils/types";
+
 import styles from "./Forhandsvisning.module.css";
+import { Uke } from "./Uke";
 
 interface IProps {
   periode: IRapporteringsperiode;
@@ -30,12 +33,12 @@ export function Forhandsvisning({ periode }: IProps) {
 
   return (
     <div className="rapporteringsperiode">
-      <h3 className={styles.header} onClick={byttAktivRapporteringsperiode}>
-        Uke {ukenummer(periode)}
-      </h3>
-      <div className={styles.periode}>
-        {formattertFraOgMed} - {formattertTilOgMed}
-      </div>
+      <Button onClick={byttAktivRapporteringsperiode}>
+        <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
+        <div className={styles.periode}>
+          {formattertFraOgMed} - {formattertTilOgMed}
+        </div>
+      </Button>
       <table className={styles.rapporteringsperiodeTabell}>
         <thead>
           <tr>

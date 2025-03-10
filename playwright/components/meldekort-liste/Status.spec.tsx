@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/experimental-ct-react";
+import { expect, test } from "@playwright/experimental-ct-react";
+
 import { Status } from "~/components/rapporteringsperiode-liste/Status";
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 
