@@ -1,5 +1,6 @@
-import { Outlet } from "react-router";
+// import { Outlet } from "react-router";
 
 export default function Behandling() {
-  return <Outlet />;
+  return <div>Du må velge en bruker</div>;
+  // return <Outlet />;
 }
