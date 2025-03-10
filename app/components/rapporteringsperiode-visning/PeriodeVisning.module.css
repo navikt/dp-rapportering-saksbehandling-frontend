@@ -11,7 +11,11 @@
 
 @container (min-width: 1080px) {
   .perioder {
+    width: 1086px;
+    margin-inline: auto;
+  }
+  /* .perioder {
     flex-direction: row;
     gap: var(--a-spacing-12);
-  }
+  } */
 }
