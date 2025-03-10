@@ -81,6 +81,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                   <Innsendt
                     mottattDato={periode.mottattDato ?? ""}
                     tilOgMed={periode.periode.tilOgMed}
+                    sisteFristForTrekk={periode.sisteFristForTrekk}
                   />
                 </Table.DataCell>
               </Table.Row>

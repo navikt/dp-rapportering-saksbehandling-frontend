@@ -6,11 +6,12 @@ import { useState, useRef } from "react";
 interface IProps {
   mottattDato: string;
   tilOgMed: string;
+  sisteFristForTrekk: string | null;
 }
 
 export const SISTE_FRIST = 10; // Endre til hvor mange dager det skal være for sent
 
-export function Innsendt({ mottattDato, tilOgMed }: IProps) {
+export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk }: IProps) {
   const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
   const forSent = dagerForskjell >= SISTE_FRIST;
   const tagRef = useRef<HTMLDivElement | null>(null);
@@ -36,7 +37,10 @@ export function Innsendt({ mottattDato, tilOgMed }: IProps) {
         >
           <Popover.Content>
             <Heading size="xsmall">Fristen er overskredet</Heading>
-            <p>Meldedato: {formatterDato({ dato: mottattDato })}</p>
+            <p>
+              Frist:{" "}
+              {sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"}
+            </p>
           </Popover.Content>
         </Popover>
       </>

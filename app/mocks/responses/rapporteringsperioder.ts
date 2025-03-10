@@ -153,7 +153,7 @@ const periode2: IRapporteringsperiode = {
       aktiviteter: [],
     },
   ],
-  sisteFristForTrekk: null,
+  sisteFristForTrekk: "2025-02-14",
   kanSendesFra: "2025-02-08",
   kanSendes: true,
   kanEndres: true,
