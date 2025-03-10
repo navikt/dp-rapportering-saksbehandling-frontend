@@ -31,13 +31,6 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
       }
     }
 
-    const firstSelectedId = params.get("rapporteringsid")?.split(",")[0] ?? "";
-    if (firstSelectedId) {
-      params.set("valgtId", firstSelectedId);
-    } else {
-      params.delete("valgtId");
-    }
-
     if (params.get("rapporteringsid") === "") {
       params.delete("rapporteringsid");
     }

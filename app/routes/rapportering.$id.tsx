@@ -26,19 +26,20 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
       .filter((periode) => periode) ?? [];
 
-  const valgtId = searchParams.get("valgtId");
-  const valgtPeriode = perioder.find((periode) => periode.id === valgtId);
-
   return (
     <div className={styles.grid}>
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListe perioder={perioder} />
       </div>
       <div className={styles.visning}>
+        <h2>Forhåndsvisning</h2>
         <RapporteringsperiodeVisning perioder={valgteRapporteringsperiode} />
       </div>
       <div className={styles.detaljer}>
-        {valgtPeriode && <PeriodeDetaljer periode={valgtPeriode} />}
+        <h2>Detaljer</h2>
+        {valgteRapporteringsperiode.map((periode) => (
+          <PeriodeDetaljer key={periode.id} periode={periode} />
+        ))}
       </div>
     </div>
   );

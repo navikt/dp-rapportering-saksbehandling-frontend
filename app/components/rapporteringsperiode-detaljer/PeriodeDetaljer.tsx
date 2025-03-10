@@ -19,7 +19,6 @@ const numberFormat = new Intl.NumberFormat("nb-NO", {
 export function PeriodeDetaljer({ periode }: IProps) {
   return (
     <>
-      <h2>Detaljer</h2>
       <h3>
         Uke {ukenummer(periode)} | {formatterDato({ dato: periode.periode.tilOgMed, kort: true })}
       </h3>

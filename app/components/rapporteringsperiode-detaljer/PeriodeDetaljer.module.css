@@ -18,5 +18,6 @@ td {
 }
 
 .korrigerKnapp {
-  margin-top: var(--a-spacing-14);
+  margin-top: var(--a-spacing-12);
+  margin-bottom: var(--a-spacing-14);
 }

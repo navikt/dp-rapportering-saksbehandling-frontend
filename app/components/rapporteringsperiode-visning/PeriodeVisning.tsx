@@ -9,7 +9,6 @@ interface IProps {
 export function RapporteringsperiodeVisning({ perioder }: IProps) {
   return (
     <div className={styles.container}>
-      <h2>Forhåndsvisning</h2>
       <div className={styles.perioder}>
         {perioder.map((periode) => (
           <Forhandsvisning key={periode.id} periode={periode} />
