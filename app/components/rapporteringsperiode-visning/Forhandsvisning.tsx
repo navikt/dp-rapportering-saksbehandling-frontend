@@ -2,6 +2,7 @@ import type { IRapporteringsperiode } from "~/utils/types";
 import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
 import { Uke } from "./Uke";
 import styles from "./Forhandsvisning.module.css";
+import { Sammenlagt } from "./Sammenlagt";
 
 interface IProps {
   periode: IRapporteringsperiode;
@@ -40,6 +41,7 @@ export function Forhandsvisning({ periode }: IProps) {
           <Uke uke={andreUke} />
         </tbody>
       </table>
+      <Sammenlagt periode={periode} />
     </div>
   );
 }
