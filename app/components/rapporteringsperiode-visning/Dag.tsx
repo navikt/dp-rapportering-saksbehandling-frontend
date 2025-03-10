@@ -24,7 +24,7 @@ const dagKnappStyle = (dag: IRapporteringsperiodeDag) => ({
 
 export function Dag({ dag }: DagProps) {
   return (
-    <td key={dag.dato}>
+    <td key={dag.dato} className={styles.dag}>
       <div className={styles.aktivitetContainer}>
         <span className={classNames(styles.aktivitet, styles.dato, dagKnappStyle(dag))}>
           {formatterDag(dag.dato)}
