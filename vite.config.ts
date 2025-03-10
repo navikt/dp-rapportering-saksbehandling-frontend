@@ -10,7 +10,7 @@ const base =
 
 export default defineConfig({
   base,
-  plugins: [reactRouter(), tsconfigPaths()],
+  plugins: [reactRouter({ basename: "/rapportering" }), tsconfigPaths()],
   build: {
     cssMinify: true,
     ssr: true,
