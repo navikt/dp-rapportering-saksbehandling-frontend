@@ -2,6 +2,7 @@ import { Button, Tag } from "@navikt/ds-react";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 import styles from "./PeriodeDetaljer.module.css";
+import { PeriodeMedUke } from "../rapporteringsperiode-visning/PeriodeMedUke";
 
 interface IProps {
   periode: IRapporteringsperiode;
@@ -23,10 +24,11 @@ export function PeriodeDetaljer({ periode }: IProps) {
 
   return (
     <div className={styles.detaljer}>
-      <h3>Uke {ukenummer(periode)}</h3>
-      <div className={styles.periode}>
-        {formattertFraOgMed} - {formattertTilOgMed}
-      </div>
+      <PeriodeMedUke
+        ukenummer={ukenummer(periode)}
+        formattertFraOgMed={formattertFraOgMed}
+        formattertTilOgMed={formattertTilOgMed}
+      />
       <table className={styles.tabell}>
         <tbody>
           <tr>

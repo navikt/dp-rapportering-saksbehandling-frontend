@@ -3,6 +3,7 @@ import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
 import { Uke } from "./Uke";
 import styles from "./Forhandsvisning.module.css";
 import { Sammenlagt } from "./Sammenlagt";
+import { PeriodeMedUke } from "./PeriodeMedUke";
 
 interface IProps {
   periode: IRapporteringsperiode;
@@ -22,10 +23,11 @@ export function Forhandsvisning({ periode }: IProps) {
 
   return (
     <div>
-      <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
-      <div className={styles.periode}>
-        {formattertFraOgMed} - {formattertTilOgMed}
-      </div>
+      <PeriodeMedUke
+        ukenummer={ukenummer(periode)}
+        formattertFraOgMed={formattertFraOgMed}
+        formattertTilOgMed={formattertTilOgMed}
+      />
       <table className={styles.rapporteringsperiodeTabell}>
         <thead>
           <tr>
