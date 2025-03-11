@@ -7,6 +7,7 @@ import { Status } from "./Status";
 import styles from "./PeriodeListe.module.css";
 import { useSearchParams } from "react-router";
 import { Dato } from "./Dato";
+import classNames from "classnames";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
@@ -53,10 +54,12 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
         </Table.Header>
         <Table.Body>
           {perioder.map((periode) => {
+            const stil = { [styles.valgt]: ids.includes(periode.id) };
             return (
               <Table.Row key={periode.id} selected={ids.includes(periode.id)}>
-                <Table.DataCell>
+                <Table.DataCell className={styles.checkboxTd}>
                   <Checkbox
+                    className={styles.checkbox}
                     hideLabel
                     data-id={periode.id}
                     checked={ids.includes(periode.id)}
@@ -67,17 +70,19 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     Velg rapporteringsperiode
                   </Checkbox>
                 </Table.DataCell>
-                <Table.DataCell scope="row">{ukenummer(periode)}</Table.DataCell>
-                <Table.DataCell scope="row">
+                <Table.DataCell className={classNames(styles.week, stil)} scope="row">
+                  {ukenummer(periode)}
+                </Table.DataCell>
+                <Table.DataCell className={classNames(stil)} scope="row">
                   <Dato periode={periode} />
                 </Table.DataCell>
-                <Table.DataCell>
+                <Table.DataCell className={classNames(stil)}>
                   <Status status={periode.status} />
                 </Table.DataCell>
-                <Table.DataCell>
+                <Table.DataCell className={classNames(stil)}>
                   <TypeAktivitet periode={periode} />
                 </Table.DataCell>
-                <Table.DataCell>
+                <Table.DataCell className={classNames(stil)}>
                   <Innsendt
                     mottattDato={periode.mottattDato ?? ""}
                     tilOgMed={periode.periode.tilOgMed}

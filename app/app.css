@@ -1,9 +1,13 @@
 html,
-body,
-main {
+body {
   height: 100%;
   max-height: 100vh;
   margin: 0;
+}
+
+main {
+  height: 100%;
+  max-height: calc(100vh - 3rem);
 }
 
 html {
@@ -55,4 +59,9 @@ p {
 
 .utdanning {
   background-color: var(--a-purple-200);
+}
+
+/* Overskriver Aksel */
+.navds-table__row--selected {
+  background-color: transparent !important;
 }

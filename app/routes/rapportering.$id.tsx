@@ -31,24 +31,16 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListe perioder={perioder} />
       </div>
-      <div
-        className={`${styles.visning} ${
-          valgteRapporteringsperiode.length === 0 ? styles.hidden : ""
-        }`}
-      >
-        <h2>Forhåndsvisning</h2>
-        <RapporteringsperiodeVisning perioder={valgteRapporteringsperiode} />
-      </div>
-      <div
-        className={`${styles.detaljer} ${
-          valgteRapporteringsperiode.length === 0 ? styles.hidden : ""
-        }`}
-      >
-        <h2>Detaljer</h2>
-        {valgteRapporteringsperiode.map((periode) => (
-          <PeriodeDetaljer key={periode.id} periode={periode} />
-        ))}
-      </div>
+      {valgteRapporteringsperiode.map((periode) => (
+        <>
+          <div className={styles.forhandsvisning}>
+            <RapporteringsperiodeVisning perioder={[periode]} />
+          </div>
+          <div className={styles.detaljer}>
+            <PeriodeDetaljer key={periode.id} periode={periode} />
+          </div>
+        </>
+      ))}
     </div>
   );
 }
