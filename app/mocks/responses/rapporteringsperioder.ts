@@ -718,7 +718,7 @@ const periode10: IRapporteringsperiode = {
 };
 
 const periode11: IRapporteringsperiode = {
-  id: "0194f454-2d83-7e31-a09d-bf6d8f330c35",
+  id: "0194f454-2d83-7e31-a09d-bf6d8f330888",
   periode: {
     fraOgMed: "2025-01-27",
     tilOgMed: "2025-02-09",
@@ -851,7 +851,7 @@ const periode11: IRapporteringsperiode = {
 };
 
 const periode12: IRapporteringsperiode = {
-  id: "0194f457-9b33-765a-9ef9-4db728c5a239",
+  id: "0194f457-9b33-765a-9ef9-4db728c5a999",
   periode: {
     fraOgMed: "2025-02-17",
     tilOgMed: "2025-03-02",
