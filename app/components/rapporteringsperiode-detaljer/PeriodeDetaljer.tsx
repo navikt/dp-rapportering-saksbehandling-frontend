@@ -23,32 +23,34 @@ export function PeriodeDetaljer({ periode }: IProps) {
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
 
   return (
-    <div className={styles.detaljer}>
-      <PeriodeMedUke
-        ukenummer={ukenummer(periode)}
-        formattertFraOgMed={formattertFraOgMed}
-        formattertTilOgMed={formattertTilOgMed}
-      />
-      <table className={styles.tabell}>
-        <tbody>
-          <tr>
-            <th>Arbeidssøkerstatus:</th>
-            <td>{renderTag(periode.registrertArbeidssoker ?? false)}</td>
-          </tr>
-          <tr>
-            <th>Korrigering av meldekort:</th>
-            <td>{renderTag(periode.originalId !== undefined)}</td>
-          </tr>
-          <tr>
-            <th>Grunn til endring: </th>
-            <td>{periode.begrunnelseEndring}</td>
-          </tr>
-          <tr>
-            <th>Utbetaling av dagpenger:</th>
-            <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div className={styles.periodeDetaljer}>
+      <div>
+        <PeriodeMedUke
+          ukenummer={ukenummer(periode)}
+          formattertFraOgMed={formattertFraOgMed}
+          formattertTilOgMed={formattertTilOgMed}
+        />
+        <table className={styles.tabell}>
+          <tbody>
+            <tr>
+              <th>Arbeidssøkerstatus:</th>
+              <td>{renderTag(periode.registrertArbeidssoker ?? false)}</td>
+            </tr>
+            <tr>
+              <th>Korrigering av meldekort:</th>
+              <td>{renderTag(periode.originalId !== undefined)}</td>
+            </tr>
+            <tr>
+              <th>Grunn til endring: </th>
+              <td>{periode.begrunnelseEndring}</td>
+            </tr>
+            <tr>
+              <th>Utbetaling av dagpenger:</th>
+              <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <Button className={styles.korrigerKnapp}>Korriger meldekort</Button>
     </div>
   );
