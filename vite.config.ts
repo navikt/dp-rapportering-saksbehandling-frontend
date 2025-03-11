@@ -3,15 +3,14 @@ import path from "path";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-const base =
-  process.env.NODE_ENV === "production"
-    ? "https://cdn.nav.no/teamdagpenger/dp-rapportering-saksbehandling-frontend/client/"
-    : "/rapportering";
+// const base =
+//   process.env.NODE_ENV === "production"
+//     ? "https://cdn.nav.no/teamdagpenger/dp-rapportering-saksbehandling-frontend/client/"
+//     : "/rapportering/";
 
 export default defineConfig({
-  base,
-  //@ts-expect-error - vite-plugin-react-router does not have types
-  plugins: [reactRouter({ basename: "/rapportering" }), tsconfigPaths()],
+  base: "/rapportering/",
+  plugins: [reactRouter(), tsconfigPaths()],
   build: {
     cssMinify: true,
     ssr: true,
