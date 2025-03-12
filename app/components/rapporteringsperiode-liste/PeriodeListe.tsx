@@ -54,7 +54,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
         </Table.Header>
         <Table.Body>
           {perioder.map((periode) => {
-            const stil = { [styles.valgt]: ids.includes(periode.id) };
+            const valgtStil = { [styles.valgt]: ids.includes(periode.id) };
             return (
               <Table.Row key={periode.id} selected={ids.includes(periode.id)}>
                 <Table.DataCell className={styles.checkboxTd}>
@@ -70,19 +70,19 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     Velg rapporteringsperiode
                   </Checkbox>
                 </Table.DataCell>
-                <Table.DataCell className={classNames(styles.week, stil)} scope="row">
+                <Table.DataCell className={classNames(styles.week, valgtStil)} scope="row">
                   {ukenummer(periode)}
                 </Table.DataCell>
-                <Table.DataCell className={classNames(stil)} scope="row">
+                <Table.DataCell className={classNames(valgtStil)} scope="row">
                   <Dato periode={periode} />
                 </Table.DataCell>
-                <Table.DataCell className={classNames(stil)}>
+                <Table.DataCell className={classNames(valgtStil)}>
                   <Status status={periode.status} />
                 </Table.DataCell>
-                <Table.DataCell className={classNames(stil)}>
+                <Table.DataCell className={classNames(valgtStil)}>
                   <TypeAktivitet periode={periode} />
                 </Table.DataCell>
-                <Table.DataCell className={classNames(stil)}>
+                <Table.DataCell className={classNames(valgtStil)}>
                   <Innsendt
                     mottattDato={periode.mottattDato ?? ""}
                     tilOgMed={periode.periode.tilOgMed}

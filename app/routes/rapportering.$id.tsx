@@ -27,20 +27,20 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       .filter((periode) => periode) ?? [];
 
   return (
-    <div className={styles.grid}>
+    <>
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListe perioder={perioder} />
       </div>
       {valgteRapporteringsperiode.map((periode) => (
-        <>
+        <div className={styles.grid}>
           <div className={styles.forhandsvisning}>
             <RapporteringsperiodeVisning perioder={[periode]} />
           </div>
           <div className={styles.detaljer}>
             <PeriodeDetaljer key={periode.id} periode={periode} />
           </div>
-        </>
+        </div>
       ))}
-    </div>
+    </>
   );
 }
