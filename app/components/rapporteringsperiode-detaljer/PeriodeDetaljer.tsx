@@ -1,7 +1,6 @@
 import { Button, Tag } from "@navikt/ds-react";
 import { useNavigate } from "react-router";
 
-import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import { PeriodeMedUke } from "../rapporteringsperiode-visning/PeriodeMedUke";
@@ -22,9 +21,6 @@ const numberFormat = new Intl.NumberFormat("nb-NO", {
 
 export function PeriodeDetaljer({ periode }: IProps) {
   const navigate = useNavigate(); // Initialize useNavigate
-  const { fraOgMed, tilOgMed } = periode.periode;
-  const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
-  const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
 
   const handleKorrigerClick = () => {
     navigate(`/periode/${periode.id}`);
@@ -33,11 +29,7 @@ export function PeriodeDetaljer({ periode }: IProps) {
   return (
     <div className={styles.periodeDetaljer}>
       <div>
-        <PeriodeMedUke
-          ukenummer={ukenummer(periode)}
-          formattertFraOgMed={formattertFraOgMed}
-          formattertTilOgMed={formattertTilOgMed}
-        />
+        <PeriodeMedUke periode={periode} />
         <table className={styles.tabell}>
           <tbody>
             <tr>
