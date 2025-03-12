@@ -1,5 +1,6 @@
 import { useLoaderData, useSearchParams } from "react-router";
 
+import PersonInformasjon from "~/components/header-meny/PersonInformasjon";
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-liste/PeriodeListe";
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
@@ -35,6 +36,7 @@ export default function Rapportering() {
 
   return (
     <>
+      <PersonInformasjon person={person} />
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListe perioder={perioder} />
       </div>

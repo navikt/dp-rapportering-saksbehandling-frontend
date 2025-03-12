@@ -15,6 +15,7 @@
     "test:playwright": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
+    "@navikt/aksel-icons": "^7.17.2",
     "@navikt/ds-css": "^7.17.0",
     "@navikt/ds-react": "^7.17.0",
     "@navikt/oasis": "^3.7.0",
