@@ -2,7 +2,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: var(--a-spacing-16);
 }
 
 .tabell {
