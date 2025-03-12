@@ -33,7 +33,7 @@ const aktivitettyper = [
 
 export function Sammenlagt({ periode }: IProps) {
   return (
-    <div>
+    <>
       <h4 className={styles.tittel}>Sammenlagt for perioden</h4>
       {aktivitettyper.map(({ type, label, erDager, klasse }) => {
         const total = beregnTotalt(periode, type, erDager);
@@ -46,6 +46,6 @@ export function Sammenlagt({ periode }: IProps) {
           </div>
         );
       })}
-    </div>
+    </>
   );
 }

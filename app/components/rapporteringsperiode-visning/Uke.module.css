@@ -13,7 +13,7 @@
 
 .aktivitet {
   display: flex;
-  border-radius: 100%;
+  border-radius: 50%;
   width: var(--a-spacing-8);
   height: var(--a-spacing-8);
   align-items: center;
@@ -50,13 +50,16 @@
   padding-right: 4px;
   padding-left: 6px;
   background-color: var(--a-bg-subtle);
+  width: calc(var(--dato-strl) * 2);
+  height: calc(var(--dato-strl) * 2);
+  font-size: var(--a-font-size-large);
+  line-height: var(--a-font-size-large);
 }
 
 .arbeid,
 .arbeidOgUtdanning,
 .arbeid.arbeidOgUtdanning {
   background-color: var(--a-blue-200);
-  border-color: var(--a-blue-200);
 }
 
 .sykOgUtdanning::after,
@@ -67,7 +70,7 @@
   right: -12.5%;
   top: -12.5%;
   background-color: var(--a-purple-200);
-  border: 1px solid var(--a-purple-200);
+
   border-radius: 50%;
   height: 50%;
   width: 50%;
@@ -79,27 +82,22 @@
   left: -12.5%;
   top: -12.5%;
   background-color: var(--a-purple-200);
-  border: 1px solid var(--a-purple-200);
-  border-radius: 50%;
   height: 50%;
   width: 50%;
 }
 
 .utdanning {
   background-color: var(--a-purple-200);
-  border-color: var(--a-purple-200);
 }
 
 .ferie,
 .fravaer {
   background-color: var(--a-green-200);
-  border-color: var(--a-green-200);
 }
 
 .sykdom,
 .sykOgFravaer {
   background-color: var(--a-orange-200);
-  border-color: var(--a-orange-200);
 }
 
 .sykOgFravaer::after {
@@ -108,17 +106,20 @@
   right: -12.5%;
   top: -12.5%;
   background-color: var(--a-green-200);
-  border-color: var(--a-green-200);
   border-radius: 50%;
   height: 50%;
   width: 50%;
 }
 
-@media screen and (min-width: 768px) {
+@container (max-width: 530px) {
+  .aktivitetContainer {
+    margin-bottom: var(--a-spacing-6);
+  }
+
   .dato {
-    width: calc(var(--dato-strl) * 2);
-    height: calc(var(--dato-strl) * 2);
-    font-size: var(--a-font-size-large);
-    line-height: var(--a-font-size-large);
+    width: clamp(30px, 5vw, var(--dato-strl));
+    height: clamp(30px, 5vw, var(--dato-strl));
+    font-size: clamp(12px, 2vw, var(--a-font-size-small));
+    line-height: clamp(12px, 2vw, var(--a-font-size-small));
   }
 }
