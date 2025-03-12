@@ -1,4 +1,4 @@
-import { prefix, route, type RouteConfig } from "@react-router/dev/routes";
+import { route } from "@react-router/dev/routes";
 
 const routes = [
   route("/", "routes/index.tsx"),
@@ -8,8 +8,4 @@ const routes = [
   route("/api/internal/isready", "routes/api.internal.isready.ts"),
 ];
 
-const prefixedRoutes = [...prefix("/rapportering", routes)];
-
-export default process.env.NODE_ENV === "development"
-  ? routes
-  : (prefixedRoutes satisfies RouteConfig);
+export default routes;

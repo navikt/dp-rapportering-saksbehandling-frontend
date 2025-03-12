@@ -7,7 +7,6 @@ export function getEnv<T>(value: keyof IEnv): T {
     IS_LOCALHOST: "false",
     USE_MSW: env.NODE_ENV === "test" ? "true" : "false",
     DP_RAPPORTERING_URL: "https://dp-rapportering.intern.dev.navn.no",
-    BASE_PATH: "/rapportering",
   };
 
   // @ts-expect-error IEnv inneholder ikke VITE_ prefix

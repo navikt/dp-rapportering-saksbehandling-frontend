@@ -1,10 +1,9 @@
 name: dp-rapportering-saksbehandling-frontend-demo
 ingresses: 
-  - https://dagpenger.ekstern.dev.nav.no/rapportering
+  - https://rapportering.dagpenger.ekstern.dev.nav.no
 replicas:
   min: 1
   max: 1
-base_path: "/rapportering"
 use_msw: true
 is_localhost: false
   

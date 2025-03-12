@@ -5,7 +5,6 @@ ingresses:
 replicas:
   min: 2
   max: 2
-base_path: "/rapportering"
 use_msw: false
 is_localhost: false
 
