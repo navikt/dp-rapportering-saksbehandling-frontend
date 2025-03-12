@@ -1,7 +1,6 @@
 name: dp-rapportering-saksbehandling-frontend-dev
 ingresses: 
-  - https://dagpenger.ansatt.dev.nav.no/rapportering
-
+  - https://rapportering.dagpenger.ansatt.dev.nav.no
 replicas:
   min: 2
   max: 2
