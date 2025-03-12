@@ -28,7 +28,7 @@ jobs:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
       - name: Build static files
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           target: export
           outputs: type=local,dest=build
