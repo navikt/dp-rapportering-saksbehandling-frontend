@@ -1,0 +1,30 @@
+.rapporteringsperiode {
+  /* background-color: var(--a-white); */
+  height: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 0.75fr;
+  width: 100%;
+  height: 100%;
+}
+
+.uendretPeriode {
+  grid-column: 1 / 2;
+  width: 100%;
+}
+
+.endretPeriode {
+  grid-column: 2 / 3;
+  width: 100%;
+  background-color: lightyellow;
+}
+
+.korrigering {
+  grid-column: 1 / 3;
+  background-color: lightcyan;
+  width: 100%;
+  margin-top: var(-a--spacing-6);
+}

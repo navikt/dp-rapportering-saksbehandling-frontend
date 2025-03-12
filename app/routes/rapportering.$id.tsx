@@ -9,7 +9,6 @@ import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/Peri
 
 export async function loader({
   request,
-  params,
 }: Route.LoaderArgs): Promise<{ perioder: IRapporteringsperiode[] }> {
   const perioder = await hentRapporteringsperioder(request);
   // TODO: Håndter feil i hentRapporteringsperioder
