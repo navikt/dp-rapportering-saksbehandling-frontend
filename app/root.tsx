@@ -117,12 +117,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
             __html: `window.env = ${JSON.stringify(env)}`,
           }}
         />
-        {/* <script
+        <script
           dangerouslySetInnerHTML={{
             __html:
-              "window.nativeFetch = window.fetch; window.customFetch = async function (url, abortController) { const regex = new RegExp('^((?!/rapportering/).)*__manifest.*'); console.log('Original url', url); if (url.pathname.match(regex)) { url = new URL(url.href.replace('/__manifest', `${window.env.BASE_PATH}/__manifest`)); console.log('Updated url', url); } const response = await window.nativeFetch(url, abortController); return response; }; window.fetch = window.customFetch;",
+              "window.nativeFetch = window.fetch; window.customFetch = async function (url, abortController) { const regex = new RegExp('^((?!/rapportering/).)*__manifest.*'); console.log('Original url', url); if (url.pathname.match(regex)) { console.log(url.href.replace('/__manifest', `${window.env.BASE_PATH}/__manifest`)); console.log('Updated url', url); } const response = await window.nativeFetch(url, abortController); return response; }; window.fetch = window.customFetch;",
           }}
-        ></script> */}
+        ></script>
       </body>
     </html>
   );
