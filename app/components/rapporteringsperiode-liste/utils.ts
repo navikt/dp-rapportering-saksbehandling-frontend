@@ -1,5 +1,5 @@
-import type { TAktivitetType, IRapporteringsperiode } from "~/utils/types";
 import { AKTIVITET_TYPE } from "~/utils/constants";
+import type { IRapporteringsperiode, TAktivitetType } from "~/utils/types";
 
 export const aktivitetMapping: { [key in TAktivitetType]: { label: string; color: string } } = {
   [AKTIVITET_TYPE.Arbeid]: { label: "J", color: "arbeid" },

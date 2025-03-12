@@ -3,8 +3,27 @@ import type { AKTIVITET_TYPE, RAPPORTERING_TYPE, RAPPORTERINGSPERIODE_STATUS } f
 declare global {
   interface Window {
     env: IEnv;
+    nativeFetch: typeof fetch;
+    customFetch: (url: URL, abortController: AbortController) => Promise<Response>;
   }
 }
+
+interface INetworkResponseSuccess<T> {
+  status: "success";
+  data?: T;
+  id?: string;
+}
+
+interface INetworkResponseError {
+  status: "error";
+  error: {
+    statusCode: number;
+    statusText: string;
+  };
+  id?: string;
+}
+
+export type INetworkResponse<T = void> = INetworkResponseSuccess<T> | INetworkResponseError;
 
 export type TAktivitetType = (typeof AKTIVITET_TYPE)[keyof typeof AKTIVITET_TYPE];
 
@@ -49,14 +68,21 @@ export interface IRapporteringsperiode {
   rapporteringstype: TRapporteringstype | null;
 }
 
-const boolskeVerdier = ["true", "false"] as const;
+export const boolskeVerdier = ["true", "false"] as const;
 
 export type TrueOrFalse = (typeof boolskeVerdier)[number];
 
 export interface IEnv {
-  BASE_PATH: string;
   DP_RAPPORTERING_URL: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";
+  DP_RAPPORTERING_TOKEN?: string;
+}
+
+export interface ISaksbehandler {
+  onPremisesSamAccountName: string; // Dette er saksbehandlerIdent
+  givenName: string;
+  displayName: string;
+  mail: string;
 }

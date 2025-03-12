@@ -1,4 +1,5 @@
 import { Search } from "@navikt/ds-react";
+
 import styles from "~/components/person-sok/PersokSok.module.css";
 
 export function PersonSok() {

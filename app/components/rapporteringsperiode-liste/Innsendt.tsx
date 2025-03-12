@@ -1,7 +1,8 @@
-import { Tag, Popover, Heading, Tooltip } from "@navikt/ds-react";
+import { Tag, Tooltip } from "@navikt/ds-react";
 import { differenceInDays, parseISO } from "date-fns";
+import { useRef, useState } from "react";
+
 import { formatterDato } from "~/utils/dato.utils";
-import { useState, useRef } from "react";
 
 interface IProps {
   mottattDato: string;

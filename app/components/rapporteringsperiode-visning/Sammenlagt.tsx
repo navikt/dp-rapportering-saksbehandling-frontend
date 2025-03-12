@@ -1,5 +1,6 @@
-import type { IRapporteringsperiode } from "~/utils/types";
 import { konverterFraISO8601Varighet } from "~/utils/dato.utils";
+import type { IRapporteringsperiode } from "~/utils/types";
+
 import styles from "./Sammenlagt.module.css";
 
 interface IProps {

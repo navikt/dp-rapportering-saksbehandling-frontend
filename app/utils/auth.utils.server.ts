@@ -2,16 +2,22 @@
 
 import { expiresIn, getToken, requestOboToken, validateToken } from "@navikt/oasis";
 
+import { logger } from "~/models/logger.server";
+
 import { getEnv, isLocalhost } from "./env.utils";
 
 const fallbackToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
 const localToken = process.env.DP_RAPPORTERING_TOKEN ?? fallbackToken;
-const audienceDPRapportering = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-rapportering`;
+export const audienceDPRapportering = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-rapportering`;
 
 export function sessionExpiresIn(request: Request) {
-  const token = getEnv("IS_LOCALHOST") === "true" ? localToken : getToken(request);
+  const token =
+    getEnv("IS_LOCALHOST") === "true" || getEnv("USE_MSW") === "true"
+      ? localToken
+      : getToken(request);
+
   if (!token) {
     return 0;
   }
@@ -24,44 +30,39 @@ export function sessionExpiresIn(request: Request) {
   }
 }
 
-export async function getRapporteringOboToken(request: Request) {
-  if (isLocalhost) {
-    return localToken;
+export async function getMicrosoftOboToken(request: Request) {
+  if (isLocalhost || getEnv("USE_MSW") === "true") {
+    return process.env.MICROSOFT_TOKEN as string;
   }
 
-  if (getEnv("IS_LOCALHOST") === "true") {
-    if (sessionExpiresIn(request) <= 0 && getEnv("USE_MSW") !== "true") {
-      throw new Response(null, {
-        status: 440,
-        statusText: "Localhost sesjon er utløpt!",
-      });
-    }
+  const audience = `https://graph.microsoft.com/.default`;
+  return await getOnBehalfOfToken(request, audience);
+}
 
+export async function getOnBehalfOfToken(request: Request, audience: string) {
+  if (isLocalhost || getEnv("USE_MSW") === "true") {
     return localToken;
   }
 
   const token = getToken(request);
+
   if (!token) {
-    throw new Response(null, {
-      status: 500,
-      statusText: "rapportering-feilmelding-henting-av-token",
-    });
+    logger.error("Missing token");
+    throw new Response("Missing token", { status: 401 });
   }
 
   const validation = await validateToken(token);
+
   if (!validation.ok) {
-    throw new Response(null, {
-      status: 500,
-      statusText: "rapportering-feilmelding-validering-av-token",
-    });
+    logger.error(`Failed to validate token: ${validation.error}`);
+    throw new Response("Token validation failed", { status: 401 });
   }
 
-  const obo = await requestOboToken(token, audienceDPRapportering);
+  const obo = await requestOboToken(token, audience);
+
   if (!obo.ok) {
-    throw new Response(null, {
-      status: 500,
-      statusText: "rapportering-feilmelding-henting-av-obo-token",
-    });
+    logger.error(`Failed to get OBO token: ${obo.error}`);
+    throw new Response("Unauthorized", { status: 401 });
   }
 
   return obo.token;

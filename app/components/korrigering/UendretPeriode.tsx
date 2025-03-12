@@ -1,7 +1,9 @@
-import type { IRapporteringsperiode } from "~/utils/types";
-import { ukenummer } from "~/utils/dato.utils";
-import { Uke } from "../rapporteringsperiode-visning/Uke";
 import { Tag } from "@navikt/ds-react";
+
+import { ukenummer } from "~/utils/dato.utils";
+import type { IRapporteringsperiode } from "~/utils/types";
+
+import { Uke } from "../rapporteringsperiode-visning/Uke";
 
 export function UendretPeriode({ periode }: { periode: IRapporteringsperiode }) {
   const forsteUke = [...periode.dager].slice(0, 7);

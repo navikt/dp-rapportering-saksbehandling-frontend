@@ -1,11 +1,11 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: dp-rapportering-saksbehandling-frontend
+  name: {{name}}
   namespace: teamdagpenger
   labels:
     team: teamdagpenger
-    app: dp-rapportering-saksbehandling-frontend
+    app: {{name}}
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "64M"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
@@ -13,10 +13,10 @@ spec:
   image: {{image}}
   port: 5173
   liveness:
-    path: "{{base_path}}/isalive"
+    path: "{{base_path}}/api/internal/isalive"
     initialDelay: 10
   readiness:
-    path: "{{base_path}}/isready"
+    path: "{{base_path}}/api/internal/isready"
     initialDelay: 10
   replicas:
     min: {{replicas.min}}
@@ -37,8 +37,6 @@ spec:
   env:
     - name: SELF_URL
       value: {{ingress}}
-    - name: VITE_BASE_PATH
-      value: {{base_path}}
     - name: VITE_DP_RAPPORTERING_URL
       value: http://dp-rapportering
     - name: VITE_USE_MSW
@@ -51,11 +49,19 @@ spec:
         - host: rt6o382n.apicdn.sanity.io
         - host: www.nav.no
         - host: amplitude.nav.no
-  idporten:
-    enabled: true
+        - host: graph.microsoft.com
+        - host: login.microsoftonline.com
+
+  azure:
+    application:
+      tenant: {{azure.tenant}}
+      enabled: {{azure.enabled}}
+      claims:
+        groups:
+          - id: {{azure.grupper.saksbehandler}}
+          - id: {{azure.grupper.beslutter}}
+        extra:
+          - NAVident
     sidecar:
-      enabled: true
-      level: {{idporten.level}}
+      enabled: {{azure.enabled}}
       autoLogin: true
-  tokenx:
-    enabled: true

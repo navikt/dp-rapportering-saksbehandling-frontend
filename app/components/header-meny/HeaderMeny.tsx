@@ -1,16 +1,14 @@
-import { NavLink } from "react-router";
-import classnames from "classnames";
-
-import { PersonSok } from "~/components/person-sok/PersonSok";
-import { HeaderUtloggingMeny } from "~/components/header-meny/HeaderUtloggingMeny";
 import styles from "~/components/header-meny/HeaderMeny.module.css";
+import { HeaderUtloggingMeny } from "~/components/header-meny/HeaderUtloggingMeny";
+import { PersonSok } from "~/components/person-sok/PersonSok";
+import type { ISaksbehandler } from "~/utils/types";
 
 interface IProps {
-  saksbehandler: any; // Bruk riktig type hvis du har den
+  saksbehandler: ISaksbehandler; // Bruk riktig type hvis du har den
   antallOppgaverJegHarTilBehandling: number;
 }
 
-export function HeaderMeny({ saksbehandler, antallOppgaverJegHarTilBehandling }: IProps) {
+export function HeaderMeny({ saksbehandler }: IProps) {
   return (
     <div className={styles.container}>
       <div className={styles.linkContainer}>

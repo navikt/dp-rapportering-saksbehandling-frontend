@@ -1,3 +1,7 @@
+import "./app.css";
+import "@navikt/ds-css";
+
+import { InternalHeader } from "@navikt/ds-react";
 import {
   isRouteErrorResponse,
   Link,
@@ -9,22 +13,24 @@ import {
   useLoaderData,
 } from "react-router";
 
-import type { Route } from "./+types/root";
-import "./app.css";
 import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 import styles from "~/route-styles/root.module.css";
-import "@navikt/ds-css";
-import { InternalHeader } from "@navikt/ds-react";
-import type { IEnv } from "./utils/types";
+
+import type { Route } from "./+types/root";
+import { mockSaksbehandler } from "./mocks/data/mock-saksbehandler";
+// import { getSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv } from "./utils/env.utils";
 
-export async function loader({}: Route.LoaderArgs): Promise<{ env: IEnv }> {
+export async function loader() {
+  // const saksbehandler = await getSaksbehandler(request);
+
   return {
+    // saksbehandler,
     env: {
-      BASE_PATH: getEnv("BASE_PATH"),
       DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
+      NODE_ENV: getEnv("NODE_ENV"),
     },
   };
 }
@@ -65,6 +71,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { env } = useLoaderData<typeof loader>();
+  const saksbehandler = mockSaksbehandler;
 
   return (
     <html lang="en">
@@ -79,7 +86,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               Dagpenger
             </InternalHeader.Title>
           </Link>
-          <HeaderMeny saksbehandler={"saksbehandlerNavn"} antallOppgaverJegHarTilBehandling={0} />
+          <HeaderMeny saksbehandler={saksbehandler} antallOppgaverJegHarTilBehandling={0} />
         </InternalHeader>
         <main>{children}</main>
         <ScrollRestoration />
@@ -94,7 +101,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App({ loaderData }: Route.ComponentProps) {
+export default function App() {
   return <Outlet />;
 }
 

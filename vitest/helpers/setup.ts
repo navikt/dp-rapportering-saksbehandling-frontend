@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeAll } from "vitest";
+
 import { server } from "../../app/mocks/server";
 
 // Establish API mocking before all tests.

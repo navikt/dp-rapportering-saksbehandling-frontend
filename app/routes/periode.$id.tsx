@@ -1,11 +1,13 @@
-import invariant from "tiny-invariant";
-import { hentPeriode } from "~/models/rapporteringsperiode.server";
-import type { Route } from "./+types";
-import type { IRapporteringsperiode } from "~/utils/types";
 import { useLoaderData } from "react-router";
-import { formatterDato, ukenummer } from "~/utils/dato.utils";
-import styles from "~/route-styles/periode.module.css";
+import invariant from "tiny-invariant";
+
 import { UendretPeriode } from "~/components/korrigering/UendretPeriode";
+import { hentPeriode } from "~/models/rapporteringsperiode.server";
+import styles from "~/route-styles/periode.module.css";
+import { formatterDato, ukenummer } from "~/utils/dato.utils";
+import type { IRapporteringsperiode } from "~/utils/types";
+
+import type { Route } from "./+types";
 
 export async function loader({
   request,
@@ -18,7 +20,7 @@ export async function loader({
   return { periode };
 }
 
-export default function Periode({ params }: Route.ComponentProps) {
+export default function Periode() {
   const { periode } = useLoaderData<typeof loader>();
 
   const { fraOgMed, tilOgMed } = periode.periode;

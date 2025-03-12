@@ -27,6 +27,20 @@ jobs:
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
+      - name: Build static files
+        uses: docker/build-push-action@v5
+        with:
+          target: export
+          outputs: type=local,dest=build
+          secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
+      - name: Upload static files
+        uses: nais/deploy/actions/cdn-upload/v2@master
+        with:
+          team: teamdagpenger
+          source: ./build/client
+          destination: '/dp-rapportering-saksbehandling-frontend/'
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
   test:
     runs-on: ubuntu-latest
@@ -48,12 +62,62 @@ jobs:
         if: steps.node_modules.outputs.cache-hit != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
-          VITE_BASE_PATH: 'rapportering'
           VITE_DP_RAPPORTERING_URL: 'https://dp-rapportering.intern.dev.navn.no'
           VITE_IS_LOCALHOST: 'false'
           VITE_USE_MSW: 'true'
 
       - run: npm run test:vitest
+
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      id: node_modules
+      with:
+        path: ./node_modules
+        key: modules-${{ hashFiles('package-lock.json') }}
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22.x'
+        cache: 'npm'
+        registry-url: 'https://npm.pkg.github.com'
+        
+    - name: Install dependencies
+      run: npm ci --ignore-scripts
+      if: steps.node_modules.outputs.cache-hit != 'true'
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npm run test:playwright
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+
+  deploy-demo:
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          VAR: image=${{ needs.build.outputs.image }},githubSha=${{ github.sha }}
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/nais.yaml
+          VARS: .nais/vars-demo.yaml
+          PRINT_PAYLOAD: true
 
   deploy-dev:
     needs: [build, test]

@@ -1,4 +1,5 @@
 import type { IRapporteringsperiode } from "~/utils/types";
+
 import { aktivitetMapping, sorterAktiviteter, unikeAktiviteter } from "./utils";
 
 interface IProps {

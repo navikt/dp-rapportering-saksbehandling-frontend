@@ -1,10 +1,15 @@
 import { reactRouter } from "@react-router/dev/vite";
+import path from "path";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import path from "path";
+
+const base =
+  process.env.NODE_ENV === "production"
+    ? "https://cdn.nav.no/teamdagpenger/dp-rapportering-saksbehandling-frontend/client/"
+    : "/";
 
 export default defineConfig({
-  base: "",
+  base,
   plugins: [reactRouter(), tsconfigPaths()],
   build: {
     cssMinify: true,
