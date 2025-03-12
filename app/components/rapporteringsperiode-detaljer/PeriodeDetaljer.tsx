@@ -1,4 +1,5 @@
 import { Button, Tag } from "@navikt/ds-react";
+import { useNavigate } from "react-router";
 
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -20,9 +21,14 @@ const numberFormat = new Intl.NumberFormat("nb-NO", {
 });
 
 export function PeriodeDetaljer({ periode }: IProps) {
+  const navigate = useNavigate(); // Initialize useNavigate
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
+
+  const handleKorrigerClick = () => {
+    navigate(`/periode/${periode.id}`);
+  };
 
   return (
     <div className={styles.periodeDetaljer}>
@@ -53,7 +59,9 @@ export function PeriodeDetaljer({ periode }: IProps) {
           </tbody>
         </table>
       </div>
-      <Button className={styles.korrigerKnapp}>Korriger meldekort</Button>
+      <Button className={styles.korrigerKnapp} onClick={handleKorrigerClick}>
+        Korriger meldekort
+      </Button>
     </div>
   );
 }
