@@ -25,3 +25,28 @@ export async function hentRapporteringsperioder(
     throw new Response(`rapportering-feilmelding-hent-perioder`, { status: 500 });
   }
 }
+
+export async function hentPeriode(
+  request: Request,
+  periodeId: string
+): Promise<IRapporteringsperiode> {
+  const url = `${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperiode/${periodeId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: await getHeaders(request),
+    });
+
+    if (!response.ok) {
+      // TODO: Logg feilmelding
+      throw "rapportering-feilmelding-hent-perioder";
+    }
+
+    const rapporteringsperiode: IRapporteringsperiode = await response.json();
+
+    return rapporteringsperiode;
+  } catch (error) {
+    throw new Response(`rapportering-feilmelding-hent-perioder`, { status: 500 });
+  }
+}
