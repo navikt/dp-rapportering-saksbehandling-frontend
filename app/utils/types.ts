@@ -3,6 +3,8 @@ import type { AKTIVITET_TYPE, RAPPORTERING_TYPE, RAPPORTERINGSPERIODE_STATUS } f
 declare global {
   interface Window {
     env: IEnv;
+    nativeFetch: typeof fetch;
+    customFetch: (url: URL, abortController: AbortController) => Promise<Response>;
   }
 }
 
