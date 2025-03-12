@@ -11,7 +11,9 @@ test.describe("InnsendtDato", () => {
     const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
     const forSent = dagerForskjell >= SISTE_FRIST;
 
-    const component = await mount(<Innsendt mottattDato={mottattDato} tilOgMed={tilOgMed} />);
+    const component = await mount(
+      <Innsendt mottattDato={mottattDato} tilOgMed={tilOgMed} sisteFristForTrekk={tilOgMed} />
+    );
     await expect(component).toHaveClass(/(^|\s)navds-tag--error(\s|$)/g);
 
     expect(forSent).toBeTruthy();
@@ -23,7 +25,9 @@ test.describe("InnsendtDato", () => {
     const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
     const forSent = dagerForskjell >= SISTE_FRIST;
 
-    const component = await mount(<Innsendt mottattDato={mottattDato} tilOgMed={tilOgMed} />);
+    const component = await mount(
+      <Innsendt mottattDato={mottattDato} tilOgMed={tilOgMed} sisteFristForTrekk={null} />
+    );
 
     await expect(component.locator("[data-testid='error-tag']")).not.toBeVisible();
     expect(forSent).toBeFalsy();

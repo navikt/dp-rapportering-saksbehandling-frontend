@@ -1,4 +1,5 @@
 import { Checkbox, Table } from "@navikt/ds-react";
+import classNames from "classnames";
 import { useSearchParams } from "react-router";
 
 import { ukenummer } from "~/utils/dato.utils";
@@ -35,13 +36,6 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
       params.set("rapporteringsid", [..._ids, id].join(","));
     }
 
-    const firstSelectedId = params.get("rapporteringsid")?.split(",")[0] ?? "";
-    if (firstSelectedId) {
-      params.set("valgtId", firstSelectedId);
-    } else {
-      params.delete("valgtId");
-    }
-
     if (params.get("rapporteringsid") === "") {
       params.delete("rapporteringsid");
     }
@@ -64,10 +58,12 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
         </Table.Header>
         <Table.Body>
           {perioder.map((periode) => {
+            const valgtStil = { [styles.valgt]: ids.includes(periode.id) };
             return (
               <Table.Row key={periode.id} selected={ids.includes(periode.id)}>
-                <Table.DataCell>
+                <Table.DataCell className={styles.checkboxTd}>
                   <Checkbox
+                    className={styles.checkbox}
                     hideLabel
                     data-id={periode.id}
                     checked={ids.includes(periode.id)}
@@ -81,20 +77,23 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     Velg rapporteringsperiode
                   </Checkbox>
                 </Table.DataCell>
-                <Table.DataCell scope="row">{ukenummer(periode)}</Table.DataCell>
-                <Table.DataCell scope="row">
+                <Table.DataCell className={classNames(styles.week, valgtStil)} scope="row">
+                  {ukenummer(periode)}
+                </Table.DataCell>
+                <Table.DataCell className={classNames(valgtStil)} scope="row">
                   <Dato periode={periode} />
                 </Table.DataCell>
-                <Table.DataCell>
+                <Table.DataCell className={classNames(valgtStil)}>
                   <Status status={periode.status} />
                 </Table.DataCell>
-                <Table.DataCell>
+                <Table.DataCell className={classNames(valgtStil)}>
                   <TypeAktivitet periode={periode} />
                 </Table.DataCell>
-                <Table.DataCell>
+                <Table.DataCell className={classNames(valgtStil)}>
                   <Innsendt
                     mottattDato={periode.mottattDato ?? ""}
                     tilOgMed={periode.periode.tilOgMed}
+                    sisteFristForTrekk={periode.sisteFristForTrekk}
                   />
                 </Table.DataCell>
               </Table.Row>

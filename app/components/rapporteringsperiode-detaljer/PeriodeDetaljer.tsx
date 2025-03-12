@@ -3,6 +3,7 @@ import { Button, Tag } from "@navikt/ds-react";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
+import { PeriodeMedUke } from "../rapporteringsperiode-visning/PeriodeMedUke";
 import styles from "./PeriodeDetaljer.module.css";
 
 interface IProps {
@@ -19,33 +20,40 @@ const numberFormat = new Intl.NumberFormat("nb-NO", {
 });
 
 export function PeriodeDetaljer({ periode }: IProps) {
+  const { fraOgMed, tilOgMed } = periode.periode;
+  const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
+  const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
+
   return (
-    <>
-      <h2>Detaljer</h2>
-      <h3>
-        Uke {ukenummer(periode)} | {formatterDato({ dato: periode.periode.tilOgMed, kort: true })}
-      </h3>
-      <table className={styles.tabell}>
-        <tbody>
-          <tr>
-            <th>Arbeidssøkerstatus:</th>
-            <td>{renderTag(periode.registrertArbeidssoker ?? false)}</td>
-          </tr>
-          <tr>
-            <th>Korrigering av meldekort:</th>
-            <td>{renderTag(periode.originalId !== undefined)}</td>
-          </tr>
-          <tr>
-            <th>Grunn til endring: </th>
-            <td>{periode.begrunnelseEndring}</td>
-          </tr>
-          <tr>
-            <th>Utbetaling av dagpenger:</th>
-            <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div className={styles.periodeDetaljer}>
+      <div>
+        <PeriodeMedUke
+          ukenummer={ukenummer(periode)}
+          formattertFraOgMed={formattertFraOgMed}
+          formattertTilOgMed={formattertTilOgMed}
+        />
+        <table className={styles.tabell}>
+          <tbody>
+            <tr>
+              <th>Arbeidssøkerstatus:</th>
+              <td>{renderTag(periode.registrertArbeidssoker ?? false)}</td>
+            </tr>
+            <tr>
+              <th>Korrigering av meldekort:</th>
+              <td>{renderTag(periode.originalId !== undefined)}</td>
+            </tr>
+            <tr>
+              <th>Grunn til endring: </th>
+              <td>{periode.begrunnelseEndring}</td>
+            </tr>
+            <tr>
+              <th>Utbetaling av dagpenger:</th>
+              <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <Button className={styles.korrigerKnapp}>Korriger meldekort</Button>
-    </>
+    </div>
   );
 }

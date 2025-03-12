@@ -1,26 +1,51 @@
-import { Tag } from "@navikt/ds-react";
+import { Tag, Tooltip } from "@navikt/ds-react";
 import { differenceInDays, parseISO } from "date-fns";
+import { useRef, useState } from "react";
 
 import { formatterDato } from "~/utils/dato.utils";
 
 interface IProps {
   mottattDato: string;
   tilOgMed: string;
+  sisteFristForTrekk: string | null;
 }
 
 export const SISTE_FRIST = 10; // Endre til hvor mange dager det skal være for sent
 
-export function Innsendt({ mottattDato, tilOgMed }: IProps) {
+export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk }: IProps) {
   const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
   const forSent = dagerForskjell >= SISTE_FRIST;
+  const tagRef = useRef<HTMLDivElement | null>(null);
+  const [open, setOpen] = useState(false);
 
   if (forSent) {
-    return <Tag variant="error">{formatterDato({ dato: mottattDato })}</Tag>;
+    return (
+      <Tooltip
+        content={`Frist: ${
+          sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"
+        }`}
+      >
+        <Tag
+          ref={tagRef}
+          variant="error"
+          onClick={() => setOpen((prev) => !prev)}
+          aria-expanded={open}
+        >
+          {formatterDato({ dato: mottattDato })}
+        </Tag>
+      </Tooltip>
+    );
   }
 
   return (
     <div className="neutralTag">
-      <Tag variant="neutral">{formatterDato({ dato: mottattDato })}</Tag>
+      <Tooltip
+        content={`Frist: ${
+          sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"
+        }`}
+      >
+        <Tag variant="neutral">{formatterDato({ dato: mottattDato })}</Tag>
+      </Tooltip>
     </div>
   );
 }

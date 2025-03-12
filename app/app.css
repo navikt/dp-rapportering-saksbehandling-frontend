@@ -5,6 +5,23 @@ body {
   margin: 0;
 }
 
+main {
+  height: 100%;
+  max-height: calc(100vh - 3rem);
+}
+
+html {
+  background-color: var(--a-surface-subtle);
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
 .neutralTag .navds-tag--neutral {
   background-color: transparent;
   border-color: transparent;
@@ -42,4 +59,9 @@ body {
 
 .utdanning {
   background-color: var(--a-purple-200);
+}
+
+/* Overskriver Aksel */
+.navds-table__row--selected {
+  background-color: transparent !important;
 }

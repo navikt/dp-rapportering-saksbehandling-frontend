@@ -1,6 +1,6 @@
 .tabell {
   overflow-y: auto;
-  height: 46vh;
+  height: 100%;
 }
 
 .tabell thead {
@@ -9,4 +9,31 @@
   z-index: 10;
   background-color: var(--a-white);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabell tr:last-child td {
+  border-bottom-color: transparent;
+}
+
+.checkbox-td {
+  border-width: 2px;
+  border-style: double;
+  border-color: transparent;
+  border-right-style: solid;
+  text-align: center;
+  background-color: transparent;
+}
+
+.checkbox {
+  margin: auto;
+}
+
+.week.valgt {
+  border-left-width: 5px;
+  border-left-style: solid;
+  border-left-color: var(--a-blue-300);
+}
+
+.valgt {
+  background-color: var(--a-lightblue-100);
 }

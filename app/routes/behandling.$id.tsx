@@ -28,20 +28,23 @@ export default function Rapportering() {
       .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
       .filter((periode) => periode) ?? [];
 
-  const valgtId = searchParams.get("valgtId");
-  const valgtPeriode = perioder.find((periode) => periode.id === valgtId);
-
   return (
-    <div className={styles.grid}>
+    <>
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListe perioder={perioder} />
       </div>
-      <div className={styles.visning}>
-        <RapporteringsperiodeVisning perioder={valgteRapporteringsperiode} />
+      <div className={styles.grid}>
+        {valgteRapporteringsperiode.map((periode) => (
+          <>
+            <div className={styles.forhandsvisning}>
+              <RapporteringsperiodeVisning perioder={[periode]} />
+            </div>
+            <div className={styles.detaljer}>
+              <PeriodeDetaljer key={periode.id} periode={periode} />
+            </div>
+          </>
+        ))}
       </div>
-      <div className={styles.detaljer}>
-        {valgtPeriode && <PeriodeDetaljer periode={valgtPeriode} />}
-      </div>
-    </div>
+    </>
   );
 }

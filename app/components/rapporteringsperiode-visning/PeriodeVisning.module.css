@@ -5,11 +5,16 @@
 .perioder {
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
+  gap: var(--a-spacing-18);
 }
 
-@container (min-width: 1000px) {
+@container (min-width: 1080px) {
   .perioder {
-    flex-direction: row;
+    width: 1086px;
+    margin-inline: auto;
   }
+  /* .perioder {
+    flex-direction: row;
+    gap: var(--a-spacing-12);
+  } */
 }

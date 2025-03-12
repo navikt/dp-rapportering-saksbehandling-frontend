@@ -1,3 +1,11 @@
+.periodeDetaljer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--a-spacing-16);
+}
+
 .tabell {
   text-align: left;
   border-collapse: collapse;
@@ -8,7 +16,6 @@
   border: solid;
   border-width: 3px 0;
   border-color: var(--a-surface-subtle);
-  padding: var(--a-spacing-2);
 }
 
 .tabell th,
@@ -18,5 +25,6 @@ td {
 }
 
 .korrigerKnapp {
-  margin-top: var(--a-spacing-14);
+  margin-bottom: var(--a-spacing-2);
+  align-self: flex-start;
 }

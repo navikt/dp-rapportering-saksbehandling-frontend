@@ -1,10 +1,9 @@
-import { Button } from "@navikt/ds-react";
-import { useSearchParams } from "react-router";
-
 import { formatterDato, getWeekDays, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import styles from "./Forhandsvisning.module.css";
+import { PeriodeMedUke } from "./PeriodeMedUke";
+import { Sammenlagt } from "./Sammenlagt";
 import { Uke } from "./Uke";
 
 interface IProps {
@@ -23,22 +22,13 @@ export function Forhandsvisning({ periode }: IProps) {
 
   const ukedager = getWeekDays();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const byttAktivRapporteringsperiode = () => {
-    const params = new URLSearchParams(searchParams);
-    params.set("valgtId", periode.id);
-    setSearchParams(params);
-  };
-
   return (
-    <div className="rapporteringsperiode">
-      <Button onClick={byttAktivRapporteringsperiode}>
-        <h3 className={styles.header}>Uke {ukenummer(periode)}</h3>
-        <div className={styles.periode}>
-          {formattertFraOgMed} - {formattertTilOgMed}
-        </div>
-      </Button>
+    <div>
+      <PeriodeMedUke
+        ukenummer={ukenummer(periode)}
+        formattertFraOgMed={formattertFraOgMed}
+        formattertTilOgMed={formattertTilOgMed}
+      />
       <table className={styles.rapporteringsperiodeTabell}>
         <thead>
           <tr>
@@ -54,6 +44,7 @@ export function Forhandsvisning({ periode }: IProps) {
           <Uke uke={andreUke} />
         </tbody>
       </table>
+      <Sammenlagt periode={periode} />
     </div>
   );
 }
