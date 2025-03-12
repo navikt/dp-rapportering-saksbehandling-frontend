@@ -36,6 +36,7 @@ export function Dag({ dag }: DagProps) {
             {konverterFraISO8601Varighet(
               dag.aktiviteter?.find((aktivitet) => aktivitet.type === "Arbeid")?.timer ?? ""
             )}
+            {"t"}
           </span>
         )}
       </div>
