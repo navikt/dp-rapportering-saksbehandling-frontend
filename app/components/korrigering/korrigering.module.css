@@ -1,0 +1,5 @@
+.periode-tag {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--a-spacing-4);
+}

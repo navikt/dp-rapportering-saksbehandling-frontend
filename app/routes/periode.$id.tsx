@@ -1,6 +1,7 @@
 import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
+import { EndretPeriode } from "~/components/korrigering/EndretPeriode";
 import { UendretPeriode } from "~/components/korrigering/UendretPeriode";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/periode.module.css";
@@ -37,7 +38,7 @@ export default function Periode() {
           <UendretPeriode periode={periode} />
         </div>
         <div className={styles.endretPeriode}>
-          <UendretPeriode periode={periode} />
+          <EndretPeriode periode={periode} />
         </div>
         <div className={styles.korrigering}>korrigering</div>
       </div>
