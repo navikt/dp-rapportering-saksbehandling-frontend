@@ -1,4 +1,4 @@
-import { Tag, Popover, Heading } from "@navikt/ds-react";
+import { Tag, Popover, Heading, Tooltip } from "@navikt/ds-react";
 import { differenceInDays, parseISO } from "date-fns";
 import { formatterDato } from "~/utils/dato.utils";
 import { useState, useRef } from "react";
@@ -19,7 +19,11 @@ export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk }: IProps) 
 
   if (forSent) {
     return (
-      <>
+      <Tooltip
+        content={`Frist: ${
+          sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"
+        }`}
+      >
         <Tag
           ref={tagRef}
           variant="error"
@@ -28,28 +32,19 @@ export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk }: IProps) 
         >
           {formatterDato({ dato: mottattDato })}
         </Tag>
-
-        <Popover
-          open={open}
-          onClose={() => setOpen(false)}
-          anchorEl={tagRef.current}
-          placement="top-start"
-        >
-          <Popover.Content>
-            <Heading size="xsmall">Fristen er overskredet</Heading>
-            <p>
-              Frist:{" "}
-              {sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"}
-            </p>
-          </Popover.Content>
-        </Popover>
-      </>
+      </Tooltip>
     );
   }
 
   return (
     <div className="neutralTag">
-      <Tag variant="neutral">{formatterDato({ dato: mottattDato })}</Tag>
+      <Tooltip
+        content={`Frist: ${
+          sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"
+        }`}
+      >
+        <Tag variant="neutral">{formatterDato({ dato: mottattDato })}</Tag>
+      </Tooltip>
     </div>
   );
 }
