@@ -6,7 +6,7 @@ import type { IRapporteringsperiode } from "~/utils/types";
 import { Uke } from "../rapporteringsperiode-visning/Uke";
 import styles from "./korrigering.module.css";
 
-export function UendretPeriode({ periode }: { periode: IRapporteringsperiode }) {
+export function EndretPeriode({ periode }: { periode: IRapporteringsperiode }) {
   const forsteUke = [...periode.dager].slice(0, 7);
   const andreUke = [...periode.dager].slice(7, 14);
 
@@ -16,7 +16,7 @@ export function UendretPeriode({ periode }: { periode: IRapporteringsperiode }) 
     <>
       <div className={styles.periodeTag}>
         <h3>Uke {ukenummer(periode)}</h3>
-        <Tag variant="neutral">Sist beregnet</Tag>
+        <Tag variant="error">Korrigering</Tag>
       </div>
       <table>
         <thead>
