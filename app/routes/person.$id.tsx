@@ -25,8 +25,6 @@ export default function Rapportering() {
   const { perioder, person } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
-  console.log(person);
-
   const valgteRapporteringsperiode =
     searchParams
       .get("rapporteringsid")

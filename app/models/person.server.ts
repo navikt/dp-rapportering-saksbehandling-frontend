@@ -15,8 +15,8 @@ export async function hentPerson(request: Request, personId: string): Promise<IP
 
     return await response.json();
   } catch (error) {
-    logger.error(`Klarte ikke hente saksbehandler status: 401: ${error}`);
+    logger.error(`Klarte ikke hente person status: 500: ${error}`);
 
-    throw new Response("Unauthorized", { status: 401 });
+    throw new Response("Unauthorized", { status: 500 });
   }
 }
