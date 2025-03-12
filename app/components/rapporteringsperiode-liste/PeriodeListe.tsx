@@ -1,5 +1,5 @@
 import { Checkbox, Table } from "@navikt/ds-react";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 import { ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -17,8 +17,9 @@ interface IProps {
 const MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER = 3;
 
 export function RapporteringsperiodeListe({ perioder }: IProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const ids = searchParams.get("rapporteringsid")?.split(",") ?? [];
+  const navigate = useNavigate();
 
   function toggleRow(event: React.ChangeEvent<HTMLInputElement>) {
     const id = event.target.dataset.id;
@@ -46,7 +47,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
       params.delete("rapporteringsid");
     }
 
-    setSearchParams(params);
+    navigate("?" + params.toString(), { replace: true });
   }
 
   return (

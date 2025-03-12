@@ -20,6 +20,7 @@ export async function loader({
 export default function Rapportering() {
   const { perioder } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
+
   const valgteRapporteringsperiode =
     searchParams
       .get("rapporteringsid")
