@@ -1,9 +1,9 @@
-import { route } from "@react-router/dev/routes";
+import { index, route } from "@react-router/dev/routes";
 
 const routes = [
-  route("/", "routes/index.tsx"),
-  route("/behandling", "routes/behandling.tsx"),
-  route("/behandling/:id", "routes/behandling.$id.tsx"),
+  index("routes/index.tsx"),
+  route("/bruker", "routes/bruker.tsx"),
+  route("/bruker/:brukerId", "routes/bruker.$brukerid.tsx"),
   route("/api/internal/isalive", "routes/api.internal.isalive.ts"),
   route("/api/internal/isready", "routes/api.internal.isready.ts"),
 ];
