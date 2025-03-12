@@ -6,7 +6,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 const base =
   process.env.NODE_ENV === "production"
     ? "https://cdn.nav.no/teamdagpenger/dp-rapportering-saksbehandling-frontend/client/"
-    : "/rapportering";
+    : "/rapportering/";
 
 export default defineConfig({
   base,
