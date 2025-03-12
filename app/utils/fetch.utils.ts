@@ -3,7 +3,7 @@
 import { uuidv7 } from "uuidv7";
 
 import { getSessionId } from "../mocks/session";
-import { audienceDPRapportering, getOnBehalfOfToken } from "./auth.utils.server";
+import { getMicrosoftOboToken } from "./auth.utils.server";
 import { isLocalhost } from "./env.utils";
 
 function generateCorralationId() {
@@ -13,7 +13,7 @@ function generateCorralationId() {
 }
 
 export async function getHeaders(request: Request, customHeaders = {}) {
-  const onBehalfOfToken = await getOnBehalfOfToken(request, audienceDPRapportering);
+  const onBehalfOfToken = await getMicrosoftOboToken(request);
 
   const headers = {
     "Content-Type": "application/json",
