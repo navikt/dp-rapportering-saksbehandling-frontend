@@ -21,7 +21,6 @@ import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv } from "./utils/env.utils";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  console.log(process.env);
   const saksbehandler = await hentSaksbehandler(request);
 
   return {
