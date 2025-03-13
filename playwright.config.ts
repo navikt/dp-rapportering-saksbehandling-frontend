@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 
 dotenv.config({
-  path: path.resolve(path.dirname(new URL(import.meta.url).pathname), ".env.playwright"),
+  path: path.resolve(path.dirname(new URL(import.meta.url).pathname), "playwright.env"),
 });
 
 /**
