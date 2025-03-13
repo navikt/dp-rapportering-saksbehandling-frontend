@@ -12,7 +12,7 @@
     "prepare": "husky",
     "test:vitest": "vitest run",
     "pre-commit": "lint-staged && npm run typecheck",
-    "test:playwright": "DEBUG=pw:webserver VITE_USE_MSW='true' playwright test -c playwright-ct.config.ts"
+    "test:playwright": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
     "@navikt/aksel-icons": "^7.17.2",
@@ -45,6 +45,7 @@
     "@types/react-dom": "^19.0.4",
     "@types/react-router-dom": "^5.3.3",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
     "eslint-config-prettier": "^10.1.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.4",
