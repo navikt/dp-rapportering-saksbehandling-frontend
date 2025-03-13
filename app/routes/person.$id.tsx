@@ -6,7 +6,7 @@ import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-lis
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
 import { hentPerson } from "~/models/person.server";
 import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
-import styles from "~/route-styles/rapportering.module.css";
+import styles from "~/route-styles/person.module.css";
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "./+types/person.$id";
