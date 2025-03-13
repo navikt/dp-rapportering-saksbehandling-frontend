@@ -17,11 +17,13 @@ import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 import styles from "~/route-styles/root.module.css";
 
 import type { Route } from "./+types/root";
-import { hentSaksbehandler } from "./models/saksbehandler.server";
+import { mockSaksbehandler } from "./mocks/data/mock-saksbehandler";
+// import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv } from "./utils/env.utils";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const saksbehandler = await hentSaksbehandler(request);
+export async function loader() {
+  // const saksbehandler = await hentSaksbehandler(request);
+  const saksbehandler = mockSaksbehandler;
 
   return {
     saksbehandler,
