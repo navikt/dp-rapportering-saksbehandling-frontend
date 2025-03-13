@@ -1,9 +1,11 @@
+import { Tag } from "@navikt/ds-react";
 import { useState } from "react";
 import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Korrigering } from "~/components/korrigering/Korrigering";
 import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
+import { PeriodeMedUke } from "~/components/rapporteringsperiode-visning/PeriodeMedUke";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/periode.module.css";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
@@ -38,13 +40,24 @@ export default function Periode() {
       </h2>
       <div className={styles.grid}>
         <div className={styles.uendretPeriode}>
+          <div className={styles.periodeOgTag}>
+            <PeriodeMedUke periode={periode} />
+            <Tag variant="neutral">Sist beregnet</Tag>
+          </div>
           <Forhandsvisning periode={periode} />
         </div>
         <div className={styles.endretPeriode}>
+          <div className={styles.periodeOgTag}>
+            <PeriodeMedUke periode={periode} />
+            <Tag variant="error">Korrigering</Tag>
+          </div>
           <Forhandsvisning periode={korrigertPeriode} />
         </div>
         <div className={styles.korrigering}>
-          <Korrigering setKorrigertPeriode={setKorrigertPeriode} />
+          <Korrigering
+            setKorrigertPeriode={setKorrigertPeriode}
+            korrigertPeriode={korrigertPeriode}
+          />
         </div>
       </div>
     </div>

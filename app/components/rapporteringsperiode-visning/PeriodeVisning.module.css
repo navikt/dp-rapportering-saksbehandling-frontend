@@ -5,7 +5,6 @@
 .perioder {
   display: flex;
   flex-direction: column;
-  gap: var(--a-spacing-18);
 }
 
 @container (min-width: 1080px) {

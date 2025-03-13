@@ -44,6 +44,12 @@ export function getWeekDays(): { kort: string; lang: string }[] {
   return weekDays;
 }
 
+export function hentUkedag(dato: string): string {
+  const date = new Date(dato);
+  const weekDays = getWeekDays();
+  return weekDays[(date.getUTCDay() + 6) % 7].kort;
+}
+
 export function konverterTilISO8601Varighet(varighet: string): string {
   const delt = varighet.trim().replace(/\./g, ",").split(",");
   const timer = delt[0] || 0;
