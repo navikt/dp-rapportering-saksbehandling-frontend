@@ -12,7 +12,7 @@
     "prepare": "husky",
     "test:vitest": "vitest run",
     "pre-commit": "lint-staged && npm run typecheck",
-    "test:playwright": "playwright test -c playwright-ct.config.ts"
+    "test:playwright": "DEBUG=pw:webserver playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
     "@navikt/aksel-icons": "^7.17.2",

@@ -1,6 +1,6 @@
 import type { IEnv } from "./types";
 
-export function getEnv<T>(value: keyof IEnv): T {
+export function getEnv<T>(key: keyof IEnv): T {
   const env = typeof window !== "undefined" ? window.env : process.env;
 
   const defaultEnv: IEnv = {
@@ -10,7 +10,8 @@ export function getEnv<T>(value: keyof IEnv): T {
   };
 
   // @ts-expect-error IEnv inneholder ikke VITE_ prefix
-  return (env[value] || env[`VITE_${value}`] || defaultEnv[value] || "") as unknown as T;
+  const value = (env[key] || env[`VITE_${key}`] || defaultEnv[key] || "") as unknown as T;
+  return value;
 }
 
 export const isLocalhost = getEnv("IS_LOCALHOST") === "true";
