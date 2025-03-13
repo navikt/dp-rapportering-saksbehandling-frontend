@@ -90,6 +90,9 @@ jobs:
       if: steps.node_modules.outputs.cache-hit != 'true'
       env:
         NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+        VITE_DP_RAPPORTERING_URL: 'https://dp-rapportering.intern.dev.navn.no'
+        VITE_IS_LOCALHOST: 'false'
+        VITE_USE_MSW: 'true'
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
