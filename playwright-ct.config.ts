@@ -1,5 +1,10 @@
 import { defineConfig, devices } from "@playwright/experimental-ct-react";
+import dotenv from "dotenv";
 import path from "path";
+
+dotenv.config({
+  path: path.resolve(path.dirname(new URL(import.meta.url).pathname), ".env.playwright"),
+});
 
 /**
  * See https://playwright.dev/docs/test-configuration.

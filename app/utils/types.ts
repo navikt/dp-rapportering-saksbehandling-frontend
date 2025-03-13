@@ -68,6 +68,23 @@ export interface IRapporteringsperiode {
   rapporteringstype: TRapporteringstype | null;
 }
 
+export interface ISikkerhetstiltak {
+  beskrivelse: string;
+  gyldigTom: string;
+}
+
+export interface IPerson {
+  ident: string;
+  fornavn: string;
+  etternavn: string;
+  mellomnavn?: string;
+  kjonn: "MANN" | "KVINNE" | "UKJENT";
+  fodselsdato: string;
+  alder: number;
+  statsborgerskap: string;
+  sikkerhetstiltak?: ISikkerhetstiltak[];
+}
+
 export const boolskeVerdier = ["true", "false"] as const;
 
 export type TrueOrFalse = (typeof boolskeVerdier)[number];

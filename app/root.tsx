@@ -17,15 +17,14 @@ import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 import styles from "~/route-styles/root.module.css";
 
 import type { Route } from "./+types/root";
-import { mockSaksbehandler } from "./mocks/data/mock-saksbehandler";
-// import { getSaksbehandler } from "./models/saksbehandler.server";
+import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv } from "./utils/env.utils";
 
-export async function loader() {
-  // const saksbehandler = await getSaksbehandler(request);
+export async function loader({ request }: Route.LoaderArgs) {
+  const saksbehandler = await hentSaksbehandler(request);
 
   return {
-    // saksbehandler,
+    saksbehandler,
     env: {
       DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
@@ -67,11 +66,27 @@ export const links: Route.LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "32x32",
+    href: `/favicon-32x32.png`,
+  },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "16x16",
+    href: `/favicon-16x16.png`,
+  },
+  {
+    rel: "icon",
+    type: "image/x-icon",
+    href: `/favicon.ico`,
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { env } = useLoaderData<typeof loader>();
-  const saksbehandler = mockSaksbehandler;
+  const { env, saksbehandler } = useLoaderData<typeof loader>();
 
   return (
     <html lang="en">

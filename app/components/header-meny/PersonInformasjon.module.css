@@ -1,0 +1,30 @@
+.person-informasjon {
+    display: flex;
+    gap: 2rem;
+    min-height: 3rem;
+    align-items: center;
+    padding-left: 2rem;
+}
+
+.kjonnIkon {
+    display: flex;
+    height: 2rem;
+    width: 2rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.mann {
+    background-color: lightblue;
+
+}
+
+.kvinne {
+    background-color: coral;
+}
+
+.ukjent {
+    background-color: gray;
+
+}

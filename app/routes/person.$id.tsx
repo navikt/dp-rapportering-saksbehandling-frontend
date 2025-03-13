@@ -1,24 +1,28 @@
 import { useLoaderData, useSearchParams } from "react-router";
 
+import PersonInformasjon from "~/components/header-meny/PersonInformasjon";
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-liste/PeriodeListe";
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
+import { hentPerson } from "~/models/person.server";
 import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/rapportering.module.css";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "./+types/person.$id";
 
 export async function loader({
   request,
-}: Route.LoaderArgs): Promise<{ perioder: IRapporteringsperiode[] }> {
+  params,
+}: Route.LoaderArgs): Promise<{ perioder: IRapporteringsperiode[]; person: IPerson }> {
   const perioder = await hentRapporteringsperioder(request);
+  const person = await hentPerson(request, params.id);
   // TODO: Håndter feil i hentRapporteringsperioder
-  return { perioder };
+  return { perioder, person };
 }
 
 export default function Rapportering() {
-  const { perioder } = useLoaderData<typeof loader>();
+  const { perioder, person } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
   const valgteRapporteringsperiode =
@@ -30,6 +34,7 @@ export default function Rapportering() {
 
   return (
     <>
+      <PersonInformasjon person={person} />
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListe perioder={perioder} />
       </div>

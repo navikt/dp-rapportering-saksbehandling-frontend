@@ -4,7 +4,7 @@ import type { ISaksbehandler } from "~/utils/types";
 
 import { logger } from "./logger.server";
 
-export async function getSaksbehandler(request: Request): Promise<ISaksbehandler> {
+export async function hentSaksbehandler(request: Request): Promise<ISaksbehandler> {
   try {
     const oboToken = await getMicrosoftOboToken(request);
 
