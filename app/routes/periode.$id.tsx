@@ -54,7 +54,10 @@ export default function Periode() {
           <Forhandsvisning periode={korrigertPeriode} />
         </div>
         <div className={styles.korrigering}>
-          <Korrigering setKorrigertPeriode={setKorrigertPeriode} />
+          <Korrigering
+            setKorrigertPeriode={setKorrigertPeriode}
+            korrigertPeriode={korrigertPeriode}
+          />
         </div>
       </div>
     </div>
