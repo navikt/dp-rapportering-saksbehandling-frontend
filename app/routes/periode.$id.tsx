@@ -9,7 +9,7 @@ import { PeriodeMedUke } from "~/components/rapporteringsperiode-visning/Periode
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/periode.module.css";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
 import type { Route } from "./+types";
 
@@ -27,11 +27,17 @@ export async function loader({
 export default function Periode() {
   const { periode } = useLoaderData<typeof loader>();
 
-  const [korrigertPeriode, setKorrigertPeriode] = useState<IRapporteringsperiode>(periode);
+  const [korrigerteDager, setKorrigerteDager] = useState<IRapporteringsperiodeDag[]>(periode.dager);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
+
+  // { periode: { dager: [], id: "" } }
+
+  // { ...periode } => { dager: [], id: "" }
+
+  // { dager: [], dager: ["hei"] }
 
   return (
     <div className={styles.rapporteringsperiode}>
@@ -51,13 +57,10 @@ export default function Periode() {
             <PeriodeMedUke periode={periode} />
             <Tag variant="error">Korrigering</Tag>
           </div>
-          <Forhandsvisning periode={korrigertPeriode} />
+          <Forhandsvisning periode={{ ...periode, dager: korrigerteDager }} />
         </div>
         <div className={styles.korrigering}>
-          <Korrigering
-            setKorrigertPeriode={setKorrigertPeriode}
-            korrigertPeriode={korrigertPeriode}
-          />
+          <Korrigering korrigerteDager={korrigerteDager} setKorrigerteDager={setKorrigerteDager} />
         </div>
       </div>
     </div>

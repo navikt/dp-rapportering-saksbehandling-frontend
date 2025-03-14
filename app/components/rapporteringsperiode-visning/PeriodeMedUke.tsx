@@ -8,7 +8,6 @@ interface IProps {
 }
 
 export function PeriodeMedUke({ periode }: IProps) {
-  console.log(periode);
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
