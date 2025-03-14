@@ -30,7 +30,7 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
       {korrigerteDager.map((dag) => {
         const { arbeid, syk, fravaer, utdanning } = hentAktiviteter(dag);
         const value = [
-          syk ? "Syk" : "",
+          syk ? AKTIVITET_TYPE.Syk : "",
           fravaer ? AKTIVITET_TYPE.Fravaer : "",
           utdanning ? AKTIVITET_TYPE.Utdanning : "",
         ].filter((v) => v);
@@ -55,7 +55,7 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
                 Syk
               </Checkbox>
               <Checkbox value={AKTIVITET_TYPE.Fravaer} hideLabel>
-                Fravaer
+                Fravær
               </Checkbox>
               <Checkbox value={AKTIVITET_TYPE.Utdanning} hideLabel>
                 Utdanning
