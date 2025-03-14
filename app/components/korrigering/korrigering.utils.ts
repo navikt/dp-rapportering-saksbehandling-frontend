@@ -1,7 +1,7 @@
 import { uuidv7 } from "uuidv7";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { konverterFraISO8601Varighet } from "~/utils/dato.utils";
+import { konverterFraISO8601Varighet, konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import type { IAktivitet, IRapporteringsperiodeDag } from "~/utils/types";
 
 export type SetKorrigerteDager = React.Dispatch<React.SetStateAction<IRapporteringsperiodeDag[]>>;
@@ -60,6 +60,50 @@ export function endreDag(
     const oppdatertDager = prevDager.toSpliced(index, 1, {
       ...dag,
       aktiviteter: leggerTilAktiviteterFraValueSomMangler,
+    });
+
+    return oppdatertDager;
+  });
+}
+
+export function endreArbeid(
+  event: React.ChangeEvent<HTMLInputElement>,
+  dag: IRapporteringsperiodeDag,
+  setKorrigerteDager: SetKorrigerteDager
+) {
+  const timer = event.target.value;
+
+  setKorrigerteDager((prevDager) => {
+    const index = prevDager.findIndex((prevDag) => prevDag.dato === dag.dato);
+
+    // Hvis timer er tom fjerner aktiviteten arbeid fra dag
+    if (!timer) {
+      const oppdatertDager = prevDager.toSpliced(index, 1, {
+        ...dag,
+        aktiviteter: dag.aktiviteter.filter(
+          (aktivitet) => aktivitet.type !== AKTIVITET_TYPE.Arbeid
+        ),
+      });
+
+      return oppdatertDager;
+    }
+
+    const dagHarArbeid = dag.aktiviteter.find(
+      (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid
+    );
+
+    const oppdatertDager = prevDager.toSpliced(index, 1, {
+      ...dag,
+      aktiviteter: [
+        ...dag.aktiviteter.filter((aktivitet) => aktivitet.type !== AKTIVITET_TYPE.Arbeid),
+        {
+          // Vi gjenbruker aktivitetens ID hvis den allerede eksisterer
+          id: dagHarArbeid?.id ?? uuidv7(),
+          type: AKTIVITET_TYPE.Arbeid,
+          dato: dag.dato,
+          timer: konverterTilISO8601Varighet(timer),
+        },
+      ],
     });
 
     return oppdatertDager;

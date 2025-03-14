@@ -5,7 +5,12 @@ import { hentUkedag } from "~/utils/dato.utils";
 import type { IRapporteringsperiodeDag } from "~/utils/types";
 
 import styles from "./Korrigering.module.css";
-import { endreDag, hentAktiviteter, type SetKorrigerteDager } from "./korrigering.utils";
+import {
+  endreArbeid,
+  endreDag,
+  hentAktiviteter,
+  type SetKorrigerteDager,
+} from "./korrigering.utils";
 
 interface IProps {
   korrigerteDager: IRapporteringsperiodeDag[];
@@ -33,7 +38,13 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
         return (
           <div key={dag.dato}>
             <div>{hentUkedag(dag.dato)}</div>
-            <TextField data-dato={dag.dato} label="arbeid" hideLabel value={arbeid}></TextField>
+            <TextField
+              data-dato={dag.dato}
+              label="arbeid"
+              hideLabel
+              value={arbeid ?? ""}
+              onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
+            ></TextField>
             <CheckboxGroup
               legend="Aktiviteter"
               hideLegend
