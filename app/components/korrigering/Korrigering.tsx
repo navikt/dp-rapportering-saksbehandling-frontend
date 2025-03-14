@@ -39,7 +39,7 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
         const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
 
         return (
-          <div key={dag.dato}>
+          <div key={dag.dato} className={styles.dag}>
             <div>{hentUkedag(dag.dato)}</div>
             <TextField
               data-dato={dag.dato}
