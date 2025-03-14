@@ -47,7 +47,7 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
               hideLabel
               value={arbeid ?? ""}
               onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
-              disabled={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
+              readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
             ></TextField>
             <CheckboxGroup
               legend="Aktiviteter"
@@ -58,21 +58,21 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
               <Checkbox
                 value={AKTIVITET_TYPE.Syk}
                 hideLabel
-                disabled={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Syk)}
+                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Syk)}
               >
                 Syk
               </Checkbox>
               <Checkbox
                 value={AKTIVITET_TYPE.Fravaer}
                 hideLabel
-                disabled={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Fravaer)}
+                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Fravaer)}
               >
                 Fravær
               </Checkbox>
               <Checkbox
                 value={AKTIVITET_TYPE.Utdanning}
                 hideLabel
-                disabled={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Utdanning)}
+                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Utdanning)}
               >
                 Utdanning
               </Checkbox>

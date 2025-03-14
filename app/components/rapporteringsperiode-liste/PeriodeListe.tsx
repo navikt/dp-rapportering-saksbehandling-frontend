@@ -68,7 +68,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     data-id={periode.id}
                     checked={ids.includes(periode.id)}
                     onChange={toggleRow}
-                    disabled={
+                    readOnly={
                       !ids.includes(periode.id) &&
                       ids.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER
                     }
