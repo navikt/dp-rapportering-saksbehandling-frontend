@@ -2,7 +2,7 @@ import { uuidv7 } from "uuidv7";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { konverterFraISO8601Varighet, konverterTilISO8601Varighet } from "~/utils/dato.utils";
-import type { IAktivitet, IRapporteringsperiodeDag } from "~/utils/types";
+import type { IAktivitet, IRapporteringsperiodeDag, TAktivitetType } from "~/utils/types";
 
 export type SetKorrigerteDager = React.Dispatch<React.SetStateAction<IRapporteringsperiodeDag[]>>;
 
@@ -108,4 +108,23 @@ export function endreArbeid(
 
     return oppdatertDager;
   });
+}
+
+export function erIkkeAktiv(aktiviteter: TAktivitetType[], aktivitet: TAktivitetType): boolean {
+  if (
+    aktiviteter.includes(AKTIVITET_TYPE.Arbeid) &&
+    ([AKTIVITET_TYPE.Syk, AKTIVITET_TYPE.Fravaer] as TAktivitetType[]).includes(aktivitet)
+  ) {
+    return true;
+  }
+
+  if (aktiviteter.includes(AKTIVITET_TYPE.Syk) && aktivitet === AKTIVITET_TYPE.Arbeid) {
+    return true;
+  }
+
+  if (aktiviteter.includes(AKTIVITET_TYPE.Fravaer) && aktivitet === AKTIVITET_TYPE.Arbeid) {
+    return true;
+  }
+
+  return false;
 }

@@ -8,6 +8,7 @@ import styles from "./Korrigering.module.css";
 import {
   endreArbeid,
   endreDag,
+  erIkkeAktiv,
   hentAktiviteter,
   type SetKorrigerteDager,
 } from "./korrigering.utils";
@@ -35,6 +36,8 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
           utdanning ? AKTIVITET_TYPE.Utdanning : "",
         ].filter((v) => v);
 
+        const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
+
         return (
           <div key={dag.dato}>
             <div>{hentUkedag(dag.dato)}</div>
@@ -44,6 +47,7 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
               hideLabel
               value={arbeid ?? ""}
               onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
+              disabled={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
             ></TextField>
             <CheckboxGroup
               legend="Aktiviteter"
@@ -51,13 +55,25 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
               onChange={(value) => endreDag(value, dag, setKorrigerteDager)}
               value={value}
             >
-              <Checkbox value={AKTIVITET_TYPE.Syk} hideLabel>
+              <Checkbox
+                value={AKTIVITET_TYPE.Syk}
+                hideLabel
+                disabled={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Syk)}
+              >
                 Syk
               </Checkbox>
-              <Checkbox value={AKTIVITET_TYPE.Fravaer} hideLabel>
+              <Checkbox
+                value={AKTIVITET_TYPE.Fravaer}
+                hideLabel
+                disabled={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Fravaer)}
+              >
                 Fravær
               </Checkbox>
-              <Checkbox value={AKTIVITET_TYPE.Utdanning} hideLabel>
+              <Checkbox
+                value={AKTIVITET_TYPE.Utdanning}
+                hideLabel
+                disabled={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Utdanning)}
+              >
                 Utdanning
               </Checkbox>
             </CheckboxGroup>
