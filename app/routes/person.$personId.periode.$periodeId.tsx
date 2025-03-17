@@ -3,33 +3,30 @@ import { useState } from "react";
 import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
-import PersonInformasjon from "~/components/header-meny/PersonInformasjon";
 import { Korrigering } from "~/components/korrigering/Korrigering";
 import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
 import { PeriodeMedUke } from "~/components/rapporteringsperiode-visning/PeriodeMedUke";
-import { hentPerson } from "~/models/person.server";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/periode.module.css";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
-import type { IPerson, IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
+import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId";
 
 export async function loader({
   request,
   params,
-}: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode; person: IPerson }> {
+}: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode }> {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
   const periode = await hentPeriode(request, params.periodeId);
-  const person = await hentPerson(request, params.personId);
 
   // TODO: Håndter feil i hentPeriode
-  return { periode, person };
+  return { periode };
 }
 
 export default function Periode() {
-  const { periode, person } = useLoaderData<typeof loader>();
+  const { periode } = useLoaderData<typeof loader>();
 
   const [korrigerteDager, setKorrigerteDager] = useState<IRapporteringsperiodeDag[]>(periode.dager);
 
@@ -39,8 +36,6 @@ export default function Periode() {
 
   return (
     <>
-      <PersonInformasjon person={person} />
-
       <div className={styles.rapporteringsperiode}>
         <h2>
           Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}

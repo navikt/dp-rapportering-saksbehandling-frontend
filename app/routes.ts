@@ -5,6 +5,7 @@ const routes = [
   ...prefix("person", [
     index("routes/person.tsx"),
     route(":personId", "routes/person.$personId.tsx"),
+    route(":personId/perioder", "routes/person.$personId.perioder.tsx"),
     route(":personId/periode", "routes/person.$personId.periode.tsx"),
     route(":personId/periode/:periodeId", "routes/person.$personId.periode.$periodeId.tsx"),
   ]),

@@ -3,7 +3,7 @@ import { Link } from "react-router";
 export default function Rapportering() {
   return (
     <p>
-      Du må velge en person, f.eks. <Link to="/person/17051412345">17051412345</Link>
+      Du må velge en person, f.eks. <Link to="/person/17051412345/perioder">17051412345</Link>
     </p>
   );
 }

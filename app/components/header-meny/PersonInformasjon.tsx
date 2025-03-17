@@ -30,7 +30,7 @@ export default function PersonInformasjon({ person }: IProps) {
         <Kjonn fontSize="1.5rem" fill="#ffff00" />
       </div>
       <div>
-        <a href="/person/17051412345">{fulltNavn}</a>
+        <a href="/person/17051412345/perioder">{fulltNavn}</a>
       </div>
       <div>
         Personnummer: <strong>{person.ident}</strong>

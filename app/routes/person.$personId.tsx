@@ -1,56 +1,24 @@
-import { useLoaderData, useSearchParams } from "react-router";
+import { Outlet, useLoaderData } from "react-router";
 
 import PersonInformasjon from "~/components/header-meny/PersonInformasjon";
-import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
-import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-liste/PeriodeListe";
-import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
 import { hentPerson } from "~/models/person.server";
-import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
-import styles from "~/route-styles/person.module.css";
-import type { IPerson, IRapporteringsperiode } from "~/utils/types";
+import type { IPerson } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId";
 
-export async function loader({
-  request,
-  params,
-}: Route.LoaderArgs): Promise<{ perioder: IRapporteringsperiode[]; person: IPerson }> {
-  const perioder = await hentRapporteringsperioder(request);
+export async function loader({ request, params }: Route.LoaderArgs): Promise<{ person: IPerson }> {
   const person = await hentPerson(request, params.personId);
-  // TODO: Håndter feil i hentRapporteringsperioder
-  return { perioder, person };
+
+  return { person };
 }
 
-export default function Rapportering({ params }: Route.ComponentProps) {
-  const { perioder, person } = useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
-
-  const valgteRapporteringsperiode =
-    searchParams
-      .get("rapporteringsid")
-      ?.split(",")
-      .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
-      .filter((periode) => periode) ?? [];
+export default function Rapportering() {
+  const { person } = useLoaderData<typeof loader>();
 
   return (
     <>
       <PersonInformasjon person={person} />
-
-      <div className={styles.rapporteringsperiodeListe}>
-        <RapporteringsperiodeListe perioder={perioder} />
-      </div>
-      <div className={styles.grid}>
-        {valgteRapporteringsperiode.map((periode) => (
-          <>
-            <div className={styles.forhandsvisning}>
-              <RapporteringsperiodeVisning perioder={[periode]} />
-            </div>
-            <div className={styles.detaljer}>
-              <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId} />
-            </div>
-          </>
-        ))}
-      </div>
+      <Outlet />
     </>
   );
 }
