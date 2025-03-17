@@ -7,7 +7,7 @@ import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server"
 import styles from "~/route-styles/person.module.css";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-import type { Route } from "./+types/person.$personId";
+import type { Route } from "./+types/person.$personId.perioder";
 
 export async function loader({
   request,
