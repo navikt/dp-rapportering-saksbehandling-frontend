@@ -1,8 +1,10 @@
 import { Checkbox, CheckboxGroup, TextField } from "@navikt/ds-react";
+import classNames from "classnames";
+import { Fragment } from "react";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { hentUkedag } from "~/utils/dato.utils";
-import type { IRapporteringsperiodeDag } from "~/utils/types";
+import { hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
+import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
 import styles from "./Korrigering.module.css";
 import {
@@ -16,19 +18,48 @@ import {
 interface IProps {
   korrigerteDager: IRapporteringsperiodeDag[];
   setKorrigerteDager: SetKorrigerteDager;
+  originalPeriode: IRapporteringsperiode;
 }
 
-export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
+export function Korrigering({ korrigerteDager, setKorrigerteDager, originalPeriode }: IProps) {
+  const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
+
   return (
     <div className={styles.grid}>
-      <div className={styles.aktiviteter}>
-        <div></div>
-        <p className="arbeid">Jobb</p>
-        <p className="syk">Syk</p>
-        <p className="fravaer">Ferie, fravær og utenlandsopphold</p>
-        <p className="utdanning">Tiltak, kurs eller utdanning</p>
+      <div className={classNames(styles.row1, styles.col2)}>Uke {startUke}</div>
+      <div className={classNames(styles.row1, styles.col9)}>Uke {sluttUke}</div>
+      <div
+        className={classNames(styles.aktivitet, styles.col1, styles.row3, styles.arbeid, "arbeid")}
+      >
+        Jobb
       </div>
-      {korrigerteDager.map((dag) => {
+      <div className={classNames(styles.aktivitet, styles.col1, styles.row4, styles.syk, "syk")}>
+        Syk
+      </div>
+      <div
+        className={classNames(
+          styles.aktivitet,
+          styles.col1,
+          styles.row5,
+          styles.fravaer,
+          "fravaer"
+        )}
+      >
+        Ferie, fravær og utenlandsopphold
+      </div>
+      <div
+        className={classNames(
+          styles.aktivitet,
+          styles.col1,
+          styles.row6,
+          styles.utdanning,
+          "utdanning"
+        )}
+      >
+        Tiltak, kurs eller utdanning
+      </div>
+
+      {korrigerteDager.map((dag, index) => {
         const { arbeid, syk, fravaer, utdanning } = hentAktiviteter(dag);
         const value = [
           syk ? AKTIVITET_TYPE.Syk : "",
@@ -39,8 +70,10 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
         const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
 
         return (
-          <div key={dag.dato} className={styles.dag}>
-            <div>{hentUkedag(dag.dato)}</div>
+          <Fragment key={dag.dato}>
+            <div className={classNames(styles[`col-${index + 2}`], styles.row2)}>
+              {hentUkedag(dag.dato)}
+            </div>
             <TextField
               data-dato={dag.dato}
               label="arbeid"
@@ -48,17 +81,25 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
               value={arbeid ?? ""}
               onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
               readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
+              className={classNames(styles[`col-${index + 2}`], styles.row3)}
             ></TextField>
             <CheckboxGroup
               legend="Aktiviteter"
               hideLegend
               onChange={(value) => endreDag(value, dag, setKorrigerteDager)}
               value={value}
+              className={classNames(
+                styles[`col-${index + 2}`],
+                styles.row4,
+                styles.gridCheckboxGroup,
+                "grid-checkbox-group"
+              )}
             >
               <Checkbox
                 value={AKTIVITET_TYPE.Syk}
                 hideLabel
                 readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Syk)}
+                className={classNames(styles.checkbox, styles.row1)}
               >
                 Syk
               </Checkbox>
@@ -66,6 +107,7 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
                 value={AKTIVITET_TYPE.Fravaer}
                 hideLabel
                 readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Fravaer)}
+                className={classNames(styles.checkbox, styles.row2)}
               >
                 Fravær
               </Checkbox>
@@ -73,11 +115,12 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager }: IProps) {
                 value={AKTIVITET_TYPE.Utdanning}
                 hideLabel
                 readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Utdanning)}
+                className={classNames(styles.checkbox, styles.row3)}
               >
                 Utdanning
               </Checkbox>
             </CheckboxGroup>
-          </div>
+          </Fragment>
         );
       })}
     </div>

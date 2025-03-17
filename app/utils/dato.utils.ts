@@ -1,7 +1,7 @@
 import { getISOWeek } from "date-fns";
 import { parse, serialize } from "tinyduration";
 
-import type { IRapporteringsperiode } from "./types";
+import type { IPeriode, IRapporteringsperiode } from "./types";
 
 export function formaterPeriodeTilUkenummer(fraOgMed: string, tilOgMed: string) {
   const startUkenummer = getISOWeek(new Date(fraOgMed));
@@ -12,6 +12,13 @@ export function formaterPeriodeTilUkenummer(fraOgMed: string, tilOgMed: string) 
 
 export function ukenummer(periode: IRapporteringsperiode) {
   return formaterPeriodeTilUkenummer(periode.periode.fraOgMed, periode.periode.tilOgMed);
+}
+
+export function hentUkerFraPeriode(periode: IPeriode): number[] {
+  const startUkenummer = getISOWeek(new Date(periode.fraOgMed));
+  const sluttUkenummer = getISOWeek(new Date(periode.tilOgMed));
+
+  return [startUkenummer, sluttUkenummer];
 }
 
 export function formatterDag(dato: string) {

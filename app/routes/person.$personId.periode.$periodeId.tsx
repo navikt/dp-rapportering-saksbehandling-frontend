@@ -35,34 +35,33 @@ export default function Periode() {
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
 
   return (
-    <>
-      <div className={styles.rapporteringsperiode}>
-        <h2>
-          Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-        </h2>
-        <div className={styles.grid}>
-          <div className={styles.uendretPeriode}>
-            <div className={styles.periodeOgTag}>
-              <PeriodeMedUke periode={periode} />
-              <Tag variant="neutral">Sist beregnet</Tag>
-            </div>
-            <Forhandsvisning periode={periode} />
+    <div className={styles.rapporteringsperiode}>
+      <h2>
+        Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
+      </h2>
+      <div className={styles.grid}>
+        <div className={styles.uendretPeriode}>
+          <div className={styles.periodeOgTag}>
+            <PeriodeMedUke periode={periode} />
+            <Tag variant="neutral">Sist beregnet</Tag>
           </div>
-          <div className={styles.endretPeriode}>
-            <div className={styles.periodeOgTag}>
-              <PeriodeMedUke periode={periode} />
-              <Tag variant="error">Korrigering</Tag>
-            </div>
-            <Forhandsvisning periode={{ ...periode, dager: korrigerteDager }} />
+          <Forhandsvisning periode={periode} />
+        </div>
+        <div className={styles.endretPeriode}>
+          <div className={styles.periodeOgTag}>
+            <PeriodeMedUke periode={periode} />
+            <Tag variant="error">Korrigering</Tag>
           </div>
-          <div className={styles.korrigering}>
-            <Korrigering
-              korrigerteDager={korrigerteDager}
-              setKorrigerteDager={setKorrigerteDager}
-            />
-          </div>
+          <Forhandsvisning periode={{ ...periode, dager: korrigerteDager }} />
+        </div>
+        <div className={styles.korrigering}>
+          <Korrigering
+            korrigerteDager={korrigerteDager}
+            setKorrigerteDager={setKorrigerteDager}
+            originalPeriode={periode}
+          />
         </div>
       </div>
-    </>
+    </div>
   );
 }

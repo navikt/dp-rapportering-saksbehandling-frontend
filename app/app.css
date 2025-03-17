@@ -65,3 +65,11 @@ p {
 .navds-table__row--selected {
   background-color: transparent !important;
 }
+
+.grid-checkbox-group .navds-checkboxes {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row-end: span 4;
+  align-items: center;
+  justify-content: center;
+}
