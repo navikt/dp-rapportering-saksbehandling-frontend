@@ -1,5 +1,4 @@
 import { Button, Tag } from "@navikt/ds-react";
-import { useNavigate } from "react-router";
 
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -8,6 +7,7 @@ import styles from "./PeriodeDetaljer.module.css";
 
 interface IProps {
   periode: IRapporteringsperiode;
+  personId: string;
 }
 
 function renderTag(condition: boolean) {
@@ -19,13 +19,7 @@ const numberFormat = new Intl.NumberFormat("nb-NO", {
   currency: "NOK",
 });
 
-export function PeriodeDetaljer({ periode }: IProps) {
-  const navigate = useNavigate(); // Initialize useNavigate
-
-  const handleKorrigerClick = () => {
-    navigate(`/periode/${periode.id}`);
-  };
-
+export function PeriodeDetaljer({ periode, personId }: IProps) {
   return (
     <div className={styles.periodeDetaljer}>
       <div>
@@ -51,7 +45,11 @@ export function PeriodeDetaljer({ periode }: IProps) {
           </tbody>
         </table>
       </div>
-      <Button className={styles.korrigerKnapp} onClick={handleKorrigerClick}>
+      <Button
+        as="a"
+        href={`/person/${personId}/periode/${periode.id}`}
+        className={styles.korrigerKnapp}
+      >
         Korriger meldekort
       </Button>
     </div>

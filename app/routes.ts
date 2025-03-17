@@ -1,10 +1,13 @@
-import { index, route } from "@react-router/dev/routes";
+import { index, prefix, route } from "@react-router/dev/routes";
 
 const routes = [
   index("routes/index.tsx"),
-  route("/person", "routes/person.tsx"),
-  route("/person/:id", "routes/person.$id.tsx"),
-  route("/periode/:id", "routes/periode.$id.tsx"),
+  ...prefix("person", [
+    index("routes/person.tsx"),
+    route(":personId", "routes/person.$personId.tsx"),
+    route(":personId/periode", "routes/person.$personId.periode.tsx"),
+    route(":personId/periode/:periodeId", "routes/person.$personId.periode.$periodeId.tsx"),
+  ]),
   route("/api/internal/isalive", "routes/api.internal.isalive.ts"),
   route("/api/internal/isready", "routes/api.internal.isready.ts"),
 ];

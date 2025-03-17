@@ -19,7 +19,7 @@ const ikoner = {
   KVINNE: FigureOutwardFillIcon,
 };
 
-export default async function PersonInformasjon({ person }: IProps) {
+export default function PersonInformasjon({ person }: IProps) {
   const fulltNavn = [person.fornavn, person.mellomnavn, person.etternavn].join(" ");
 
   const Kjonn = ikoner[person.kjonn];
@@ -29,7 +29,9 @@ export default async function PersonInformasjon({ person }: IProps) {
       <div className={classNames(styles.kjonnIkon, styles[person.kjonn.toLowerCase()])}>
         <Kjonn fontSize="1.5rem" fill="#ffff00" />
       </div>
-      <div>{fulltNavn}</div>
+      <div>
+        <a href="/person/17051412345">{fulltNavn}</a>
+      </div>
       <div>
         Personnummer: <strong>{person.ident}</strong>
       </div>

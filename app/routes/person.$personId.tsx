@@ -9,19 +9,19 @@ import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server"
 import styles from "~/route-styles/person.module.css";
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
-import type { Route } from "./+types/person.$id";
+import type { Route } from "./+types/person.$personId";
 
 export async function loader({
   request,
   params,
 }: Route.LoaderArgs): Promise<{ perioder: IRapporteringsperiode[]; person: IPerson }> {
   const perioder = await hentRapporteringsperioder(request);
-  const person = await hentPerson(request, params.id);
+  const person = await hentPerson(request, params.personId);
   // TODO: Håndter feil i hentRapporteringsperioder
   return { perioder, person };
 }
 
-export default function Rapportering() {
+export default function Rapportering({ params }: Route.ComponentProps) {
   const { perioder, person } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
@@ -35,6 +35,7 @@ export default function Rapportering() {
   return (
     <>
       <PersonInformasjon person={person} />
+
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListe perioder={perioder} />
       </div>
@@ -45,7 +46,7 @@ export default function Rapportering() {
               <RapporteringsperiodeVisning perioder={[periode]} />
             </div>
             <div className={styles.detaljer}>
-              <PeriodeDetaljer key={periode.id} periode={periode} />
+              <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId} />
             </div>
           </>
         ))}

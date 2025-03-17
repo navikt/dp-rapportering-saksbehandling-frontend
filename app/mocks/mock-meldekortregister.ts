@@ -29,4 +29,8 @@ export const mockMeldekortregister = [
       return HttpResponse.json(rapporteringsperiode);
     }
   ),
+
+  http.post(`${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperiode`, () => {
+    logger.info("Lagrer rapporteringsperiode");
+  }),
 ];
