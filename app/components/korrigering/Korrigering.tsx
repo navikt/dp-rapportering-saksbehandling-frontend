@@ -34,8 +34,8 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager, originalPerio
 
   return (
     <div className={styles.korrigeringsGrid}>
-      <h4 className={classNames(styles.row1, styles.col2)}>Uke {startUke}</h4>
-      <h4 className={classNames(styles.row1, styles.col9)}>Uke {sluttUke}</h4>
+      <h3 className={classNames(styles.row1, styles.col2, styles.greie)}>Uke {startUke}</h3>
+      <h3 className={classNames(styles.row1, styles.col9, styles.greie)}>Uke {sluttUke}</h3>
       <div
         className={classNames(styles.aktivitet, styles.col1, styles.row3, styles.arbeid, "arbeid")}
       >
