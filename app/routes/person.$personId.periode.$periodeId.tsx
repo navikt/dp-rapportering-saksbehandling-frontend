@@ -36,10 +36,10 @@ export default function Periode() {
 
   return (
     <div className={styles.rapporteringsperiode}>
-      <h2>
-        Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-      </h2>
       <div className={styles.grid}>
+        <h2 className={styles.periodeOverskrift}>
+          Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
+        </h2>
         <div className={styles.uendretPeriode}>
           <div className={styles.periodeOgTag}>
             <PeriodeMedUke periode={periode} />

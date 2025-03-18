@@ -33,7 +33,7 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager, originalPerio
   const totalUtdanning = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Utdanning, true);
 
   return (
-    <div className={styles.grid}>
+    <div className={styles.korrigeringsGrid}>
       <h4 className={classNames(styles.row1, styles.col2)}>Uke {startUke}</h4>
       <h4 className={classNames(styles.row1, styles.col9)}>Uke {sluttUke}</h4>
       <div

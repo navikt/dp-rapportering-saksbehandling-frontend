@@ -1,4 +1,4 @@
-.grid {
+.korrigerings-grid {
   display: grid;
   grid-template-columns: auto repeat(14, 1fr) auto;
   grid-template-rows: auto auto repeat(5, 1fr);
@@ -108,6 +108,7 @@
 
 .row-1 {
   grid-row: 1;
+  width: max-content;
 }
 
 .row-2 {
