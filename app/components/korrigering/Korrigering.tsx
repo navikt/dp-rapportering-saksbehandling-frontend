@@ -3,9 +3,10 @@ import classNames from "classnames";
 import { Fragment } from "react";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { hentUkedag, hentUkerFraPeriode, konverterFraISO8601Varighet } from "~/utils/dato.utils";
+import { hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
+import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
 import styles from "./Korrigering.module.css";
 import {
   endreArbeid,
@@ -21,21 +22,15 @@ interface IProps {
   originalPeriode: IRapporteringsperiode;
 }
 
-function beregnTotalt(periode: IRapporteringsperiode, type: string, erDager: boolean) {
-  return periode.dager.reduce((sum, dag) => {
-    const aktivitet = dag.aktiviteter.find((aktivitet) => aktivitet.type === type);
-    if (!aktivitet) return sum;
-    return erDager ? sum + 1 : sum + (konverterFraISO8601Varighet(aktivitet.timer) || 0);
-  }, 0);
-}
-
 export function Korrigering({ korrigerteDager, setKorrigerteDager, originalPeriode }: IProps) {
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
 
-  const totalArbeid = beregnTotalt(originalPeriode, AKTIVITET_TYPE.Arbeid, false);
-  const totalSyk = beregnTotalt(originalPeriode, AKTIVITET_TYPE.Syk, true);
-  const totalFravaer = beregnTotalt(originalPeriode, AKTIVITET_TYPE.Fravaer, true);
-  const totalUtdanning = beregnTotalt(originalPeriode, AKTIVITET_TYPE.Utdanning, true);
+  const korrigertPeriode = { ...originalPeriode, dager: korrigerteDager };
+
+  const totalArbeid = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Arbeid, false);
+  const totalSyk = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Syk, true);
+  const totalFravaer = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Fravaer, true);
+  const totalUtdanning = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Utdanning, true);
 
   return (
     <div className={styles.grid}>
