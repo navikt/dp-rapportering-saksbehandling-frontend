@@ -1,3 +1,4 @@
+import { DP_MELDEKORTREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -7,14 +8,14 @@ import { logger } from "./logger.server";
 export async function hentRapporteringsperioder(
   request: Request
 ): Promise<IRapporteringsperiode[]> {
-  const url = `${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperioder`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperioder`;
 
   logger.info(`Henter rapporteringsperioder fra ${url}`);
 
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: await getHeaders(request),
+      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
     });
 
     if (!response.ok) {
@@ -43,12 +44,12 @@ export async function hentPeriode(
   request: Request,
   periodeId: string
 ): Promise<IRapporteringsperiode> {
-  const url = `${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperiode/${periodeId}`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/${periodeId}`;
 
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: await getHeaders(request),
+      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
     });
 
     if (!response.ok) {

@@ -1,8 +1,14 @@
-import { AKTIVITET_TYPE, RAPPORTERING_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import {
+  AKTIVITET_TYPE,
+  KORT_TYPE,
+  RAPPORTERING_TYPE,
+  RAPPORTERINGSPERIODE_STATUS,
+} from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 const periode1: IRapporteringsperiode = {
   id: "0194f44e-befd-7974-b48f-250353c1ff09",
+  type: KORT_TYPE.Elektronisk,
   periode: { fraOgMed: "2025-01-27", tilOgMed: "2025-02-09" },
   dager: [
     { dagIndex: 0, dato: "2025-01-27", aktiviteter: [] },
@@ -36,6 +42,7 @@ const periode1: IRapporteringsperiode = {
 
 const periode2: IRapporteringsperiode = {
   id: "0194f454-2d83-7e31-a09d-bf6d8f330c35",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-01-27",
     tilOgMed: "2025-02-09",
@@ -169,6 +176,7 @@ const periode2: IRapporteringsperiode = {
 
 const periode3: IRapporteringsperiode = {
   id: "0194f457-9b33-765a-9ef9-4db728c5a239",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-02-17",
     tilOgMed: "2025-03-02",
@@ -309,6 +317,7 @@ const periode3: IRapporteringsperiode = {
 
 const periode4: IRapporteringsperiode = {
   id: "0194f45a-b518-7e7b-80fb-70627fd31ee1",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-01-27",
     tilOgMed: "2025-02-09",
@@ -419,6 +428,7 @@ const periode4: IRapporteringsperiode = {
 
 const periode5: IRapporteringsperiode = {
   id: "0194f459-7fb9-7bd1-9da7-a0ff10e2831a",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-01-27",
     tilOgMed: "2025-02-09",
@@ -539,6 +549,7 @@ const periode5: IRapporteringsperiode = {
 
 const periode6: IRapporteringsperiode = {
   id: "0194f45b-7fb9-7bd1-9da7-a0ff10e2831b",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-02-10",
     tilOgMed: "2025-02-23",
@@ -575,6 +586,7 @@ const periode6: IRapporteringsperiode = {
 
 const periode7: IRapporteringsperiode = {
   id: "0194f45c-7fb9-7bd1-9da7-a0ff10e2831c",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-02-10",
     tilOgMed: "2025-02-23",
@@ -611,6 +623,7 @@ const periode7: IRapporteringsperiode = {
 
 const periode8: IRapporteringsperiode = {
   id: "0194f45d-7fb9-7bd1-9da7-a0ff10e2831d",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-02-10",
     tilOgMed: "2025-02-23",
@@ -647,6 +660,7 @@ const periode8: IRapporteringsperiode = {
 
 const periode9: IRapporteringsperiode = {
   id: "0194f45e-7fb9-7bd1-9da7-a0ff10e2831e",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-02-10",
     tilOgMed: "2025-02-23",
@@ -683,6 +697,7 @@ const periode9: IRapporteringsperiode = {
 
 const periode10: IRapporteringsperiode = {
   id: "0194f45f-7fb9-7bd1-9da7-a0ff10e2831f",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-02-10",
     tilOgMed: "2025-02-23",
@@ -719,6 +734,7 @@ const periode10: IRapporteringsperiode = {
 
 const periode11: IRapporteringsperiode = {
   id: "0194f454-2d83-7e31-a09d-bf6d8f330888",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-01-27",
     tilOgMed: "2025-02-09",
@@ -852,6 +868,7 @@ const periode11: IRapporteringsperiode = {
 
 const periode12: IRapporteringsperiode = {
   id: "0194f457-9b33-765a-9ef9-4db728c5a999",
+  type: KORT_TYPE.Elektronisk,
   periode: {
     fraOgMed: "2025-02-17",
     tilOgMed: "2025-03-02",

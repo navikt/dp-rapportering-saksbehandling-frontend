@@ -6,14 +6,14 @@ import { getEnv } from "~/utils/env.utils";
 import rapporteringsperioder from "./data/mock-rapporteringsperioder";
 
 export const mockMeldekortregister = [
-  http.get(`${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperioder`, () => {
+  http.get(`${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperioder`, () => {
     logger.info(`Henter ${rapporteringsperioder.length} rapporteringsperioder`);
 
     return HttpResponse.json(rapporteringsperioder);
   }),
 
   http.get(
-    `${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
+    `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
     ({ params }) => {
       const rapporteringsperiodeId = params.rapporteringsperiodeId;
       const rapporteringsperiode = rapporteringsperioder.find(
@@ -30,7 +30,7 @@ export const mockMeldekortregister = [
     }
   ),
 
-  http.post(`${getEnv("DP_RAPPORTERING_URL")}/rapporteringsperiode`, () => {
+  http.post(`${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`, () => {
     logger.info("Lagrer rapporteringsperiode");
   }),
 ];

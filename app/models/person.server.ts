@@ -1,3 +1,4 @@
+import { DP_PERSONREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import type { IPerson } from "~/utils/types";
@@ -6,11 +7,11 @@ import { logger } from "./logger.server";
 
 export async function hentPerson(request: Request, personId: string): Promise<IPerson> {
   try {
-    const url = `${getEnv("DP_RAPPORTERING_URL")}/person/${personId}`;
+    const url = `${getEnv("DP_PERSONREGISTER_URL")}/person/${personId}`;
 
     const response = await fetch(url, {
       method: "GET",
-      headers: await getHeaders(request),
+      headers: await getHeaders({ request, audience: DP_PERSONREGISTER_AUDIENCE }),
     });
 
     return await response.json();

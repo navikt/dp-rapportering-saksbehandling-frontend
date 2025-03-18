@@ -17,3 +17,15 @@ export const AKTIVITET_TYPE = {
   Fravaer: "Fravaer",
   Utdanning: "Utdanning",
 } as const;
+
+export const KORT_TYPE = {
+  Ordinaer: "01",
+  Erstatning: "03",
+  Retur: "04",
+  Elektronisk: "05",
+  Aap: "06",
+  Ordinaer_manuell: "07",
+  Maskinelt_oppdatert: "08",
+  Manuell_arena: "09",
+  Korrigert_elektronisk: "10",
+} as const;

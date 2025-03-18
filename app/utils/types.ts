@@ -1,4 +1,9 @@
-import type { AKTIVITET_TYPE, RAPPORTERING_TYPE, RAPPORTERINGSPERIODE_STATUS } from "./constants";
+import type {
+  AKTIVITET_TYPE,
+  KORT_TYPE,
+  RAPPORTERING_TYPE,
+  RAPPORTERINGSPERIODE_STATUS,
+} from "./constants";
 
 declare global {
   interface Window {
@@ -50,8 +55,11 @@ export interface IRapporteringsperiodeDag {
   aktiviteter: IAktivitet[];
 }
 
+type TKortType = (typeof KORT_TYPE)[keyof typeof KORT_TYPE];
+
 export interface IRapporteringsperiode {
   id: string;
+  type: TKortType;
   periode: IPeriode;
   dager: IRapporteringsperiodeDag[];
   sisteFristForTrekk: string | null;
@@ -90,11 +98,13 @@ export const boolskeVerdier = ["true", "false"] as const;
 export type TrueOrFalse = (typeof boolskeVerdier)[number];
 
 export interface IEnv {
-  DP_RAPPORTERING_URL: string;
+  DP_MELDEKORTREGISTER_URL: string;
+  DP_MELDEKORTREGISTER_TOKEN?: string;
+  DP_PERSONREGISTER_URL: string;
+  DP_PERSONREGISTER_TOKEN?: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";
-  DP_RAPPORTERING_TOKEN?: string;
 }
 
 export interface ISaksbehandler {

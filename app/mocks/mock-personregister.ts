@@ -6,7 +6,7 @@ import { getEnv } from "~/utils/env.utils";
 import { mockPerson } from "./data/mock-person";
 
 export const mockPersonregister = [
-  http.get(`${getEnv("DP_RAPPORTERING_URL")}/person/:id`, () => {
+  http.get(`${getEnv("DP_PERSONREGISTER_URL")}/person/:id`, () => {
     logger.info(`Henter person ${mockPerson.ident}`);
 
     return HttpResponse.json(mockPerson);

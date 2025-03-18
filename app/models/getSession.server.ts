@@ -17,11 +17,11 @@ export async function getSession(req: Request): Promise<INetworkResponse<ISessio
     };
   }
 
-  if (isLocalhost && getEnv("DP_RAPPORTERING_TOKEN")) {
+  if (isLocalhost && getEnv("DP_MELDEKORTREGISTER_TOKEN")) {
     return {
       status: "success",
       data: {
-        expiresIn: expiresIn(getEnv("DP_RAPPORTERING_TOKEN")),
+        expiresIn: expiresIn(getEnv("DP_MELDEKORTREGISTER_TOKEN")),
       },
     };
   }

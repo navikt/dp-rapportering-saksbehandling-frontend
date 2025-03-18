@@ -9,8 +9,11 @@ import { getEnv, isLocalhost } from "./env.utils";
 const fallbackToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
-const localToken = process.env.DP_RAPPORTERING_TOKEN ?? fallbackToken;
-export const audienceDPRapportering = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-rapportering`;
+const localToken = process.env.DP_MELDEKORTREGISTER_TOKEN ?? fallbackToken;
+
+export const DP_MELDEKORTREGISTER_AUDIENCE = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-meldekortregister`;
+export const DP_PERSONREGISTER_AUDIENCE = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-personregister`;
+export const MICROSOFT_AUDIENCE = `https://graph.microsoft.com/.default`;
 
 export function sessionExpiresIn(request: Request) {
   const token =
@@ -28,15 +31,6 @@ export function sessionExpiresIn(request: Request) {
   } catch (e: unknown) {
     return 0;
   }
-}
-
-export async function getMicrosoftOboToken(request: Request) {
-  if (isLocalhost || getEnv("USE_MSW") === "true") {
-    return process.env.MICROSOFT_TOKEN as string;
-  }
-
-  const audience = `https://graph.microsoft.com/.default`;
-  return await getOnBehalfOfToken(request, audience);
 }
 
 export async function getOnBehalfOfToken(request: Request, audience: string) {

@@ -3,7 +3,7 @@
 import { uuidv7 } from "uuidv7";
 
 import { getSessionId } from "../mocks/session";
-import { getMicrosoftOboToken } from "./auth.utils.server";
+import { getOnBehalfOfToken } from "./auth.utils.server";
 import { isLocalhost } from "./env.utils";
 
 function generateCorrelationId() {
@@ -12,8 +12,14 @@ function generateCorrelationId() {
   return `dp-rapp-${uuidv7()}`.substring(0, 54);
 }
 
-export async function getHeaders(request: Request, customHeaders = {}) {
-  const onBehalfOfToken = await getMicrosoftOboToken(request);
+interface IProps {
+  request: Request;
+  customHeaders?: Record<string, string>;
+  audience: string;
+}
+
+export async function getHeaders({ request, customHeaders = {}, audience }: IProps) {
+  const onBehalfOfToken = await getOnBehalfOfToken(request, audience);
 
   const headers = {
     "Content-Type": "application/json",

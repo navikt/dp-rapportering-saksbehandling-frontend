@@ -26,7 +26,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   return {
     saksbehandler,
     env: {
-      DP_RAPPORTERING_URL: getEnv("DP_RAPPORTERING_URL"),
+      DP_MELDEKORTREGISTER_URL: getEnv("DP_MELDEKORTREGISTER_URL"),
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
       NODE_ENV: getEnv("NODE_ENV"),

@@ -6,7 +6,8 @@ export function getEnv<T>(key: keyof IEnv): T {
   const defaultEnv: IEnv = {
     IS_LOCALHOST: "false",
     USE_MSW: env.NODE_ENV === "test" ? "true" : "false",
-    DP_RAPPORTERING_URL: "https://dp-rapportering.intern.dev.navn.no",
+    DP_MELDEKORTREGISTER_URL: "https://dp-meldekortregister.intern.dev.navn.no",
+    DP_PERSONREGISTER_URL: "https://dp-personregister.intern.dev.nav.no",
   };
 
   // @ts-expect-error IEnv inneholder ikke VITE_ prefix
