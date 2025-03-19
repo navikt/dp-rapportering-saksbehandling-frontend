@@ -29,9 +29,7 @@ export default function Periode() {
   const { periode } = useLoaderData<typeof loader>();
 
   const [korrigerteDager, setKorrigerteDager] = useState<IRapporteringsperiodeDag[]>(periode.dager);
-  const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>(
-    periode.begrunnelseEndring ?? ""
-  );
+  const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
@@ -49,6 +47,12 @@ export default function Periode() {
             <Tag variant="neutral">Sist beregnet</Tag>
           </div>
           <Forhandsvisning periode={periode} />
+          {periode.begrunnelseEndring && (
+            <div className={styles.begrunnelseVisning}>
+              <h4>Begrunnelse for korrigering</h4>
+              <p>{periode.begrunnelseEndring}</p>
+            </div>
+          )}
         </div>
         <div className={styles.endretPeriode}>
           <div className={styles.periodeOgTag}>
