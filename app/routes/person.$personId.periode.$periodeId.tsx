@@ -29,6 +29,9 @@ export default function Periode() {
   const { periode } = useLoaderData<typeof loader>();
 
   const [korrigerteDager, setKorrigerteDager] = useState<IRapporteringsperiodeDag[]>(periode.dager);
+  const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>(
+    periode.begrunnelseEndring ?? ""
+  );
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
@@ -36,10 +39,10 @@ export default function Periode() {
 
   return (
     <div className={styles.rapporteringsperiode}>
-      <h2>
-        Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-      </h2>
       <div className={styles.grid}>
+        <h2 className={styles.periodeOverskrift}>
+          Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
+        </h2>
         <div className={styles.uendretPeriode}>
           <div className={styles.periodeOgTag}>
             <PeriodeMedUke periode={periode} />
@@ -52,15 +55,28 @@ export default function Periode() {
             <PeriodeMedUke periode={periode} />
             <Tag variant="error">Korrigering</Tag>
           </div>
-          <Forhandsvisning periode={{ ...periode, dager: korrigerteDager }} />
-        </div>
-        <div className={styles.korrigering}>
-          <Korrigering
-            korrigerteDager={korrigerteDager}
-            setKorrigerteDager={setKorrigerteDager}
-            originalPeriode={periode}
+          <Forhandsvisning
+            periode={{
+              ...periode,
+              dager: korrigerteDager,
+              begrunnelseEndring: korrigertBegrunnelse,
+            }}
           />
+          <div className={styles.begrunnelseVisning}>
+            <h4>Saksbehandlers begrunnelse for korrigering</h4>
+            <p className={!korrigertBegrunnelse ? styles.obligatorisk : ""}>
+              {korrigertBegrunnelse || "Obligatorisk"}
+            </p>
+          </div>
         </div>
+      </div>
+      <div className={styles.korrigering}>
+        <Korrigering
+          korrigerteDager={korrigerteDager}
+          setKorrigerteDager={setKorrigerteDager}
+          originalPeriode={periode}
+          setKorrigertBegrunnelse={setKorrigertBegrunnelse}
+        />
       </div>
     </div>
   );

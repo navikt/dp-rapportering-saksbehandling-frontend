@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import { Forhandsvisning } from "./Forhandsvisning";
@@ -14,11 +16,11 @@ export function RapporteringsperiodeVisning({ perioder }: IProps) {
     <div className={styles.container}>
       <div className={styles.perioder}>
         {perioder.map((periode) => (
-          <>
+          <Fragment key={periode.id}>
             <PeriodeMedUke periode={periode} />
             <Forhandsvisning key={periode.id} periode={periode} />
             <Sammenlagt periode={periode} />
-          </>
+          </Fragment>
         ))}
       </div>
     </div>

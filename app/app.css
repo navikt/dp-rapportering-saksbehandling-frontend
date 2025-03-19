@@ -73,3 +73,13 @@ p {
   align-items: center;
   justify-content: center;
 }
+
+.korrigering-tekstfelt textarea.navds-textarea__input {
+  height: 100%;
+  margin-top: var(--a-spacing-6);
+}
+
+.korrigering-tekstfelt.navds-form-field {
+  display: block;
+  height: 100%;
+}

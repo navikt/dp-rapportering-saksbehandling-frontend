@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useLoaderData, useSearchParams } from "react-router";
 
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
@@ -35,14 +36,14 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       </div>
       <div className={styles.grid}>
         {valgteRapporteringsperiode.map((periode) => (
-          <>
+          <Fragment key={periode.id}>
             <div className={styles.forhandsvisning}>
               <RapporteringsperiodeVisning perioder={[periode]} />
             </div>
             <div className={styles.detaljer}>
               <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId} />
             </div>
-          </>
+          </Fragment>
         ))}
       </div>
     </>
