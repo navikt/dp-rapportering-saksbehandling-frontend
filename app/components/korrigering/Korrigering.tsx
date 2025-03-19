@@ -177,7 +177,19 @@ export function Korrigering({
           className="korrigering-tekstfelt"
         ></Textarea>
       </div>
-      <Button className={classNames(styles.col17, styles.row7)} onClick={handleOnClick}>
+      <Button
+        as="a"
+        href="/person/17051412345/perioder"
+        variant="secondary"
+        className={classNames(styles.col16, styles.row7)}
+      >
+        Avbryt
+      </Button>
+      <Button
+        variant="primary"
+        className={classNames(styles.col17, styles.row7)}
+        onClick={handleOnClick}
+      >
         Fullfør korrigering
       </Button>
     </div>
