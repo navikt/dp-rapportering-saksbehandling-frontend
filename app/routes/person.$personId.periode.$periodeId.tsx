@@ -76,6 +76,7 @@ export default function Periode() {
           setKorrigerteDager={setKorrigerteDager}
           originalPeriode={periode}
           setKorrigertBegrunnelse={setKorrigertBegrunnelse}
+          korrigertBegrunnelse={korrigertBegrunnelse}
         />
       </div>
     </div>

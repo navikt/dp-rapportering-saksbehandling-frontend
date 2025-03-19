@@ -1,6 +1,7 @@
 import { Button, Checkbox, CheckboxGroup, Textarea, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
 import { Fragment } from "react";
+import { useFetcher } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
@@ -21,6 +22,7 @@ interface IProps {
   setKorrigerteDager: SetKorrigerteDager;
   originalPeriode: IRapporteringsperiode;
   setKorrigertBegrunnelse: (value: string) => void;
+  korrigertBegrunnelse: string;
 }
 
 export function Korrigering({
@@ -28,15 +30,31 @@ export function Korrigering({
   setKorrigerteDager,
   originalPeriode,
   setKorrigertBegrunnelse,
+  korrigertBegrunnelse,
 }: IProps) {
+  const fetcher = useFetcher();
+
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
 
-  const korrigertPeriode = { ...originalPeriode, dager: korrigerteDager };
+  const korrigertPeriode = {
+    ...originalPeriode,
+    dager: korrigerteDager,
+    begrunnelseEndring: korrigertBegrunnelse,
+  };
 
   const totalArbeid = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Arbeid, false);
   const totalSyk = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Syk, true);
   const totalFravaer = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Fravaer, true);
   const totalUtdanning = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Utdanning, true);
+
+  function handleOnClick() {
+    fetcher.submit(
+      {
+        rapporteringsperiode: JSON.stringify(korrigertPeriode),
+      },
+      { method: "post", action: "/api/rapportering" }
+    );
+  }
 
   return (
     <div className={styles.korrigeringsGrid}>
@@ -159,7 +177,9 @@ export function Korrigering({
           className="korrigering-tekstfelt"
         ></Textarea>
       </div>
-      <Button className={classNames(styles.col17, styles.row7)}>Fullfør korrigering</Button>
+      <Button className={classNames(styles.col17, styles.row7)} onClick={handleOnClick}>
+        Fullfør korrigering
+      </Button>
     </div>
   );
 }

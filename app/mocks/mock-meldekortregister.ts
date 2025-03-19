@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 
 import { logger } from "~/models/logger.server";
 import { getEnv } from "~/utils/env.utils";
+import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { withDb } from "./db";
 import { getDatabase } from "./db.utils";
@@ -37,11 +38,21 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
       }
     ),
 
-    http.post(`${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`, ({ cookies }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const db = database || getDatabase(cookies);
+    http.post(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`,
+      async ({ request, cookies }) => {
+        const db = database || getDatabase(cookies);
 
-      logger.info("Lagrer rapporteringsperiode");
-    }),
+        const rapporteringsperiode = (await request.json()) as IRapporteringsperiode;
+
+        const korrigertPeriode = await db.korrigerPeriode(rapporteringsperiode);
+        console.log(rapporteringsperiode.id);
+        console.log(korrigertPeriode.id, korrigertPeriode.originalId);
+
+        logger.info("Lagrer rapporteringsperiode");
+
+        return HttpResponse.json(korrigertPeriode, { status: 200 });
+      }
+    ),
   ];
 }

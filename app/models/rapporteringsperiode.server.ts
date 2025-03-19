@@ -66,3 +66,22 @@ export async function hentPeriode(
     throw new Response(`rapportering-feilmelding-hent-periode`, { status: 500 });
   }
 }
+
+export async function korrigerPeriode(request: Request, periode: IRapporteringsperiode) {
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      body: JSON.stringify(periode),
+    });
+
+    if (!response.ok) {
+      throw "rapportering-feilmelding-korriger-periode";
+    }
+  } catch (error) {
+    logger.error(`Feil ved henting av rapporteringsperiode: ${error}`);
+    throw new Response("rapportering-feilmelding-hent-periode", { status: 500 });
+  }
+}
