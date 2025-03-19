@@ -40,6 +40,10 @@
   justify-content: center;
 }
 
+.korrigeringDato p {
+  align-self: center;
+}
+
 .arbeid {
   grid-row: 2 / 3;
 }

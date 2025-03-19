@@ -120,7 +120,7 @@ export function Korrigering({
               value={arbeid ?? ""}
               onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
               readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
-              className={classNames(styles[`col-${index + 2}`], styles.row3, styles.arbeidInput)}
+              className={classNames(styles[`col-${index + 2}`], styles.row3, "arbeidInput")}
             ></TextField>
             <CheckboxGroup
               legend="Aktiviteter"
