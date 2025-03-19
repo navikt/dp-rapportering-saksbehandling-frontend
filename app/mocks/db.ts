@@ -1,4 +1,4 @@
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
 import { type Database } from "./session";
 
@@ -29,11 +29,33 @@ function leggTilRapporteringsperiode(db: Database, rapporteringsperiode: IRappor
   db.rapporteringsperioder.create(rapporteringsperiode);
 }
 
+function hentPerson(db: Database, personId: string) {
+  return db.personer.findFirst({
+    where: {
+      ident: {
+        equals: personId,
+      },
+    },
+  }) as IPerson;
+}
+
+function hentSaksbehandler(db: Database, saksbehandlerId: string) {
+  return db.saksbehandlere.findFirst({
+    where: {
+      onPremisesSamAccountName: {
+        equals: saksbehandlerId,
+      },
+    },
+  }) as ISaksbehandler;
+}
+
 export function withDb(db: Database) {
   return {
     leggTilRapporteringsperiode: (rapporteringsperiode: IRapporteringsperiode) =>
       leggTilRapporteringsperiode(db, rapporteringsperiode),
     hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
     hentRapporteringsperiodeMedId: (id: string) => hentRapporteringsperiodeMedId(db, id),
+    hentPerson: (personId: string) => hentPerson(db, personId),
+    hentSaksbehandler: (saksbehandlerId: string) => hentSaksbehandler(db, saksbehandlerId),
   };
 }

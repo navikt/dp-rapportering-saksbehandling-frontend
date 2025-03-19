@@ -1,7 +1,9 @@
 import { faker } from "@faker-js/faker";
 import { factory, nullable, primaryKey } from "@mswjs/data";
 
+import { mockPerson } from "./data/mock-person";
 import mockRapporteringsperioder from "./data/mock-rapporteringsperioder";
+import { mockSaksbehandler } from "./data/mock-saksbehandler";
 
 export type Database = ReturnType<SessionRecord["createDatabase"]>;
 
@@ -19,6 +21,10 @@ class SessionRecord {
       const db = this.createDatabase();
 
       this.sessions.set(sessionId, db);
+
+      db.personer.create(mockPerson);
+
+      db.saksbehandlere.create(mockSaksbehandler);
 
       mockRapporteringsperioder.forEach((rapporteringsperiode) => {
         db.rapporteringsperioder.create(rapporteringsperiode);
@@ -51,23 +57,23 @@ class SessionRecord {
         html: nullable(faker.string.alpha),
         rapporteringstype: nullable(faker.string.alpha),
       },
-      // personer: {
-      //   alder: faker.number.int,
-      //   fodselsdato: faker.date.past,
-      //   kjonn: faker.string.alpha,
-      //   statsborgerskap: faker.string.alpha,
-      //   fornavn: faker.string.alpha,
-      //   mellomnavn: faker.string.alpha,
-      //   etternavn: faker.string.alpha,
-      //   ident: faker.string.alpha,
-      //   sikkerhetstiltak: Array,
-      // },
-      // saksbehandlere: {
-      //   onPremisesSamAccountName: faker.string.alphanumeric,
-      //   givenName: faker.string.alpha,
-      //   displayName: faker.string.alpha,
-      //   mail: () => faker.internet.email(),
-      // },
+      personer: {
+        ident: primaryKey(faker.string.alpha),
+        alder: faker.number.int,
+        etternavn: faker.string.alpha,
+        fodselsdato: faker.string.alphanumeric,
+        fornavn: faker.string.alpha,
+        kjonn: faker.string.alpha,
+        mellomnavn: faker.string.alpha,
+        sikkerhetstiltak: Array,
+        statsborgerskap: faker.string.alpha,
+      },
+      saksbehandlere: {
+        onPremisesSamAccountName: primaryKey(faker.string.alphanumeric),
+        displayName: faker.string.alpha,
+        givenName: faker.string.alpha,
+        mail: () => faker.internet.email(),
+      },
     });
   }
 }

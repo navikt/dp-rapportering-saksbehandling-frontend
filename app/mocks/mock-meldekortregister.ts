@@ -13,7 +13,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
 
       const rapporteringsperioder = db.hentAlleRapporteringsperioder();
 
-      logger.info(`Henter ${rapporteringsperioder.length} rapporteringsperioder`);
+      logger.info(`Hentet ${rapporteringsperioder.length} rapporteringsperioder`);
 
       return HttpResponse.json(rapporteringsperioder);
     }),
@@ -29,9 +29,9 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         if (!rapporteringsperiode) {
           logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId}`);
           return HttpResponse.json(null, { status: 404 });
-        } else {
-          logger.info(`Henter rapporteringsperiode ${rapporteringsperiodeId}`);
         }
+
+        logger.info(`Hentet rapporteringsperiode ${rapporteringsperiodeId}`);
 
         return HttpResponse.json(rapporteringsperiode);
       }
