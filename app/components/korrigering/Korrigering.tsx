@@ -1,4 +1,4 @@
-import { Checkbox, CheckboxGroup, TextField } from "@navikt/ds-react";
+import { Button, Checkbox, CheckboxGroup, Textarea, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
 import { Fragment } from "react";
 
@@ -20,9 +20,15 @@ interface IProps {
   korrigerteDager: IRapporteringsperiodeDag[];
   setKorrigerteDager: SetKorrigerteDager;
   originalPeriode: IRapporteringsperiode;
+  setKorrigertBegrunnelse: (value: string) => void;
 }
 
-export function Korrigering({ korrigerteDager, setKorrigerteDager, originalPeriode }: IProps) {
+export function Korrigering({
+  korrigerteDager,
+  setKorrigerteDager,
+  originalPeriode,
+  setKorrigertBegrunnelse,
+}: IProps) {
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
 
   const korrigertPeriode = { ...originalPeriode, dager: korrigerteDager };
@@ -34,8 +40,8 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager, originalPerio
 
   return (
     <div className={styles.korrigeringsGrid}>
-      <h3 className={classNames(styles.row1, styles.col2, styles.greie)}>Uke {startUke}</h3>
-      <h3 className={classNames(styles.row1, styles.col9, styles.greie)}>Uke {sluttUke}</h3>
+      <h3 className={classNames(styles.forsteUke)}>Uke {startUke}</h3>
+      <h3 className={classNames(styles.andreUke)}>Uke {sluttUke}</h3>
       <div
         className={classNames(styles.aktivitet, styles.col1, styles.row3, styles.arbeid, "arbeid")}
       >
@@ -144,6 +150,16 @@ export function Korrigering({ korrigerteDager, setKorrigerteDager, originalPerio
       <div className={classNames(styles.col16, styles.row6, styles.oppsummering)}>
         <p>{totalUtdanning} dager</p>
       </div>
+
+      <div className={classNames(styles.col17, styles.begrunnelse)}>
+        <Textarea
+          label="Begrunnelse:"
+          placeholder="Obligatorisk"
+          onChange={(event) => setKorrigertBegrunnelse(event.target.value)}
+          className="korrigering-tekstfelt"
+        ></Textarea>
+      </div>
+      <Button className={classNames(styles.col17, styles.row7)}>Fullfør korrigering</Button>
     </div>
   );
 }
