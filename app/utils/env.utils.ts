@@ -16,3 +16,5 @@ export function getEnv<T>(key: keyof IEnv): T {
 }
 
 export const isLocalhost = getEnv("IS_LOCALHOST") === "true";
+
+export const usesMsw = getEnv("USE_MSW") === "true";

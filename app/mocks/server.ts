@@ -6,7 +6,7 @@ import { mockAzure } from "./mock-azure";
 import { mockMeldekortregister } from "./mock-meldekortregister";
 import { mockPersonregister } from "./mock-personregister";
 
-const handlers = [...mockAzure, ...mockMeldekortregister, ...mockPersonregister];
+const handlers = [...mockAzure(), ...mockMeldekortregister(), ...mockPersonregister()];
 
 export const server = setupServer(...handlers);
 

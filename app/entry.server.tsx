@@ -8,11 +8,11 @@ import type { EntryContext } from "react-router";
 import { ServerRouter } from "react-router";
 
 import { logger } from "./models/logger.server";
-import { getEnv } from "./utils/env.utils";
+import { usesMsw } from "./utils/env.utils";
 
 export const streamTimeout = 5_000;
 
-if (getEnv("USE_MSW") === "true") {
+if (usesMsw) {
   import("~/mocks/server").then(({ setup, startMockServer }) => {
     const server = setup();
     startMockServer(server);

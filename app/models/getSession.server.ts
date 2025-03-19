@@ -1,6 +1,6 @@
 import { expiresIn, getToken, validateToken } from "@navikt/oasis";
 
-import { getEnv, isLocalhost } from "~/utils/env.utils";
+import { getEnv, isLocalhost, usesMsw } from "~/utils/env.utils";
 import type { INetworkResponse } from "~/utils/types";
 
 export interface ISessionData {
@@ -8,7 +8,7 @@ export interface ISessionData {
 }
 
 export async function getSession(req: Request): Promise<INetworkResponse<ISessionData>> {
-  if (getEnv("IS_LOCALHOST") === "true" || getEnv("USE_MSW") === "true") {
+  if (getEnv("IS_LOCALHOST") === "true" || usesMsw) {
     return {
       status: "success",
       data: {

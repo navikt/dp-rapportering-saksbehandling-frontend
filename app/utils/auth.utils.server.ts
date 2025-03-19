@@ -4,7 +4,7 @@ import { expiresIn, getToken, requestOboToken, validateToken } from "@navikt/oas
 
 import { logger } from "~/models/logger.server";
 
-import { getEnv, isLocalhost } from "./env.utils";
+import { getEnv, isLocalhost, usesMsw } from "./env.utils";
 
 const fallbackToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
@@ -16,10 +16,7 @@ export const DP_PERSONREGISTER_AUDIENCE = `${process.env.NAIS_CLUSTER_NAME}:team
 export const MICROSOFT_AUDIENCE = `https://graph.microsoft.com/.default`;
 
 export function sessionExpiresIn(request: Request) {
-  const token =
-    getEnv("IS_LOCALHOST") === "true" || getEnv("USE_MSW") === "true"
-      ? localToken
-      : getToken(request);
+  const token = getEnv("IS_LOCALHOST") === "true" || usesMsw ? localToken : getToken(request);
 
   if (!token) {
     return 0;
@@ -34,7 +31,7 @@ export function sessionExpiresIn(request: Request) {
 }
 
 export async function getOnBehalfOfToken(request: Request, audience: string) {
-  if (isLocalhost || getEnv("USE_MSW") === "true") {
+  if (isLocalhost || usesMsw) {
     return localToken;
   }
 

@@ -1,6 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { factory, nullable, primaryKey } from "@mswjs/data";
 
+import mockRapporteringsperioder from "./data/mock-rapporteringsperioder";
+
 export type Database = ReturnType<SessionRecord["createDatabase"]>;
 
 type SessionMap = Map<string, Database>;
@@ -17,6 +19,10 @@ class SessionRecord {
       const db = this.createDatabase();
 
       this.sessions.set(sessionId, db);
+
+      mockRapporteringsperioder.forEach((rapporteringsperiode) => {
+        db.rapporteringsperioder.create(rapporteringsperiode);
+      });
     }
 
     return this.sessions.get(sessionId)!;
@@ -45,6 +51,23 @@ class SessionRecord {
         html: nullable(faker.string.alpha),
         rapporteringstype: nullable(faker.string.alpha),
       },
+      // personer: {
+      //   alder: faker.number.int,
+      //   fodselsdato: faker.date.past,
+      //   kjonn: faker.string.alpha,
+      //   statsborgerskap: faker.string.alpha,
+      //   fornavn: faker.string.alpha,
+      //   mellomnavn: faker.string.alpha,
+      //   etternavn: faker.string.alpha,
+      //   ident: faker.string.alpha,
+      //   sikkerhetstiltak: Array,
+      // },
+      // saksbehandlere: {
+      //   onPremisesSamAccountName: faker.string.alphanumeric,
+      //   givenName: faker.string.alpha,
+      //   displayName: faker.string.alpha,
+      //   mail: () => faker.internet.email(),
+      // },
     });
   }
 }

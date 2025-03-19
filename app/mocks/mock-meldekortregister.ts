@@ -3,34 +3,45 @@ import { http, HttpResponse } from "msw";
 import { logger } from "~/models/logger.server";
 import { getEnv } from "~/utils/env.utils";
 
-import rapporteringsperioder from "./data/mock-rapporteringsperioder";
+import type { withDb } from "./db";
+import { getDatabase } from "./db.utils";
 
-export const mockMeldekortregister = [
-  http.get(`${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperioder`, () => {
-    logger.info(`Henter ${rapporteringsperioder.length} rapporteringsperioder`);
+export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
+  return [
+    http.get(`${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperioder`, ({ cookies }) => {
+      const db = database || getDatabase(cookies);
 
-    return HttpResponse.json(rapporteringsperioder);
-  }),
+      const rapporteringsperioder = db.hentAlleRapporteringsperioder();
 
-  http.get(
-    `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
-    ({ params }) => {
-      const rapporteringsperiodeId = params.rapporteringsperiodeId;
-      const rapporteringsperiode = rapporteringsperioder.find(
-        (r) => r.id === rapporteringsperiodeId
-      );
+      logger.info(`Henter ${rapporteringsperioder.length} rapporteringsperioder`);
 
-      if (!rapporteringsperiode?.id) {
-        logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId}`);
-      } else {
-        logger.info(`Henter rapporteringsperiode ${rapporteringsperiodeId}`);
+      return HttpResponse.json(rapporteringsperioder);
+    }),
+
+    http.get(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
+      ({ params, cookies }) => {
+        const db = database || getDatabase(cookies);
+
+        const rapporteringsperiodeId: string = params.rapporteringsperiodeId as string;
+        const rapporteringsperiode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
+
+        if (!rapporteringsperiode) {
+          logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId}`);
+          return HttpResponse.json(null, { status: 404 });
+        } else {
+          logger.info(`Henter rapporteringsperiode ${rapporteringsperiodeId}`);
+        }
+
+        return HttpResponse.json(rapporteringsperiode);
       }
+    ),
 
-      return HttpResponse.json(rapporteringsperiode);
-    }
-  ),
+    http.post(`${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`, ({ cookies }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const db = database || getDatabase(cookies);
 
-  http.post(`${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`, () => {
-    logger.info("Lagrer rapporteringsperiode");
-  }),
-];
+      logger.info("Lagrer rapporteringsperiode");
+    }),
+  ];
+}

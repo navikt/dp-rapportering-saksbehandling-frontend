@@ -8,20 +8,31 @@ import {
   Links,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
   useLoaderData,
 } from "react-router";
+import { uuidv7 } from "uuidv7";
 
 import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
 import styles from "~/route-styles/root.module.css";
 
 import type { Route } from "./+types/root";
+import { hasSession } from "./mocks/session";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
-import { getEnv } from "./utils/env.utils";
+import { getEnv, isLocalhost, usesMsw } from "./utils/env.utils";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const saksbehandler = await hentSaksbehandler(request);
+
+  if (getEnv("NODE_ENV") !== "test" && (isLocalhost || usesMsw) && !hasSession(request)) {
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": `sessionId=${uuidv7()}`,
+      },
+    });
+  }
 
   return {
     saksbehandler,
