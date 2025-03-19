@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { useFetcher } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
+import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
@@ -103,8 +103,15 @@ export function Korrigering({
 
         return (
           <Fragment key={dag.dato}>
-            <div className={classNames(styles[`col-${index + 2}`], styles.row2)}>
-              {hentUkedag(dag.dato)}
+            <div
+              className={classNames(
+                styles[`col-${index + 2}`],
+                styles.row2,
+                styles.korrigeringDato
+              )}
+            >
+              <h4>{hentUkedag(dag.dato)}</h4>
+              <p>{formatterDag(dag.dato)}</p>
             </div>
             <TextField
               data-dato={dag.dato}
