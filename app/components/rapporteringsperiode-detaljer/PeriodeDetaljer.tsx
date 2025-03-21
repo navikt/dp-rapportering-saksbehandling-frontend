@@ -28,11 +28,15 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
           <tbody>
             <tr>
               <th>Arbeidssøkerstatus:</th>
-              <td>{renderTag(periode.registrertArbeidssoker ?? false)}</td>
+              <td>
+                {typeof periode.registrertArbeidssoker === "boolean"
+                  ? renderTag(periode.registrertArbeidssoker ?? false)
+                  : null}
+              </td>
             </tr>
             <tr>
               <th>Korrigering av meldekort:</th>
-              <td>{renderTag(periode.originalId !== undefined)}</td>
+              <td> {renderTag(!!periode.originalId)}</td>
             </tr>
             <tr>
               <th>Grunn til endring: </th>

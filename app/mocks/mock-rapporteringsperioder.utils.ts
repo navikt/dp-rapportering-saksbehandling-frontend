@@ -1,9 +1,9 @@
 import { addDays, addWeeks, format, getWeek, getYear, startOfWeek, subDays } from "date-fns";
 
 import { KORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
-import type { IPeriode, IRapporteringsperiode } from "~/utils/types";
+import type { IPeriode, IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
-function createId(): string {
+export function createId(): string {
   return String(Math.floor(Math.random() * 10_000_000_000));
 }
 
@@ -30,7 +30,17 @@ export function beregnNåværendePeriodeDato(): IPeriode {
   return lagPeriodeDatoFor(uke, år);
 }
 
-export function lagRapporteringsperiode(props = {}): IRapporteringsperiode {
+export function lagDager(): IRapporteringsperiodeDag[] {
+  return new Array(14).fill(null).map((_, i) => ({
+    dagIndex: i,
+    dato: "",
+    aktiviteter: [],
+  }));
+}
+
+export function lagRapporteringsperiode(
+  props: Partial<IRapporteringsperiode> = {}
+): IRapporteringsperiode {
   const { fraOgMed, tilOgMed } = beregnNåværendePeriodeDato();
 
   const meldekort: IRapporteringsperiode = {
@@ -40,11 +50,7 @@ export function lagRapporteringsperiode(props = {}): IRapporteringsperiode {
       fraOgMed,
       tilOgMed,
     },
-    dager: new Array(14).fill(null).map((_, i) => ({
-      dagIndex: i,
-      dato: "",
-      aktiviteter: [],
-    })),
+    dager: lagDager(),
     sisteFristForTrekk: null,
     kanSendesFra: "",
     kanSendes: true,
@@ -61,10 +67,17 @@ export function lagRapporteringsperiode(props = {}): IRapporteringsperiode {
   };
 
   meldekort.kanSendesFra = format(subDays(new Date(meldekort.periode.tilOgMed), 1), "yyyy-MM-dd");
-  meldekort.dager = meldekort.dager.map((dag, index) => ({
-    ...dag,
-    dato: format(addDays(new Date(meldekort.periode.fraOgMed), index), "yyyy-MM-dd"),
-  }));
+  meldekort.sisteFristForTrekk = format(
+    addDays(new Date(meldekort.periode.tilOgMed), 8),
+    "yyyy-MM-dd"
+  );
+
+  if (!props.dager) {
+    meldekort.dager = meldekort.dager.map((dag, index) => ({
+      ...dag,
+      dato: format(addDays(new Date(meldekort.periode.fraOgMed), index), "yyyy-MM-dd"),
+    }));
+  }
 
   return meldekort;
 }
