@@ -66,6 +66,11 @@ p {
   background-color: transparent !important;
 }
 
+.arbeidInput.navds-form-field {
+  max-width: 75px;
+  justify-self: center;
+}
+
 .grid-checkbox-group .navds-checkboxes {
   display: grid;
   grid-template-rows: subgrid;

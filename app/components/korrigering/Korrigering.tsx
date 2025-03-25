@@ -1,9 +1,10 @@
 import { Button, Checkbox, CheckboxGroup, Textarea, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
 import { Fragment } from "react";
+import { useFetcher } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
+import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
@@ -21,6 +22,7 @@ interface IProps {
   setKorrigerteDager: SetKorrigerteDager;
   originalPeriode: IRapporteringsperiode;
   setKorrigertBegrunnelse: (value: string) => void;
+  korrigertBegrunnelse: string;
 }
 
 export function Korrigering({
@@ -28,15 +30,31 @@ export function Korrigering({
   setKorrigerteDager,
   originalPeriode,
   setKorrigertBegrunnelse,
+  korrigertBegrunnelse,
 }: IProps) {
+  const fetcher = useFetcher();
+
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
 
-  const korrigertPeriode = { ...originalPeriode, dager: korrigerteDager };
+  const korrigertPeriode = {
+    ...originalPeriode,
+    dager: korrigerteDager,
+    begrunnelseEndring: korrigertBegrunnelse,
+  };
 
   const totalArbeid = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Arbeid, false);
   const totalSyk = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Syk, true);
   const totalFravaer = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Fravaer, true);
   const totalUtdanning = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Utdanning, true);
+
+  function handleOnClick() {
+    fetcher.submit(
+      {
+        rapporteringsperiode: JSON.stringify(korrigertPeriode),
+      },
+      { method: "post", action: "/api/rapportering" }
+    );
+  }
 
   return (
     <div className={styles.korrigeringsGrid}>
@@ -85,8 +103,15 @@ export function Korrigering({
 
         return (
           <Fragment key={dag.dato}>
-            <div className={classNames(styles[`col-${index + 2}`], styles.row2)}>
-              {hentUkedag(dag.dato)}
+            <div
+              className={classNames(
+                styles[`col-${index + 2}`],
+                styles.row2,
+                styles.korrigeringDato
+              )}
+            >
+              <h4>{hentUkedag(dag.dato)}</h4>
+              <p>{formatterDag(dag.dato)}</p>
             </div>
             <TextField
               data-dato={dag.dato}
@@ -95,7 +120,7 @@ export function Korrigering({
               value={arbeid ?? ""}
               onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
               readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
-              className={classNames(styles[`col-${index + 2}`], styles.row3, styles.arbeidInput)}
+              className={classNames(styles[`col-${index + 2}`], styles.row3, "arbeidInput")}
             ></TextField>
             <CheckboxGroup
               legend="Aktiviteter"
@@ -159,7 +184,21 @@ export function Korrigering({
           className="korrigering-tekstfelt"
         ></Textarea>
       </div>
-      <Button className={classNames(styles.col17, styles.row7)}>Fullfør korrigering</Button>
+      <Button
+        as="a"
+        href="/person/17051412345/perioder"
+        variant="secondary"
+        className={classNames(styles.col16, styles.row7)}
+      >
+        Avbryt
+      </Button>
+      <Button
+        variant="primary"
+        className={classNames(styles.col17, styles.row7)}
+        onClick={handleOnClick}
+      >
+        Fullfør korrigering
+      </Button>
     </div>
   );
 }

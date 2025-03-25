@@ -34,6 +34,16 @@
   align-items: center;
 }
 
+.korrigeringDato {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.korrigeringDato p {
+  align-self: center;
+}
+
 .arbeid {
   grid-row: 2 / 3;
 }
@@ -124,6 +134,7 @@
 
 .row-2 {
   grid-row: 2;
+  justify-self: center;
 }
 
 .row-3 {
