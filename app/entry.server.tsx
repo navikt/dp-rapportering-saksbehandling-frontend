@@ -13,8 +13,7 @@ import { usesMsw } from "./utils/env.utils";
 export const streamTimeout = 5_000;
 
 if (usesMsw) {
-  import("~/mocks/server").then(({ setup, startMockServer }) => {
-    const server = setup();
+  import("~/mocks/server").then(({ server, startMockServer }) => {
     startMockServer(server);
   });
 }

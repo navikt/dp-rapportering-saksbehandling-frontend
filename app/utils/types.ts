@@ -1,3 +1,5 @@
+import type { SetupWorker } from "msw/browser";
+
 import type {
   AKTIVITET_TYPE,
   KORT_TYPE,
@@ -10,6 +12,7 @@ declare global {
     env: IEnv;
     nativeFetch: typeof fetch;
     customFetch: (url: URL, abortController: AbortController) => Promise<Response>;
+    worker: SetupWorker;
   }
 }
 

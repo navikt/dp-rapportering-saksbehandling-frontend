@@ -1,13 +1,14 @@
-import { expect, test } from "@playwright/experimental-ct-react";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, test } from "vitest";
 
 import { TypeAktivitet } from "~/components/rapporteringsperiode-liste/TypeAktivitet";
 import { aktivitetMapping } from "~/components/rapporteringsperiode-liste/utils";
 import { lagRapporteringsperiode } from "~/mocks/mock-rapporteringsperioder.utils";
 import { AKTIVITET_TYPE } from "~/utils/constants";
 
-test.describe("TypeAktivitet", () => {
-  test("skal vise alle aktivitetstypene", async ({ mount }) => {
-    const component = await mount(
+describe("TypeAktivitet", () => {
+  test("skal vise alle aktivitetstypene", () => {
+    render(
       <TypeAktivitet
         periode={lagRapporteringsperiode({
           dager: [
@@ -39,9 +40,14 @@ test.describe("TypeAktivitet", () => {
       />
     );
 
-    await expect(component).toContainText(aktivitetMapping.Arbeid.label);
-    await expect(component).toContainText(aktivitetMapping.Syk.label);
-    await expect(component).toContainText(aktivitetMapping.Fravaer.label);
-    await expect(component).toContainText(aktivitetMapping.Utdanning.label);
+    const arbeid = screen.getByText(aktivitetMapping.Arbeid.label);
+    const syk = screen.getByText(aktivitetMapping.Syk.label);
+    const fravaer = screen.getByText(aktivitetMapping.Fravaer.label);
+    const utdanning = screen.getByText(aktivitetMapping.Utdanning.label);
+
+    expect(arbeid).toBeInTheDocument();
+    expect(syk).toBeInTheDocument();
+    expect(fravaer).toBeInTheDocument();
+    expect(utdanning).toBeInTheDocument();
   });
 });

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/experimental-ct-react";
 import { uuidv7 } from "uuidv7";
 
-import { setup, startMockServer } from "~/mocks/server";
+import { server, startMockServer } from "~/mocks/server";
 
 const url = "http://localhost:5173";
 
@@ -9,7 +9,6 @@ test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
   context.addCookies([{ name: "sessionId", value: uuidv7(), url }]);
 
-  const server = setup();
   startMockServer(server);
 });
 

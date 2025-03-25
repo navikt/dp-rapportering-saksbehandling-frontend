@@ -23,6 +23,13 @@ export default [
   {
     name: "eslint/recommended:",
     ...eslint.configs.recommended,
+    settings: {
+      "import/resolver": {
+        alias: {
+          map: [["msw/browser", "./node_modules/msw/browser"]],
+        },
+      },
+    },
   },
   ...typescript.configs.recommended,
   {
