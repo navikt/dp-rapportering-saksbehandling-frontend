@@ -11,9 +11,7 @@ export default function PersonInformasjon({ person }: IProps) {
 
   return (
     <div className={styles.personInformasjon}>
-      <div>
-        <a href="/person/17051412345/perioder">{fulltNavn}</a>
-      </div>
+      <div>{fulltNavn}</div>
       <div>
         Personnummer: <strong>{person.ident}</strong>
       </div>
