@@ -1,22 +1,30 @@
 import { Tag, Tooltip } from "@navikt/ds-react";
 import { differenceInDays, parseISO } from "date-fns";
-import { useRef, useState } from "react";
 
+import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { formatterDato } from "~/utils/dato.utils";
+import type { TRapporteringsperiodeStatus } from "~/utils/types";
 
 interface IProps {
   mottattDato: string;
   tilOgMed: string;
   sisteFristForTrekk: string | null;
+  status: TRapporteringsperiodeStatus;
 }
 
-export const SISTE_FRIST = 7; // Endre til hvor mange dager det skal være for sent
+export const SISTE_FRIST = 7; // TODO: Endre til hvor mange dager det skal være for sent
 
-export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk }: IProps) {
+export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk, status }: IProps) {
   const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
   const forSent = dagerForskjell >= SISTE_FRIST;
-  const tagRef = useRef<HTMLDivElement | null>(null);
-  const [open, setOpen] = useState(false);
+
+  if (status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling) {
+    return (
+      <div className="neutralTag">
+        <Tag variant="neutral"> </Tag>
+      </div>
+    );
+  }
 
   if (forSent) {
     return (
@@ -25,14 +33,7 @@ export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk }: IProps) 
           sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"
         }`}
       >
-        <Tag
-          ref={tagRef}
-          variant="error"
-          onClick={() => setOpen((prev) => !prev)}
-          aria-expanded={open}
-        >
-          {formatterDato({ dato: mottattDato })}
-        </Tag>
+        <Tag variant="error">{formatterDato({ dato: mottattDato })}</Tag>
       </Tooltip>
     );
   }
