@@ -1,5 +1,6 @@
 .container {
   container-type: inline-size;
+  padding-right: var(--a-spacing-6);
 }
 
 .perioder {
