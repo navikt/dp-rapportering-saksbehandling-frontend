@@ -20,7 +20,6 @@ export async function loader({
 
 export default function Rapportering({ params }: Route.ComponentProps) {
   const { perioder } = useLoaderData<typeof loader>();
-  console.log(perioder);
   const [searchParams] = useSearchParams();
 
   const valgteRapporteringsperiode =

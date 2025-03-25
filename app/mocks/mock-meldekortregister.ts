@@ -46,8 +46,6 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const rapporteringsperiode = (await request.json()) as IRapporteringsperiode;
 
         const korrigertPeriode = await db.korrigerPeriode(rapporteringsperiode);
-        console.log(rapporteringsperiode.id);
-        console.log(korrigertPeriode.id, korrigertPeriode.originalId);
 
         logger.info("Lagrer rapporteringsperiode");
 
