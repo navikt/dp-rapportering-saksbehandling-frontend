@@ -2,7 +2,6 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   background-color: var(--a-surface-subtle);
-  padding-bottom: var(--a-spacing-6);
 }
 
 .rapporteringsperiodeListe {
@@ -13,7 +12,6 @@
 .forhandsvisning {
   background-color: var(--a-surface-default);
   margin-left: var(--a-spacing-6);
-  margin-right: var(--a-spacing-6);
 }
 
 .detaljer {
@@ -25,6 +23,7 @@
 .detaljer {
   padding: var(--a-spacing-4);
   padding-bottom: var(--a-spacing-10);
+  margin-bottom: var(--a-spacing-6);
 }
 
 .hidden {
