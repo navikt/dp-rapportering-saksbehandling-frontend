@@ -6,13 +6,9 @@ import { mockAzure } from "./mock-azure";
 import { mockMeldekortregister } from "./mock-meldekortregister";
 import { mockPersonregister } from "./mock-personregister";
 
-const handlers = [...mockAzure(), ...mockMeldekortregister(), ...mockPersonregister()];
+export const handlers = [...mockAzure(), ...mockMeldekortregister(), ...mockPersonregister()];
 
 export const server = setupServer(...handlers);
-
-export function setup() {
-  return setupServer(...handlers) as SetupServerApi;
-}
 
 export function startMockServer(server: SetupServerApi) {
   server.listen({

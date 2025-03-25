@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     exclude: [...configDefaults.exclude],
     setupFiles: ["./vitest/helpers/setup.ts"],
+    environment: "jsdom",
     dir: "./vitest",
     watch: false,
     coverage: {
