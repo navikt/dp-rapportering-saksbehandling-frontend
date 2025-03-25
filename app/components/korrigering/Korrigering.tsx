@@ -1,21 +1,15 @@
-import { Button, Checkbox, CheckboxGroup, Textarea, TextField } from "@navikt/ds-react";
+import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
-import { Fragment } from "react";
 import { useFetcher } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
+import { hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
 import styles from "./Korrigering.module.css";
-import {
-  endreArbeid,
-  endreDag,
-  erIkkeAktiv,
-  hentAktiviteter,
-  type SetKorrigerteDager,
-} from "./korrigering.utils";
+import { type SetKorrigerteDager } from "./korrigering.utils";
+import { KorrigeringDag } from "./KorrigeringDag";
 
 interface IProps {
   korrigerteDager: IRapporteringsperiodeDag[];
@@ -91,77 +85,27 @@ export function Korrigering({
         Tiltak, kurs eller utdanning
       </div>
 
-      {korrigerteDager.map((dag, index) => {
-        const { arbeid, syk, fravaer, utdanning } = hentAktiviteter(dag);
-        const value = [
-          syk ? AKTIVITET_TYPE.Syk : "",
-          fravaer ? AKTIVITET_TYPE.Fravaer : "",
-          utdanning ? AKTIVITET_TYPE.Utdanning : "",
-        ].filter((v) => v);
+      <div className={classNames(styles.uke, styles.forsteUkeDager)}>
+        {korrigerteDager.slice(0, 7).map((dag, index) => (
+          <KorrigeringDag
+            key={dag.dato}
+            dag={dag}
+            index={index}
+            setKorrigerteDager={setKorrigerteDager}
+          />
+        ))}
+      </div>
 
-        const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
-
-        return (
-          <Fragment key={dag.dato}>
-            <div
-              className={classNames(
-                styles[`col-${index + 2}`],
-                styles.row2,
-                styles.korrigeringDato
-              )}
-            >
-              <h4>{hentUkedag(dag.dato)}</h4>
-              <p>{formatterDag(dag.dato)}</p>
-            </div>
-            <TextField
-              data-dato={dag.dato}
-              label="arbeid"
-              hideLabel
-              value={arbeid ?? ""}
-              onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
-              readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
-              className={classNames(styles[`col-${index + 2}`], styles.row3, "arbeidInput")}
-            ></TextField>
-            <CheckboxGroup
-              legend="Aktiviteter"
-              hideLegend
-              onChange={(value) => endreDag(value, dag, setKorrigerteDager)}
-              value={value}
-              className={classNames(
-                styles[`col-${index + 2}`],
-                styles.row4,
-                styles.gridCheckboxGroup,
-                "grid-checkbox-group"
-              )}
-            >
-              <Checkbox
-                value={AKTIVITET_TYPE.Syk}
-                hideLabel
-                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Syk)}
-                className={classNames(styles.checkbox, styles.row1)}
-              >
-                Syk
-              </Checkbox>
-              <Checkbox
-                value={AKTIVITET_TYPE.Fravaer}
-                hideLabel
-                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Fravaer)}
-                className={classNames(styles.checkbox, styles.row2)}
-              >
-                Fravær
-              </Checkbox>
-              <Checkbox
-                value={AKTIVITET_TYPE.Utdanning}
-                hideLabel
-                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Utdanning)}
-                className={classNames(styles.checkbox, styles.row3)}
-              >
-                Utdanning
-              </Checkbox>
-            </CheckboxGroup>
-          </Fragment>
-        );
-      })}
+      <div className={classNames(styles.uke, styles.andreUkeDager)}>
+        {korrigerteDager.slice(7).map((dag, index) => (
+          <KorrigeringDag
+            key={dag.dato}
+            dag={dag}
+            index={index + 7}
+            setKorrigerteDager={setKorrigerteDager}
+          />
+        ))}
+      </div>
 
       <div className={classNames(styles.col16, styles.row3, styles.oppsummering)}>
         <p>{totalArbeid} timer</p>
