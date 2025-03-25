@@ -6,10 +6,15 @@ function hentAlleRapporteringsperioder(db: Database) {
   return db.rapporteringsperioder.findMany({
     orderBy: [
       {
+        periode: {
+          fraOgMed: "desc",
+        },
+      },
+      {
         mottattDato: "desc",
       },
       {
-        originalId: "asc",
+        originalId: "desc",
       },
     ],
   }) as IRapporteringsperiode[];

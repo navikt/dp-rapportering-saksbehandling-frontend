@@ -1,7 +1,8 @@
-import { addDays, format, getWeek, getYear, subWeeks } from "date-fns";
+import { addDays, format, subWeeks } from "date-fns";
 import { uuidv7 } from "uuidv7";
 
 import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import type { IAktivitet, IRapporteringsperiode } from "~/utils/types";
 
 import {
@@ -57,6 +58,12 @@ const perioder: {
     },
     ukerFraIDag: 4,
     innsendtEtterTilOgMed: 1,
+    aktiviteter: [
+      ...new Array(4).fill(null),
+      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("3") }],
+      ...new Array(6).fill(null),
+      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("4") }],
+    ],
   },
   {
     periode: {
@@ -66,8 +73,18 @@ const perioder: {
     },
     ukerFraIDag: 6,
     innsendtEtterTilOgMed: 1,
+    aktiviteter: [
+      ...new Array(3).fill(null),
+      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("5") }],
+      ...new Array(4).fill(null),
+      [{ type: AKTIVITET_TYPE.Syk }],
+      [{ type: AKTIVITET_TYPE.Fravaer }],
+      [{ type: AKTIVITET_TYPE.Fravaer }],
+      [{ type: AKTIVITET_TYPE.Fravaer }],
+    ],
   },
   {
+    // Saksbehandler har tatt vekk utdanning
     periode: {
       status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
       originalId: id,
@@ -77,8 +94,9 @@ const perioder: {
     },
     ukerFraIDag: 8,
     innsendtEtterTilOgMed: 1,
-  }, // Saksbehandler har tatt vekk utdanning
+  },
   {
+    // Bruker har ført utdanning
     periode: {
       status: RAPPORTERINGSPERIODE_STATUS.Feilet,
       id,
@@ -87,8 +105,8 @@ const perioder: {
     },
     ukerFraIDag: 8,
     innsendtEtterTilOgMed: 1,
-    aktiviteter: [null, null, [{ type: AKTIVITET_TYPE.Utdanning }]],
-  }, // Bruker har ført utdanning
+    aktiviteter: [...new Array(2).fill(null), [{ type: AKTIVITET_TYPE.Utdanning }]],
+  },
   {
     periode: {
       status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
@@ -131,10 +149,7 @@ export default perioder.map(({ periode, ukerFraIDag, innsendtEtterTilOgMed, akti
   const dagensDato = new Date();
   const startDato = subWeeks(dagensDato, ukerFraIDag);
 
-  const { fraOgMed, tilOgMed } = lagPeriodeDatoFor(
-    getWeek(startDato, { weekStartsOn: 1 }) - 2,
-    getYear(startDato)
-  );
+  const { fraOgMed, tilOgMed } = lagPeriodeDatoFor(startDato);
 
   const dager = lagDager().map((dag, index) => {
     const dato = format(addDays(new Date(fraOgMed), index), "yyyy-MM-dd");
