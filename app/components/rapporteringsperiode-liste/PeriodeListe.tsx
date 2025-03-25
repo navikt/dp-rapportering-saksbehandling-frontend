@@ -1,5 +1,6 @@
 import { Checkbox, Table } from "@navikt/ds-react";
 import classNames from "classnames";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 
 import { ukenummer } from "~/utils/dato.utils";
@@ -26,7 +27,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
     if (!id) return;
 
     const params = new URLSearchParams(window.location.search);
-    const _ids = [...ids].filter((value) => value);
+    const _ids = [...ids].filter((value) => value && perioder.map(({ id }) => id).includes(value));
 
     if (_ids.includes(id) && _ids.length > 1) {
       params.set("rapporteringsid", _ids.filter((i) => i !== id).join(","));
@@ -42,6 +43,21 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
 
     setParams(params);
   }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const idFraUrlSomErIPerioder = ids.filter((valgtId) =>
+      perioder.map(({ id }) => id).includes(valgtId)
+    );
+
+    if (!idFraUrlSomErIPerioder.length) {
+      params.delete("rapporteringsid");
+    } else {
+      params.set("rapporteringsid", idFraUrlSomErIPerioder.join(","));
+    }
+
+    setParams(params);
+  }, []);
 
   return (
     <div className={styles.tabell}>
