@@ -184,3 +184,20 @@
 .begrunnelse {
   grid-row: 2 / 6;
 }
+
+/* New styles for table layout */
+.uke {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.uke th,
+.uke td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.uke th {
+  background-color: #f2f2f2;
+  text-align: left;
+}

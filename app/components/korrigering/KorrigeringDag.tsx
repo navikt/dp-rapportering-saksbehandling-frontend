@@ -1,6 +1,5 @@
-import { Checkbox, CheckboxGroup, TextField } from "@navikt/ds-react";
+import { Checkbox, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
-import { Fragment } from "react";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { formatterDag, hentUkedag } from "~/utils/dato.utils";
@@ -21,68 +20,73 @@ interface IProps {
   setKorrigerteDager: SetKorrigerteDager;
 }
 
-export function KorrigeringDag({ dag, index, setKorrigerteDager }: IProps) {
+export function KorrigeringDag({ dag, setKorrigerteDager }: IProps) {
   const { arbeid, syk, fravaer, utdanning } = hentAktiviteter(dag);
-  const value = [
-    syk ? AKTIVITET_TYPE.Syk : "",
-    fravaer ? AKTIVITET_TYPE.Fravaer : "",
-    utdanning ? AKTIVITET_TYPE.Utdanning : "",
-  ].filter((v) => v);
-
   const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
 
   return (
-    <Fragment key={dag.dato}>
-      <div className={classNames(styles[`col-${index + 2}`], styles.row2, styles.korrigeringDato)}>
+    <tr key={dag.dato}>
+      <td className={classNames(styles.korrigeringDato)}>
         <h4>{hentUkedag(dag.dato)}</h4>
         <p>{formatterDag(dag.dato)}</p>
-      </div>
-      <TextField
-        data-dato={dag.dato}
-        label="arbeid"
-        hideLabel
-        value={arbeid ?? ""}
-        onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
-        readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
-        className={classNames(styles[`col-${index + 2}`], styles.row3, "arbeidInput")}
-      ></TextField>
-      <CheckboxGroup
-        legend="Aktiviteter"
-        hideLegend
-        onChange={(value) => endreDag(value, dag, setKorrigerteDager)}
-        value={value}
-        className={classNames(
-          styles[`col-${index + 2}`],
-          styles.row4,
-          styles.gridCheckboxGroup,
-          "grid-checkbox-group"
-        )}
-      >
+      </td>
+      <td>
+        <TextField
+          data-dato={dag.dato}
+          label="arbeid"
+          hideLabel
+          value={arbeid ?? ""}
+          onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
+          readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
+          className={classNames("arbeidInput")}
+        ></TextField>
+      </td>
+      <td>
         <Checkbox
           value={AKTIVITET_TYPE.Syk}
           hideLabel
           readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Syk)}
-          className={classNames(styles.checkbox, styles.row1)}
+          className={classNames(styles.checkbox)}
+          checked={syk}
+          onChange={(event) =>
+            endreDag(event.target.checked ? [AKTIVITET_TYPE.Syk] : [], dag, setKorrigerteDager)
+          }
         >
           Syk
         </Checkbox>
+      </td>
+      <td>
         <Checkbox
           value={AKTIVITET_TYPE.Fravaer}
           hideLabel
           readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Fravaer)}
-          className={classNames(styles.checkbox, styles.row2)}
+          className={classNames(styles.checkbox)}
+          checked={fravaer}
+          onChange={(event) =>
+            endreDag(event.target.checked ? [AKTIVITET_TYPE.Fravaer] : [], dag, setKorrigerteDager)
+          }
         >
           Fravær
         </Checkbox>
+      </td>
+      <td>
         <Checkbox
           value={AKTIVITET_TYPE.Utdanning}
           hideLabel
           readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Utdanning)}
-          className={classNames(styles.checkbox, styles.row3)}
+          className={classNames(styles.checkbox)}
+          checked={utdanning}
+          onChange={(event) =>
+            endreDag(
+              event.target.checked ? [AKTIVITET_TYPE.Utdanning] : [],
+              dag,
+              setKorrigerteDager
+            )
+          }
         >
           Utdanning
         </Checkbox>
-      </CheckboxGroup>
-    </Fragment>
+      </td>
+    </tr>
   );
 }

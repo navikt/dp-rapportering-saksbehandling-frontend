@@ -9,7 +9,7 @@ import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/ty
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
 import styles from "./Korrigering.module.css";
 import { type SetKorrigerteDager } from "./korrigering.utils";
-import { KorrigeringDag } from "./KorrigeringDag";
+import { KorrigeringUke } from "./KorrigeringUke";
 
 interface IProps {
   korrigerteDager: IRapporteringsperiodeDag[];
@@ -29,6 +29,8 @@ export function Korrigering({
   const fetcher = useFetcher();
 
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
+  const forsteUke = korrigerteDager.slice(0, 7);
+  const andreUke = korrigerteDager.slice(7);
 
   const korrigertPeriode = {
     ...originalPeriode,
@@ -52,8 +54,13 @@ export function Korrigering({
 
   return (
     <div className={styles.korrigeringsGrid}>
-      <h3 className={classNames(styles.forsteUke)}>Uke {startUke}</h3>
-      <h3 className={classNames(styles.andreUke)}>Uke {sluttUke}</h3>
+      <KorrigeringUke
+        uke={forsteUke}
+        setKorrigerteDager={setKorrigerteDager}
+        ukenummer={startUke}
+      />
+      <KorrigeringUke uke={andreUke} setKorrigerteDager={setKorrigerteDager} ukenummer={sluttUke} />
+
       <div
         className={classNames(styles.aktivitet, styles.col1, styles.row3, styles.arbeid, "arbeid")}
       >
@@ -83,28 +90,6 @@ export function Korrigering({
         )}
       >
         Tiltak, kurs eller utdanning
-      </div>
-
-      <div className={classNames(styles.uke, styles.forsteUkeDager)}>
-        {korrigerteDager.slice(0, 7).map((dag, index) => (
-          <KorrigeringDag
-            key={dag.dato}
-            dag={dag}
-            index={index}
-            setKorrigerteDager={setKorrigerteDager}
-          />
-        ))}
-      </div>
-
-      <div className={classNames(styles.uke, styles.andreUkeDager)}>
-        {korrigerteDager.slice(7).map((dag, index) => (
-          <KorrigeringDag
-            key={dag.dato}
-            dag={dag}
-            index={index + 7}
-            setKorrigerteDager={setKorrigerteDager}
-          />
-        ))}
       </div>
 
       <div className={classNames(styles.col16, styles.row3, styles.oppsummering)}>
