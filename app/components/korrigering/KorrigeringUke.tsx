@@ -1,11 +1,12 @@
-import { Checkbox } from "@navikt/ds-react";
+import { Checkbox, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
+import { formatterDag, hentUkedag } from "~/utils/dato.utils";
 import type { IRapporteringsperiodeDag } from "~/utils/types";
 
 import styles from "./Korrigering.module.css";
-import { endreDag, erIkkeAktiv, type SetKorrigerteDager } from "./korrigering.utils";
+import { endreArbeid, endreDag, erIkkeAktiv, type SetKorrigerteDager } from "./korrigering.utils";
 
 interface IProps {
   uke: IRapporteringsperiodeDag[];
@@ -15,83 +16,72 @@ interface IProps {
 
 export function KorrigeringUke({ uke, setKorrigerteDager, ukenummer }: IProps) {
   return (
-    <>
-      <h3>Uke {ukenummer}</h3>
+    <div className={styles.korrigeringUke}>
+      <h3 className={styles.ukenummer}>Uke {ukenummer}</h3>
       <table className={classNames(styles.uke)}>
         <thead>
           <tr>
-            {uke.map((dag) => {
-              return <td key={dag.dato}>{dag.dato}</td>;
-            })}
+            {uke.map((dag) => (
+              <td key={dag.dato}>
+                <h4>{hentUkedag(dag.dato)}</h4>
+                {formatterDag(dag.dato)}
+              </td>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {[AKTIVITET_TYPE.Syk, AKTIVITET_TYPE.Fravaer, AKTIVITET_TYPE.Utdanning].map(
-            (aktivitet) => {
-              return (
-                <tr key={aktivitet}>
-                  {uke.map((dag) => {
-                    const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
+          <tr>
+            {uke.map((dag) => {
+              const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
 
-                    return (
-                      <td key={dag.dato}>
-                        <Checkbox
-                          value={AKTIVITET_TYPE[aktivitet]}
-                          hideLabel
-                          readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE[aktivitet])}
-                          className={classNames(styles.checkbox)}
-                          checked={dag.aktiviteter.some(
-                            (a) => a.type === AKTIVITET_TYPE[aktivitet]
-                          )}
-                          onChange={(event) =>
-                            endreDag(
-                              event.target.checked ? [AKTIVITET_TYPE[aktivitet]] : [],
-                              dag,
-                              setKorrigerteDager
-                            )
-                          }
-                        >
-                          Utdanning
-                        </Checkbox>
-                      </td>
-                    );
-                  })}
-                </tr>
+              return (
+                <td key={dag.dato}>
+                  <TextField
+                    data-dato={dag.dato}
+                    label="arbeid"
+                    hideLabel
+                    value={dag.arbeid ?? ""}
+                    onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
+                    readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
+                    className={classNames("arbeidInput")}
+                  />
+                </td>
               );
-            }
+            })}
+          </tr>
+          {[AKTIVITET_TYPE.Syk, AKTIVITET_TYPE.Fravaer, AKTIVITET_TYPE.Utdanning].map(
+            (aktivitet) => (
+              <tr key={aktivitet}>
+                {uke.map((dag) => {
+                  const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
+
+                  return (
+                    <td key={dag.dato}>
+                      <Checkbox
+                        value={AKTIVITET_TYPE[aktivitet]}
+                        hideLabel
+                        readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE[aktivitet])}
+                        className={classNames(styles.checkbox)}
+                        checked={dag.aktiviteter.some((a) => a.type === AKTIVITET_TYPE[aktivitet])}
+                        onChange={(event) => {
+                          const isChecked = event.target.checked;
+                          const updatedAktiviteter = isChecked
+                            ? [...aktiviteter, AKTIVITET_TYPE[aktivitet]]
+                            : aktiviteter.filter((a) => a !== AKTIVITET_TYPE[aktivitet]);
+
+                          endreDag(updatedAktiviteter, dag, setKorrigerteDager);
+                        }}
+                      >
+                        {aktivitet}
+                      </Checkbox>
+                    </td>
+                  );
+                })}
+              </tr>
+            )
           )}
-          {/* //   {uke.map((dag, index) => (
-        //     <KorrigeringDag
-        //       key={dag.dato}
-        //       dag={dag}
-        //       index={index}
-        //       setKorrigerteDager={setKorrigerteDager}
-        //     />
-        //   ))} */}
         </tbody>
       </table>
-    </>
+    </div>
   );
 }
-
-<table>
-  <thead>
-    <tr>
-      <td>Man 10.</td>
-      <td>Tir 11.</td>
-      <td>Ons 12.</td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>ARBEID</td>
-      <td>ARBEID</td>
-      <td>ARBEID</td>
-    </tr>
-    <tr>
-      <td>Syk</td>
-      <td>Syk</td>
-      <td>Syk</td>
-    </tr>
-  </tbody>
-</table>;

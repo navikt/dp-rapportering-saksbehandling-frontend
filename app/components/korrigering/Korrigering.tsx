@@ -54,55 +54,43 @@ export function Korrigering({
 
   return (
     <div className={styles.korrigeringsGrid}>
-      <KorrigeringUke
-        uke={forsteUke}
-        setKorrigerteDager={setKorrigerteDager}
-        ukenummer={startUke}
-      />
-      <KorrigeringUke uke={andreUke} setKorrigerteDager={setKorrigerteDager} ukenummer={sluttUke} />
-
-      <div
-        className={classNames(styles.aktivitet, styles.col1, styles.row3, styles.arbeid, "arbeid")}
-      >
-        Jobb
-      </div>
-      <div className={classNames(styles.aktivitet, styles.col1, styles.row4, styles.syk, "syk")}>
-        Syk
-      </div>
-      <div
-        className={classNames(
-          styles.aktivitet,
-          styles.col1,
-          styles.row5,
-          styles.fravaer,
-          "fravaer"
-        )}
-      >
-        Ferie, fravær og utenlandsopphold
-      </div>
-      <div
-        className={classNames(
-          styles.aktivitet,
-          styles.col1,
-          styles.row6,
-          styles.utdanning,
-          "utdanning"
-        )}
-      >
-        Tiltak, kurs eller utdanning
+      <div className={styles.aktiviteter}>
+        <div className={classNames(styles.arbeid, "arbeid")}>Jobb</div>
+        <div className={classNames(styles.syk, "syk")}>Syk</div>
+        <div className={classNames(styles.fravaer, "fravaer")}>
+          Ferie, fravær og utenlandsopphold
+        </div>
+        <div className={classNames(styles.utdanning, "utdanning")}>
+          Tiltak, kurs eller utdanning
+        </div>
       </div>
 
-      <div className={classNames(styles.col16, styles.row3, styles.oppsummering)}>
-        <p>{totalArbeid} timer</p>
+      <div className={styles.ukeContainer}>
+        <KorrigeringUke
+          uke={forsteUke}
+          setKorrigerteDager={setKorrigerteDager}
+          ukenummer={startUke}
+        />
+        <KorrigeringUke
+          uke={andreUke}
+          setKorrigerteDager={setKorrigerteDager}
+          ukenummer={sluttUke}
+        />
       </div>
-      <div className={classNames(styles.col16, styles.row4, styles.oppsummering)}>
-        <p>{totalSyk} dager</p>
-      </div>
-      <div className={classNames(styles.col16, styles.row5, styles.oppsummering)}>
-        <p>{totalFravaer} dager</p>
-      </div>
-      <div className={classNames(styles.col16, styles.row6, styles.oppsummering)}>
-        <p>{totalUtdanning} dager</p>
+
+      <div className={styles.oppsummeringContainer}>
+        <div className={classNames(styles.col16, styles.row3, styles.oppsummering)}>
+          <p>{totalArbeid} timer</p>
+        </div>
+        <div className={classNames(styles.col16, styles.row4, styles.oppsummering)}>
+          <p>{totalSyk} dager</p>
+        </div>
+        <div className={classNames(styles.col16, styles.row5, styles.oppsummering)}>
+          <p>{totalFravaer} dager</p>
+        </div>
+        <div className={classNames(styles.col16, styles.row6, styles.oppsummering)}>
+          <p>{totalUtdanning} dager</p>
+        </div>
       </div>
 
       <div className={classNames(styles.col17, styles.begrunnelse)}>
@@ -113,21 +101,24 @@ export function Korrigering({
           className="korrigering-tekstfelt"
         ></Textarea>
       </div>
-      <Button
-        as="a"
-        href="/person/17051412345/perioder"
-        variant="secondary"
-        className={classNames(styles.col16, styles.row7)}
-      >
-        Avbryt
-      </Button>
-      <Button
-        variant="primary"
-        className={classNames(styles.col17, styles.row7)}
-        onClick={handleOnClick}
-      >
-        Fullfør korrigering
-      </Button>
+
+      <div className={styles.knapper}>
+        <Button
+          as="a"
+          href="/person/17051412345/perioder"
+          variant="secondary"
+          className={classNames(styles.col16, styles.row7)}
+        >
+          Avbryt
+        </Button>
+        <Button
+          variant="primary"
+          className={classNames(styles.col17, styles.row7)}
+          onClick={handleOnClick}
+        >
+          Fullfør korrigering
+        </Button>
+      </div>
     </div>
   );
 }
