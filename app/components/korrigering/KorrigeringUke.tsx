@@ -2,7 +2,7 @@ import { Checkbox, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { formatterDag, hentUkedag } from "~/utils/dato.utils";
+import { formatterDag, hentUkedag, konverterFraISO8601Varighet } from "~/utils/dato.utils";
 import type { IRapporteringsperiodeDag } from "~/utils/types";
 
 import styles from "./Korrigering.module.css";
@@ -40,7 +40,9 @@ export function KorrigeringUke({ uke, setKorrigerteDager, ukenummer }: IProps) {
                     data-dato={dag.dato}
                     label="arbeid"
                     hideLabel
-                    value={dag.arbeid ?? ""}
+                    value={konverterFraISO8601Varighet(
+                      dag.aktiviteter.find((a) => a.type === AKTIVITET_TYPE.Arbeid)?.timer
+                    )}
                     onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
                     readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
                     className={classNames("arbeidInput")}
