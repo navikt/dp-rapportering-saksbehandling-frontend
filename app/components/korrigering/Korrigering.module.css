@@ -11,7 +11,7 @@
 }
 
 .andreUke {
-  grid-column: 9 / 16;
+  grid-column: 10 / 16;
 }
 
 .aktiviteter {
@@ -93,39 +93,47 @@
 }
 
 .col-9 {
-  grid-column: 9;
-}
-
-.col-10 {
   grid-column: 10;
 }
 
-.col-11 {
+.col-10 {
   grid-column: 11;
 }
 
-.col-12 {
+.col-11 {
   grid-column: 12;
 }
 
-.col-13 {
+.col-12 {
   grid-column: 13;
 }
 
-.col-14 {
+.col-13 {
   grid-column: 14;
 }
 
-.col-15 {
+.col-14 {
   grid-column: 15;
 }
 
-.col-16 {
+.col-15 {
   grid-column: 16;
 }
 
-.col-17 {
+.col-16 {
   grid-column: 17;
+}
+
+.col-17 {
+  grid-column: 18;
+}
+
+.col-18 {
+  grid-column: 19;
+}
+
+.col-19 {
+  grid-column: 19;
 }
 
 .row-1 {

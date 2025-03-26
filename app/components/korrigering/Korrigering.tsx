@@ -176,7 +176,7 @@ export function Korrigering({
         <p>{totalUtdanning} dager</p>
       </div>
 
-      <div className={classNames(styles.col17, styles.begrunnelse)}>
+      <div className={classNames(styles.col19, styles.begrunnelse)}>
         <Textarea
           label="Begrunnelse:"
           placeholder="Obligatorisk"
@@ -188,13 +188,13 @@ export function Korrigering({
         as="a"
         href="/person/17051412345/perioder"
         variant="secondary"
-        className={classNames(styles.col16, styles.row7)}
+        className={classNames(styles.col17, styles.row7)}
       >
         Avbryt
       </Button>
       <Button
         variant="primary"
-        className={classNames(styles.col17, styles.row7)}
+        className={classNames(styles.col19, styles.row7)}
         onClick={handleOnClick}
       >
         Fullfør korrigering
