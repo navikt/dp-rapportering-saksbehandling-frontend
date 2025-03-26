@@ -1,6 +1,6 @@
 .korrigerings-grid {
   display: grid;
-  grid-template-columns: auto repeat(14, 1fr) auto auto;
+  grid-template-columns: auto repeat(15, 1fr) auto;
   grid-template-rows: auto auto repeat(5, 1fr);
   width: 100%;
   gap: var(--a-spacing-6);
