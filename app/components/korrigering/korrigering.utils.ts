@@ -78,9 +78,8 @@ export function endreArbeid(
   dag: IRapporteringsperiodeDag,
   setKorrigerteDager: SetKorrigerteDager
 ) {
-  if (isNaN(Number(event.target.value))) return;
-
   const timer = event.target.value;
+  if (isNaN(Number(timer))) return;
 
   setKorrigerteDager((prevDager) => {
     const index = prevDager.findIndex((prevDag) => prevDag.dato === dag.dato);
