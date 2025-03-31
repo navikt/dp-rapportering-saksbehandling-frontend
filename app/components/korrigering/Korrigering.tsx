@@ -79,43 +79,34 @@ export function Korrigering({
       </div>
 
       <div className={styles.oppsummeringContainer}>
-        <div className={classNames(styles.col16, styles.row3, styles.oppsummering)}>
+        <div className={classNames(styles.oppsummering)}>
           <p>{totalArbeid} timer</p>
         </div>
-        <div className={classNames(styles.col16, styles.row4, styles.oppsummering)}>
+        <div className={classNames(styles.oppsummering)}>
           <p>{totalSyk} dager</p>
         </div>
-        <div className={classNames(styles.col16, styles.row5, styles.oppsummering)}>
+        <div className={classNames(styles.oppsummering)}>
           <p>{totalFravaer} dager</p>
         </div>
-        <div className={classNames(styles.col16, styles.row6, styles.oppsummering)}>
+        <div className={classNames(styles.oppsummering)}>
           <p>{totalUtdanning} dager</p>
         </div>
       </div>
 
-      <div className={classNames(styles.col17, styles.begrunnelse)}>
+      <div className={classNames(styles.begrunnelse)}>
         <Textarea
           label="Begrunnelse:"
           placeholder="Obligatorisk"
           onChange={(event) => setKorrigertBegrunnelse(event.target.value)}
-          className="korrigering-tekstfelt"
+          className={classNames("korrigering-tekstfelt")}
         ></Textarea>
       </div>
 
       <div className={styles.knapper}>
-        <Button
-          as="a"
-          href="/person/17051412345/perioder"
-          variant="secondary"
-          className={classNames(styles.col16, styles.row7)}
-        >
+        <Button as="a" href="/person/17051412345/perioder" variant="secondary">
           Avbryt
         </Button>
-        <Button
-          variant="primary"
-          className={classNames(styles.col17, styles.row7)}
-          onClick={handleOnClick}
-        >
+        <Button variant="primary" onClick={handleOnClick}>
           Fullfør korrigering
         </Button>
       </div>
