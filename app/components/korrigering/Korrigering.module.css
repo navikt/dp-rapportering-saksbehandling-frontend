@@ -3,7 +3,7 @@
   grid-template-columns: auto 3fr auto 0.2fr 1fr;
   grid-template-rows: 1fr auto;
   width: 100%;
-  gap: var(--a-spacing-4);
+  gap: var(--a-spacing-6);
 }
 
 .uker {
@@ -67,11 +67,11 @@
 }
 
 .knapper {
-  grid-column: 1 / 6;
+  grid-column: 5 / 6;
   grid-row: 2;
   display: flex;
-  justify-content: right;
-  gap: var(--a-spacing-6);
+  justify-content: space-between;
+  gap: var(--a-spacing-4);
 }
 
 .uke {
