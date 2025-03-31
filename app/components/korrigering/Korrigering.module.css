@@ -1,7 +1,7 @@
 .korrigeringsGrid {
   display: grid;
-  grid-template-columns: auto 3fr auto 0.5fr;
-  grid-template-rows: 1fr, auto;
+  grid-template-columns: auto 3fr auto 0.2fr 1fr;
+  grid-template-rows: 1fr auto;
   width: 100%;
   gap: var(--a-spacing-4);
 }
@@ -67,7 +67,7 @@
 }
 
 .knapper {
-  grid-column: 1 / 5;
+  grid-column: 1 / 6;
   grid-row: 2;
   display: flex;
   justify-content: right;
@@ -84,8 +84,14 @@
   padding: var(--a-spacing-2);
   text-align: center;
   justify-items: center;
+  min-width: 60px;
+  max-width: 70px;
 }
 
 .korrigering-uke h3 {
   padding-left: var(--a-spacing-2);
+}
+
+.begrunnelse {
+  grid-column: 5 / 6;
 }
