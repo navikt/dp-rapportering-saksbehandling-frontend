@@ -1,42 +1,45 @@
 import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
+import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
-import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
+import type { IRapporteringsperiode } from "~/utils/types";
 
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
 import styles from "./Korrigering.module.css";
-import { type SetKorrigerteDager } from "./korrigering.utils";
+import {
+  type IKorrigertDag,
+  konverterTimerFraISO8601Varighet,
+  konverterTimerTilISO8601Varighet,
+} from "./korrigering.utils";
 import { KorrigeringUke } from "./KorrigeringUke";
 
 interface IProps {
-  korrigerteDager: IRapporteringsperiodeDag[];
-  setKorrigerteDager: SetKorrigerteDager;
+  korrigertPeriode: IRapporteringsperiode;
+  setKorrigertPeriode: React.Dispatch<React.SetStateAction<IRapporteringsperiode>>;
   originalPeriode: IRapporteringsperiode;
-  setKorrigertBegrunnelse: (value: string) => void;
-  korrigertBegrunnelse: string;
 }
 
-export function Korrigering({
-  korrigerteDager,
-  setKorrigerteDager,
-  originalPeriode,
-  setKorrigertBegrunnelse,
-  korrigertBegrunnelse,
-}: IProps) {
+export function Korrigering({ originalPeriode, korrigertPeriode, setKorrigertPeriode }: IProps) {
   const fetcher = useFetcher();
 
+  const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
+    korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet)
+  );
+  const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
   const forsteUke = korrigerteDager.slice(0, 7);
   const andreUke = korrigerteDager.slice(7);
 
-  const korrigertPeriode = {
-    ...originalPeriode,
-    dager: korrigerteDager,
-    begrunnelseEndring: korrigertBegrunnelse,
-  };
+  useEffect(() => {
+    setKorrigertPeriode((prev) => ({
+      ...prev,
+      dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
+      begrunnelseEndring: korrigertBegrunnelse,
+    }));
+  }, [korrigerteDager, korrigertBegrunnelse]);
 
   const totalArbeid = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Arbeid, false);
   const totalSyk = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Syk, true);

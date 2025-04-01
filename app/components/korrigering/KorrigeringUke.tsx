@@ -2,14 +2,19 @@ import { Checkbox, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { formatterDag, hentUkedag, konverterFraISO8601Varighet } from "~/utils/dato.utils";
-import type { IRapporteringsperiodeDag } from "~/utils/types";
+import { formatterDag, hentUkedag } from "~/utils/dato.utils";
 
 import styles from "./Korrigering.module.css";
-import { endreArbeid, endreDag, erIkkeAktiv, type SetKorrigerteDager } from "./korrigering.utils";
+import {
+  endreArbeid,
+  endreDag,
+  erIkkeAktiv,
+  type IKorrigertDag,
+  type SetKorrigerteDager,
+} from "./korrigering.utils";
 
 interface IProps {
-  uke: IRapporteringsperiodeDag[];
+  uke: IKorrigertDag[];
   setKorrigerteDager: SetKorrigerteDager;
   ukenummer: number;
 }
@@ -33,6 +38,7 @@ export function KorrigeringUke({ uke, setKorrigerteDager, ukenummer }: IProps) {
           <tr>
             {uke.map((dag) => {
               const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
+              const harArbeid = dag.aktiviteter.some((a) => a.type === AKTIVITET_TYPE.Arbeid);
 
               return (
                 <td key={dag.dato}>
@@ -40,12 +46,14 @@ export function KorrigeringUke({ uke, setKorrigerteDager, ukenummer }: IProps) {
                     data-dato={dag.dato}
                     label="arbeid"
                     hideLabel
-                    value={konverterFraISO8601Varighet(
-                      dag.aktiviteter.find((a) => a.type === AKTIVITET_TYPE.Arbeid)?.timer
-                    )}
+                    value={
+                      dag.aktiviteter.find((a) => a.type === AKTIVITET_TYPE.Arbeid)?.timer ?? ""
+                    }
                     onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
                     readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
-                    className={classNames("arbeidInput")}
+                    className={classNames("arbeidInput", {
+                      styledArbeidInput: harArbeid,
+                    })}
                   />
                 </td>
               );
