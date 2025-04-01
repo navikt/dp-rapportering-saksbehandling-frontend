@@ -1,46 +1,45 @@
-import { Button, Checkbox, CheckboxGroup, Textarea, TextField } from "@navikt/ds-react";
+import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
-import { Fragment } from "react";
+import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
-import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
+import { hentUkerFraPeriode } from "~/utils/dato.utils";
+import type { IRapporteringsperiode } from "~/utils/types";
 
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
 import styles from "./Korrigering.module.css";
 import {
-  endreArbeid,
-  endreDag,
-  erIkkeAktiv,
-  hentAktiviteter,
-  type SetKorrigerteDager,
+  type IKorrigertDag,
+  konverterTimerFraISO8601Varighet,
+  konverterTimerTilISO8601Varighet,
 } from "./korrigering.utils";
+import { KorrigeringUke } from "./KorrigeringUke";
 
 interface IProps {
-  korrigerteDager: IRapporteringsperiodeDag[];
-  setKorrigerteDager: SetKorrigerteDager;
+  korrigertPeriode: IRapporteringsperiode;
+  setKorrigertPeriode: React.Dispatch<React.SetStateAction<IRapporteringsperiode>>;
   originalPeriode: IRapporteringsperiode;
-  setKorrigertBegrunnelse: (value: string) => void;
-  korrigertBegrunnelse: string;
 }
 
-export function Korrigering({
-  korrigerteDager,
-  setKorrigerteDager,
-  originalPeriode,
-  setKorrigertBegrunnelse,
-  korrigertBegrunnelse,
-}: IProps) {
+export function Korrigering({ originalPeriode, korrigertPeriode, setKorrigertPeriode }: IProps) {
   const fetcher = useFetcher();
 
+  const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
+    korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet)
+  );
+  const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
+  const forsteUke = korrigerteDager.slice(0, 7);
+  const andreUke = korrigerteDager.slice(7);
 
-  const korrigertPeriode = {
-    ...originalPeriode,
-    dager: korrigerteDager,
-    begrunnelseEndring: korrigertBegrunnelse,
-  };
+  useEffect(() => {
+    setKorrigertPeriode((prev) => ({
+      ...prev,
+      dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
+      begrunnelseEndring: korrigertBegrunnelse,
+    }));
+  }, [korrigerteDager, korrigertBegrunnelse]);
 
   const totalArbeid = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Arbeid, false);
   const totalSyk = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Syk, true);
@@ -58,147 +57,62 @@ export function Korrigering({
 
   return (
     <div className={styles.korrigeringsGrid}>
-      <h3 className={classNames(styles.forsteUke)}>Uke {startUke}</h3>
-      <h3 className={classNames(styles.andreUke)}>Uke {sluttUke}</h3>
-      <div
-        className={classNames(styles.aktivitet, styles.col1, styles.row3, styles.arbeid, "arbeid")}
-      >
-        Jobb
-      </div>
-      <div className={classNames(styles.aktivitet, styles.col1, styles.row4, styles.syk, "syk")}>
-        Syk
-      </div>
-      <div
-        className={classNames(
-          styles.aktivitet,
-          styles.col1,
-          styles.row5,
-          styles.fravaer,
-          "fravaer"
-        )}
-      >
-        Ferie, fravær og utenlandsopphold
-      </div>
-      <div
-        className={classNames(
-          styles.aktivitet,
-          styles.col1,
-          styles.row6,
-          styles.utdanning,
-          "utdanning"
-        )}
-      >
-        Tiltak, kurs eller utdanning
+      <div className={styles.aktiviteter}>
+        <div className={classNames(styles.arbeid, "arbeid")}>Jobb</div>
+        <div className={classNames(styles.syk, "syk")}>Syk</div>
+        <div className={classNames(styles.fravaer, "fravaer")}>
+          Ferie, fravær og utenlandsopphold
+        </div>
+        <div className={classNames(styles.utdanning, "utdanning")}>
+          Tiltak, kurs eller utdanning
+        </div>
       </div>
 
-      {korrigerteDager.map((dag, index) => {
-        const { arbeid, syk, fravaer, utdanning } = hentAktiviteter(dag);
-        const value = [
-          syk ? AKTIVITET_TYPE.Syk : "",
-          fravaer ? AKTIVITET_TYPE.Fravaer : "",
-          utdanning ? AKTIVITET_TYPE.Utdanning : "",
-        ].filter((v) => v);
-
-        const aktiviteter = dag.aktiviteter.map((aktivitet) => aktivitet.type);
-
-        return (
-          <Fragment key={dag.dato}>
-            <div
-              className={classNames(
-                styles[`col-${index + 2}`],
-                styles.row2,
-                styles.korrigeringDato
-              )}
-            >
-              <h4>{hentUkedag(dag.dato)}</h4>
-              <p>{formatterDag(dag.dato)}</p>
-            </div>
-            <TextField
-              data-dato={dag.dato}
-              label="arbeid"
-              hideLabel
-              value={arbeid ?? ""}
-              onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
-              readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Arbeid)}
-              className={classNames(styles[`col-${index + 2}`], styles.row3, "arbeidInput")}
-            ></TextField>
-            <CheckboxGroup
-              legend="Aktiviteter"
-              hideLegend
-              onChange={(value) => endreDag(value, dag, setKorrigerteDager)}
-              value={value}
-              className={classNames(
-                styles[`col-${index + 2}`],
-                styles.row4,
-                styles.gridCheckboxGroup,
-                "grid-checkbox-group"
-              )}
-            >
-              <Checkbox
-                value={AKTIVITET_TYPE.Syk}
-                hideLabel
-                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Syk)}
-                className={classNames(styles.checkbox, styles.row1)}
-              >
-                Syk
-              </Checkbox>
-              <Checkbox
-                value={AKTIVITET_TYPE.Fravaer}
-                hideLabel
-                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Fravaer)}
-                className={classNames(styles.checkbox, styles.row2)}
-              >
-                Fravær
-              </Checkbox>
-              <Checkbox
-                value={AKTIVITET_TYPE.Utdanning}
-                hideLabel
-                readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE.Utdanning)}
-                className={classNames(styles.checkbox, styles.row3)}
-              >
-                Utdanning
-              </Checkbox>
-            </CheckboxGroup>
-          </Fragment>
-        );
-      })}
-
-      <div className={classNames(styles.col16, styles.row3, styles.oppsummering)}>
-        <p>{totalArbeid} timer</p>
-      </div>
-      <div className={classNames(styles.col16, styles.row4, styles.oppsummering)}>
-        <p>{totalSyk} dager</p>
-      </div>
-      <div className={classNames(styles.col16, styles.row5, styles.oppsummering)}>
-        <p>{totalFravaer} dager</p>
-      </div>
-      <div className={classNames(styles.col16, styles.row6, styles.oppsummering)}>
-        <p>{totalUtdanning} dager</p>
+      <div className={styles.ukeContainer}>
+        <KorrigeringUke
+          uke={forsteUke}
+          setKorrigerteDager={setKorrigerteDager}
+          ukenummer={startUke}
+        />
+        <KorrigeringUke
+          uke={andreUke}
+          setKorrigerteDager={setKorrigerteDager}
+          ukenummer={sluttUke}
+        />
       </div>
 
-      <div className={classNames(styles.col19, styles.begrunnelse)}>
+      <div className={styles.oppsummeringContainer}>
+        <div className={classNames(styles.oppsummering)}>
+          <p>{totalArbeid} timer</p>
+        </div>
+        <div className={classNames(styles.oppsummering)}>
+          <p>{totalSyk} dager</p>
+        </div>
+        <div className={classNames(styles.oppsummering)}>
+          <p>{totalFravaer} dager</p>
+        </div>
+        <div className={classNames(styles.oppsummering)}>
+          <p>{totalUtdanning} dager</p>
+        </div>
+      </div>
+
+      <div className={classNames(styles.begrunnelse)}>
         <Textarea
           label="Begrunnelse:"
           placeholder="Obligatorisk"
           onChange={(event) => setKorrigertBegrunnelse(event.target.value)}
-          className="korrigering-tekstfelt"
+          className={classNames("korrigering-tekstfelt")}
         ></Textarea>
       </div>
-      <Button
-        as="a"
-        href="/person/17051412345/perioder"
-        variant="secondary"
-        className={classNames(styles.col17, styles.row7)}
-      >
-        Avbryt
-      </Button>
-      <Button
-        variant="primary"
-        className={classNames(styles.col19, styles.row7)}
-        onClick={handleOnClick}
-      >
-        Fullfør korrigering
-      </Button>
+
+      <div className={styles.knapper}>
+        <Button as="a" href="/person/17051412345/perioder" variant="secondary">
+          Avbryt
+        </Button>
+        <Button variant="primary" onClick={handleOnClick}>
+          Fullfør korrigering
+        </Button>
+      </div>
     </div>
   );
 }

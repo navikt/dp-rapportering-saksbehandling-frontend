@@ -4,7 +4,35 @@ import { AKTIVITET_TYPE } from "~/utils/constants";
 import { konverterFraISO8601Varighet, konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import type { IAktivitet, IRapporteringsperiodeDag, TAktivitetType } from "~/utils/types";
 
-export type SetKorrigerteDager = React.Dispatch<React.SetStateAction<IRapporteringsperiodeDag[]>>;
+export interface IKorrigertAktivitet extends Omit<IAktivitet, "timer"> {
+  timer?: string; // string er desimaltall
+}
+
+export interface IKorrigertDag extends Omit<IRapporteringsperiodeDag, "aktiviteter"> {
+  aktiviteter: IKorrigertAktivitet[];
+}
+
+export type SetKorrigerteDager = React.Dispatch<React.SetStateAction<IKorrigertDag[]>>;
+
+export function konverterTimerFraISO8601Varighet(dag: IRapporteringsperiodeDag): IKorrigertDag {
+  return {
+    ...dag,
+    aktiviteter: dag.aktiviteter.map((aktivitet) => ({
+      ...aktivitet,
+      timer: aktivitet.timer ? konverterFraISO8601Varighet(aktivitet.timer)?.toString() : "",
+    })),
+  };
+}
+
+export function konverterTimerTilISO8601Varighet(dag: IKorrigertDag): IRapporteringsperiodeDag {
+  return {
+    ...dag,
+    aktiviteter: dag.aktiviteter.map((aktivitet) => ({
+      ...aktivitet,
+      timer: aktivitet.timer ? konverterTilISO8601Varighet(aktivitet.timer.toString()) : "",
+    })),
+  };
+}
 
 export function hentAktiviteter(dag: IRapporteringsperiodeDag): {
   arbeid: number | undefined;
@@ -33,14 +61,14 @@ export function hentAktiviteter(dag: IRapporteringsperiodeDag): {
 
 export function endreDag(
   value: string[],
-  dag: IRapporteringsperiodeDag,
+  dag: IKorrigertDag,
   setKorrigerteDager: SetKorrigerteDager
 ) {
   const beholderAktiviteterSomErIValue = dag.aktiviteter.filter((aktivitet) =>
     value.includes(aktivitet.type)
   );
 
-  const leggerTilAktiviteterFraValueSomMangler: IAktivitet[] = value.map((type) => {
+  const leggerTilAktiviteterFraValueSomMangler: IKorrigertAktivitet[] = value.map((type) => {
     const aktivitetFinnes = beholderAktiviteterSomErIValue.find(
       (aktivitet) => aktivitet.type === type
     );
@@ -51,7 +79,7 @@ export function endreDag(
       id: uuidv7(),
       type,
       dato: dag.dato,
-    } as IAktivitet;
+    } as IKorrigertAktivitet;
   });
 
   const arbeidAktivitet = dag.aktiviteter.find(
@@ -75,12 +103,18 @@ export function endreDag(
 
 export function endreArbeid(
   event: React.ChangeEvent<HTMLInputElement>,
-  dag: IRapporteringsperiodeDag,
+  dag: IKorrigertDag,
   setKorrigerteDager: SetKorrigerteDager
 ) {
-  if (isNaN(Number(event.target.value))) return;
+  const timer = event.target.value.replace(",", ".").trim();
 
-  const timer = event.target.value;
+  // TODO: Det er mulig å skrive inn 0 i input-feltet, og det er ikke ønskelig
+
+  if (isNaN(Number(timer))) return;
+  if (Number(timer) > 24) return;
+  if (Number(timer) < 0) return;
+
+  if (Number(timer) % 0.5 !== 0) return;
 
   setKorrigerteDager((prevDager) => {
     const index = prevDager.findIndex((prevDag) => prevDag.dato === dag.dato);
@@ -110,7 +144,7 @@ export function endreArbeid(
           id: dagHarArbeid?.id ?? uuidv7(),
           type: AKTIVITET_TYPE.Arbeid,
           dato: dag.dato,
-          timer: konverterTilISO8601Varighet(timer),
+          timer,
         },
       ],
     });
