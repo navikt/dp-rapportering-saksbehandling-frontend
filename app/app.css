@@ -87,3 +87,7 @@ p {
   display: block;
   height: 100%;
 }
+
+.styledArbeidInput .navds-text-field__input {
+  background-color: var(--a-blue-200);
+}
