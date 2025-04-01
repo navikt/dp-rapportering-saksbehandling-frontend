@@ -10,7 +10,7 @@ describe("Status", () => {
 
     expect(container.querySelector(".navds-tag--info")).toBeInTheDocument();
 
-    const text = screen.getByText(RAPPORTERINGSPERIODE_STATUS.TilUtfylling);
+    const text = screen.getByText("Opprettet");
     expect(text).toBeInTheDocument();
   });
 
@@ -19,7 +19,7 @@ describe("Status", () => {
 
     expect(container.querySelector(".navds-tag--success")).toBeInTheDocument();
 
-    const text = screen.getByText(RAPPORTERINGSPERIODE_STATUS.Innsendt);
+    const text = screen.getByText("Innsendt");
     expect(text).toBeInTheDocument();
   });
 
@@ -28,7 +28,7 @@ describe("Status", () => {
 
     expect(container.querySelector(".navds-tag--warning")).toBeInTheDocument();
 
-    const text = screen.getByText(RAPPORTERINGSPERIODE_STATUS.Endret);
+    const text = screen.getByText("Endret");
     expect(text).toBeInTheDocument();
   });
 
@@ -37,7 +37,7 @@ describe("Status", () => {
 
     expect(container.querySelector(".navds-tag--success")).toBeInTheDocument();
 
-    const text = screen.getByText(RAPPORTERINGSPERIODE_STATUS.Ferdig);
+    const text = screen.getByText("Beregnet");
     expect(text).toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe("Status", () => {
 
     expect(container.querySelector(".navds-tag--error")).toBeInTheDocument();
 
-    const text = screen.getByText(RAPPORTERINGSPERIODE_STATUS.Feilet);
+    const text = screen.getByText("Feilet");
     expect(text).toBeInTheDocument();
   });
 });

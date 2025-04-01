@@ -98,7 +98,7 @@ const perioder: {
   {
     // Bruker har ført utdanning
     periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Feilet,
+      status: RAPPORTERINGSPERIODE_STATUS.Ferdig, // Byttet til Ferdig fra Feilet for å ikke få spørsmål om det når det skal vises frem
       id,
       bruttoBelop: 3056,
       registrertArbeidssoker: true,

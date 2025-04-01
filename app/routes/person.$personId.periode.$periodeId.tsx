@@ -43,7 +43,7 @@ export default function Periode() {
         <div className={styles.uendretPeriode}>
           <div className={styles.periodeOgTag}>
             <PeriodeMedUke periode={periode} />
-            <Tag variant="neutral">Sist beregnet</Tag>
+            <Tag variant="info">Sist beregnet</Tag>
           </div>
           <Forhandsvisning periode={periode} />
           {periode.begrunnelseEndring && (
@@ -56,7 +56,7 @@ export default function Periode() {
         <div className={styles.endretPeriode}>
           <div className={styles.periodeOgTag}>
             <PeriodeMedUke periode={periode} />
-            <Tag variant="error">Korrigering</Tag>
+            <Tag variant="info">Korrigering</Tag>
           </div>
           <Forhandsvisning periode={korrigertPeriode} />
           <div className={styles.begrunnelseVisning}>

@@ -110,6 +110,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     mottattDato={periode.mottattDato ?? ""}
                     tilOgMed={periode.periode.tilOgMed}
                     sisteFristForTrekk={periode.sisteFristForTrekk}
+                    status={periode.status}
                   />
                 </Table.DataCell>
               </Table.Row>
