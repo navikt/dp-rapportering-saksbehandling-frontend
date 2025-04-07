@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-bottom: 30px;
+  padding: 16px 0;
   white-space: nowrap;
 }
 
@@ -65,14 +65,11 @@
   margin-top: auto;
   justify-content: space-between;
   white-space: nowrap;
+  padding: 16px 0;
 }
 
 .oppsummering-container div {
   padding: var(--a-spacing-1) 0;
-}
-
-.oppsummering-container div:last-child {
-  padding-bottom: var(--a-spacing-8);
 }
 
 .knapper {
@@ -111,8 +108,23 @@
     max-width: 945px;
     overflow-x: scroll;
   }
+
   .knapper {
     grid-column: 1 / 6;
     grid-row: 2;
+  }
+
+  .aktiviteter {
+    padding-top: 0;
+    padding-bottom: 30px;
+    height: 256px;
+  }
+
+  .oppsummering-container {
+    padding: 0;
+  }
+
+  .oppsummering-container div:last-child {
+    padding-bottom: var(--a-spacing-8);
   }
 }

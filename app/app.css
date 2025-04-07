@@ -66,6 +66,7 @@ p {
 }
 
 .arbeidInput.navds-form-field {
+  min-width: 50px;
   max-width: 75px;
   justify-self: center;
 }
