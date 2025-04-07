@@ -13,7 +13,7 @@
 .uke-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--a-spacing-6);
+  gap: var(--a-spacing-12);
 }
 
 .aktiviteter {
@@ -96,14 +96,16 @@
 
 .begrunnelse {
   grid-column: 5 / 6;
+  min-width: 180px;
 }
 
-@media (max-width: 1790px) {
+@media (max-width: 1980px) {
   .uke-container {
-    grid-template-columns: 1fr;
+    max-width: 945px;
+    overflow-x: scroll;
   }
-
   .knapper {
-    justify-content: space-between;
+    grid-column: 1 / 6;
+    grid-row: 2;
   }
 }
