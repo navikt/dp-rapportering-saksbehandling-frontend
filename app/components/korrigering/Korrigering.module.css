@@ -17,10 +17,12 @@
 }
 
 .aktiviteter {
-  padding-top: var(--a-spacing-20); /* TODO: Gjøre dette på en annen måte */
+  height: 256px;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
+  padding-bottom: 30px;
   white-space: nowrap;
 }
 
@@ -57,15 +59,20 @@
 }
 
 .oppsummering-container {
+  height: 256px;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  margin-top: var(--a-spacing-20); /* TODO: Gjøre dette på en annen måte */
+  margin-top: auto;
+  justify-content: space-between;
   white-space: nowrap;
 }
 
 .oppsummering-container div {
-  padding: var(--a-spacing-4) 0;
+  padding: var(--a-spacing-1) 0;
+}
+
+.oppsummering-container div:last-child {
+  padding-bottom: var(--a-spacing-8);
 }
 
 .knapper {
