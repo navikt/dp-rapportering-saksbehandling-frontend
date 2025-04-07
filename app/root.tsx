@@ -100,7 +100,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { env, saksbehandler } = useLoaderData<typeof loader>();
 
   return (
-    <html lang="en">
+    <html lang="nb">
       <head>
         <Meta />
         <Links />
