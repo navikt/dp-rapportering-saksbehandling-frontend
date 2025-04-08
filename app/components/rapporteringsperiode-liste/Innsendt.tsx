@@ -20,7 +20,7 @@ export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk, status }: 
 
   if (status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling) {
     return (
-      <div className="neutralTag">
+      <div className="transparrent-tag">
         <Tag variant="neutral"> </Tag>
       </div>
     );
@@ -39,7 +39,7 @@ export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk, status }: 
   }
 
   return (
-    <div className="neutralTag">
+    <div className="transparrent-tag">
       <Tooltip
         content={`Frist: ${
           sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"

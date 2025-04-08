@@ -59,7 +59,7 @@ p {
 }
 
 /* Overskriver Aksel */
-.neutralTag .navds-tag--neutral {
+.transparrent-tag .navds-tag--neutral {
   background-color: transparent;
   border-color: transparent;
 }
@@ -87,6 +87,6 @@ p {
   background-color: var(--a-blue-200);
 }
 
-.nyttMeldekortKnapp .navds-label--small {
+.nytt-meldekort-knapp .navds-label--small {
   font-weight: normal;
 }

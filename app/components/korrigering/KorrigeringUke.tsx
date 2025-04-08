@@ -23,7 +23,7 @@ export function KorrigeringUke({ uke, setKorrigerteDager, ukenummer }: IProps) {
   return (
     <div className={styles.korrigeringUke}>
       <h3 className={styles.ukenummer}>Uke {ukenummer}</h3>
-      <table className={classNames(styles.uke)}>
+      <table className={styles.uke}>
         <thead>
           <tr>
             {uke.map((dag) => (
@@ -71,7 +71,7 @@ export function KorrigeringUke({ uke, setKorrigerteDager, ukenummer }: IProps) {
                         value={AKTIVITET_TYPE[aktivitet]}
                         hideLabel
                         readOnly={erIkkeAktiv(aktiviteter, AKTIVITET_TYPE[aktivitet])}
-                        className={classNames(styles.checkbox)}
+                        className={styles.checkbox}
                         checked={dag.aktiviteter.some((a) => a.type === AKTIVITET_TYPE[aktivitet])}
                         onChange={(event) => {
                           const isChecked = event.target.checked;

@@ -84,26 +84,26 @@ export function Korrigering({ originalPeriode, korrigertPeriode, setKorrigertPer
       </div>
 
       <div className={styles.oppsummeringContainer}>
-        <div className={classNames(styles.oppsummering)}>
+        <div className={styles.oppsummering}>
           <p>{totalArbeid} timer</p>
         </div>
-        <div className={classNames(styles.oppsummering)}>
+        <div className={styles.oppsummering}>
           <p>{totalSyk} dager</p>
         </div>
-        <div className={classNames(styles.oppsummering)}>
+        <div className={styles.oppsummering}>
           <p>{totalFravaer} dager</p>
         </div>
-        <div className={classNames(styles.oppsummering)}>
+        <div className={styles.oppsummering}>
           <p>{totalUtdanning} dager</p>
         </div>
       </div>
 
-      <div className={classNames(styles.begrunnelse)}>
+      <div className={styles.begrunnelse}>
         <Textarea
           label="Begrunnelse:"
           placeholder="Obligatorisk"
           onChange={(event) => setKorrigertBegrunnelse(event.target.value)}
-          className={classNames("korrigering-tekstfelt")}
+          className="korrigering-tekstfelt"
         ></Textarea>
       </div>
 
