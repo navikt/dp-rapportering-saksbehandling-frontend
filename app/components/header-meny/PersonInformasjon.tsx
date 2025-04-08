@@ -24,9 +24,15 @@ export default function PersonInformasjon({ person }: IProps) {
           Statsborgerskap: <strong>{person.statsborgerskap}</strong>
         </div>
       </div>
-      <Button variant="secondary-neutral" size="small" onClick={() => setModalOpen(true)}>
-        Historikk
-      </Button>
+      <div className={styles.headerKnapper}>
+        <Button variant="primary-neutral" size="small" className="nyttMeldekortKnapp">
+          Nytt meldekort
+        </Button>
+        <Button variant="secondary-neutral" size="small" onClick={() => setModalOpen(true)}>
+          Historikk
+        </Button>
+      </div>
+
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} aria-labelledby="modal-heading">
         <Modal.Header>
           <Heading level="1" size="large" id="modal-heading">

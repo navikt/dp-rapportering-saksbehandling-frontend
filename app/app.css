@@ -86,3 +86,7 @@ p {
 .styledArbeidInput .navds-text-field__input {
   background-color: var(--a-blue-200);
 }
+
+.nyttMeldekortKnapp .navds-label--small {
+  font-weight: normal;
+}
