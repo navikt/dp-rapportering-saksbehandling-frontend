@@ -24,7 +24,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
     <div className={styles.periodeDetaljer}>
       <div>
         <PeriodeMedUke periode={periode} />
-        <table className={styles.tabell}>
+        <table className={styles.detaljerTabell}>
           <tbody>
             <tr>
               <th>Arbeidssøkerstatus:</th>
