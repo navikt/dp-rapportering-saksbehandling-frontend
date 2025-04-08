@@ -1,8 +1,10 @@
 import { faker } from "@faker-js/faker";
 import { factory, nullable, primaryKey } from "@mswjs/data";
 
+import type { IPerson } from "~/utils/types";
+
 import { mockPerson } from "./data/mock-person";
-import mockRapporteringsperioder from "./data/mock-rapporteringsperioder";
+import { lagRapporteringsperioder } from "./data/mock-rapporteringsperioder";
 import { mockSaksbehandler } from "./data/mock-saksbehandler";
 
 export type Database = ReturnType<SessionRecord["createDatabase"]>;
@@ -22,11 +24,11 @@ class SessionRecord {
 
       this.sessions.set(sessionId, db);
 
-      db.personer.create(mockPerson);
+      const person = db.personer.create(mockPerson) as IPerson;
 
       db.saksbehandlere.create(mockSaksbehandler);
 
-      mockRapporteringsperioder.forEach((rapporteringsperiode) => {
+      lagRapporteringsperioder(person).forEach((rapporteringsperiode) => {
         db.rapporteringsperioder.create(rapporteringsperiode);
       });
     }
@@ -38,6 +40,7 @@ class SessionRecord {
     return factory({
       rapporteringsperioder: {
         id: primaryKey(faker.string.numeric),
+        ident: faker.string.alpha,
         type: faker.string.numeric,
         periode: {
           fraOgMed: () => faker.date.recent().toISOString(),

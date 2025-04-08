@@ -6,11 +6,10 @@ import type { IRapporteringsperiode } from "~/utils/types";
 import { logger } from "./logger.server";
 
 export async function hentRapporteringsperioder(
-  request: Request
+  request: Request,
+  personId: string
 ): Promise<IRapporteringsperiode[]> {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperioder`;
-
-  logger.info(`Henter rapporteringsperioder fra ${url}`);
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/person/${personId}/rapporteringsperioder`;
 
   try {
     const response = await fetch(url, {

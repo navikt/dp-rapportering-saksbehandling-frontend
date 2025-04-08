@@ -58,6 +58,16 @@ function hentPerson(db: Database, personId: string) {
   }) as IPerson;
 }
 
+function hentPersoner(db: Database) {
+  return db.personer.findMany({
+    orderBy: [
+      {
+        fodselsdato: "desc",
+      },
+    ],
+  }) as IPerson[];
+}
+
 function hentSaksbehandler(db: Database, saksbehandlerId: string) {
   return db.saksbehandlere.findFirst({
     where: {
@@ -75,6 +85,7 @@ export function withDb(db: Database) {
     hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
     hentRapporteringsperiodeMedId: (id: string) => hentRapporteringsperiodeMedId(db, id),
     hentPerson: (personId: string) => hentPerson(db, personId),
+    hentPersoner: () => hentPersoner(db),
     hentSaksbehandler: (saksbehandlerId: string) => hentSaksbehandler(db, saksbehandlerId),
     korrigerPeriode: (rapporteringsperiode: IRapporteringsperiode) =>
       korrigerPeriode(db, rapporteringsperiode),

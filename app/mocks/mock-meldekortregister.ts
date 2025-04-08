@@ -9,15 +9,18 @@ import { getDatabase } from "./db.utils";
 
 export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
   return [
-    http.get(`${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperioder`, ({ cookies }) => {
-      const db = database || getDatabase(cookies);
+    http.get(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/person/:personId/rapporteringsperioder`,
+      ({ cookies }) => {
+        const db = database || getDatabase(cookies);
 
-      const rapporteringsperioder = db.hentAlleRapporteringsperioder();
+        const rapporteringsperioder = db.hentAlleRapporteringsperioder();
 
-      logger.info(`Hentet ${rapporteringsperioder.length} rapporteringsperioder`);
+        logger.info(`Hentet ${rapporteringsperioder.length} rapporteringsperioder`);
 
-      return HttpResponse.json(rapporteringsperioder);
-    }),
+        return HttpResponse.json(rapporteringsperioder);
+      }
+    ),
 
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,

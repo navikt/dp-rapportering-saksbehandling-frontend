@@ -5,6 +5,7 @@ import { describe, expect, test } from "vitest";
 import { Innsendt } from "~/components/rapporteringsperiode-liste/Innsendt";
 import { SISTE_FRIST } from "~/components/rapporteringsperiode-liste/Innsendt";
 import { formatereDato } from "~/mocks/mock-rapporteringsperioder.utils";
+import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 
 describe("Innsendt", () => {
   test("skal vise error tag hvis SISTE_FRIST er passert", () => {
@@ -12,7 +13,12 @@ describe("Innsendt", () => {
     const mottattDato = formatereDato(addDays(new Date(tilOgMed), SISTE_FRIST + 1));
 
     const { container } = render(
-      <Innsendt mottattDato={mottattDato} tilOgMed={tilOgMed} sisteFristForTrekk={tilOgMed} />
+      <Innsendt
+        mottattDato={mottattDato}
+        tilOgMed={tilOgMed}
+        sisteFristForTrekk={tilOgMed}
+        status={RAPPORTERINGSPERIODE_STATUS.Feilet}
+      />
     );
 
     expect(container.querySelector(".navds-tag--error")).toBeInTheDocument();
@@ -23,7 +29,12 @@ describe("Innsendt", () => {
     const mottattDato = formatereDato(addDays(new Date(tilOgMed), 1));
 
     const { container } = render(
-      <Innsendt mottattDato={mottattDato} tilOgMed={tilOgMed} sisteFristForTrekk={null} />
+      <Innsendt
+        mottattDato={mottattDato}
+        tilOgMed={tilOgMed}
+        sisteFristForTrekk={null}
+        status={RAPPORTERINGSPERIODE_STATUS.Ferdig}
+      />
     );
     expect(container.querySelector(".navds-tag--neutral")).toBeInTheDocument();
   });

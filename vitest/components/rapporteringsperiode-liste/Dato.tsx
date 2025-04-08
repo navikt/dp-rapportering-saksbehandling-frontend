@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 
 import { Dato } from "~/components/rapporteringsperiode-liste/Dato";
-import { lagRapporteringsperiode } from "~/mocks/mock-rapporteringsperioder.utils";
+import { lagRapporteringsperiode } from "~/mocks/mock.utils";
 
 describe("Dato", () => {
   const fraOgMed = "2025-01-27";

@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 import { TypeAktivitet } from "~/components/rapporteringsperiode-liste/TypeAktivitet";
 import { aktivitetMapping } from "~/components/rapporteringsperiode-liste/utils";
-import { lagRapporteringsperiode } from "~/mocks/mock-rapporteringsperioder.utils";
+import { lagRapporteringsperiode } from "~/mocks/mock.utils";
 import { AKTIVITET_TYPE } from "~/utils/constants";
 
 describe("TypeAktivitet", () => {

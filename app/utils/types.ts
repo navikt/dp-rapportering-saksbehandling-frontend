@@ -2,6 +2,7 @@ import type { SetupWorker } from "msw/browser";
 
 import type {
   AKTIVITET_TYPE,
+  KJONN,
   KORT_TYPE,
   RAPPORTERING_TYPE,
   RAPPORTERINGSPERIODE_STATUS,
@@ -60,8 +61,11 @@ export interface IRapporteringsperiodeDag {
 
 type TKortType = (typeof KORT_TYPE)[keyof typeof KORT_TYPE];
 
+export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
+
 export interface IRapporteringsperiode {
   id: string;
+  ident: string;
   type: TKortType;
   periode: IPeriode;
   dager: IRapporteringsperiodeDag[];
@@ -89,7 +93,7 @@ export interface IPerson {
   fornavn: string;
   etternavn: string;
   mellomnavn?: string;
-  kjonn: "MANN" | "KVINNE" | "UKJENT";
+  kjonn: TKjonn;
   fodselsdato: string;
   alder: number;
   statsborgerskap: string;

@@ -1,100 +1,17 @@
-# Welcome to React Router!
+# Saksbehandlerflate for dagpengemeldekort
 
-A modern, production-ready template for building full-stack React applications using React Router.
+## Kom i gang
+Appen er basert på [React Router v7 i framework mode](https://reactrouter.com/start/framework/installation). Sjekk `.nvmrc` for ønsket Node-versjon, og pass på å holde den i sync med `Dockerfile`.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+Vi bruker [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) til å formattere kode, så sørg for å ha det installert og satt opp som formatterer.
 
-## Features
+Kopier `.env.example` og gi den navnet `.env`. Pt. trenger du ikke gjøre noen endringer i `.env`, men det endrer seg når vi har en backend å gå mot. Enn så lenge er `VITE_IS_LOCALHOST="true"` og `VITE_USE_MSW="true"`. Da får du mock-data fra [MSW](https://mswjs.io/).
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
-
-```bash
-npm install
 ```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
+npm install
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+Testene er satt opp med Vitest og Testing library for enhets- og komponenttester, og Playwright for ende-til-ende-tester (men er det pt. ingen tester). Testene kjøres med hhv. `npm run test:vitest` og `npm run test:playwright`, eller bare `npm run test`.
 
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-This template includes three Dockerfiles optimized for different package managers:
-
-- `Dockerfile` - for npm
-- `Dockerfile.pnpm` - for pnpm
-- `Dockerfile.bun` - for bun
-
-To build and run using Docker:
-
-```bash
-# For npm
-docker build -t my-app .
-
-# For pnpm
-docker build -f Dockerfile.pnpm -t my-app .
-
-# For bun
-docker build -f Dockerfile.bun -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+Saksbehandlerflaten er dokumentert i [dp-dokumentasjon](https://dagpenger-dokumentasjon.ansatt.nav.no/innbyggerflate/ramp/losninger/rapportering/saksbehandlerflate). Skissene finner du under [Saksbehandlerflate - dagpenger i Figma](https://www.figma.com/design/uQm809LGIjlDRt0kBrvBVl/Behandlingsl%C3%B8sningen?node-id=14138-57188&p=f&t=HJ4yDUkUNOCI48KW-0).

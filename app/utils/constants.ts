@@ -29,3 +29,9 @@ export const KORT_TYPE = {
   Manuell_arena: "09",
   Korrigert_elektronisk: "10",
 } as const;
+
+export const KJONN = {
+  MANN: "MANN",
+  KVINNE: "KVINNE",
+  UKJENT: "UKJENT",
+};

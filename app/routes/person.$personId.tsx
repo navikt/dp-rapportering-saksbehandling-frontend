@@ -2,6 +2,7 @@ import { Outlet, redirect, useLoaderData } from "react-router";
 
 import PersonInformasjon from "~/components/header-meny/PersonInformasjon";
 import { hentPerson } from "~/models/person.server";
+import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 
 import type { Route } from "./+types/person.$personId";
 
@@ -11,8 +12,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   }
 
   const person = await hentPerson(request, params.personId);
+  const perioder = await hentRapporteringsperioder(request, params.personId);
 
-  return { person };
+  return { person, perioder };
 }
 
 export default function Rapportering() {

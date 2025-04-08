@@ -3,25 +3,9 @@ import { uuidv7 } from "uuidv7";
 
 import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
-import type { IAktivitet, IRapporteringsperiode } from "~/utils/types";
+import type { IAktivitet, IPerson, IRapporteringsperiode } from "~/utils/types";
 
-import {
-  createId,
-  lagDager,
-  lagPeriodeDatoFor,
-  lagRapporteringsperiode,
-} from "../mock-rapporteringsperioder.utils";
-
-/**
-
-Ingenting fylt ut, alt fylt ut og noe fylt ut
-
-BeregningFeilet -> huket av for utdanning, men bruker har ikke tiltak
-
-Må vise at det er korrigert
-
-Tooltip på aktivitet
- */
+import { createId, lagDager, lagPeriodeDatoFor, lagRapporteringsperiode } from "../mock.utils";
 
 const id = createId();
 
@@ -98,7 +82,7 @@ const perioder: {
   {
     // Bruker har ført utdanning
     periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig, // Byttet til Ferdig fra Feilet for å ikke få spørsmål om det når det skal vises frem
+      status: RAPPORTERINGSPERIODE_STATUS.Feilet, // Byttet til Ferdig fra Feilet for å ikke få spørsmål om det når det skal vises frem
       id,
       bruttoBelop: 3056,
       registrertArbeidssoker: true,
@@ -145,35 +129,42 @@ const perioder: {
   },
 ];
 
-export default perioder.map(({ periode, ukerFraIDag, innsendtEtterTilOgMed, aktiviteter }) => {
-  const dagensDato = new Date();
-  const startDato = subWeeks(dagensDato, ukerFraIDag);
+export function lagRapporteringsperioder(person: IPerson) {
+  return perioder.map(({ periode, ukerFraIDag, innsendtEtterTilOgMed, aktiviteter }) => {
+    const dagensDato = new Date();
+    const startDato = subWeeks(dagensDato, ukerFraIDag);
 
-  const { fraOgMed, tilOgMed } = lagPeriodeDatoFor(startDato);
+    const { fraOgMed, tilOgMed } = lagPeriodeDatoFor(startDato);
 
-  const dager = lagDager().map((dag, index) => {
-    const dato = format(addDays(new Date(fraOgMed), index), "yyyy-MM-dd");
+    const dager = lagDager().map((dag, index) => {
+      const dato = format(addDays(new Date(fraOgMed), index), "yyyy-MM-dd");
 
-    return {
-      ...dag,
-      dato,
-      aktiviteter:
-        aktiviteter && aktiviteter[index]
-          ? aktiviteter[index].map(({ type, timer = "" }: Pick<IAktivitet, "type" | "timer">) => ({
-              id: uuidv7(),
-              type,
-              dato,
-              timer,
-            }))
-          : [],
-    };
+      return {
+        ...dag,
+        dato,
+        aktiviteter:
+          aktiviteter && aktiviteter[index]
+            ? aktiviteter[index].map(
+                ({ type, timer = "" }: Pick<IAktivitet, "type" | "timer">) => ({
+                  id: uuidv7(),
+                  type,
+                  dato,
+                  timer,
+                })
+              )
+            : [],
+      };
+    });
+
+    return lagRapporteringsperiode(
+      {
+        periode: { fraOgMed, tilOgMed },
+        dager,
+        mottattDato:
+          periode.mottattDato ?? format(addDays(tilOgMed, innsendtEtterTilOgMed), "yyyy-MM-dd"),
+        ...periode,
+      },
+      person
+    );
   });
-
-  return lagRapporteringsperiode({
-    periode: { fraOgMed, tilOgMed },
-    dager,
-    mottattDato:
-      periode.mottattDato ?? format(addDays(tilOgMed, innsendtEtterTilOgMed), "yyyy-MM-dd"),
-    ...periode,
-  });
-});
+}
