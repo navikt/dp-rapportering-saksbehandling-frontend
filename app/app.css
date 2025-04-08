@@ -53,7 +53,9 @@ p {
 }
 
 .utdanning {
-  background-color: var(--a-purple-200);
+  background-color: var(
+    --a-purple-200
+  ); /* samme farge som er brukt i dp-rapportering-frontend, men feil i forhold til skissene */
 }
 
 /* Overskriver Aksel */
@@ -70,14 +72,6 @@ p {
   max-width: 75px;
   justify-self: center;
 }
-
-/* .grid-checkbox-group .navds-checkboxes {
-  display: grid;
-  grid-template-rows: subgrid;
-  grid-row-end: span 4;
-  align-items: center;
-  justify-content: center;
-} */
 
 .korrigering-tekstfelt textarea.navds-textarea__input {
   height: 80%;
