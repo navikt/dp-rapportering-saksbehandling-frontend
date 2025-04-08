@@ -1,7 +1,7 @@
 import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { useFetcher } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
@@ -24,6 +24,7 @@ interface IProps {
 
 export function Korrigering({ originalPeriode, korrigertPeriode, setKorrigertPeriode }: IProps) {
   const fetcher = useFetcher();
+  const navigate = useNavigate();
 
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
     korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet)
@@ -53,6 +54,7 @@ export function Korrigering({ originalPeriode, korrigertPeriode, setKorrigertPer
       },
       { method: "post", action: "/api/rapportering" }
     );
+    navigate("/person/17051412345/perioder");
   }
 
   return (
