@@ -1,6 +1,6 @@
 import { Tag } from "@navikt/ds-react";
 import { useState } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Korrigering } from "~/components/korrigering/Korrigering";
@@ -27,6 +27,7 @@ export async function loader({
 
 export default function Periode() {
   const { periode } = useLoaderData<typeof loader>();
+  const { person } = useRouteLoaderData("routes/person.$personId");
 
   const [korrigertPeriode, setKorrigertPeriode] = useState<IRapporteringsperiode>(periode);
 
@@ -72,6 +73,7 @@ export default function Periode() {
           korrigertPeriode={korrigertPeriode}
           setKorrigertPeriode={setKorrigertPeriode}
           originalPeriode={periode}
+          person={person}
         />
       </div>
     </div>

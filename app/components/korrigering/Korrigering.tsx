@@ -5,7 +5,7 @@ import { useFetcher, useNavigate } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
 import styles from "./Korrigering.module.css";
@@ -20,9 +20,15 @@ interface IProps {
   korrigertPeriode: IRapporteringsperiode;
   setKorrigertPeriode: React.Dispatch<React.SetStateAction<IRapporteringsperiode>>;
   originalPeriode: IRapporteringsperiode;
+  person: IPerson;
 }
 
-export function Korrigering({ originalPeriode, korrigertPeriode, setKorrigertPeriode }: IProps) {
+export function Korrigering({
+  originalPeriode,
+  korrigertPeriode,
+  setKorrigertPeriode,
+  person,
+}: IProps) {
   const fetcher = useFetcher();
   const navigate = useNavigate();
 
@@ -54,7 +60,7 @@ export function Korrigering({ originalPeriode, korrigertPeriode, setKorrigertPer
       },
       { method: "post", action: "/api/rapportering" }
     );
-    navigate("/person/17051412345/perioder");
+    navigate(`/person/${person.ident}/perioder`);
   }
 
   return (
@@ -108,7 +114,7 @@ export function Korrigering({ originalPeriode, korrigertPeriode, setKorrigertPer
       </div>
 
       <div className={styles.knapper}>
-        <Button as="a" href="/person/17051412345/perioder" variant="secondary">
+        <Button as="a" href={`/person/${person.ident}/perioder`} variant="secondary">
           Avbryt
         </Button>
         <Button variant="primary" onClick={handleOnClick}>
