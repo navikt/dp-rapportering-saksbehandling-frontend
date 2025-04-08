@@ -1,8 +1,9 @@
-import { BodyLong, Button, Heading, Modal } from "@navikt/ds-react";
+import { Button } from "@navikt/ds-react";
 import { useState } from "react";
 
 import type { IPerson } from "~/utils/types";
 
+import HistorikkModal from "./HistorikkModal";
 import styles from "./PersonInformasjon.module.css";
 
 interface IProps {
@@ -33,22 +34,7 @@ export default function PersonInformasjon({ person }: IProps) {
         </Button>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} aria-labelledby="modal-heading">
-        <Modal.Header>
-          <Heading level="1" size="large" id="modal-heading">
-            Laborum proident id ullamco
-          </Heading>
-        </Modal.Header>
-        <Modal.Body>
-          <BodyLong>
-            Culpa aliquip ut cupidatat laborum minim quis ex in aliqua. Qui incididunt dolor do ad
-            ut. Incididunt eiusmod nostrud deserunt duis laborum. Proident aute culpa qui nostrud
-            velit adipisicing minim. Consequat aliqua aute dolor do sit Lorem nisi mollit velit.
-            Aliqua exercitation non minim minim pariatur sunt laborum ipsum. Exercitation nostrud
-            est laborum magna non non aliqua qui esse.
-          </BodyLong>
-        </Modal.Body>
-      </Modal>
+      <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }
