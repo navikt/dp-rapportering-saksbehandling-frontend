@@ -115,10 +115,10 @@ export function Korrigering({
 
       <div className={styles.knapper}>
         <Button as="a" href={`/person/${person.ident}/perioder`} variant="secondary">
-          Avbryt
+          Avbryt korrigering
         </Button>
         <Button variant="primary" onClick={handleOnClick}>
-          Fullfør korrigering
+          Fullfør og lukk korrigering
         </Button>
       </div>
     </div>

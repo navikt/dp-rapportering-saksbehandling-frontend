@@ -64,7 +64,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
       <Table>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell scope="col"></Table.HeaderCell>
+            <Table.HeaderCell scope="col">Vis</Table.HeaderCell>
             <Table.HeaderCell scope="col">Uke</Table.HeaderCell>
             <Table.HeaderCell scope="col">Dato</Table.HeaderCell>
             <Table.HeaderCell scope="col">Status</Table.HeaderCell>
