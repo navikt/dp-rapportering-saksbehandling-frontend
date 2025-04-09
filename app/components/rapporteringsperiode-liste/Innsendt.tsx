@@ -33,7 +33,9 @@ export function Innsendt({ mottattDato, tilOgMed, sisteFristForTrekk, status }: 
           sisteFristForTrekk ? formatterDato({ dato: sisteFristForTrekk }) : "Ingen frist"
         }`}
       >
-        <Tag variant="error">{formatterDato({ dato: mottattDato })}</Tag>
+        <Tag role="alert" variant="error">
+          {formatterDato({ dato: mottattDato })}
+        </Tag>
       </Tooltip>
     );
   }
