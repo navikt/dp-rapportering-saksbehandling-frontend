@@ -1,13 +1,13 @@
 import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { useFetcher, useNavigate } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
+import { BekreftModal } from "./BekreftModal";
 import styles from "./Korrigering.module.css";
 import {
   type IKorrigertDag,
@@ -29,9 +29,6 @@ export function Korrigering({
   setKorrigertPeriode,
   person,
 }: IProps) {
-  const fetcher = useFetcher();
-  const navigate = useNavigate();
-
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
     korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet)
   );
@@ -39,6 +36,14 @@ export function Korrigering({
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
   const forsteUke = korrigerteDager.slice(0, 7);
   const andreUke = korrigerteDager.slice(7);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"avbryt" | "fullfor" | null>(null);
+
+  function openModal(type: "avbryt" | "fullfor") {
+    setModalType(type);
+    setModalOpen(true);
+  }
 
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
@@ -52,16 +57,6 @@ export function Korrigering({
   const totalSyk = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Syk, true);
   const totalFravaer = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Fravaer, true);
   const totalUtdanning = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Utdanning, true);
-
-  function handleOnClick() {
-    fetcher.submit(
-      {
-        rapporteringsperiode: JSON.stringify(korrigertPeriode),
-      },
-      { method: "post", action: "/api/rapportering" }
-    );
-    navigate(`/person/${person.ident}/perioder`);
-  }
 
   return (
     <div className={styles.korrigeringsGrid}>
@@ -114,12 +109,20 @@ export function Korrigering({
       </div>
 
       <div className={styles.knapper}>
-        <Button as="a" href={`/person/${person.ident}/perioder`} variant="secondary">
+        <Button variant="secondary" onClick={() => openModal("avbryt")}>
           Avbryt korrigering
         </Button>
-        <Button variant="primary" onClick={handleOnClick}>
+        <Button variant="primary" onClick={() => openModal("fullfor")}>
           Fullfør og lukk korrigering
         </Button>
+
+        <BekreftModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          type={modalType}
+          korrigertPeriode={korrigertPeriode}
+          person={person}
+        />
       </div>
     </div>
   );
