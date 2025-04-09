@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/experimental-ct-react";
+import { expect, test } from "@playwright/test";
 import { uuidv7 } from "uuidv7";
 
 import { server, startMockServer } from "~/mocks/server";
