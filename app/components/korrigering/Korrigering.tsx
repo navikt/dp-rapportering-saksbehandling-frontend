@@ -58,6 +58,9 @@ export function Korrigering({
   const totalFravaer = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Fravaer, true);
   const totalUtdanning = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Utdanning, true);
 
+  const harEndringer =
+    JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(originalPeriode.dager);
+
   return (
     <div className={styles.korrigeringsGrid}>
       <div className={styles.aktiviteter}>
@@ -112,7 +115,11 @@ export function Korrigering({
         <Button variant="secondary" onClick={() => openModal("avbryt")}>
           Avbryt korrigering
         </Button>
-        <Button variant="primary" onClick={() => openModal("fullfor")}>
+        <Button
+          variant="primary"
+          onClick={() => openModal("fullfor")}
+          disabled={!korrigertBegrunnelse.trim() || !harEndringer}
+        >
           Fullfør og lukk korrigering
         </Button>
 
