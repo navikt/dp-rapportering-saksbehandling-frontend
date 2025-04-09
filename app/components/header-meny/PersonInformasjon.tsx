@@ -26,9 +26,6 @@ export default function PersonInformasjon({ person }: IProps) {
         </div>
       </div>
       <div className={styles.headerKnapper}>
-        <Button variant="primary-neutral" size="small" className="nytt-meldekort-knapp">
-          Nytt meldekort
-        </Button>
         <Button variant="secondary-neutral" size="small" onClick={() => setModalOpen(true)}>
           Historikk
         </Button>
