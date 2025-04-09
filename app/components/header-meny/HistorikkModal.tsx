@@ -1,11 +1,11 @@
 import { BodyLong, Heading, Modal } from "@navikt/ds-react";
 
-interface HistorikkModalProps {
+interface IProps {
   open: boolean;
   onClose: () => void;
 }
 
-export default function HistorikkModal({ open, onClose }: HistorikkModalProps) {
+export function HistorikkModal({ open, onClose }: IProps) {
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="modal-heading">
       <Modal.Header>

@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import type { IPerson } from "~/utils/types";
 
-import HistorikkModal from "./HistorikkModal";
+import { HistorikkModal } from "./HistorikkModal";
 import styles from "./PersonInformasjon.module.css";
 
 interface IProps {
