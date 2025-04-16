@@ -1,6 +1,5 @@
 import styles from "~/components/header-meny/HeaderMeny.module.css";
 import { HeaderUtloggingMeny } from "~/components/header-meny/HeaderUtloggingMeny";
-import { PersonSok } from "~/components/person-sok/PersonSok";
 import type { ISaksbehandler } from "~/utils/types";
 
 interface IProps {
@@ -46,7 +45,6 @@ export function HeaderMeny({ saksbehandler }: IProps) {
       </div>
 
       <div className={styles.searchAndSaksbehandlerContainer}>
-        <PersonSok />
         <HeaderUtloggingMeny saksbehandler={saksbehandler} />
       </div>
     </div>
