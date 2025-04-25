@@ -23,7 +23,7 @@
     "@navikt/oasis": "^3.7.0",
     "@react-router/fs-routes": "^7.5.0",
     "@react-router/node": "^7.5.0",
-    "@react-router/serve": "^7.5.0",
+    "@react-router/serve": "^7.5.2",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
     "isbot": "^5.1.26",
