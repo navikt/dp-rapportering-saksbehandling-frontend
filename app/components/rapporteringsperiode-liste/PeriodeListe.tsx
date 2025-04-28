@@ -98,7 +98,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                   }
                 }}
               >
-                <Table.DataCell className={styles.checkboxTd} scope="row">
+                <Table.DataCell className={classNames(styles.week, valgtStil)} scope="row">
                   <Checkbox
                     className={styles.checkbox}
                     hideLabel
@@ -112,7 +112,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
                   </Checkbox>
                 </Table.DataCell>
-                <Table.DataCell className={classNames(styles.week, valgtStil)} scope="row">
+                <Table.DataCell className={classNames(valgtStil)} scope="row">
                   {ukenummer(periode)}
                 </Table.DataCell>
                 <Table.DataCell className={classNames(valgtStil)} scope="row">
