@@ -26,6 +26,14 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
     const id = event.target.dataset.id;
     if (!id) return;
 
+    updateParams(id);
+  }
+
+  function toggleRowViaRowClick(id: string) {
+    updateParams(id);
+  }
+
+  function updateParams(id: string) {
     const params = new URLSearchParams(window.location.search);
     const _ids = [...ids].filter((value) => value && perioder.map(({ id }) => id).includes(value));
 
@@ -74,23 +82,34 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
         </Table.Header>
         <Table.Body>
           {perioder.map((periode) => {
-            const valgtStil = { [styles.valgt]: ids.includes(periode.id) };
+            const valgt = ids.includes(periode.id);
+            const valgtStil = { [styles.valgt]: valgt };
+
             return (
-              <Table.Row key={periode.id} selected={ids.includes(periode.id)}>
-                <Table.DataCell className={styles.checkboxTd}>
+              <Table.Row
+                key={periode.id}
+                selected={valgt}
+                tabIndex={0} // Tab-navigasjon støttes
+                onClick={() => toggleRowViaRowClick(periode.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault(); // Unngå scrolling ved mellomrom
+                    toggleRowViaRowClick(periode.id);
+                  }
+                }}
+              >
+                <Table.DataCell className={styles.checkboxTd} scope="row">
                   <Checkbox
                     className={styles.checkbox}
                     hideLabel
                     data-id={periode.id}
-                    checked={ids.includes(periode.id)}
+                    checked={valgt}
                     onChange={toggleRow}
-                    readOnly={
-                      !ids.includes(periode.id) &&
-                      ids.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER
-                    }
+                    onClick={(e) => e.stopPropagation()} // Hindre radklikk
+                    readOnly={!valgt && ids.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER}
                     aria-labelledby={`id-${periode.id}`}
                   >
-                    Velg rapporteringsperiode
+                    {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
                   </Checkbox>
                 </Table.DataCell>
                 <Table.DataCell className={classNames(styles.week, valgtStil)} scope="row">
