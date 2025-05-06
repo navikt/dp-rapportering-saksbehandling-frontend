@@ -12,27 +12,6 @@
   align-items: center;
 }
 
-.kjonnIkon {
-  display: flex;
-  height: 2rem;
-  width: 2rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-}
-
-.mann {
-  background-color: lightblue;
-}
-
-.kvinne {
-  background-color: coral;
-}
-
-.ukjent {
-  background-color: gray;
-}
-
 .headerKnapper {
   display: flex;
   gap: 1rem;

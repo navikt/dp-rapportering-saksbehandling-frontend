@@ -1,10 +1,8 @@
 import "./app.css";
 import "@navikt/ds-css";
 
-import { InternalHeader } from "@navikt/ds-react";
 import {
   isRouteErrorResponse,
-  Link,
   Links,
   Meta,
   Outlet,
@@ -15,10 +13,8 @@ import {
 } from "react-router";
 import { uuidv7 } from "uuidv7";
 
-import { HeaderMeny } from "~/components/header-meny/HeaderMeny";
-import styles from "~/route-styles/root.module.css";
-
 import type { Route } from "./+types/root";
+import Header from "./components/navigasjon/header/Header";
 import { hasSession } from "./mocks/session";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv, isLocalhost, usesMsw } from "./utils/env.utils";
@@ -106,14 +102,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <InternalHeader>
-          <Link to={"/"} className={styles.headerLogo}>
-            <InternalHeader.Title as="h1" className={styles.pageHeader}>
-              Dagpenger
-            </InternalHeader.Title>
-          </Link>
-          <HeaderMeny saksbehandler={saksbehandler} antallOppgaverJegHarTilBehandling={0} />
-        </InternalHeader>
+        <Header saksbehandler={saksbehandler} antallOppgaverJegHarTilBehandling={2} />
         <main>{children}</main>
         <ScrollRestoration />
         <Scripts />
