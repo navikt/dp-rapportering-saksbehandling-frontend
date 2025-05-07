@@ -11,7 +11,11 @@ interface IProps {
 }
 
 function renderTag(condition: boolean) {
-  return condition ? <Tag variant="success">Ja</Tag> : <Tag variant="error">Nei</Tag>;
+  return condition ? (
+    <Tag variant="success">Arbeidssøker</Tag>
+  ) : (
+    <Tag variant="error">Ikke arbeidssøker</Tag>
+  );
 }
 
 const numberFormat = new Intl.NumberFormat("nb-NO", {
@@ -27,7 +31,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
         <table className={styles.detaljerTabell}>
           <tbody>
             <tr>
-              <th>Arbeidssøkerstatus:</th>
+              <th>Status neste 14 dager:</th>
               <td>
                 {typeof periode.registrertArbeidssoker === "boolean"
                   ? renderTag(periode.registrertArbeidssoker ?? false)
