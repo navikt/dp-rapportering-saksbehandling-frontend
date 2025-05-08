@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import type { IPerson } from "~/utils/types";
 
-import { HistorikkModal } from "./HistorikkModal";
+import { HistorikkModal } from "../../modals/historikk/HistorikkModal";
 import styles from "./PersonInformasjon.module.css";
 
 interface IProps {
@@ -31,7 +31,7 @@ export default function PersonInformasjon({ person }: IProps) {
         </Button>
       </div>
 
-      <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} fulltNavn={fulltNavn} />
     </div>
   );
 }

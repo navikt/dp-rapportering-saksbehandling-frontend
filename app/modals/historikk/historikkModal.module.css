@@ -1,0 +1,45 @@
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 28px 56px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--a-space-8);
+    color: var(--text-action-selected, #00459C);
+  }
+  
+  .listItem {
+    display: flex;
+    gap: var(--a-space-8);
+  }
+  
+  .content {
+    padding-bottom: var(--a-space-28);
+  }
+  
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--a-space-8);
+    align-self: stretch;
+  }
+  
+  .circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--text-action-selected, #00459C);
+    background: transparent;
+  }
+  
+  .current {
+    background: var(--text-action-selected, #00459C);
+  }
+  
+  .line {
+    width: 2px;
+    flex-grow: 1;
+    background-color: var(--text-action-selected, #00459C);
+  }
+  
