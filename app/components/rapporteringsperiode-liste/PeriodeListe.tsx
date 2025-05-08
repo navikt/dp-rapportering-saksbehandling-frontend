@@ -115,6 +115,7 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     onClick={(e) => e.stopPropagation()}
                     readOnly={!valgt && ids.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER}
                     aria-labelledby={`id-${periode.id}`}
+                    tabIndex={-1}
                   >
                     {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
                   </Checkbox>
