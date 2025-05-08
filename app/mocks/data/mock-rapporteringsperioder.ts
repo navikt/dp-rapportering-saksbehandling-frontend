@@ -70,7 +70,7 @@ const perioder: {
   {
     // Saksbehandler har tatt vekk utdanning
     periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       originalId: id,
       begrunnelseEndring: "Feil annet fravær",
       bruttoBelop: 3056,
@@ -83,22 +83,22 @@ const perioder: {
     ukerFraIDag: 8,
     innsendtEtterTilOgMed: 1,
   },
-  {
-    // Bruker har ført utdanning
-    periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Feilet, // Byttet til Ferdig fra Feilet for å ikke få spørsmål om det når det skal vises frem
-      id,
-      bruttoBelop: 3056,
-      registrertArbeidssoker: true,
-      kilde: {
-        rolle: "Bruker",
-        ident: "987654321",
-      },
-    },
-    ukerFraIDag: 8,
-    innsendtEtterTilOgMed: 1,
-    aktiviteter: [...new Array(2).fill(null), [{ type: AKTIVITET_TYPE.Utdanning }]],
-  },
+  // {
+  //   // Bruker har ført utdanning
+  //   periode: {
+  //     status: RAPPORTERINGSPERIODE_STATUS.Feilet, // Byttet til Ferdig fra Feilet for å ikke få spørsmål om det når det skal vises frem
+  //     id,
+  //     bruttoBelop: 3056,
+  //     registrertArbeidssoker: true,
+  //     kilde: {
+  //       rolle: "Bruker",
+  //       ident: "987654321",
+  //     },
+  //   },
+  //   ukerFraIDag: 8,
+  //   innsendtEtterTilOgMed: 1,
+  //   aktiviteter: [...new Array(2).fill(null), [{ type: AKTIVITET_TYPE.Utdanning }]],
+  // },
   {
     periode: {
       status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
