@@ -70,7 +70,7 @@ const perioder: {
   {
     // Saksbehandler har tatt vekk utdanning
     periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       originalId: id,
       begrunnelseEndring: "Feil annet fravær",
       bruttoBelop: 3056,
