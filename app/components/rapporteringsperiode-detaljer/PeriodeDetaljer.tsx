@@ -10,20 +10,15 @@ interface IProps {
   personId: string;
 }
 
-function renderTag(condition: boolean) {
-  return condition ? (
-    <Tag variant="success">Arbeidssøker</Tag>
-  ) : (
-    <Tag variant="error">Ikke arbeidssøker</Tag>
-  );
-}
-
 const numberFormat = new Intl.NumberFormat("nb-NO", {
   style: "currency",
   currency: "NOK",
 });
 
 export function PeriodeDetaljer({ periode, personId }: IProps) {
+  const erArbeidssoker = periode.registrertArbeidssoker;
+  const erKorrigert = !!periode.originalId;
+
   return (
     <div className={styles.periodeDetaljer}>
       <div>
@@ -31,24 +26,30 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
         <table className={styles.detaljerTabell}>
           <tbody>
             <tr>
-              <th>Status neste 14 dager:</th>
+              <th scope="row">Status neste 14 dager:</th>
               <td>
-                {typeof periode.registrertArbeidssoker === "boolean"
-                  ? renderTag(periode.registrertArbeidssoker ?? false)
-                  : null}
+                {typeof erArbeidssoker === "boolean" && (
+                  <Tag variant={erArbeidssoker ? "success" : "error"}>
+                    {erArbeidssoker ? "Arbeidssøker" : "Ikke arbeidssøker"}
+                  </Tag>
+                )}
               </td>
             </tr>
             <tr>
-              <th>Korrigering av meldekort:</th>
-              <td> {renderTag(!!periode.originalId)}</td>
+              <th scope="row">Korrigering av meldekort:</th>
+              <td>
+                <Tag variant={erKorrigert ? "success" : "neutral"}>
+                  {erKorrigert ? "Ja" : "Nei"}
+                </Tag>
+              </td>
             </tr>
             <tr>
-              <th>Grunn til endring: </th>
-              <td>{periode.begrunnelseEndring}</td>
+              <th scope="row">Grunn til endring:</th>
+              <td>{periode.begrunnelseEndring || "-"}</td>
             </tr>
             <tr>
-              <th>Utbetaling av dagpenger:</th>
-              <td>{periode.bruttoBelop && numberFormat.format(periode.bruttoBelop)}</td>
+              <th scope="row">Utbetaling av dagpenger:</th>
+              <td>{periode.bruttoBelop ? numberFormat.format(periode.bruttoBelop) : "-"}</td>
             </tr>
           </tbody>
         </table>
