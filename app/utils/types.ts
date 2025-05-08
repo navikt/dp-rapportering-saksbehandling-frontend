@@ -81,6 +81,10 @@ export interface IRapporteringsperiode {
   originalId: string | null;
   html: string | null;
   rapporteringstype: TRapporteringstype | null;
+  kilde: {
+    rolle: "Bruker" | "Saksbehandler";
+    ident: string;
+  } | null;
 }
 
 export interface ISikkerhetstiltak {
