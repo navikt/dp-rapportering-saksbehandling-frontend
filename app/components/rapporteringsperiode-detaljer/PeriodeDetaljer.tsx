@@ -35,18 +35,18 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
                 )}
               </td>
             </tr>
-            <tr>
-              <th scope="row">Korrigering av meldekort:</th>
-              <td>
-                <Tag variant={erKorrigert ? "success" : "neutral"}>
-                  {erKorrigert ? "Ja" : "Nei"}
-                </Tag>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">Grunn til endring:</th>
-              <td>{periode.begrunnelseEndring || "-"}</td>
-            </tr>
+            {erKorrigert && periode?.kilde?.rolle && (
+              <tr>
+                <th scope="row">Korrigert av:</th>
+                <td>{periode?.kilde?.rolle}</td>
+              </tr>
+            )}
+            {periode.begrunnelseEndring && (
+              <tr>
+                <th scope="row">Grunn til endring:</th>
+                <td>{periode.begrunnelseEndring}</td>
+              </tr>
+            )}
             <tr>
               <th scope="row">Utbetaling av dagpenger:</th>
               <td>{periode.bruttoBelop ? numberFormat.format(periode.bruttoBelop) : "-"}</td>

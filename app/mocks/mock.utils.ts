@@ -100,6 +100,7 @@ export function lagRapporteringsperiode(
     originalId: null,
     html: null,
     rapporteringstype: null,
+    kilde: props.kilde ?? null,
     ...props,
   };
 

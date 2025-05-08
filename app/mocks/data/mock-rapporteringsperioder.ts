@@ -75,6 +75,10 @@ const perioder: {
       begrunnelseEndring: "Feil annet fravær",
       bruttoBelop: 3056,
       registrertArbeidssoker: true,
+      kilde: {
+        rolle: "Saksbehandler",
+        ident: "123456789",
+      },
     },
     ukerFraIDag: 8,
     innsendtEtterTilOgMed: 1,
@@ -86,6 +90,10 @@ const perioder: {
       id,
       bruttoBelop: 3056,
       registrertArbeidssoker: true,
+      kilde: {
+        rolle: "Bruker",
+        ident: "987654321",
+      },
     },
     ukerFraIDag: 8,
     innsendtEtterTilOgMed: 1,

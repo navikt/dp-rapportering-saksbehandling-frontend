@@ -59,6 +59,10 @@ class SessionRecord {
         originalId: nullable(faker.string.numeric),
         html: nullable(faker.string.alpha),
         rapporteringstype: nullable(faker.string.alpha),
+        kilde: nullable({
+          rolle: nullable(faker.string.alpha),
+          ident: nullable(faker.string.alpha),
+        }),
       },
       personer: {
         ident: primaryKey(faker.string.alpha),
