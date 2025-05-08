@@ -18,53 +18,60 @@ interface IProps {
 
 const MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER = 3;
 
+// Hjelpefunksjon for å lage en Set med gyldige ID-er
+function getGyldigeRapporteringsIder(perioder: IRapporteringsperiode[]) {
+  return new Set(perioder.map((p) => p.id));
+}
+
 export function RapporteringsperiodeListe({ perioder }: IProps) {
   const [searchParams, setParams] = useSearchParams();
   const ids = searchParams.get("rapporteringsid")?.split(",") ?? [];
 
-  function toggleRow(event: React.ChangeEvent<HTMLInputElement>) {
-    const id = event.target.dataset.id;
-    if (!id) return;
+  function toggleRapporteringsperiode(id: string) {
+    const gyldigeIds = getGyldigeRapporteringsIder(perioder);
+    const gjeldendeValgte = ids.filter((valgtId) => gyldigeIds.has(valgtId));
+    const alleredeValgt = gjeldendeValgte.includes(id);
 
-    updateParams(id);
-  }
-
-  function toggleRowViaRowClick(id: string) {
-    updateParams(id);
-  }
-
-  function updateParams(id: string) {
-    const params = new URLSearchParams(window.location.search);
-    const _ids = [...ids].filter((value) => value && perioder.map(({ id }) => id).includes(value));
-
-    if (_ids.includes(id) && _ids.length > 1) {
-      params.set("rapporteringsid", _ids.filter((i) => i !== id).join(","));
-    } else if (_ids.includes(id)) {
-      params.delete("rapporteringsid");
-    } else {
-      params.set("rapporteringsid", [..._ids, id].join(","));
+    // Ikke tillat flere enn maks hvis man prøver å legge til en ny
+    if (!alleredeValgt && gjeldendeValgte.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER) {
+      return;
     }
 
-    if (params.get("rapporteringsid") === "") {
+    const nyeValgte = alleredeValgt
+      ? gjeldendeValgte.filter((valgtId) => valgtId !== id)
+      : [...gjeldendeValgte, id];
+
+    const params = new URLSearchParams(searchParams);
+    if (nyeValgte.length === 0) {
       params.delete("rapporteringsid");
+    } else {
+      params.set("rapporteringsid", nyeValgte.join(","));
     }
 
     setParams(params);
+  }
+
+  function toggleRow(event: React.ChangeEvent<HTMLInputElement>) {
+    const id = event.target.dataset.id;
+    if (id) toggleRapporteringsperiode(id);
+  }
+
+  function toggleRowViaRowClick(id: string) {
+    toggleRapporteringsperiode(id);
   }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const idFraUrlSomErIPerioder = ids.filter((valgtId) =>
-      perioder.map(({ id }) => id).includes(valgtId)
-    );
+    const gyldigeIds = getGyldigeRapporteringsIder(perioder);
+    const urlValgte = params.get("rapporteringsid")?.split(",") ?? [];
+    const filtrerteValgte = urlValgte.filter((id) => gyldigeIds.has(id));
 
-    if (!idFraUrlSomErIPerioder.length) {
-      params.delete("rapporteringsid");
-    } else {
-      params.set("rapporteringsid", idFraUrlSomErIPerioder.join(","));
+    const nyeParams = new URLSearchParams();
+    if (filtrerteValgte.length > 0) {
+      nyeParams.set("rapporteringsid", filtrerteValgte.join(","));
     }
 
-    setParams(params);
+    setParams(nyeParams);
   }, []);
 
   return (
@@ -83,17 +90,17 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
         <Table.Body>
           {perioder.map((periode) => {
             const valgt = ids.includes(periode.id);
-            const valgtStil = { [styles.valgt]: valgt };
+            const valgtStil = classNames({ [styles.valgt]: valgt });
 
             return (
               <Table.Row
                 key={periode.id}
                 selected={valgt}
-                tabIndex={0} // Tab-navigasjon støttes
+                tabIndex={0}
                 onClick={() => toggleRowViaRowClick(periode.id)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault(); // Unngå scrolling ved mellomrom
+                    event.preventDefault();
                     toggleRowViaRowClick(periode.id);
                   }
                 }}
@@ -105,26 +112,26 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
                     data-id={periode.id}
                     checked={valgt}
                     onChange={toggleRow}
-                    onClick={(e) => e.stopPropagation()} // Hindre radklikk
+                    onClick={(e) => e.stopPropagation()}
                     readOnly={!valgt && ids.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER}
                     aria-labelledby={`id-${periode.id}`}
                   >
                     {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
                   </Checkbox>
                 </Table.DataCell>
-                <Table.DataCell className={classNames(valgtStil)} scope="row">
+                <Table.DataCell className={valgtStil} scope="row">
                   {ukenummer(periode)}
                 </Table.DataCell>
-                <Table.DataCell className={classNames(valgtStil)} scope="row">
+                <Table.DataCell className={valgtStil} scope="row">
                   <Dato periode={periode} />
                 </Table.DataCell>
-                <Table.DataCell className={classNames(valgtStil)}>
+                <Table.DataCell className={valgtStil}>
                   <Status status={periode.status} />
                 </Table.DataCell>
-                <Table.DataCell className={classNames(valgtStil)}>
+                <Table.DataCell className={valgtStil}>
                   <TypeAktivitet periode={periode} />
                 </Table.DataCell>
-                <Table.DataCell className={classNames(valgtStil)}>
+                <Table.DataCell className={valgtStil}>
                   <Innsendt
                     mottattDato={periode.mottattDato ?? ""}
                     tilOgMed={periode.periode.tilOgMed}
