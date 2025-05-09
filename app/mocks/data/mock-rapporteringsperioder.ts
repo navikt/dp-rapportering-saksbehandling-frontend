@@ -16,19 +16,60 @@ const perioder: {
   aktiviteter?: Array<null | Pick<IAktivitet, "type" | "timer">[]>;
 }[] = [
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling },
-    ukerFraIDag: -2,
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig },
+    ukerFraIDag: 14,
     innsendtEtterTilOgMed: 1,
   },
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt, registrertArbeidssoker: true },
-    ukerFraIDag: 0,
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig },
+    ukerFraIDag: 12,
+    innsendtEtterTilOgMed: 1,
+  },
+  {
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig },
+    ukerFraIDag: 10,
+    innsendtEtterTilOgMed: 1,
+  },
+  {
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt },
+    ukerFraIDag: 8,
+    innsendtEtterTilOgMed: 1,
+    aktiviteter: [
+      ...new Array(3).fill(null),
+      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("5") }],
+      ...new Array(3).fill(null),
+      [{ type: AKTIVITET_TYPE.Syk }],
+      [{ type: AKTIVITET_TYPE.Fravaer }],
+      ...new Array(6).fill(null),
+    ],
+  },
+  {
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt },
+    ukerFraIDag: 6,
+    innsendtEtterTilOgMed: 1,
+  },
+  {
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt },
+    ukerFraIDag: 4,
     innsendtEtterTilOgMed: 1,
   },
   {
     periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
-      bruttoBelop: 3056,
+      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+      originalId: id,
+      begrunnelseEndring: "Feil annet fravær",
+      registrertArbeidssoker: true,
+      kilde: {
+        rolle: "Saksbehandler",
+        ident: "123456789",
+      },
+    },
+    ukerFraIDag: 2,
+    innsendtEtterTilOgMed: 1,
+  },
+  {
+    periode: {
+      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       registrertArbeidssoker: true,
     },
     ukerFraIDag: 2,
@@ -36,103 +77,9 @@ const perioder: {
   },
   {
     periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
-      bruttoBelop: 3056,
-      registrertArbeidssoker: true,
+      status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
     },
-    ukerFraIDag: 4,
-    innsendtEtterTilOgMed: 1,
-    aktiviteter: [
-      ...new Array(4).fill(null),
-      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("3") }],
-      ...new Array(6).fill(null),
-      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("4") }],
-    ],
-  },
-  {
-    periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
-      bruttoBelop: 3056,
-      registrertArbeidssoker: true,
-    },
-    ukerFraIDag: 6,
-    innsendtEtterTilOgMed: 1,
-    aktiviteter: [
-      ...new Array(3).fill(null),
-      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("5") }],
-      ...new Array(4).fill(null),
-      [{ type: AKTIVITET_TYPE.Syk }],
-      [{ type: AKTIVITET_TYPE.Fravaer }],
-      [{ type: AKTIVITET_TYPE.Fravaer }],
-      [{ type: AKTIVITET_TYPE.Fravaer }],
-    ],
-  },
-  {
-    // Saksbehandler har tatt vekk utdanning
-    periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-      originalId: id,
-      begrunnelseEndring: "Feil annet fravær",
-      bruttoBelop: 3056,
-      registrertArbeidssoker: true,
-      kilde: {
-        rolle: "Saksbehandler",
-        ident: "123456789",
-      },
-    },
-    ukerFraIDag: 8,
-    innsendtEtterTilOgMed: 1,
-  },
-  // {
-  //   // Bruker har ført utdanning
-  //   periode: {
-  //     status: RAPPORTERINGSPERIODE_STATUS.Feilet, // Byttet til Ferdig fra Feilet for å ikke få spørsmål om det når det skal vises frem
-  //     id,
-  //     bruttoBelop: 3056,
-  //     registrertArbeidssoker: true,
-  //     kilde: {
-  //       rolle: "Bruker",
-  //       ident: "987654321",
-  //     },
-  //   },
-  //   ukerFraIDag: 8,
-  //   innsendtEtterTilOgMed: 1,
-  //   aktiviteter: [...new Array(2).fill(null), [{ type: AKTIVITET_TYPE.Utdanning }]],
-  // },
-  {
-    periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
-      bruttoBelop: 3056,
-      registrertArbeidssoker: true,
-    },
-    ukerFraIDag: 10,
-    innsendtEtterTilOgMed: 1,
-  },
-  {
-    periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
-      bruttoBelop: 3056,
-      registrertArbeidssoker: true,
-    },
-    ukerFraIDag: 12,
-    innsendtEtterTilOgMed: 18,
-  },
-  {
-    periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
-      bruttoBelop: 3056,
-      registrertArbeidssoker: true,
-    },
-    ukerFraIDag: 14,
-    innsendtEtterTilOgMed: 1,
-  },
-  {
-    periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
-      bruttoBelop: 3056,
-      registrertArbeidssoker: true,
-    },
-    ukerFraIDag: 16,
+    ukerFraIDag: 0,
     innsendtEtterTilOgMed: 1,
   },
 ];
@@ -140,7 +87,7 @@ const perioder: {
 export function lagRapporteringsperioder(person: IPerson) {
   return perioder.map(({ periode, ukerFraIDag, innsendtEtterTilOgMed, aktiviteter }) => {
     const dagensDato = new Date();
-    const startDato = subWeeks(dagensDato, ukerFraIDag);
+    const startDato = subWeeks(dagensDato, Math.abs(ukerFraIDag));
 
     const { fraOgMed, tilOgMed } = lagPeriodeDatoFor(startDato);
 

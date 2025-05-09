@@ -37,7 +37,7 @@ describe("Status", () => {
 
     expect(container.querySelector(".navds-tag--success")).toBeInTheDocument();
 
-    const text = screen.getByText("Beregnet");
+    const text = screen.getByText("Beregning utført");
     expect(text).toBeInTheDocument();
   });
 

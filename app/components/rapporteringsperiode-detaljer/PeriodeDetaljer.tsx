@@ -39,12 +39,10 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
             <tr>
               <th scope="row">Status neste 14 dager:</th>
               <td>
-                {typeof erArbeidssoker === "boolean" ? (
+                {typeof erArbeidssoker === "boolean" && (
                   <Tag variant={erArbeidssoker ? "success" : "error"}>
                     {erArbeidssoker ? "Arbeidssøker" : "Ikke arbeidssøker"}
                   </Tag>
-                ) : (
-                  "—"
                 )}
               </td>
             </tr>
@@ -61,10 +59,12 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
                 <td>{periode.begrunnelseEndring}</td>
               </tr>
             )}
-            <tr>
-              <th scope="row">Utbetaling av dagpenger:</th>
-              <td>{periode.bruttoBelop ? numberFormat.format(periode.bruttoBelop) : "—"}</td>
-            </tr>
+            {periode.bruttoBelop && (
+              <tr>
+                <th scope="row">Utbetaling av dagpenger:</th>
+                <td>{periode.bruttoBelop ? numberFormat.format(periode.bruttoBelop) : "—"}</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
