@@ -63,6 +63,20 @@ export function Korrigering({
   const harEndringer =
     JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(originalPeriode.dager);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (harEndringer || korrigertBegrunnelse.trim()) {
+        event.preventDefault();
+        event.returnValue = ""; // For moderne nettlesere
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [harEndringer, korrigertBegrunnelse]);
+
   return (
     <div className={styles.korrigeringsGrid}>
       <div className={styles.aktiviteter}>
