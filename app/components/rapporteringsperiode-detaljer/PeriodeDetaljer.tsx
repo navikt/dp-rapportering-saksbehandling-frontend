@@ -1,8 +1,8 @@
-import { Button, Tag } from "@navikt/ds-react";
+import { Button, Heading, Tag } from "@navikt/ds-react";
 
+import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-import { PeriodeMedUke } from "../rapporteringsperiode-visning/PeriodeMedUke";
 import styles from "./PeriodeDetaljer.module.css";
 
 interface IProps {
@@ -19,22 +19,36 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalId;
 
+  const { fraOgMed } = periode.periode;
+  const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
+  const uker = ukenummer(periode);
+
   return (
     <div className={styles.periodeDetaljer}>
       <div>
-        <PeriodeMedUke periode={periode} />
+        <div className={styles.header}>
+          <Heading level="3" size="small">
+            Uke {uker} | {formattertFraOgMed}
+          </Heading>
+          {erKorrigert && periode?.kilde?.rolle == "Saksbehandler" && (
+            <Tag variant="info">Korrigering</Tag>
+          )}
+        </div>
         <table className={styles.detaljerTabell}>
           <tbody>
             <tr>
               <th scope="row">Status neste 14 dager:</th>
               <td>
-                {typeof erArbeidssoker === "boolean" && (
+                {typeof erArbeidssoker === "boolean" ? (
                   <Tag variant={erArbeidssoker ? "success" : "error"}>
                     {erArbeidssoker ? "Arbeidssøker" : "Ikke arbeidssøker"}
                   </Tag>
+                ) : (
+                  "—"
                 )}
               </td>
             </tr>
+
             {erKorrigert && periode?.kilde?.rolle && (
               <tr>
                 <th scope="row">Korrigert av:</th>
@@ -49,7 +63,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
             )}
             <tr>
               <th scope="row">Utbetaling av dagpenger:</th>
-              <td>{periode.bruttoBelop ? numberFormat.format(periode.bruttoBelop) : "-"}</td>
+              <td>{periode.bruttoBelop ? numberFormat.format(periode.bruttoBelop) : "—"}</td>
             </tr>
           </tbody>
         </table>

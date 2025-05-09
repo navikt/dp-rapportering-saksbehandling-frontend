@@ -1,64 +1,48 @@
-import { Checkbox, Table } from "@navikt/ds-react";
-import classNames from "classnames";
+import { Table } from "@navikt/ds-react";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 
-import { ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-import { Dato } from "./Dato";
-import { Innsendt } from "./Innsendt";
 import styles from "./PeriodeListe.module.css";
-import { Status } from "./Status";
-import { TypeAktivitet } from "./TypeAktivitet";
+import { PeriodeRad } from "./PeriodeRad";
 
-interface IProps {
+interface Props {
   perioder: IRapporteringsperiode[];
 }
 
-const MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER = 3;
+const MAKS_VALGTE = 3;
 
-// Hjelpefunksjon for å lage en Set med gyldige ID-er
-function getGyldigeRapporteringsIder(perioder: IRapporteringsperiode[]) {
-  return new Set(perioder.map((p) => p.id));
-}
+const getGyldigeRapporteringsIder = (perioder: IRapporteringsperiode[]) =>
+  new Set(perioder.map((p) => p.id));
 
-export function RapporteringsperiodeListe({ perioder }: IProps) {
+export function RapporteringsperiodeListe({ perioder }: Props) {
   const [searchParams, setParams] = useSearchParams();
-  const ids = searchParams.get("rapporteringsid")?.split(",") ?? [];
+  const valgteIds = searchParams.get("rapporteringsid")?.split(",") ?? [];
 
-  function toggleRapporteringsperiode(id: string) {
+  const oppdaterURLMedValgte = (valgte: string[]) => {
+    const params = new URLSearchParams(searchParams);
+    if (valgte.length === 0) {
+      params.delete("rapporteringsid");
+    } else {
+      params.set("rapporteringsid", valgte.join(","));
+    }
+    setParams(params);
+  };
+
+  const toggleRapporteringsperiode = (id: string) => {
     const gyldigeIds = getGyldigeRapporteringsIder(perioder);
-    const gjeldendeValgte = ids.filter((valgtId) => gyldigeIds.has(valgtId));
+    const gjeldendeValgte = valgteIds.filter((valgtId) => gyldigeIds.has(valgtId));
     const alleredeValgt = gjeldendeValgte.includes(id);
 
-    // Ikke tillat flere enn maks hvis man prøver å legge til en ny
-    if (!alleredeValgt && gjeldendeValgte.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER) {
-      return;
-    }
+    if (!alleredeValgt && gjeldendeValgte.length >= MAKS_VALGTE) return;
 
-    const nyeValgte = alleredeValgt
+    const oppdatertValgte = alleredeValgt
       ? gjeldendeValgte.filter((valgtId) => valgtId !== id)
       : [...gjeldendeValgte, id];
 
-    const params = new URLSearchParams(searchParams);
-    if (nyeValgte.length === 0) {
-      params.delete("rapporteringsid");
-    } else {
-      params.set("rapporteringsid", nyeValgte.join(","));
-    }
-
-    setParams(params);
-  }
-
-  function toggleRow(event: React.ChangeEvent<HTMLInputElement>) {
-    const id = event.target.dataset.id;
-    if (id) toggleRapporteringsperiode(id);
-  }
-
-  function toggleRowViaRowClick(id: string) {
-    toggleRapporteringsperiode(id);
-  }
+    oppdaterURLMedValgte(oppdatertValgte);
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -66,83 +50,48 @@ export function RapporteringsperiodeListe({ perioder }: IProps) {
     const urlValgte = params.get("rapporteringsid")?.split(",") ?? [];
     const filtrerteValgte = urlValgte.filter((id) => gyldigeIds.has(id));
 
-    const nyeParams = new URLSearchParams();
-    if (filtrerteValgte.length > 0) {
-      nyeParams.set("rapporteringsid", filtrerteValgte.join(","));
-    }
-
-    setParams(nyeParams);
+    oppdaterURLMedValgte(filtrerteValgte);
   }, []);
 
   return (
-    <div className={styles.tabell}>
+    <div className={styles.periodeListe}>
       <Table>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell scope="col">Vis</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Uke</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Dato</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Status</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Aktiviteter</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Innsendt</Table.HeaderCell>
+            <Table.HeaderCell
+              scope="col"
+              className={styles.periodeListe__header + " " + styles["periodeListe__header--first"]}
+            >
+              Vis
+            </Table.HeaderCell>
+            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
+              Uke
+            </Table.HeaderCell>
+            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
+              Dato
+            </Table.HeaderCell>
+            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
+              Status
+            </Table.HeaderCell>
+            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
+              Aktiviteter
+            </Table.HeaderCell>
+            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
+              Innsendt
+            </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {perioder.map((periode) => {
-            const valgt = ids.includes(periode.id);
-            const valgtStil = classNames({ [styles.valgt]: valgt });
-
-            return (
-              <Table.Row
-                key={periode.id}
-                selected={valgt}
-                tabIndex={0}
-                onClick={() => toggleRowViaRowClick(periode.id)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    toggleRowViaRowClick(periode.id);
-                  }
-                }}
-              >
-                <Table.DataCell className={classNames(styles.week, valgtStil)} scope="row">
-                  <Checkbox
-                    className={styles.checkbox}
-                    hideLabel
-                    data-id={periode.id}
-                    checked={valgt}
-                    onChange={toggleRow}
-                    onClick={(e) => e.stopPropagation()}
-                    readOnly={!valgt && ids.length >= MAKS_ANTALL_VALGTE_RAPPORTERINGSPERIODER}
-                    aria-labelledby={`id-${periode.id}`}
-                    tabIndex={-1}
-                  >
-                    {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
-                  </Checkbox>
-                </Table.DataCell>
-                <Table.DataCell className={valgtStil} scope="row">
-                  {ukenummer(periode)}
-                </Table.DataCell>
-                <Table.DataCell className={valgtStil} scope="row">
-                  <Dato periode={periode} />
-                </Table.DataCell>
-                <Table.DataCell className={valgtStil}>
-                  <Status status={periode.status} />
-                </Table.DataCell>
-                <Table.DataCell className={valgtStil}>
-                  <TypeAktivitet periode={periode} />
-                </Table.DataCell>
-                <Table.DataCell className={valgtStil}>
-                  <Innsendt
-                    mottattDato={periode.mottattDato ?? ""}
-                    tilOgMed={periode.periode.tilOgMed}
-                    sisteFristForTrekk={periode.sisteFristForTrekk}
-                    status={periode.status}
-                  />
-                </Table.DataCell>
-              </Table.Row>
-            );
-          })}
+          {perioder.map((periode) => (
+            <PeriodeRad
+              key={periode.id}
+              periode={periode}
+              valgt={valgteIds.includes(periode.id)}
+              toggle={toggleRapporteringsperiode}
+              valgteAntall={valgteIds.length}
+              maksValgte={MAKS_VALGTE}
+            />
+          ))}
         </Table.Body>
       </Table>
     </div>
