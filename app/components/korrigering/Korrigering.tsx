@@ -2,7 +2,7 @@ import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 
-import { AKTIVITET_TYPE } from "~/utils/constants";
+import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
@@ -48,8 +48,10 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
+      status: RAPPORTERINGSPERIODE_STATUS.Endret,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       begrunnelseEndring: korrigertBegrunnelse,
+      kilde: { rolle: "Saksbehandler", ident: "123456789" },
     }));
   }, [korrigerteDager, korrigertBegrunnelse]);
 
@@ -120,7 +122,7 @@ export function Korrigering({
           onClick={() => openModal("fullfor")}
           disabled={!korrigertBegrunnelse.trim() || !harEndringer}
         >
-          Fullfør og lukk korrigering
+          Fullfør korrigering
         </Button>
 
         <BekreftModal
