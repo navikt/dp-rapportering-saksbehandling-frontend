@@ -16,22 +16,22 @@ const perioder: {
   aktiviteter?: Array<null | Pick<IAktivitet, "type" | "timer">[]>;
 }[] = [
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig },
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig, registrertArbeidssoker: true },
     ukerFraIDag: 14,
     innsendtEtterTilOgMed: 1,
   },
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig },
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig, registrertArbeidssoker: true },
     ukerFraIDag: 12,
-    innsendtEtterTilOgMed: 1,
+    innsendtEtterTilOgMed: 9,
   },
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig },
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig, registrertArbeidssoker: true },
     ukerFraIDag: 10,
     innsendtEtterTilOgMed: 1,
   },
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt },
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt, registrertArbeidssoker: true },
     ukerFraIDag: 8,
     innsendtEtterTilOgMed: 1,
     aktiviteter: [
@@ -40,16 +40,24 @@ const perioder: {
       ...new Array(3).fill(null),
       [{ type: AKTIVITET_TYPE.Syk }],
       [{ type: AKTIVITET_TYPE.Fravaer }],
-      ...new Array(6).fill(null),
+      ...new Array(1).fill(null),
+      [{ type: AKTIVITET_TYPE.Syk }],
+      [{ type: AKTIVITET_TYPE.Syk }],
     ],
   },
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt },
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt, registrertArbeidssoker: true },
     ukerFraIDag: 6,
     innsendtEtterTilOgMed: 1,
+    aktiviteter: [
+      ...new Array(2).fill(null),
+      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("4") }],
+      ...new Array(6).fill(null),
+      [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("4") }],
+    ],
   },
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt },
+    periode: { status: RAPPORTERINGSPERIODE_STATUS.Innsendt, registrertArbeidssoker: true },
     ukerFraIDag: 4,
     innsendtEtterTilOgMed: 1,
   },
@@ -66,6 +74,7 @@ const perioder: {
     },
     ukerFraIDag: 2,
     innsendtEtterTilOgMed: 1,
+    aktiviteter: [[{ type: AKTIVITET_TYPE.Fravaer }], ...new Array(2).fill(null)],
   },
   {
     periode: {
@@ -73,11 +82,12 @@ const perioder: {
       registrertArbeidssoker: true,
     },
     ukerFraIDag: 2,
-    innsendtEtterTilOgMed: 1,
+    innsendtEtterTilOgMed: 2,
   },
   {
     periode: {
       status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+      registrertArbeidssoker: true,
     },
     ukerFraIDag: 0,
     innsendtEtterTilOgMed: 1,
