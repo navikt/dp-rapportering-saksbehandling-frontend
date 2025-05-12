@@ -64,6 +64,14 @@ const perioder: {
   {
     periode: {
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+      registrertArbeidssoker: true,
+    },
+    ukerFraIDag: 2,
+    innsendtEtterTilOgMed: 2,
+  },
+  {
+    periode: {
+      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       originalId: id,
       begrunnelseEndring: "Feil annet fravær",
       registrertArbeidssoker: true,
@@ -75,14 +83,6 @@ const perioder: {
     ukerFraIDag: 2,
     innsendtEtterTilOgMed: 1,
     aktiviteter: [[{ type: AKTIVITET_TYPE.Fravaer }], ...new Array(2).fill(null)],
-  },
-  {
-    periode: {
-      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-      registrertArbeidssoker: true,
-    },
-    ukerFraIDag: 2,
-    innsendtEtterTilOgMed: 2,
   },
   {
     periode: {
