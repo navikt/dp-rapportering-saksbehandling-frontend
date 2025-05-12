@@ -67,7 +67,7 @@ const perioder: {
       registrertArbeidssoker: true,
     },
     ukerFraIDag: 2,
-    innsendtEtterTilOgMed: 2,
+    innsendtEtterTilOgMed: 1,
   },
   {
     periode: {
