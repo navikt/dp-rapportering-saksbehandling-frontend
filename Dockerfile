@@ -1,4 +1,4 @@
-FROM node:22-alpine AS node
+FROM node:24-alpine AS node
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN sh -c \
     'npm config set //npm.pkg.github.com/:_authToken=$(cat /run/secrets/NODE_AUTH_TOKEN)'
