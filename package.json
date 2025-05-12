@@ -22,7 +22,7 @@
     "@navikt/ds-react": "^7.21.1",
     "@navikt/oasis": "^3.8.0",
     "@react-router/fs-routes": "^7.5.3",
-    "@react-router/node": "^7.5.3",
+    "@react-router/node": "^7.6.0",
     "@react-router/serve": "^7.5.3",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
