@@ -66,6 +66,7 @@ const perioder: {
     },
     ukerFraIDag: 2,
     innsendtEtterTilOgMed: 1,
+    aktiviteter: [[{ type: AKTIVITET_TYPE.Fravaer }], ...new Array(2).fill(null)],
   },
   {
     periode: {
@@ -116,7 +117,9 @@ export function lagRapporteringsperioder(person: IPerson) {
         periode: { fraOgMed, tilOgMed },
         dager,
         mottattDato:
-          periode.mottattDato ?? format(addDays(tilOgMed, innsendtEtterTilOgMed), "yyyy-MM-dd"),
+          periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt
+            ? "" // Her kan du sette til null eller en tom streng hvis UI-en håndterer det bedre
+            : periode.mottattDato ?? format(addDays(tilOgMed, innsendtEtterTilOgMed), "yyyy-MM-dd"),
         ...periode,
       },
       person
