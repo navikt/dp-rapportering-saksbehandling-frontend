@@ -35,7 +35,7 @@ const getStatusText = (status: TRapporteringsperiodeStatus): string => {
     case RAPPORTERINGSPERIODE_STATUS.Endret:
       return "Endret";
     case RAPPORTERINGSPERIODE_STATUS.Ferdig:
-      return "Beregnet";
+      return "Beregning utført";
     case RAPPORTERINGSPERIODE_STATUS.Feilet:
       return "Feilet";
     default:
