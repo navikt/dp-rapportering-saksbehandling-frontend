@@ -22,7 +22,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
   const { fraOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
   const uker = ukenummer(periode);
-
+  console.log(periode.registrertArbeidssoker);
   return (
     <div className={styles.periodeDetaljer}>
       <div>
@@ -39,7 +39,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
             <tr>
               <th scope="row">Status neste 14 dager:</th>
               <td>
-                {typeof erArbeidssoker === "boolean" && (
+                {periode.registrertArbeidssoker && (
                   <Tag variant={erArbeidssoker ? "success" : "error"}>
                     {erArbeidssoker ? "Arbeidssøker" : "Ikke arbeidssøker"}
                   </Tag>
