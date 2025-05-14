@@ -16,17 +16,29 @@ const perioder: {
   aktiviteter?: Array<null | Pick<IAktivitet, "type" | "timer">[]>;
 }[] = [
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig, registrertArbeidssoker: true },
+    periode: {
+      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+      registrertArbeidssoker: true,
+      bruttoBelop: 4673,
+    },
     ukerFraIDag: 14,
     innsendtEtterTilOgMed: 1,
   },
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig, registrertArbeidssoker: true },
+    periode: {
+      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+      registrertArbeidssoker: true,
+      bruttoBelop: 4673,
+    },
     ukerFraIDag: 12,
     innsendtEtterTilOgMed: 9,
   },
   {
-    periode: { status: RAPPORTERINGSPERIODE_STATUS.Ferdig, registrertArbeidssoker: true },
+    periode: {
+      status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+      registrertArbeidssoker: true,
+      bruttoBelop: 4673,
+    },
     ukerFraIDag: 10,
     innsendtEtterTilOgMed: 1,
   },
