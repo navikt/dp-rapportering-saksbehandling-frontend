@@ -22,7 +22,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
   const { fraOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
   const uker = ukenummer(periode);
-  console.log(periode.registrertArbeidssoker);
+
   return (
     <div className={styles.periodeDetaljer}>
       <div>
