@@ -25,7 +25,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (getEnv("NODE_ENV") !== "test" && (isLocalhost || usesMsw) && !hasSession(request)) {
     return redirect("/", {
       headers: {
-        "Set-Cookie": `sessionId=${uuidv7()}`,
+        "Set-Cookie": `sessionId=${uuidv7()}; Path=/; HttpOnly; Secure; SameSite=Lax`,
       },
     });
   }
