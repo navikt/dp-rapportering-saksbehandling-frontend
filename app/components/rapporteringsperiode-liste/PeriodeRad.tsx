@@ -63,7 +63,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         />
       </Table.DataCell>
       <Table.DataCell className={radKlasse}>
-        {formatterDato({ dato: periode.sisteFristForTrekk })}
+        {periode.sisteFristForTrekk ? formatterDato({ dato: periode.sisteFristForTrekk }) : ""}
       </Table.DataCell>
     </Table.Row>
   );
