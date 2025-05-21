@@ -2,6 +2,7 @@ import "./app.css";
 import "@navikt/ds-css";
 
 import {
+  createCookie,
   isRouteErrorResponse,
   Links,
   Meta,
@@ -15,17 +16,25 @@ import { uuidv7 } from "uuidv7";
 
 import type { Route } from "./+types/root";
 import Header from "./components/navigasjon/header/Header";
-import { hasSession } from "./mocks/session";
+import { getSessionId } from "./mocks/session";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv, isLocalhost, usesMsw } from "./utils/env.utils";
 
 export async function loader({ request }: Route.LoaderArgs) {
+  const sessionIdCookie = createCookie("sessionId", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+  });
   const saksbehandler = await hentSaksbehandler(request);
 
-  if (getEnv("NODE_ENV") !== "test" && (isLocalhost || usesMsw) && !hasSession(request)) {
+  if (getEnv("NODE_ENV") !== "test" && (isLocalhost || usesMsw) && !(await getSessionId(request))) {
+    const newCookie = await sessionIdCookie.serialize(uuidv7());
+
     return redirect("/", {
       headers: {
-        "Set-Cookie": `sessionId=${uuidv7()}`,
+        "Set-Cookie": newCookie,
       },
     });
   }

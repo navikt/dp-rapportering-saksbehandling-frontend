@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { factory, nullable, primaryKey } from "@mswjs/data";
+import { createCookie } from "react-router";
 
 import type { IPerson } from "~/utils/types";
 
@@ -87,18 +88,15 @@ class SessionRecord {
 
 export const sessionRecord = new SessionRecord();
 
-export function getSessionId(request: Request) {
-  const cookieString = request.headers.get("Cookie") || "";
-  const cookies = cookieString.split(";").map((cookie) => cookie.trim());
+const sessionIdCookie = createCookie("sessionId", {
+  httpOnly: true,
+  sameSite: "lax",
+  path: "/",
+  secure: process.env.NODE_ENV === "production",
+});
 
-  const sessionCookie = cookies.find((cookie) => cookie.startsWith("sessionId="));
-
-  if (sessionCookie) {
-    return sessionCookie.split("=")[1];
-  }
-  return null;
-}
-
-export function hasSession(request: Request) {
-  return request.headers.get("Cookie")?.includes("sessionId");
+export async function getSessionId(request: Request): Promise<string | null> {
+  const cookieHeader = request.headers.get("Cookie");
+  const sessionId = await sessionIdCookie.parse(cookieHeader);
+  return typeof sessionId === "string" && sessionId.length > 0 ? sessionId : null;
 }

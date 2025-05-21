@@ -32,7 +32,7 @@ export async function getHeaders({ request, customHeaders = {}, audience }: IPro
   };
 
   if (isLocalhost) {
-    return { ...headers, Cookie: `sessionId=${getSessionId(request)}` };
+    return { ...headers, Cookie: `sessionId=${await getSessionId(request)}` };
   }
 
   return headers;
