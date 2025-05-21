@@ -1,5 +1,5 @@
 import { Table } from "@navikt/ds-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -11,74 +11,76 @@ interface Props {
   perioder: IRapporteringsperiode[];
 }
 
-const MAKS_VALGTE = 3;
+const MAKS_VALGTE_PERIODER = 3;
 
-const getGyldigeRapporteringsIder = (perioder: IRapporteringsperiode[]) =>
-  new Set(perioder.map((p) => p.id));
+function KolonneTittel({
+  children,
+  erFørste = false,
+}: {
+  children: React.ReactNode;
+  erFørste?: boolean;
+}) {
+  const className = erFørste
+    ? `${styles.periodeListe__header} ${styles["periodeListe__header--first"]}`
+    : styles.periodeListe__header;
+
+  return (
+    <Table.HeaderCell scope="col" className={className}>
+      {children}
+    </Table.HeaderCell>
+  );
+}
 
 export function RapporteringsperiodeListe({ perioder }: Props) {
-  const [searchParams, setParams] = useSearchParams();
-  const valgteIds = searchParams.get("rapporteringsid")?.split(",") ?? [];
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [valgteIds, setValgteIds] = useState<string[]>([]);
 
-  const oppdaterURLMedValgte = (valgte: string[]) => {
-    const params = new URLSearchParams(searchParams);
-    if (valgte.length === 0) {
-      params.delete("rapporteringsid");
-    } else {
-      params.set("rapporteringsid", valgte.join(","));
-    }
-    setParams(params);
-  };
+  const gyldigeIds = new Set(perioder.map((p) => p.id));
 
-  const toggleRapporteringsperiode = (id: string) => {
-    const gyldigeIds = getGyldigeRapporteringsIder(perioder);
-    const gjeldendeValgte = valgteIds.filter((valgtId) => gyldigeIds.has(valgtId));
-    const alleredeValgt = gjeldendeValgte.includes(id);
-
-    if (!alleredeValgt && gjeldendeValgte.length >= MAKS_VALGTE) return;
-
-    const oppdatertValgte = alleredeValgt
-      ? gjeldendeValgte.filter((valgtId) => valgtId !== id)
-      : [...gjeldendeValgte, id];
-
-    oppdaterURLMedValgte(oppdatertValgte);
-  };
-
+  // Les én gang ved mount eller når searchParams endrer seg
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const gyldigeIds = getGyldigeRapporteringsIder(perioder);
-    const urlValgte = params.get("rapporteringsid")?.split(",") ?? [];
-    const filtrerteValgte = urlValgte.filter((id) => gyldigeIds.has(id));
+    const raw = searchParams.get("rapporteringsid")?.split(",") ?? [];
+    const filtrerte = raw.filter((id) => gyldigeIds.has(id));
+    setValgteIds(filtrerte);
+  }, [searchParams, perioder]);
 
-    oppdaterURLMedValgte(filtrerteValgte);
-  }, []);
+  // Oppdater URL når valgteIds endres
+  useEffect(() => {
+    const prev = searchParams.get("rapporteringsid")?.split(",") ?? [];
+    const erUlikt = prev.join(",") !== valgteIds.join(",");
+
+    if (erUlikt) {
+      const params = new URLSearchParams(searchParams);
+      if (valgteIds.length === 0) {
+        params.delete("rapporteringsid");
+      } else {
+        params.set("rapporteringsid", valgteIds.join(","));
+      }
+      setSearchParams(params, { replace: true });
+    }
+  }, [valgteIds]);
+
+  const togglePeriode = (id: string) => {
+    setValgteIds((prev) => {
+      const alleredeValgt = prev.includes(id);
+      if (!alleredeValgt && prev.length >= MAKS_VALGTE_PERIODER) return prev;
+      return alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
+    });
+  };
 
   return (
     <div className={styles.periodeListe}>
       <Table>
+        <caption className="sr-only">Liste over rapporteringsperioder</caption>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell
-              scope="col"
-              className={styles.periodeListe__header + " " + styles["periodeListe__header--first"]}
-            >
-              Vis
-            </Table.HeaderCell>
-            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
-              Uke
-            </Table.HeaderCell>
-            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
-              Dato
-            </Table.HeaderCell>
-            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
-              Status
-            </Table.HeaderCell>
-            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
-              Aktiviteter
-            </Table.HeaderCell>
-            <Table.HeaderCell scope="col" className={styles.periodeListe__header}>
-              Innsendt
-            </Table.HeaderCell>
+            <KolonneTittel erFørste>Vis</KolonneTittel>
+            <KolonneTittel>Uke</KolonneTittel>
+            <KolonneTittel>Dato</KolonneTittel>
+            <KolonneTittel>Status</KolonneTittel>
+            <KolonneTittel>Aktiviteter</KolonneTittel>
+            <KolonneTittel>Innsendt</KolonneTittel>
+            <KolonneTittel>Frist</KolonneTittel>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -87,13 +89,20 @@ export function RapporteringsperiodeListe({ perioder }: Props) {
               key={periode.id}
               periode={periode}
               valgt={valgteIds.includes(periode.id)}
-              toggle={toggleRapporteringsperiode}
+              toggle={togglePeriode}
               valgteAntall={valgteIds.length}
-              maksValgte={MAKS_VALGTE}
+              maksValgte={MAKS_VALGTE_PERIODER}
             />
           ))}
         </Table.Body>
       </Table>
+
+      {/* Skjermleservennlig statusmelding ved maksvalg */}
+      {valgteIds.length >= MAKS_VALGTE_PERIODER && (
+        <div role="status" aria-live="polite" className="sr-only">
+          Du kan ikke velge flere enn {MAKS_VALGTE_PERIODER} rapporteringsperioder.
+        </div>
+      )}
     </div>
   );
 }

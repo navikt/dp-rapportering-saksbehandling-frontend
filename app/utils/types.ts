@@ -69,7 +69,7 @@ export interface IRapporteringsperiode {
   type: TKortType;
   periode: IPeriode;
   dager: IRapporteringsperiodeDag[];
-  sisteFristForTrekk: string | null;
+  sisteFristForTrekk: string;
   kanSendesFra: string;
   kanSendes: boolean;
   kanEndres: boolean;

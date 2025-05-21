@@ -1,10 +1,9 @@
 import { Checkbox, Table } from "@navikt/ds-react";
 import classNames from "classnames";
 
-import { ukenummer } from "~/utils/dato.utils";
+import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-import { Dato } from "./Dato";
 import { Innsendt } from "./Innsendt";
 import styles from "./PeriodeListe.module.css";
 import { Status } from "./Status";
@@ -26,39 +25,29 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
   });
 
   const handleCheckboxChange = () => toggle(periode.id);
+  const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({
+    dato: periode.periode.tilOgMed,
+  })}`;
 
   return (
-    <Table.Row
-      selected={valgt}
-      className={radKlasse}
-      tabIndex={0}
-      onClick={() => toggle(periode.id)}
-      onKeyDown={(event) => {
-        if (["Enter", " "].includes(event.key)) {
-          event.preventDefault();
-          toggle(periode.id);
-        }
-      }}
-    >
-      <Table.DataCell className={ukeKlasse} scope="row">
+    <Table.Row selected={valgt} className={radKlasse} onClick={() => toggle(periode.id)}>
+      <Table.DataCell className={ukeKlasse}>
         <Checkbox
           className={styles.periodeListe__checkbox}
           hideLabel
           checked={valgt}
-          onChange={handleCheckboxChange}
+          onChange={(e) => {
+            e.stopPropagation(); // Stopper click fra å gå til raden
+            handleCheckboxChange();
+          }}
           onClick={(e) => e.stopPropagation()}
           readOnly={!valgt && valgteAntall >= maksValgte}
-          aria-labelledby={`id-${periode.id}`}
         >
           {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
         </Checkbox>
       </Table.DataCell>
-      <Table.DataCell className={radKlasse} scope="row">
-        {ukenummer(periode)}
-      </Table.DataCell>
-      <Table.DataCell className={radKlasse} scope="row">
-        <Dato periode={periode} />
-      </Table.DataCell>
+      <Table.DataCell className={radKlasse}>{ukenummer(periode)}</Table.DataCell>
+      <Table.DataCell className={radKlasse}>{periodeDatoTekst}</Table.DataCell>
       <Table.DataCell className={radKlasse}>
         <Status status={periode.status} />
       </Table.DataCell>
@@ -72,6 +61,9 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
           sisteFristForTrekk={periode.sisteFristForTrekk}
           status={periode.status}
         />
+      </Table.DataCell>
+      <Table.DataCell className={radKlasse}>
+        {periode.sisteFristForTrekk ? formatterDato({ dato: periode.sisteFristForTrekk }) : ""}
       </Table.DataCell>
     </Table.Row>
   );

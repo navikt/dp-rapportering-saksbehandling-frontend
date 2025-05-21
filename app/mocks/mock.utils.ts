@@ -88,7 +88,7 @@ export function lagRapporteringsperiode(
       tilOgMed,
     },
     dager: lagDager(),
-    sisteFristForTrekk: null,
+    sisteFristForTrekk: "",
     kanSendesFra: "",
     kanSendes: true,
     kanEndres: true,
