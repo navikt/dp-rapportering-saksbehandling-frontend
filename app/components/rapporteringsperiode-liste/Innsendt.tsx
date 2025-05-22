@@ -14,28 +14,15 @@ interface IProps {
 export const SISTE_FRIST = 7; // TODO: Endre til hvor mange dager det skal være for sent
 
 export function Innsendt({ mottattDato, tilOgMed, status }: IProps) {
+  const tilUtfylling = status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling;
+  if (tilUtfylling) return null;
+
   const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
   const forSent = dagerForskjell >= SISTE_FRIST;
 
-  if (status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling) {
-    return (
-      <div className="transparrent-tag">
-        <Tag variant="neutral"> </Tag>
-      </div>
-    );
-  }
-
-  if (forSent) {
-    return (
-      <Tag role="alert" variant="error">
-        {formatterDato({ dato: mottattDato })}
-      </Tag>
-    );
-  }
-
-  return (
-    <div className="transparrent-tag">
-      <Tag variant="neutral">{formatterDato({ dato: mottattDato })}</Tag>
-    </div>
+  return forSent ? (
+    <Tag variant="error">{formatterDato({ dato: mottattDato })}</Tag>
+  ) : (
+    formatterDato({ dato: mottattDato })
   );
 }
