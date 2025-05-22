@@ -6,12 +6,13 @@ import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { withDb } from "./db";
 import { getDatabase } from "./db.utils";
+import { withSession } from "./session.utils";
 
 export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
   return [
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/person/:personId/rapporteringsperioder`,
-      ({ cookies }) => {
+      withSession(({ cookies }) => {
         const db = database || getDatabase(cookies);
 
         const rapporteringsperioder = db.hentAlleRapporteringsperioder();
@@ -19,12 +20,12 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         logger.info(`Hentet ${rapporteringsperioder.length} rapporteringsperioder`);
 
         return HttpResponse.json(rapporteringsperioder);
-      }
+      })
     ),
 
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
-      ({ params, cookies }) => {
+      withSession(({ params, cookies }) => {
         const db = database || getDatabase(cookies);
 
         const rapporteringsperiodeId: string = params.rapporteringsperiodeId as string;
@@ -38,12 +39,12 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         logger.info(`Hentet rapporteringsperiode ${rapporteringsperiodeId}`);
 
         return HttpResponse.json(rapporteringsperiode);
-      }
+      })
     ),
 
     http.post(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`,
-      async ({ request, cookies }) => {
+      withSession(async ({ request, cookies }) => {
         const db = database || getDatabase(cookies);
 
         const rapporteringsperiode = (await request.json()) as IRapporteringsperiode;
@@ -53,7 +54,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         logger.info("Lagrer rapporteringsperiode");
 
         return HttpResponse.json(korrigertPeriode, { status: 200 });
-      }
+      })
     ),
   ];
 }
