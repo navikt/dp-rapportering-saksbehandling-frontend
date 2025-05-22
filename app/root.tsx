@@ -22,7 +22,7 @@ import { getEnv, isLocalOrDemo } from "./utils/env.utils";
 export async function loader({ request }: Route.LoaderArgs) {
   const saksbehandler = await hentSaksbehandler(request);
 
-  if (isLocalOrDemo) {
+  if (getEnv("NODE_ENV") !== "test" && isLocalOrDemo) {
     const sessionId = getSessionId(request);
 
     if (!sessionId) {
