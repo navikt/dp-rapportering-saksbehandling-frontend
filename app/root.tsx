@@ -17,17 +17,21 @@ import type { Route } from "./+types/root";
 import Header from "./components/navigasjon/header/Header";
 import { getSessionId } from "./mocks/session";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
-import { getEnv, isLocalhost, usesMsw } from "./utils/env.utils";
+import { getEnv, isLocalOrDemo } from "./utils/env.utils";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const saksbehandler = await hentSaksbehandler(request);
 
-  if (getEnv("NODE_ENV") !== "test" && (isLocalhost || usesMsw) && !getSessionId(request)) {
-    return redirect("/", {
-      headers: {
-        "Set-Cookie": `sessionId=${uuidv7()}`,
-      },
-    });
+  if (isLocalOrDemo) {
+    const sessionId = getSessionId(request);
+
+    if (!sessionId) {
+      return redirect("/", {
+        headers: {
+          "Set-Cookie": `sessionId=${uuidv7()}`,
+        },
+      });
+    }
   }
 
   return {

@@ -19,7 +19,7 @@ export function mockAzure(database?: ReturnType<typeof withDb>) {
         return HttpResponse.json(null, { status: 404 });
       }
 
-      logger.info(`Hentet saksbehandler old old ${saksbehandlerId}`);
+      logger.info(`Hentet saksbehandler ${saksbehandlerId}`);
 
       return HttpResponse.json(saksbehandler);
     }),

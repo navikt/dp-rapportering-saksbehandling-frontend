@@ -4,7 +4,7 @@ import { uuidv7 } from "uuidv7";
 
 import { getSessionId } from "../mocks/session";
 import { getOnBehalfOfToken } from "./auth.utils.server";
-import { isLocalhost } from "./env.utils";
+import { isLocalOrDemo } from "./env.utils";
 
 function generateCorrelationId() {
   // https://github.com/navikt/dp-rapportering-frontend/pull/242#pullrequestreview-2403834306
@@ -31,8 +31,12 @@ export async function getHeaders({ request, customHeaders = {}, audience }: IPro
     ...customHeaders,
   };
 
-  if (isLocalhost) {
-    return { ...headers, Cookie: `sessionId=${getSessionId(request)}` };
+  if (isLocalOrDemo) {
+    const sessionId = getSessionId(request);
+
+    if (sessionId) {
+      return { ...headers, Cookie: `sessionId=${sessionId}` };
+    }
   }
 
   return headers;
