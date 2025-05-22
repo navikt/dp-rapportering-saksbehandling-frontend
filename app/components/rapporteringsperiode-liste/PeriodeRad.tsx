@@ -58,7 +58,6 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         <Innsendt
           mottattDato={periode.mottattDato ?? ""}
           tilOgMed={periode.periode.tilOgMed}
-          sisteFristForTrekk={periode.sisteFristForTrekk}
           status={periode.status}
         />
       </Table.DataCell>
