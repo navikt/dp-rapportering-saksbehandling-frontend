@@ -23,12 +23,12 @@ describe("Status", () => {
     expect(text).toBeInTheDocument();
   });
 
-  test("skal vise warning tag for status Endret", () => {
-    const { container } = render(<Status status={RAPPORTERINGSPERIODE_STATUS.Endret} />);
+  test("skal vise warning tag for status Korrigert", () => {
+    const { container } = render(<Status status={RAPPORTERINGSPERIODE_STATUS.Korrigert} />);
 
     expect(container.querySelector(".navds-tag--warning")).toBeInTheDocument();
 
-    const text = screen.getByText("Endret");
+    const text = screen.getByText("Korrigert");
     expect(text).toBeInTheDocument();
   });
 

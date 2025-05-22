@@ -7,33 +7,35 @@ import { Korrigering } from "~/components/korrigering/Korrigering";
 import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
 import { PeriodeMedUke } from "~/components/rapporteringsperiode-visning/PeriodeMedUke";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
+import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
-import { formatterDato, ukenummer } from "~/utils/dato.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import type { IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId";
 
 export async function loader({
   request,
   params,
-}: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode }> {
+}: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode; saksbehandler: ISaksbehandler }> {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
   const periode = await hentPeriode(request, params.periodeId);
+  const saksbehandler = await hentSaksbehandler(request);
 
   // TODO: Håndter feil i hentPeriode
-  return { periode };
+  return { periode, saksbehandler };
 }
 
 export default function Periode() {
-  const { periode } = useLoaderData<typeof loader>();
+  const { periode, saksbehandler } = useLoaderData<typeof loader>();
   const { person } = useRouteLoaderData("routes/person.$personId");
 
   const [korrigertPeriode, setKorrigertPeriode] = useState<IRapporteringsperiode>(periode);
 
   const { fraOgMed, tilOgMed } = periode.periode;
-  const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
-  const formattertTilOgMed = formatterDato({ dato: tilOgMed, kort: true });
+  const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
+  const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
   return (
     <div className={styles.rapporteringsperiode}>
@@ -74,6 +76,7 @@ export default function Periode() {
           setKorrigertPeriode={setKorrigertPeriode}
           originalPeriode={periode}
           person={person}
+          saksbehandler={saksbehandler}
         />
       </div>
     </div>

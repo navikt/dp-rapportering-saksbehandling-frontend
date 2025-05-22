@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
-import type { IPerson, IRapporteringsperiode } from "~/utils/types";
+import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
 import { beregnTotalt } from "../rapporteringsperiode-visning/sammenlagt.utils";
 import { BekreftModal } from "./BekreftModal";
@@ -21,6 +21,7 @@ interface IProps {
   setKorrigertPeriode: React.Dispatch<React.SetStateAction<IRapporteringsperiode>>;
   originalPeriode: IRapporteringsperiode;
   person: IPerson;
+  saksbehandler: ISaksbehandler;
 }
 
 export function Korrigering({
@@ -28,6 +29,7 @@ export function Korrigering({
   korrigertPeriode,
   setKorrigertPeriode,
   person,
+  saksbehandler,
 }: IProps) {
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
     korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet)
@@ -48,12 +50,15 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
-      status: RAPPORTERINGSPERIODE_STATUS.Endret,
+      status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       begrunnelseEndring: korrigertBegrunnelse,
-      kilde: { rolle: "Saksbehandler", ident: "123456789" },
+      kilde: {
+        rolle: "Saksbehandler",
+        ident: saksbehandler.onPremisesSamAccountName,
+      },
     }));
-  }, [korrigerteDager, korrigertBegrunnelse]);
+  }, [korrigerteDager, korrigertBegrunnelse, saksbehandler]);
 
   const totalArbeid = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Arbeid, false);
   const totalSyk = beregnTotalt(korrigertPeriode, AKTIVITET_TYPE.Syk, true);

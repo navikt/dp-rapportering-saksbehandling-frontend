@@ -1,6 +1,6 @@
-import { Button, Heading, Tag } from "@navikt/ds-react";
+import { Alert, Button, Tag } from "@navikt/ds-react";
 
-import { formatterDato, ukenummer } from "~/utils/dato.utils";
+import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import styles from "./PeriodeDetaljer.module.css";
@@ -19,17 +19,10 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalId;
 
-  const { fraOgMed } = periode.periode;
-  const formattertFraOgMed = formatterDato({ dato: fraOgMed, kort: true });
-  const uker = ukenummer(periode);
-
   return (
     <div className={styles.periodeDetaljer}>
       <div>
         <div className={styles.header}>
-          <Heading level="3" size="small">
-            Uke {uker} | {formattertFraOgMed}
-          </Heading>
           {erKorrigert && periode?.kilde?.rolle == "Saksbehandler" && (
             <Tag variant="info">Korrigering</Tag>
           )}
@@ -50,7 +43,11 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
             {erKorrigert && periode?.kilde?.rolle && (
               <tr>
                 <th scope="row">Korrigert av:</th>
-                <td>{periode?.kilde?.rolle}</td>
+                <td>
+                  {periode?.kilde?.rolle === "Saksbehandler"
+                    ? `Saksbehandler (${periode?.kilde?.ident})`
+                    : periode?.kilde?.ident}
+                </td>
               </tr>
             )}
             {periode.begrunnelseEndring && (
@@ -68,6 +65,13 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
           </tbody>
         </table>
       </div>
+      {periode.status === RAPPORTERINGSPERIODE_STATUS.Feilet && (
+        <Alert variant={"info"}>
+          Det har skjedd en teknisk feil. Beskrive den tekniske feilen og forklare saksbehandler hva
+          hen kan gjøre for å rette opp i det. Evt. om noen må varsles eller om det vil bli rettet
+          opp av seg selv.
+        </Alert>
+      )}
       <Button
         as="a"
         href={`/person/${personId}/periode/${periode.id}`}

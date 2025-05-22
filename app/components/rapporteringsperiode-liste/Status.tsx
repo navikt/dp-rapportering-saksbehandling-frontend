@@ -15,7 +15,7 @@ const getVariant = (
       return "info";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "success";
-    case RAPPORTERINGSPERIODE_STATUS.Endret:
+    case RAPPORTERINGSPERIODE_STATUS.Korrigert:
       return "warning";
     case RAPPORTERINGSPERIODE_STATUS.Ferdig:
       return "success";
@@ -32,8 +32,8 @@ const getStatusText = (status: TRapporteringsperiodeStatus): string => {
       return "Opprettet";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "Innsendt";
-    case RAPPORTERINGSPERIODE_STATUS.Endret:
-      return "Endret";
+    case RAPPORTERINGSPERIODE_STATUS.Korrigert:
+      return "Korrigert";
     case RAPPORTERINGSPERIODE_STATUS.Ferdig:
       return "Beregning utført";
     case RAPPORTERINGSPERIODE_STATUS.Feilet:

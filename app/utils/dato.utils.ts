@@ -3,6 +3,13 @@ import { parse, serialize } from "tinyduration";
 
 import type { IPeriode, IRapporteringsperiode } from "./types";
 
+export enum DatoFormat {
+  DagMnd = "dag-mnd",
+  DagMndAar = "dd.mm.yyyy",
+  DagMndAarLang = "lang",
+  Kort = "kort",
+}
+
 export function formaterPeriodeTilUkenummer(fraOgMed: string, tilOgMed: string) {
   const startUkenummer = getISOWeek(new Date(fraOgMed));
   const sluttUkenummer = getISOWeek(new Date(tilOgMed));
@@ -27,16 +34,45 @@ export function formatterDag(dato: string) {
   return new Date(dato).toLocaleDateString(locale, options);
 }
 
-export function formatterDato({ dato, kort }: { dato: string; kort?: boolean }) {
+export function formatterDato({
+  dato,
+  format = DatoFormat.DagMnd,
+}: {
+  dato: string;
+  format?: DatoFormat;
+}): string {
+  const date = new Date(dato);
   const locale = "nb-NO";
 
-  const options: Intl.DateTimeFormatOptions = kort
-    ? { year: "2-digit", month: "2-digit", day: "2-digit" }
-    : { month: "long", day: "numeric" };
+  switch (format) {
+    case DatoFormat.DagMndAar:
+      return date.toLocaleDateString(locale, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
 
-  const formattertDato = new Date(dato).toLocaleDateString(locale, options);
+    case DatoFormat.DagMndAarLang:
+      return date.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
 
-  return formattertDato;
+    case DatoFormat.Kort:
+      return date.toLocaleDateString(locale, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      });
+
+    case DatoFormat.DagMnd:
+    default:
+      return date.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+      });
+  }
 }
 
 export function getWeekDays(): { kort: string; lang: string }[] {
