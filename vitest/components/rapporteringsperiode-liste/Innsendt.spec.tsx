@@ -18,7 +18,6 @@ describe("Innsendt", () => {
       <Innsendt
         mottattDato={mottattDato}
         tilOgMed={tilOgMed}
-        sisteFristForTrekk={tilOgMed}
         status={RAPPORTERINGSPERIODE_STATUS.Feilet}
       />
     );
@@ -35,7 +34,6 @@ describe("Innsendt", () => {
       <Innsendt
         mottattDato={mottattDato}
         tilOgMed={tilOgMed}
-        sisteFristForTrekk={null}
         status={RAPPORTERINGSPERIODE_STATUS.Ferdig}
       />
     );
