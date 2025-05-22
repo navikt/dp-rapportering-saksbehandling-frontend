@@ -1,5 +1,7 @@
 import { HttpResponse, type HttpResponseResolver } from "msw";
 
+import { getEnv } from "~/utils/env.utils";
+
 export function withSession(handler: HttpResponseResolver): HttpResponseResolver {
   return (req) => {
     const sessionId = req.cookies?.sessionId;
@@ -10,7 +12,7 @@ export function withSession(handler: HttpResponseResolver): HttpResponseResolver
       sessionId !== "null" &&
       sessionId !== "undefined";
 
-    if (!hasSession) {
+    if (!hasSession && getEnv("NODE_ENV") !== "test") {
       return HttpResponse.json({ error: "Uautorisert: mangler sessionId" }, { status: 401 });
     }
 
