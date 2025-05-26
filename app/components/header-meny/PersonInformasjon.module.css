@@ -1,11 +1,11 @@
-.person-informasjon-container {
+.personInformasjonContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
 }
 
-.person-informasjon {
+.personInformasjon {
   display: flex;
   gap: 2rem;
   min-height: 3rem;
