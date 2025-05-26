@@ -27,12 +27,17 @@ export default function Rapportering({ params }: Route.ComponentProps) {
 
   const [searchParams] = useSearchParams();
 
-  const valgteRapporteringsperiode =
-    searchParams
-      .get("rapporteringsid")
-      ?.split(",")
-      .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
-      .filter((periode) => periode) ?? [];
+  const rapporteringsidParam = searchParams.get("rapporteringsid");
+  const idListe = rapporteringsidParam?.split(",") ?? [];
+
+  const periodeMap = new Map(perioder.map((p) => [p.id, p]));
+
+  const valgteRapporteringsperiode = idListe
+    .map((id) => periodeMap.get(id))
+    .filter((periode): periode is IRapporteringsperiode => !!periode)
+    .sort(
+      (a, b) => new Date(b.periode.tilOgMed).getTime() - new Date(a.periode.tilOgMed).getTime()
+    );
 
   return (
     <>
