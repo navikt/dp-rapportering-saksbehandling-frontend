@@ -19,8 +19,8 @@ spec:
     path: "{{base_path}}/api/internal/isready"
     initialDelay: 10
   replicas:
-    min: "{{replicas.min}}"
-    max: "{{replicas.max}}"
+    min: {{replicas.min}}
+    max: {{replicas.max}}
     cpuThresholdPercentage: 75
   resources:
     limits:
