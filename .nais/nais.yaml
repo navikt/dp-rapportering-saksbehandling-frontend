@@ -1,16 +1,16 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: {{name}}
+  name: "{{name}}"
   namespace: teamdagpenger
   labels:
     team: teamdagpenger
-    app: {{name}}
+    app: "{{name}}"
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "64M"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
 spec:
-  image: {{image}}
+  image: "{{image}}"
   port: 5173
   liveness:
     path: "{{base_path}}/api/internal/isalive"
@@ -19,8 +19,8 @@ spec:
     path: "{{base_path}}/api/internal/isready"
     initialDelay: 10
   replicas:
-    min: {{replicas.min}}
-    max: {{replicas.max}}
+    min: "{{replicas.min}}"
+    max: "{{replicas.max}}"
     cpuThresholdPercentage: 75
   resources:
     limits:
@@ -36,7 +36,7 @@ spec:
     enabled: true
   env:
     - name: SELF_URL
-      value: {{ingress}}
+      value: "{{ingress}}"
     - name: VITE_DP_MELDEKORTREGISTER_URL
       value: http://dp-meldekortregister
     - name: VITE_DP_PERSONREGISTER_URL
@@ -56,14 +56,14 @@ spec:
 
   azure:
     application:
-      tenant: {{azure.tenant}}
-      enabled: {{azure.enabled}}
+      tenant: "{{azure.tenant}}"
+      enabled: "{{azure.enabled}}"
       claims:
         groups:
-          - id: {{azure.grupper.saksbehandler}}
-          - id: {{azure.grupper.beslutter}}
+          - id: "{{azure.grupper.saksbehandler}}"
+          - id: "{{azure.grupper.beslutter}}"
         extra:
           - NAVident
     sidecar:
-      enabled: {{azure.enabled}}
+      enabled: "{{azure.enabled}}"
       autoLogin: true
