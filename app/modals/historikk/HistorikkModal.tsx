@@ -28,7 +28,7 @@ export function HistorikkModal({ open, onClose, fulltNavn }: HistorikkModalProps
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="historikk-heading" closeOnBackdropClick>
       <Modal.Header>
-        <Heading level="2" size="large" id="historikk-heading">
+        <Heading level="2" size="medium" id="historikk-heading">
           {`Historikk — ${fulltNavn}`}
         </Heading>
       </Modal.Header>
@@ -48,8 +48,10 @@ export function HistorikkModal({ open, onClose, fulltNavn }: HistorikkModalProps
                   {hasLine && <span className={styles.line} aria-hidden="true" />}
                 </div>
                 <div className={styles.content}>
-                  <BodyShort weight="semibold">{item.date}</BodyShort>
-                  <BodyShort>{item.event}</BodyShort>
+                  <BodyShort size="small" weight="semibold">
+                    {item.date}
+                  </BodyShort>
+                  <BodyShort size="small">{item.event}</BodyShort>
                   {item.tag && <Tag variant="neutral">{item.tag}</Tag>}
                 </div>
               </li>

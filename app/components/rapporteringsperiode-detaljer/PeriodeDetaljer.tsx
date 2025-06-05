@@ -24,7 +24,9 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
       <div>
         <div className={styles.header}>
           {erKorrigert && periode?.kilde?.rolle == "Saksbehandler" && (
-            <Tag variant="info">Korrigering</Tag>
+            <Tag variant="info" size="small">
+              Korrigering
+            </Tag>
           )}
         </div>
         <table className={styles.detaljerTabell}>
@@ -33,7 +35,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
               <th scope="row">Status neste 14 dager:</th>
               <td>
                 {periode.registrertArbeidssoker && (
-                  <Tag variant={erArbeidssoker ? "success" : "error"}>
+                  <Tag variant={erArbeidssoker ? "success" : "error"} size="small">
                     {erArbeidssoker ? "Arbeidssøker" : "Ikke arbeidssøker"}
                   </Tag>
                 )}
@@ -66,7 +68,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
         </table>
       </div>
       {periode.status === RAPPORTERINGSPERIODE_STATUS.Feilet && (
-        <Alert variant={"info"}>
+        <Alert variant={"info"} size="small">
           Det har skjedd en teknisk feil. Beskrive den tekniske feilen og forklare saksbehandler hva
           hen kan gjøre for å rette opp i det. Evt. om noen må varsles eller om det vil bli rettet
           opp av seg selv.
@@ -76,6 +78,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
         as="a"
         href={`/person/${personId}/periode/${periode.id}`}
         className={styles.korrigerKnapp}
+        size="small"
       >
         Korriger meldekort
       </Button>

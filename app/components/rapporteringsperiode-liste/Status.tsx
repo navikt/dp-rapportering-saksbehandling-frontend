@@ -44,5 +44,9 @@ const getStatusText = (status: TRapporteringsperiodeStatus): string => {
 };
 
 export function Status({ status }: IProps) {
-  return <Tag variant={getVariant(status)}>{getStatusText(status)}</Tag>;
+  return (
+    <Tag variant={getVariant(status)} size="small">
+      {getStatusText(status)}
+    </Tag>
+  );
 }

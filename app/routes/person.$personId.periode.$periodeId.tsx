@@ -1,4 +1,4 @@
-import { Tag } from "@navikt/ds-react";
+import { Heading, Tag } from "@navikt/ds-react";
 import { useState } from "react";
 import { useLoaderData, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
@@ -40,18 +40,22 @@ export default function Periode() {
   return (
     <div className={styles.rapporteringsperiode}>
       <div className={styles.grid}>
-        <h2 className={styles.periodeOverskrift}>
+        <Heading level="2" size="medium" className={styles.periodeOverskrift}>
           Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-        </h2>
+        </Heading>
         <div className={styles.uendretPeriode}>
           <div className={styles.periodeOgTag}>
             <PeriodeMedUke periode={periode} />
-            <Tag variant="info">Sist beregnet</Tag>
+            <Tag variant="info" size="small">
+              Sist beregnet
+            </Tag>
           </div>
           <Forhandsvisning periode={periode} />
           {periode.begrunnelseEndring && (
             <div className={styles.begrunnelseVisning}>
-              <h4>Begrunnelse for korrigering</h4>
+              <Heading level="4" size="small">
+                Begrunnelse for korrigering
+              </Heading>
               <p>{periode.begrunnelseEndring}</p>
             </div>
           )}
@@ -59,11 +63,15 @@ export default function Periode() {
         <div className={styles.endretPeriode}>
           <div className={styles.periodeOgTag}>
             <PeriodeMedUke periode={periode} />
-            <Tag variant="info">Korrigering</Tag>
+            <Tag variant="info" size="small">
+              Korrigering
+            </Tag>
           </div>
           <Forhandsvisning periode={korrigertPeriode} />
           <div className={styles.begrunnelseVisning}>
-            <h4>Saksbehandlers begrunnelse for korrigering</h4>
+            <Heading level="4" size="xsmall">
+              Saksbehandlers begrunnelse for korrigering
+            </Heading>
             <p className={!korrigertPeriode.begrunnelseEndring ? styles.obligatorisk : ""}>
               {korrigertPeriode.begrunnelseEndring || "Obligatorisk"}
             </p>

@@ -1,4 +1,4 @@
-import { Button } from "@navikt/ds-react";
+import { BodyShort, Button } from "@navikt/ds-react";
 import { useState } from "react";
 
 import type { IPerson } from "~/utils/types";
@@ -17,13 +17,13 @@ export default function PersonInformasjon({ person }: IProps) {
   return (
     <div className={styles.personInformasjonContainer}>
       <div className={styles.personInformasjon}>
-        <div>{fulltNavn}</div>
-        <div>
+        <BodyShort size="small">{fulltNavn}</BodyShort>
+        <BodyShort size="small">
           Personnummer: <strong>{person.ident}</strong>
-        </div>
-        <div>
+        </BodyShort>
+        <BodyShort size="small">
           Statsborgerskap: <strong>{person.statsborgerskap}</strong>
-        </div>
+        </BodyShort>
       </div>
       <div className={styles.headerKnapper}>
         <Button variant="secondary-neutral" size="small" onClick={() => setModalOpen(true)}>

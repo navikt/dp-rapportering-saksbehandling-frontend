@@ -21,7 +21,9 @@ export function Innsendt({ mottattDato, tilOgMed, status }: IProps) {
   const forSent = dagerForskjell >= SISTE_FRIST;
 
   return forSent ? (
-    <Tag variant="error">{formatterDato({ dato: mottattDato })}</Tag>
+    <Tag variant="error" size="small">
+      {formatterDato({ dato: mottattDato })}
+    </Tag>
   ) : (
     formatterDato({ dato: mottattDato })
   );
