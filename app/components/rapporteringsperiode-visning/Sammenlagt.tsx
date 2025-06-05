@@ -1,3 +1,5 @@
+import { BodyShort, Heading } from "@navikt/ds-react";
+
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import styles from "./Sammenlagt.module.css";
@@ -27,15 +29,17 @@ const aktivitettyper = [
 export function Sammenlagt({ periode }: IProps) {
   return (
     <>
-      <h4 className={styles.tittel}>Sammenlagt for perioden</h4>
+      <Heading level="4" size="xsmall" className={styles.tittel}>
+        Sammenlagt for perioden
+      </Heading>
       {aktivitettyper.map(({ type, label, erDager, klasse }) => {
         const total = beregnTotalt(periode, type, erDager);
         return (
           <div key={type} className={`${styles.aktivitet} ${klasse}`}>
-            <p>{label}</p>
-            <p>
+            <BodyShort size="small">{label}</BodyShort>
+            <BodyShort size="small">
               {total} {erDager ? "dager" : "timer"}
-            </p>
+            </BodyShort>
           </div>
         );
       })}

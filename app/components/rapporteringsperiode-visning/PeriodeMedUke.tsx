@@ -15,14 +15,7 @@ export function PeriodeMedUke({ periode }: IProps) {
 
   return (
     <>
-      <h3 className={styles.header}>
-        Uke {uker}{" "}
-        {periode.mottattDato &&
-          ` | innsendt ${formatterDato({
-            dato: periode.mottattDato,
-            format: DatoFormat.DagMndAar,
-          })}`}
-      </h3>
+      <h3 className={styles.header}>Uke {uker}</h3>
       <div className={styles.periode}>
         {formattertFraOgMed} - {formattertTilOgMed}
       </div>

@@ -133,13 +133,14 @@ export function Korrigering({
       </div>
 
       <div className={styles.knapper}>
-        <Button variant="secondary" onClick={() => openModal("avbryt")}>
+        <Button variant="secondary" onClick={() => openModal("avbryt")} size="small">
           Avbryt korrigering
         </Button>
         <Button
           variant="primary"
           onClick={() => openModal("fullfor")}
           disabled={!korrigertBegrunnelse.trim() || !harEndringer}
+          size="small"
         >
           Fullfør korrigering
         </Button>

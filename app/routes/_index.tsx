@@ -32,13 +32,13 @@ export default function Rapportering() {
         padding: "2rem 1rem",
       }}
     >
-      <Heading level="1" size="large">
+      <Heading level="1" size="medium">
         Saksbehandlerflate for meldekort
       </Heading>
 
       {data.personer.length > 0 ? (
         <>
-          <BodyShort>
+          <BodyShort size="small">
             Velkommen til demoversjonen av saksbehandlerflaten for meldekort. <br /> Her kan du
             velge en person med et forhåndsdefinert scenario. Når du klikker på en person, får du se
             hele rapporteringsperioden deres.
@@ -68,7 +68,7 @@ export default function Rapportering() {
                       transition: "box-shadow 0.2s ease",
                     }}
                   >
-                    <Heading level="3" size="medium" style={{ marginBottom: "0.5rem" }}>
+                    <Heading level="3" size="small" style={{ marginBottom: "0.5rem" }}>
                       {navn}
                     </Heading>
                     {scenarioInfo && <p>{scenarioInfo.tittel}</p>}
@@ -79,7 +79,7 @@ export default function Rapportering() {
           </ul>
         </>
       ) : (
-        <BodyShort>
+        <BodyShort size="small">
           Ingen testpersoner tilgjengelig. Sørg for at MSW (Mock Service Worker) er aktivert.
         </BodyShort>
       )}

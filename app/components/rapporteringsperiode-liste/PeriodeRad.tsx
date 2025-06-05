@@ -31,7 +31,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
 
   return (
     <Table.Row selected={valgt} className={radKlasse} onClick={() => toggle(periode.id)}>
-      <Table.DataCell className={ukeKlasse}>
+      <Table.DataCell textSize="small" className={ukeKlasse}>
         <Checkbox
           className={styles.periodeListe__checkbox}
           hideLabel
@@ -46,22 +46,26 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
           {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
         </Checkbox>
       </Table.DataCell>
-      <Table.DataCell className={radKlasse}>{ukenummer(periode)}</Table.DataCell>
-      <Table.DataCell className={radKlasse}>{periodeDatoTekst}</Table.DataCell>
-      <Table.DataCell className={radKlasse}>
+      <Table.DataCell textSize="small" className={radKlasse}>
+        {ukenummer(periode)}
+      </Table.DataCell>
+      <Table.DataCell textSize="small" className={radKlasse}>
+        {periodeDatoTekst}
+      </Table.DataCell>
+      <Table.DataCell textSize="small" className={radKlasse}>
         <Status status={periode.status} />
       </Table.DataCell>
-      <Table.DataCell className={radKlasse}>
+      <Table.DataCell textSize="small" className={radKlasse}>
         <TypeAktivitet periode={periode} />
       </Table.DataCell>
-      <Table.DataCell className={radKlasse}>
+      <Table.DataCell textSize="small" className={radKlasse}>
         <Innsendt
           mottattDato={periode.mottattDato ?? ""}
           tilOgMed={periode.periode.tilOgMed}
           status={periode.status}
         />
       </Table.DataCell>
-      <Table.DataCell className={radKlasse}>
+      <Table.DataCell textSize="small" className={radKlasse}>
         {periode.sisteFristForTrekk ? formatterDato({ dato: periode.sisteFristForTrekk }) : ""}
       </Table.DataCell>
     </Table.Row>

@@ -25,7 +25,7 @@ function KolonneTittel({
     : styles.periodeListe__header;
 
   return (
-    <Table.HeaderCell scope="col" className={className}>
+    <Table.HeaderCell scope="col" className={className} textSize="small">
       {children}
     </Table.HeaderCell>
   );

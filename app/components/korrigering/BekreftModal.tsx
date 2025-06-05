@@ -42,10 +42,10 @@ export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: 
     <Modal open={open} onClose={onClose} header={{ heading: tittel }}>
       <Modal.Body>{tekst}</Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={handleBekreft}>
+        <Button variant="primary" onClick={handleBekreft} size="small">
           {bekreft}
         </Button>
-        <Button variant="secondary" onClick={onClose}>
+        <Button variant="secondary" onClick={onClose} size="small">
           {avbryt}
         </Button>
       </Modal.Footer>

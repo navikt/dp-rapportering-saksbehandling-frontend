@@ -1,4 +1,4 @@
-import { Checkbox, TextField } from "@navikt/ds-react";
+import { Checkbox, Heading, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
@@ -22,7 +22,9 @@ interface IProps {
 export function KorrigeringUke({ uke, setKorrigerteDager, ukenummer }: IProps) {
   return (
     <div className={styles.korrigeringUke}>
-      <h3 className={styles.ukenummer}>Uke {ukenummer}</h3>
+      <Heading level="3" size="xsmall" className={styles.ukenummer}>
+        Uke {ukenummer}
+      </Heading>
       <table className={styles.uke}>
         <thead>
           <tr>
