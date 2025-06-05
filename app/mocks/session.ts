@@ -3,8 +3,8 @@ import { factory, nullable, primaryKey } from "@mswjs/data";
 
 import type { IPerson } from "~/utils/types";
 
-import { mockPerson } from "./data/mock-person";
-import { lagRapporteringsperioder } from "./data/mock-rapporteringsperioder";
+import { mockPersons } from "./data/mock-persons";
+import { hentRapporteringsperioderForScenario } from "./data/mock-rapporteringsperioder";
 import { mockSaksbehandler } from "./data/mock-saksbehandler";
 
 export type Database = ReturnType<SessionRecord["createDatabase"]>;
@@ -24,12 +24,18 @@ class SessionRecord {
 
       this.sessions.set(sessionId, db);
 
-      const person = db.personer.create(mockPerson) as IPerson;
-
       db.saksbehandlere.create(mockSaksbehandler);
 
-      lagRapporteringsperioder(person).forEach((rapporteringsperiode) => {
-        db.rapporteringsperioder.create(rapporteringsperiode);
+      // Lag personer med perioder
+      mockPersons.forEach((personData) => {
+        const { scenario, ...person } = personData;
+        const createdPerson = db.personer.create(person) as IPerson;
+
+        // Generer perioder basert på personens scenario
+        const periods = hentRapporteringsperioderForScenario(createdPerson, scenario);
+        periods.forEach((rapporteringsperiode) => {
+          db.rapporteringsperioder.create(rapporteringsperiode);
+        });
       });
     }
 
