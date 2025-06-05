@@ -11,12 +11,16 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
   return [
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/person/:personId/rapporteringsperioder`,
-      ({ cookies }) => {
+      ({ params, cookies }) => {
         const db = database || getDatabase(cookies);
+        const personId = params.personId as string;
 
-        const rapporteringsperioder = db.hentAlleRapporteringsperioder();
+        const allePerioder = db.hentAlleRapporteringsperioder();
+        const rapporteringsperioder = allePerioder.filter((periode) => periode.ident === personId);
 
-        logger.info(`Hentet ${rapporteringsperioder.length} rapporteringsperioder`);
+        logger.info(
+          `Hentet ${rapporteringsperioder.length} rapporteringsperioder for person ${personId}`
+        );
 
         return HttpResponse.json(rapporteringsperioder);
       }

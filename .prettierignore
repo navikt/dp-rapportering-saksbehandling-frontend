@@ -1,2 +1,12 @@
 **/.github
 **/.nais
+build/
+.react-router/
+node_modules/
+coverage/
+playwright-report/
+test-results/
+*.css
+*.json
+*.html
+*.js.map

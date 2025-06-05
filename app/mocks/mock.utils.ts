@@ -1,7 +1,9 @@
 import { addDays, format, startOfWeek, subDays, subYears } from "date-fns";
 
-import { KJONN, KORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { AKTIVITET_TYPE, KJONN, KORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import type {
+  IAktivitet,
   IPeriode,
   IPerson,
   IRapporteringsperiode,
@@ -150,3 +152,47 @@ export function lagSaksbehandler(props: Partial<ISaksbehandler> = {}) {
     ...props,
   };
 }
+
+// Hjelpefunksjon for å lage ett meldekort
+export const lagArbeidUker = (
+  timer: string
+): Array<null | Pick<IAktivitet, "type" | "timer">[]> => [
+  // Uke 1
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Mandag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Tirsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Onsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Torsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Fredag
+  null, // Lørdag
+  null, // Søndag
+  // Uke 2
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Mandag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Tirsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Onsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Torsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Fredag
+  null, // Lørdag
+  null, // Søndag
+];
+
+// Hjelpefunksjon for å lage ett meldekort med arbeid annen hver dag
+export const lagAlternerendeArbeidsUker = (
+  timer: string
+): Array<null | Pick<IAktivitet, "type" | "timer">[]> => [
+  // Uke 1
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Mandag
+  null, // Tirsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Onsdag
+  null, // Torsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Fredag
+  null, // Lørdag
+  null, // Søndag
+  // Uke 2
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Mandag
+  null, // Tirsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Onsdag
+  null, // Torsdag
+  [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Fredag
+  null, // Lørdag
+  null, // Søndag
+];
