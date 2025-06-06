@@ -1,5 +1,5 @@
-import { BodyShort, Heading } from "@navikt/ds-react";
-import { Link, useLoaderData } from "react-router";
+import { BodyShort, Heading, LinkPanel } from "@navikt/ds-react";
+import { useLoaderData } from "react-router";
 
 import { getScenarioForPerson } from "~/mocks/data/mock-persons";
 import { hentPersoner } from "~/models/person.server";
@@ -54,25 +54,17 @@ export default function Rapportering() {
 
               return (
                 <li key={person.fodselsdato} style={{ marginBottom: "1rem" }}>
-                  <Link
-                    to={link}
+                  <LinkPanel
+                    href={link}
+                    border
                     aria-label={`Gå til perioder for ${navn}. ${scenarioInfo?.tittel ?? ""}`}
-                    style={{
-                      display: "block",
-                      padding: "1rem",
-                      border: "1px solid #ccc",
-                      borderRadius: "8px",
-                      textDecoration: "none",
-                      color: "inherit",
-                      background: "white",
-                      transition: "box-shadow 0.2s ease",
-                    }}
                   >
-                    <Heading level="3" size="small" style={{ marginBottom: "0.5rem" }}>
-                      {navn}
-                    </Heading>
-                    {scenarioInfo && <p>{scenarioInfo.tittel}</p>}
-                  </Link>
+                    <LinkPanel.Title> {navn}</LinkPanel.Title>
+
+                    {scenarioInfo && (
+                      <LinkPanel.Description>{scenarioInfo.tittel}</LinkPanel.Description>
+                    )}
+                  </LinkPanel>
                 </li>
               );
             })}
