@@ -36,7 +36,7 @@
   background-color: var(--a-surface-selected);
   width: calc(var(--dato-strl) - 1px);
   height: calc(calc(var(--dato-strl) * 1.15));
-  font-size: var(--a-font-size-xsmall);
+  font-size: var(--a-font-size-medium);
   color: var(--a-text-subtle);
   z-index: 1;
 }
@@ -121,7 +121,7 @@
   .dato {
     width: clamp(30px, 5vw, var(--dato-strl));
     height: clamp(30px, 5vw, var(--dato-strl));
-    font-size: clamp(12px, 2vw, var(--a-font-size-xsmall));
-    line-height: clamp(12px, 2vw, var(--a-font-size-xsmall));
+    font-size: clamp(12px, 2vw, var(--a-font-size-medium));
+    line-height: clamp(12px, 2vw, var(--a-font-size-medium));
   }
 }
