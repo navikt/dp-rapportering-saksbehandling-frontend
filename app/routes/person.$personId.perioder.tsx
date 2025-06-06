@@ -35,9 +35,27 @@ export default function Rapportering({ params }: Route.ComponentProps) {
   const valgteRapporteringsperiode = idListe
     .map((id) => periodeMap.get(id))
     .filter((periode): periode is IRapporteringsperiode => !!periode)
-    .sort(
-      (a, b) => new Date(b.periode.tilOgMed).getTime() - new Date(a.periode.tilOgMed).getTime()
-    );
+    .sort((a, b) => {
+      // Først sortér på fraOgMed dato (nyeste først) - matcher database
+      const fraOgMedDiff =
+        new Date(b.periode.fraOgMed).getTime() - new Date(a.periode.fraOgMed).getTime();
+      if (fraOgMedDiff !== 0) {
+        return fraOgMedDiff;
+      }
+
+      // Hvis samme periode-dato, sortér på mottattDato (nyeste først)
+      const mottattDatoA = a.mottattDato ? new Date(a.mottattDato).getTime() : 0;
+      const mottattDatoB = b.mottattDato ? new Date(b.mottattDato).getTime() : 0;
+      const mottattDiff = mottattDatoB - mottattDatoA;
+      if (mottattDiff !== 0) {
+        return mottattDiff;
+      }
+
+      // Hvis samme mottattDato, prioritér korrigerte perioder (originalId !== null)
+      const originalIdA = a.originalId ? 1 : 0;
+      const originalIdB = b.originalId ? 1 : 0;
+      return originalIdB - originalIdA;
+    });
 
   return (
     <>

@@ -51,7 +51,7 @@
   display: flex;
   align-self: center;
   padding: var(--a-spacing-2) var(--a-spacing-6);
-  font-size: var(--a-font-size-small);
+  font-size: var(--a-font-size-medium);
 }
 
 .checkbox {

@@ -36,7 +36,7 @@
   justify-content: center;
   align-items: center;
 
-  font-size: var(--a-font-size-small);
+  font-size: var(--a-font-size-medium);
 
   margin-left: var(--a-spacing-2);
   width: 22px;
