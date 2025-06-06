@@ -151,14 +151,13 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       },
       ukerFraIDag: 10,
       innsendtEtterTilOgMed: 1,
-      aktiviteter: lagArbeidUker("7.5"),
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
         begrunnelseEndring: "Feil antall arbeidstimer. Hadde jobbet full tid",
-        bruttoBelop: 8750,
+        bruttoBelop: 0,
         kilde: {
           rolle: "Bruker" as const,
           ident: "987654321",
@@ -176,7 +175,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       },
       ukerFraIDag: 8,
       innsendtEtterTilOgMed: 1,
-      aktiviteter: lagArbeidUker("5"), // Original: 5 timer/dag
     },
   ],
 
