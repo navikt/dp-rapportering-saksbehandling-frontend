@@ -19,8 +19,35 @@
 }
 
 /* === Rad i tabellen === */
+.periodeListe__row {
+  cursor: pointer;
+  transition: background-color 0.2s ease-out;
+}
+
 .periodeListe__row--selected {
   background-color: var(--a-lightblue-100);
+}
+
+/* === Klikkbar rad === */
+.navds-table__row[role="button"] {
+  cursor: pointer;
+  transition: background-color 0.2s ease-out;
+}
+
+.navds-table__row[role="button"]:hover {
+  background-color: var(--a-surface-hover);
+}
+
+.navds-table__row[role="button"]:focus {
+  outline: 2px solid var(--a-border-focus);
+  outline-offset: -2px;
+  background-color: var(--a-surface-hover);
+}
+
+
+/* === Fallback for alle table rows i periode-listen === */
+.periodeListe .navds-table__row {
+  cursor: pointer;
 }
 
 /* === Kolonne for uke med venstre kant === */
@@ -32,6 +59,29 @@
   border-left-color: var(--a-blue-300);
 }
 
+.periodeListe__week--pendingChange {
+  border-left-color: var(--a-orange-400);
+  position: relative;
+}
+
+.periodeListe__week--pendingChange::after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: var(--a-orange-500);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* === Checkbox-sentrering === */
 .periodeListe__checkbox {
   margin: auto;
@@ -40,4 +90,122 @@
 /* === Fjerne border på siste rad === */
 .periodeListe__row:last-child td {
   border-bottom-color: transparent;
+}
+
+/* === Actions (knapper) === */
+.periodeListe__actions {
+  padding: var(--a-spacing-4);
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--a-border-subtle);
+  background-color: var(--a-surface-subtle);
+}
+
+/* === Year grouped actions === */
+.yearGrouped__actions {
+  position: sticky;
+  bottom: 0;
+  padding: var(--a-spacing-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--a-surface-default);
+  border-top: 2px solid var(--a-border-action);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  
+  /* Smooth transitions for show/hide */
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  max-height: 200px;
+  transition: 
+    transform 0.4s ease-out,
+    opacity 0.4s ease-out,
+    visibility 0.4s ease-out,
+    max-height 0.4s ease-out,
+    box-shadow 0.2s ease-out;
+}
+
+/* === Status info area === */
+.yearGrouped__statusInfo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* === Button group layout === */
+.yearGrouped__buttonGroup {
+  display: flex;
+  gap: var(--a-spacing-2);
+  align-items: center;
+}
+
+/* Hiding state when no periods selected */
+.yearGrouped__actions--hiding {
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+  max-height: 0;
+}
+
+/* Hover and focus states for better interactivity */
+.yearGrouped__actions:hover,
+.yearGrouped__actions:focus-within {
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation classes for enter/exit */
+.yearGrouped__actions--entering {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.yearGrouped__actions--exiting {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+/* Change indicator for buttons */
+.changeIndicator {
+  position: relative;
+}
+
+.changeIndicator::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--a-orange-500);
+  border-radius: 50%;
+  border: 2px solid var(--a-white);
+  z-index: 1;
+}
+
+/* Button animation */
+.yearGrouped__actions button {
+  animation: slideUpFadeIn 0.4s ease-out;
+  transition: 
+    transform 0.2s ease-out,
+    background-color 0.25s ease-out,
+    border-color 0.25s ease-out,
+    color 0.25s ease-out;
+}
+
+.yearGrouped__actions button:hover,
+.yearGrouped__actions button:focus {
+  transform: translateY(-1px);
+}
+
+@keyframes slideUpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

@@ -1,7 +1,12 @@
 .grid {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--a-surface-subtle);
+}
+
+.periodeContainer {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  background-color: var(--a-surface-subtle);
 }
 
 .rapporteringsperiodeListe {
@@ -24,8 +29,58 @@
   padding: var(--a-spacing-6);
   padding-bottom: var(--a-spacing-10);
   margin-bottom: var(--a-spacing-6);
+  
+  /* Smooth transitions for periode changes */
+  transition: 
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animation states for entering/exiting periods */
+.forhandsvisning--entering,
+.detaljer--entering {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.forhandsvisning--exiting,
+.detaljer--exiting {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* Stagger animation for multiple periode cards */
+.grid > *:nth-child(odd) {
+  animation-delay: 0.05s;
+}
+
+.grid > *:nth-child(even) {
+  animation-delay: 0.1s;
+}
+
+/* Fade-in animation for new period cards */
+@keyframes periodeFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.forhandsvisning,
+.detaljer {
+  animation: periodeFadeIn 0.2s ease-in-out;
 }
 
 .hidden {
   display: none;
 }
+
+/* Fade in animation for periode containers */
+.fadeIn {
+  animation: periodeFadeIn 0.4s ease-out;
+}
+
