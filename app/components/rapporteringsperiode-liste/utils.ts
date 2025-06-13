@@ -26,3 +26,23 @@ export const sortOrder = [
 export function sorterAktiviteter(aktiviteter: TAktivitetType[]): TAktivitetType[] {
   return aktiviteter.sort((a, b) => sortOrder.indexOf(a) - sortOrder.indexOf(b));
 }
+
+/**
+ * Utility function to group periods by year based on fraOgMed date
+ * Use the start date to determine which year the period belongs to
+ */
+export function groupPeriodsByYear(
+  perioder: IRapporteringsperiode[]
+): Record<number, IRapporteringsperiode[]> {
+  return perioder.reduce((groups, periode) => {
+    // Bruk fraOgMed for å finne år
+    const fraOgMedDate = new Date(periode.periode.fraOgMed);
+    const year = fraOgMedDate.getFullYear();
+
+    if (!groups[year]) {
+      groups[year] = [];
+    }
+    groups[year].push(periode);
+    return groups;
+  }, {} as Record<number, IRapporteringsperiode[]>);
+}

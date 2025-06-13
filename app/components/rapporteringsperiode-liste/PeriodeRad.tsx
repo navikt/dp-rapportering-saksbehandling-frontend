@@ -18,7 +18,10 @@ interface Props {
 }
 
 export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }: Props) {
-  const radKlasse = valgt ? styles["periodeListe__row--selected"] : undefined;
+  const radKlasse = classNames({
+    [styles["periodeListe__row--selected"]]: valgt,
+    [styles["periodeListe__row"]]: true, // Alle rader får basis klasse
+  });
   const ukeKlasse = classNames(styles.periodeListe__week, {
     [styles["periodeListe__week--selected"]]: valgt,
     [styles["periodeListe__row--selected"]]: valgt,
@@ -30,7 +33,23 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
   })}`;
 
   return (
-    <Table.Row selected={valgt} className={radKlasse} onClick={() => toggle(periode.id)}>
+    <Table.Row
+      selected={valgt}
+      className={radKlasse}
+      onClick={() => toggle(periode.id)}
+      role="button"
+      tabIndex={!valgt && valgteAntall >= maksValgte ? -1 : 0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggle(periode.id);
+        }
+      }}
+      aria-label={`${valgt ? "Avvelg" : "Velg"} rapporteringsperiode uke ${ukenummer(
+        periode
+      )}, ${periodeDatoTekst}`}
+      aria-pressed={valgt}
+    >
       <Table.DataCell textSize="small" className={ukeKlasse}>
         <Checkbox
           className={styles.periodeListe__checkbox}
@@ -42,6 +61,8 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
           }}
           onClick={(e) => e.stopPropagation()}
           readOnly={!valgt && valgteAntall >= maksValgte}
+          aria-hidden="true"
+          tabIndex={-1}
         >
           {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
         </Checkbox>

@@ -1,8 +1,8 @@
-import { Fragment } from "react";
+import { useEffect, useState } from "react";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
-import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-liste/PeriodeListe";
+import { RapporteringsperiodeListeByYear } from "~/components/rapporteringsperiode-liste/PeriodeListe";
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
 import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/person.module.css";
@@ -26,6 +26,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
   const perioder = data?.perioder ?? [];
 
   const [searchParams] = useSearchParams();
+  const [fadeKey, setFadeKey] = useState(0);
 
   const rapporteringsidParam = searchParams.get("rapporteringsid");
   const idListe = rapporteringsidParam?.split(",") ?? [];
@@ -57,21 +58,26 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       return originalIdB - originalIdA;
     });
 
+  // Trigger fade animation when selected periods change
+  useEffect(() => {
+    setFadeKey((prev) => prev + 1);
+  }, [rapporteringsidParam]);
+
   return (
     <>
       <div className={styles.rapporteringsperiodeListe}>
-        <RapporteringsperiodeListe perioder={perioder} />
+        <RapporteringsperiodeListeByYear perioder={perioder} />
       </div>
-      <div className={styles.grid}>
+      <div key={fadeKey} className={styles.grid}>
         {valgteRapporteringsperiode.map((periode) => (
-          <Fragment key={periode.id}>
+          <div key={periode.id} className={`${styles.periodeContainer} ${styles.fadeIn}`}>
             <div className={styles.forhandsvisning}>
               <RapporteringsperiodeVisning perioder={[periode]} />
             </div>
             <div className={styles.detaljer}>
               <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId} />
             </div>
-          </Fragment>
+          </div>
         ))}
       </div>
     </>
