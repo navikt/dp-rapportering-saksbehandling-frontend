@@ -5,6 +5,7 @@ export enum ScenarioType {
   SENDT_FOR_SENT = "sendt_for_sent",
   IKKE_SENDT_INN = "ikke_sendt_inn",
   FLERE_BEREGNEDE = "flere_beregnede",
+  FULL_DEMO = "FULL_DEMO",
 }
 
 export interface IScenario {
