@@ -11,7 +11,9 @@ const getVariant = (
   status: TRapporteringsperiodeStatus
 ): "info" | "success" | "warning" | "error" | "neutral" => {
   switch (status) {
-    case RAPPORTERINGSPERIODE_STATUS.TilUtfylling:
+    case RAPPORTERINGSPERIODE_STATUS.Opprettet:
+      return "info";
+    case RAPPORTERINGSPERIODE_STATUS.Klar:
       return "info";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "success";
@@ -28,8 +30,10 @@ const getVariant = (
 
 const getStatusText = (status: TRapporteringsperiodeStatus): string => {
   switch (status) {
-    case RAPPORTERINGSPERIODE_STATUS.TilUtfylling:
-      return "Opprettet";
+    case RAPPORTERINGSPERIODE_STATUS.Opprettet:
+      return "Meldekort opprettet";
+    case RAPPORTERINGSPERIODE_STATUS.Klar:
+      return "Klar til utfylling";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "Innsendt";
     case RAPPORTERINGSPERIODE_STATUS.Korrigert:

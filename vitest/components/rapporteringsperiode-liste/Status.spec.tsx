@@ -6,11 +6,11 @@ import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 
 describe("Status", () => {
   test("skal vise info tag for status TilUtfylling", () => {
-    const { container } = render(<Status status={RAPPORTERINGSPERIODE_STATUS.TilUtfylling} />);
+    const { container } = render(<Status status={RAPPORTERINGSPERIODE_STATUS.Klar} />);
 
     expect(container.querySelector(".navds-tag--info")).toBeInTheDocument();
 
-    const text = screen.getByText("Opprettet");
+    const text = screen.getByText("Klar til utfylling");
     expect(text).toBeInTheDocument();
   });
 

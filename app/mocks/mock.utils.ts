@@ -96,7 +96,7 @@ export function lagRapporteringsperiode(
     kanEndres: true,
     bruttoBelop: null,
     begrunnelseEndring: "",
-    status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+    status: RAPPORTERINGSPERIODE_STATUS.Klar,
     mottattDato: null,
     registrertArbeidssoker: null,
     originalId: null,

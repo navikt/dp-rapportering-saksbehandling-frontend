@@ -14,7 +14,7 @@ interface IProps {
 export const SISTE_FRIST = 7; // TODO: Endre til hvor mange dager det skal være for sent
 
 export function Innsendt({ mottattDato, tilOgMed, status }: IProps) {
-  const tilUtfylling = status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling;
+  const tilUtfylling = status === RAPPORTERINGSPERIODE_STATUS.Klar;
   if (tilUtfylling) return null;
 
   const dagerForskjell = differenceInDays(parseISO(mottattDato), parseISO(tilOgMed));
