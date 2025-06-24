@@ -48,6 +48,13 @@ const personData = [
     birthdate: new Date("1988-04-12"),
     pnr: "97531",
   },
+  {
+    scenario: ScenarioType.FULL_DEMO,
+    fornavn: "Full",
+    etternavn: "Demo",
+    birthdate: new Date("2000-01-02"),
+    pnr: "12345",
+  },
 ];
 
 export const mockPersons: Array<IPerson & { scenario: ScenarioType }> = personData.map((data) => {

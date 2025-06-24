@@ -345,6 +345,106 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       innsendtEtterTilOgMed: 1,
     },
   ],
+
+  [ScenarioType.FULL_DEMO]: [
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+      },
+      aktiviteter: lagArbeidUker("4"), // 4 timer hver onsdag
+      ukerFraIDag: 28, // tilsvarer uke 11-12
+      innsendtEtterTilOgMed: 1,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+      },
+      aktiviteter: lagArbeidUker("4"),
+      ukerFraIDag: 26, // uke 13-14
+      innsendtEtterTilOgMed: 1,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+      },
+      aktiviteter: lagArbeidUker("4"),
+      ukerFraIDag: 24, // uke 15-16
+      innsendtEtterTilOgMed: 1,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+      },
+      ukerFraIDag: 22,
+      innsendtEtterTilOgMed: 1,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+      },
+      ukerFraIDag: 20,
+      innsendtEtterTilOgMed: 1,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        begrunnelseEndring: "Sendt inn en dag etter fristen",
+      },
+      aktiviteter: [null, null, null, [{ type: AKTIVITET_TYPE.Syk }]],
+      ukerFraIDag: 18,
+      innsendtEtterTilOgMed: 1,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+      },
+      aktiviteter: [
+        [{ type: AKTIVITET_TYPE.Fravaer }],
+        [{ type: AKTIVITET_TYPE.Fravaer }],
+        [{ type: AKTIVITET_TYPE.Fravaer }],
+        [{ type: AKTIVITET_TYPE.Fravaer }],
+        [{ type: AKTIVITET_TYPE.Fravaer }],
+      ],
+      ukerFraIDag: 16,
+      innsendtEtterTilOgMed: 1,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
+        registrertArbeidssoker: true,
+        begrunnelseEndring: "Glemt å føre aktiviteter.",
+        kilde: {
+          rolle: "Bruker" as const,
+          ident: "1234567891011",
+        },
+      },
+      ukerFraIDag: 16,
+      innsendtEtterTilOgMed: 4,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Feilet,
+        registrertArbeidssoker: false,
+      },
+      ukerFraIDag: 2, // uke 7-8
+      innsendtEtterTilOgMed: 1,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+        registrertArbeidssoker: true,
+      },
+      ukerFraIDag: 0, // uke 9-10
+      innsendtEtterTilOgMed: 0,
+    },
+  ],
 };
 
 /**
