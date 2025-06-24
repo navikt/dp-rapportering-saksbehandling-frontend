@@ -22,7 +22,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
   return (
     <div className={styles.periodeDetaljer}>
       <dl className={styles.detailList}>
-        <dt>Status neste 14 dager:</dt>
+        <dt>Svar på spørsmål om arbeidssøkerregistrering:</dt>
         <dd>
           {periode.registrertArbeidssoker && (
             <Tag variant={erArbeidssoker ? "success" : "error"} size="small">
