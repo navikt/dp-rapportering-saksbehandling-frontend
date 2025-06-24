@@ -1,4 +1,5 @@
 import { Button, Modal } from "@navikt/ds-react";
+import { useEffect } from "react";
 import { useFetcher, useNavigate } from "react-router";
 
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
@@ -14,6 +15,12 @@ interface IProps {
 export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: IProps) {
   const fetcher = useFetcher();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data) {
+      navigate(`/person/${person.ident}/perioder`);
+    }
+  }, [fetcher.state, fetcher.data, navigate, person.ident]);
 
   if (!type) return null;
 
@@ -33,9 +40,8 @@ export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: 
         { rapporteringsperiode: JSON.stringify(korrigertPeriode) },
         { method: "post", action: "/api/rapportering" }
       );
+      navigate(`/person/${person.ident}/perioder`);
     }
-
-    navigate(`/person/${person.ident}/perioder`);
   }
 
   return (

@@ -50,6 +50,7 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
+      mottattDato: new Date().toISOString(),
       status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       begrunnelseEndring: korrigertBegrunnelse,
