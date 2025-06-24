@@ -1,4 +1,4 @@
-import { addDays, differenceInWeeks, format, startOfWeek, subWeeks } from "date-fns";
+import { addDays, addWeeks, differenceInWeeks, format, startOfWeek, subWeeks } from "date-fns";
 import { uuidv7 } from "uuidv7";
 
 import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
@@ -270,7 +270,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
   [ScenarioType.IKKE_SENDT_INN]: [
     {
       periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+        status: RAPPORTERINGSPERIODE_STATUS.Klar,
         registrertArbeidssoker: true,
       },
       ukerFraIDag: 2,
@@ -438,10 +438,18 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
     {
       periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+        status: RAPPORTERINGSPERIODE_STATUS.Klar,
         registrertArbeidssoker: true,
       },
       ukerFraIDag: 0, // uke 9-10
+      innsendtEtterTilOgMed: 0,
+    },
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Opprettet,
+        registrertArbeidssoker: true,
+      },
+      ukerFraIDag: -1, // uke 11-12
       innsendtEtterTilOgMed: 0,
     },
   ],
@@ -458,7 +466,10 @@ function byggRapporteringsperioderFraKonfigurasjon(
 
   periodedefinisjon.forEach(({ periode, ukerFraIDag, innsendtEtterTilOgMed, aktiviteter }) => {
     const dagensDato = new Date();
-    const startDato = subWeeks(dagensDato, Math.abs(ukerFraIDag));
+    const startDato =
+      ukerFraIDag >= 0
+        ? subWeeks(dagensDato, ukerFraIDag)
+        : addWeeks(dagensDato, Math.abs(ukerFraIDag));
     const { fraOgMed, tilOgMed } = lagPeriodeDatoFor(startDato);
 
     const dager = lagDager().map((dag, index) => {
