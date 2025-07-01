@@ -2,8 +2,10 @@ import { addDays, format, startOfWeek } from "date-fns";
 
 import type { IPeriode, IRapporteringsperiodeDag } from "~/utils/types";
 
+let idCounter = 1;
+
 export function createId(): string {
-  return String(Math.floor(Math.random() * 10_000_000_000));
+  return String(idCounter++);
 }
 
 export function formatereDato(dato: Date): string {

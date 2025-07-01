@@ -347,63 +347,165 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
   ],
 
   [ScenarioType.FULL_DEMO]: [
+    // 1. Ferdig beregnet, uke 11-12, Arbeidet 4 timer hver dag begge ukene
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-      },
-      aktiviteter: lagArbeidUker("4"), // 4 timer hver onsdag
-      ukerFraIDag: 28, // tilsvarer uke 11-12
-      innsendtEtterTilOgMed: 1,
-    },
-    {
-      periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
-        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
       aktiviteter: lagArbeidUker("4"),
-      ukerFraIDag: 26, // uke 13-14
-      innsendtEtterTilOgMed: 1,
+      ukerFraIDag: 58, // uke 11-12
+      innsendtEtterTilOgMed: 0,
     },
+    // 2. Ferdig beregnet, uke 13-14, Arbeid 4 timer hver onsdag
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
-      aktiviteter: lagArbeidUker("4"),
-      ukerFraIDag: 24, // uke 15-16
-      innsendtEtterTilOgMed: 1,
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+      ],
+      ukerFraIDag: 56, // uke 13-14
+      innsendtEtterTilOgMed: 0,
     },
+    // 3. Ferdig beregnet, uke 15-16, Arbeid 4 timer hver onsdag
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
-      ukerFraIDag: 22,
-      innsendtEtterTilOgMed: 1,
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+      ],
+      ukerFraIDag: 54, // uke 15-16
+      innsendtEtterTilOgMed: 0,
     },
+    // 4. Ferdig beregnet, uke 17-18, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
-      ukerFraIDag: 20,
-      innsendtEtterTilOgMed: 1,
+      aktiviteter: [
+        null, // mandag uke 1
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // tirsdag uke 1
+        [{ type: AKTIVITET_TYPE.Utdanning }], // onsdag uke 1
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // torsdag uke 1
+        null, // fredag uke 1
+        null,
+        null, // helg
+        null, // mandag uke 2
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // tirsdag uke 2
+        [{ type: AKTIVITET_TYPE.Utdanning }], // onsdag uke 2
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // torsdag uke 2
+        [{ type: AKTIVITET_TYPE.Syk }], // fredag uke 2
+        null,
+        null, // helg
+      ],
+      ukerFraIDag: 52, // uke 17-18
+      innsendtEtterTilOgMed: 0,
     },
+    // 5. Ferdig beregnet, uke 19-20, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        begrunnelseEndring: "Sendt inn en dag etter fristen",
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
-      aktiviteter: [null, null, null, [{ type: AKTIVITET_TYPE.Syk }]],
-      ukerFraIDag: 18,
-      innsendtEtterTilOgMed: 1,
+      aktiviteter: [
+        null, // mandag uke 1
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // tirsdag uke 1
+        [{ type: AKTIVITET_TYPE.Utdanning }], // onsdag uke 1
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // torsdag uke 1
+        null, // fredag uke 1
+        null,
+        null, // helg
+        null, // mandag uke 2
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // tirsdag uke 2
+        [{ type: AKTIVITET_TYPE.Utdanning }], // onsdag uke 2
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // torsdag uke 2
+        [{ type: AKTIVITET_TYPE.Syk }], // fredag uke 2
+        null,
+        null, // helg
+      ],
+      ukerFraIDag: 50, // uke 19-20
+      innsendtEtterTilOgMed: 0,
     },
+    // 6. Ferdig beregnet, uke 21-22, Syk torsdag uke 22, Sendt inn en dag etter fristen
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+        null,
+      ],
+      ukerFraIDag: 48, // uke 21-22
+      innsendtEtterTilOgMed: 1,
+    },
+    // 7. Korrigering Innsendt, uke 23-24, Glemt å føre aktiviteter
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
+        registrertArbeidssoker: true,
+        begrunnelseEndring: "Glemt å føre aktiviteter.",
+        mottattDato: null, // Vil bli satt automatisk basert på perioden
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      ukerFraIDag: 46, // uke 23-24 (samme som over, korrigering)
+      innsendtEtterTilOgMed: 4,
+    },
+    // 8. Ferdig beregnet, uke 23-24, Ferie hele uke 23
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
       aktiviteter: [
         [{ type: AKTIVITET_TYPE.Fravaer }],
@@ -411,45 +513,403 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         [{ type: AKTIVITET_TYPE.Fravaer }],
         [{ type: AKTIVITET_TYPE.Fravaer }],
         [{ type: AKTIVITET_TYPE.Fravaer }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
       ],
-      ukerFraIDag: 16,
-      innsendtEtterTilOgMed: 1,
+      ukerFraIDag: 46, // uke 23-24
+      innsendtEtterTilOgMed: 0,
     },
+    // 9. Ferdig beregnet, uke 25-26, Arbeid 4 timer hver onsdag
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+      ],
+      ukerFraIDag: 44, // uke 25-26
+      innsendtEtterTilOgMed: 0,
+    },
+    // 10. Ferdig beregnet, uke 27-28, Arbeid 4 timer hver onsdag
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+      ],
+      ukerFraIDag: 42, // uke 27-28
+      innsendtEtterTilOgMed: 0,
+    },
+    // 11. Ferdig beregnet, uke 29-30, ingen aktiviteter
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      ukerFraIDag: 40, // uke 29-30
+      innsendtEtterTilOgMed: 0,
+    },
+    // 12. Ferdig beregnet, uke 31-32, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+      ],
+      ukerFraIDag: 38, // uke 31-32
+      innsendtEtterTilOgMed: 0,
+    },
+    // 13. Ferdig beregnet, uke 33-34, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+      ],
+      ukerFraIDag: 36, // uke 33-34
+      innsendtEtterTilOgMed: 0,
+    },
+    // 14. Ferdig beregnet, uke 35-36, ingen aktiviteter
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      ukerFraIDag: 34, // uke 35-36
+      innsendtEtterTilOgMed: 0,
+    },
+    // 15. Ferdig beregnet, uke 37-38, ingen aktiviteter
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      ukerFraIDag: 32, // uke 37-38
+      innsendtEtterTilOgMed: 0,
+    },
+    // 16. Korrigering Innsendt, uke 39-40, Glemt å føre aktiviteter, Saksbehandler
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
         begrunnelseEndring: "Glemt å føre aktiviteter.",
-        kilde: {
-          rolle: "Bruker" as const,
-          ident: "1234567891011",
-        },
+        mottattDato: null, // Vil bli satt automatisk basert på perioden
+        kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
       },
-      ukerFraIDag: 16,
+      ukerFraIDag: 30, // uke 39-40 (samme som under, korrigering)
       innsendtEtterTilOgMed: 4,
     },
+    // 17. Ferdig beregnet, uke 39-40, Arbeid 4h onsdag, Syk torsdag-fredag uke 40
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+      ],
+      ukerFraIDag: 30, // uke 39-40
+      innsendtEtterTilOgMed: 0,
+    },
+    // 18. Ferdig beregnet, uke 41-42, ingen aktiviteter
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      ukerFraIDag: 28, // uke 41-42
+      innsendtEtterTilOgMed: 0,
+    },
+    // 19. Ferdig beregnet, uke 43-44, Arbeid 4 timer hver onsdag
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+      ],
+      ukerFraIDag: 26, // uke 43-44
+      innsendtEtterTilOgMed: 0,
+    },
+    // 20. Ferdig beregnet, uke 45-46, ingen aktiviteter
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      ukerFraIDag: 24, // uke 45-46
+      innsendtEtterTilOgMed: 0,
+    },
+    // 21. Ferdig beregnet, uke 47-48, Arbeid 4 timer hver onsdag
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+      ],
+      ukerFraIDag: 22, // uke 47-48
+      innsendtEtterTilOgMed: 0,
+    },
+    // 22. Ferdig beregnet, uke 49-50, ingen aktiviteter
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      ukerFraIDag: 20, // uke 49-50
+      innsendtEtterTilOgMed: 0,
+    },
+    // 23. Ferdig beregnet, uke 51-52, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+      ],
+      ukerFraIDag: 18, // uke 51-52
+      innsendtEtterTilOgMed: 0,
+    },
+    // 24. Ferdig beregnet, uke 1-2, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+      ],
+      ukerFraIDag: 16, // uke 1-2
+      innsendtEtterTilOgMed: 0,
+    },
+    // 25. Ferdig beregnet, uke 3-4, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+      ],
+      ukerFraIDag: 14, // uke 3-4
+      innsendtEtterTilOgMed: 0,
+    },
+    // 26. Ferdig beregnet, uke 5-6, Arbeid 4 timer hver onsdag
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+      },
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
+        null,
+        null,
+        null,
+        null,
+      ],
+      ukerFraIDag: 12, // uke 5-6
+      innsendtEtterTilOgMed: 0,
+    },
+    // 27. Feilet, uke 7-8
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Feilet,
-        registrertArbeidssoker: false,
-      },
-      ukerFraIDag: 2, // uke 7-8
-      innsendtEtterTilOgMed: 1,
-    },
-    {
-      periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Klar,
         registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
-      ukerFraIDag: 0, // uke 9-10
+      ukerFraIDag: 10, // uke 7-8
       innsendtEtterTilOgMed: 0,
     },
+    // 28. Opprettet, uke 9-10, ikke registrert arbeidssøker
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Opprettet,
-        registrertArbeidssoker: true,
+        registrertArbeidssoker: false,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
-      ukerFraIDag: -1, // uke 11-12
+      ukerFraIDag: 8, // uke 9-10
+      innsendtEtterTilOgMed: 0,
+    },
+    // 29. Opprettet, uke 11-12, ingen data ennå
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Opprettet,
+      },
+      ukerFraIDag: 6, // uke 11-12
       innsendtEtterTilOgMed: 0,
     },
   ],
