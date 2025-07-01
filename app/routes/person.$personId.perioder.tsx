@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
@@ -26,49 +25,20 @@ export default function Rapportering({ params }: Route.ComponentProps) {
   const perioder = data?.perioder ?? [];
 
   const [searchParams] = useSearchParams();
-  const [fadeKey, setFadeKey] = useState(0);
 
-  const rapporteringsidParam = searchParams.get("rapporteringsid");
-  const idListe = rapporteringsidParam?.split(",") ?? [];
-
-  const periodeMap = new Map(perioder.map((p) => [p.id, p]));
-
-  const valgteRapporteringsperiode = idListe
-    .map((id) => periodeMap.get(id))
-    .filter((periode): periode is IRapporteringsperiode => !!periode)
-    .sort((a, b) => {
-      // Først sortér på fraOgMed dato (nyeste først) - matcher database
-      const fraOgMedDiff =
-        new Date(b.periode.fraOgMed).getTime() - new Date(a.periode.fraOgMed).getTime();
-      if (fraOgMedDiff !== 0) {
-        return fraOgMedDiff;
-      }
-
-      // Hvis samme periode-dato, sortér på mottattDato (nyeste først)
-      const mottattDatoA = a.mottattDato ? new Date(a.mottattDato).getTime() : 0;
-      const mottattDatoB = b.mottattDato ? new Date(b.mottattDato).getTime() : 0;
-      const mottattDiff = mottattDatoB - mottattDatoA;
-      if (mottattDiff !== 0) {
-        return mottattDiff;
-      }
-
-      // Hvis samme mottattDato, prioritér korrigerte perioder (originalId !== null)
-      const originalIdA = a.originalId ? 1 : 0;
-      const originalIdB = b.originalId ? 1 : 0;
-      return originalIdB - originalIdA;
-    });
-
-  // Trigger fade animation when selected periods change
-  useEffect(() => {
-    setFadeKey((prev) => prev + 1);
-  }, [rapporteringsidParam]);
+  const valgteRapporteringsperiode =
+    searchParams
+      .get("rapporteringsid")
+      ?.split(",")
+      .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
+      .filter((periode) => periode) ?? [];
 
   return (
     <>
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListeByYear perioder={perioder} />
       </div>
-      <div key={fadeKey} className={styles.grid}>
+      <div className={styles.grid}>
         {valgteRapporteringsperiode.map((periode) => (
           <div key={periode.id} className={`${styles.periodeContainer} ${styles.fadeIn}`}>
             <div className={styles.forhandsvisning}>

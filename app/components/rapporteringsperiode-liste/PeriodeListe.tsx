@@ -1,4 +1,4 @@
-import { Accordion, Button, Table, Tag } from "@navikt/ds-react";
+import { Accordion, Button, Table } from "@navikt/ds-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
@@ -183,54 +183,6 @@ export function RapporteringsperiodeListe({ perioder }: Props) {
   );
 }
 
-function getButtonText(
-  valgteIds: string[],
-  validCurrentUrlIds: string[],
-  urlIsEmpty: boolean,
-  hasChanges: boolean
-) {
-  if (valgteIds.length === 0 && validCurrentUrlIds.length > 0) {
-    return "Fjern alle valgte perioder";
-  }
-  if (urlIsEmpty && valgteIds.length > 0) {
-    return valgteIds.length === 1
-      ? "Vis 1 valgt periode"
-      : `Vis valgte perioder (${valgteIds.length})`;
-  }
-  if (hasChanges) {
-    return valgteIds.length === 1
-      ? "Oppdater 1 valgt periode"
-      : `Oppdater valgte perioder (${valgteIds.length})`;
-  }
-  return valgteIds.length === 1
-    ? "Viser 1 valgt periode"
-    : `Viser ${valgteIds.length} valgte perioder`;
-}
-
-function getButtonAriaLabel(
-  valgteIds: string[],
-  validCurrentUrlIds: string[],
-  urlIsEmpty: boolean,
-  hasChanges: boolean
-) {
-  if (valgteIds.length === 0 && validCurrentUrlIds.length > 0) {
-    return "Fjern alle valgte perioder fra visningen";
-  }
-  if (urlIsEmpty && valgteIds.length > 0) {
-    return valgteIds.length === 1
-      ? "Vis den valgte perioden"
-      : `Vis de ${valgteIds.length} valgte periodene`;
-  }
-  if (hasChanges) {
-    return valgteIds.length === 1
-      ? "Oppdater visningen med den valgte perioden"
-      : `Oppdater visningen med de ${valgteIds.length} valgte periodene`;
-  }
-  return valgteIds.length === 1
-    ? "Visningsstatus: 1 periode vises for øyeblikket"
-    : `Visningsstatus: ${valgteIds.length} perioder vises for øyeblikket`;
-}
-
 /**
  * Main component that groups reporting periods by year in an accordion
  */
@@ -256,45 +208,20 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
     setValgteIds((prev) => {
       const alleredeValgt = prev.includes(id);
       if (!alleredeValgt && prev.length >= MAKS_VALGTE_PERIODER) return prev;
-      return alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
+      const nyeIds = alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
+
+      // Oppdater URL automatisk når IDs endres
+      const newParams = new URLSearchParams(searchParams);
+      if (nyeIds.length > 0) {
+        newParams.set("rapporteringsid", nyeIds.join(","));
+      } else {
+        newParams.delete("rapporteringsid");
+      }
+      setSearchParams(newParams, { replace: true });
+
+      return nyeIds;
     });
   };
-
-  const oppdaterValgteperioder = () => {
-    const params = new URLSearchParams(searchParams);
-    if (valgteIds.length === 0) {
-      params.delete("rapporteringsid");
-    } else {
-      params.set("rapporteringsid", valgteIds.join(","));
-    }
-    setSearchParams(params, { replace: true });
-  };
-
-  const fjernAlleValgteperioder = () => {
-    setValgteIds([]);
-    const params = new URLSearchParams(searchParams);
-    params.delete("rapporteringsid");
-    setSearchParams(params, { replace: true });
-  };
-
-  // Fjernet automatisk URL-opprydding - brudd på WCAG 3.2.2
-
-  // Check if current URL selection differs from local state
-  const currentUrlIds = searchParams.get("rapporteringsid")?.split(",") ?? [];
-  // Filter out URL IDs that don't exist for this person
-  const validCurrentUrlIds = currentUrlIds.filter((id) => gyldigeIds.has(id));
-
-  // Special case: if URL is completely empty, always show "Vis" text (not "Oppdater")
-  const urlIsEmpty = !searchParams.has("rapporteringsid") || currentUrlIds.every((id) => id === "");
-  const hasChanges = urlIsEmpty
-    ? false // Force "Vis" when URL is empty
-    : JSON.stringify([...valgteIds].sort()) !== JSON.stringify([...validCurrentUrlIds].sort());
-
-  // Button should be primary when there's an action to perform
-  const isActionButton =
-    hasChanges ||
-    (urlIsEmpty && valgteIds.length > 0) ||
-    (valgteIds.length === 0 && validCurrentUrlIds.length > 0);
 
   return (
     <div role="region" aria-labelledby="periode-heading">
@@ -318,59 +245,6 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
           </Accordion.Item>
         ))}
       </Accordion>
-
-      {/* Oppdater valgte perioder knapp - vises alltid når det er endringer */}
-      {(valgteIds.length > 0 || validCurrentUrlIds.length > 0) && (
-        <div className={styles.yearGrouped__actions}>
-          <div className={styles.yearGrouped__statusInfo}>
-            <Tag
-              variant="info"
-              size="small"
-              aria-live="polite"
-              aria-describedby="total-selected-count"
-            >
-              {validCurrentUrlIds.length === 0
-                ? "Ingen perioder vises"
-                : validCurrentUrlIds.length === 1
-                ? "1 periode vises"
-                : `${validCurrentUrlIds.length} perioder vises`}
-            </Tag>
-          </div>
-          <div className={styles.yearGrouped__buttonGroup}>
-            {isActionButton && (
-              <Button
-                variant="primary"
-                size="small"
-                onClick={oppdaterValgteperioder}
-                aria-describedby="total-selected-count"
-                className={hasChanges ? styles.changeIndicator : ""}
-                aria-label={getButtonAriaLabel(
-                  valgteIds,
-                  validCurrentUrlIds,
-                  urlIsEmpty,
-                  hasChanges
-                )}
-              >
-                {getButtonText(valgteIds, validCurrentUrlIds, urlIsEmpty, hasChanges)}
-              </Button>
-            )}
-
-            {/* Fjern alle knapp - vises når det er noe å fjerne */}
-            {(valgteIds.length > 0 || validCurrentUrlIds.length > 0) && (
-              <Button
-                variant="tertiary"
-                size="small"
-                onClick={fjernAlleValgteperioder}
-                aria-label="Fjern alle valgte perioder og tøm visningen"
-                disabled={false}
-              >
-                Fjern alle
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Skjermleservennlig statusmelding - mindre støy */}
       <div role="status" aria-live="polite" className="sr-only">
         {valgteIds.length >= MAKS_VALGTE_PERIODER && (
@@ -379,15 +253,6 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
           </span>
         )}
       </div>
-
-      {/* Status for valg-teller - bare når det trengs */}
-      {valgteIds.length > 0 && (
-        <div className="sr-only">
-          <span id="total-selected-count">
-            {valgteIds.length} av {MAKS_VALGTE_PERIODER} rapporteringsperioder valgt totalt.
-          </span>
-        </div>
-      )}
     </div>
   );
 }
