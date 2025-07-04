@@ -106,12 +106,16 @@ export function konverterTilISO8601Varighet(varighet: string): string {
 }
 
 export function konverterFraISO8601Varighet(periode?: string): number | undefined {
-  if (!periode) return undefined;
+  if (!periode || periode.trim() === "") return undefined;
 
-  periode = periode.replace(/\s/g, "");
-
-  const parsed = parse(periode);
-  const timer = parsed.hours || 0;
-  const minutt = parsed.minutes || 0;
-  return timer + minutt / 60;
+  try {
+    periode = periode.replace(/\s/g, "");
+    const parsed = parse(periode);
+    const timer = parsed.hours || 0;
+    const minutt = parsed.minutes || 0;
+    return timer + minutt / 60;
+  } catch (error) {
+    console.warn("Invalid duration format:", periode, error);
+    return undefined;
+  }
 }

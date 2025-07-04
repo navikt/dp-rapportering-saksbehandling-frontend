@@ -12,7 +12,7 @@ import styles from "~/route-styles/periode.module.css";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
-import type { Route } from "./+types/person.$personId.periode.$periodeId";
+import type { Route } from "../+types/root";
 
 export async function loader({
   request,

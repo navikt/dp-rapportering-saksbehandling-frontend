@@ -4,8 +4,8 @@
 }
 
 .rapporteringsperiodeTabell th {
-  font-weight: var(--a-font-weight-bold);
-  font-size: var(--a-font-size-medium);
+  font-weight: var(--a-font-weight-light);
+  font-size: var(--a-font-size-small);
   padding: var(--a-spacing-2);
   text-align: center;
   white-space: nowrap;

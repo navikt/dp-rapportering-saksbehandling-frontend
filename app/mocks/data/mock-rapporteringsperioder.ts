@@ -670,7 +670,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
       },
       ukerFraIDag: 30, // uke 39-40 (samme som under, korrigering)
-      innsendtEtterTilOgMed: 4,
+      innsendtEtterTilOgMed: 1,
     },
     // 17. Ferdig beregnet, uke 39-40, Arbeid 4h onsdag, Syk torsdag-fredag uke 40
     {

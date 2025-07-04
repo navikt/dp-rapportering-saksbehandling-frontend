@@ -44,6 +44,31 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
   return hentRapporteringsperiodeMedId(db, id);
 }
 
+function oppdaterPeriode(
+  db: Database,
+  periodeId: string,
+  oppdateringer: Partial<IRapporteringsperiode>
+) {
+  const eksisterendePeriode = hentRapporteringsperiodeMedId(db, periodeId);
+
+  if (!eksisterendePeriode) {
+    throw new Error(`Periode ${periodeId} ikke funnet`);
+  }
+
+  const oppdatertPeriode = { ...eksisterendePeriode, ...oppdateringer };
+
+  db.rapporteringsperioder.update({
+    where: {
+      id: {
+        equals: periodeId,
+      },
+    },
+    data: oppdatertPeriode,
+  });
+
+  return hentRapporteringsperiodeMedId(db, periodeId);
+}
+
 function leggTilRapporteringsperiode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
   db.rapporteringsperioder.create(rapporteringsperiode);
 }
@@ -89,5 +114,7 @@ export function withDb(db: Database) {
     hentSaksbehandler: (saksbehandlerId: string) => hentSaksbehandler(db, saksbehandlerId),
     korrigerPeriode: (rapporteringsperiode: IRapporteringsperiode) =>
       korrigerPeriode(db, rapporteringsperiode),
+    oppdaterPeriode: (periodeId: string, oppdateringer: Partial<IRapporteringsperiode>) =>
+      oppdaterPeriode(db, periodeId, oppdateringer),
   };
 }

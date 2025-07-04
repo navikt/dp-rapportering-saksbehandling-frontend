@@ -1,0 +1,68 @@
+table {
+    text-align: left;
+    font-size: 16px;
+border-spacing: 0px 8px;
+}
+
+.label {
+    text-align: left;
+    font-weight: 600;
+}
+
+td {
+    text-wrap: nowrap;
+}
+
+thead, tr, th {
+    font-weight: 400;
+}
+
+
+.aktivitet {
+    display: flex;
+    padding: 0px 20px;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 40px;
+}
+
+.aktivitetArbeid {
+    background: #99C3FF;
+}
+
+.aktivitetSyk {
+    background: #FFD399;
+}
+
+.aktivitetFravaer {
+    background: #A8DCB1;
+}
+
+.aktivitetUtdanning {
+    background: #D2A8DC;
+}
+
+
+.trHoverArbeid:hover {
+  background-color: rgba(153, 195, 255, 0.15); /* 50% opacity */
+}
+
+.trHoverSyk:hover {
+  background-color: rgba(255, 211, 153, 0.15);
+}
+
+.trHoverFravaer:hover {
+  background-color: rgba(168, 220, 177, 0.15);
+}
+
+.trHoverUtdanning:hover {
+  background-color: rgba(210, 168, 220, 0.15);
+}
+
+.gap {
+  width: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  pointer-events: none; /* Forhindrer at gap-cellen er interaktiv */
+}

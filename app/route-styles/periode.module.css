@@ -67,3 +67,95 @@
 .obligatorisk {
   color: var(--a-text-subtle);
 }
+
+
+.fyllroot {
+    gap: 15px;
+    flex-direction: column;
+    margin: 15px;
+    display: flex;
+}
+
+.top{
+  display: flex;
+  padding: 32px;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  align-self: stretch;
+  background: #FFF;
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 100px;
+    padding-right: 100px;
+  }
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+}
+
+.forhandsvisning {
+  display: flex;
+  padding: 22px 22px 12px 22px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 34px;
+  border-radius: 6px;
+  border: 8px solid #DDE9F5;
+}
+
+.skjema{
+  width: 100%;
+  display: flex;
+  padding: 32px;
+  flex-direction: column;
+  gap: 46px;
+  background: #FFF;
+  @media (min-width: 1024px) {
+    padding-left: 100px;
+    padding-right: 100px;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+}
+
+.details{
+    display: flex;
+          flex-direction: column;
+gap: 22px;
+      @media (min-width: 1024px) {
+      flex-direction: row;
+    }
+}
+
+.details > div {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  flex: 1;
+}
+
+.begrunnelse {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+}
+
+.handlinger {
+    display: flex;
+    gap: 22px;
+    justify-content: space-between;
+      @media (min-width: 1024px) {
+    justify-content: flex-end;
+  }
+}

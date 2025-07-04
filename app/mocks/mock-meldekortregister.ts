@@ -59,5 +59,28 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         return HttpResponse.json(korrigertPeriode, { status: 200 });
       }
     ),
+
+    http.put(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
+      async ({ params, request, cookies }) => {
+        const db = database || getDatabase(cookies);
+        const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
+        const oppdateringer = (await request.json()) as Partial<IRapporteringsperiode>;
+
+        const eksisterendePeriode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
+
+        if (!eksisterendePeriode) {
+          logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`);
+          return HttpResponse.json(null, { status: 404 });
+        }
+
+        const oppdatertPeriode = { ...eksisterendePeriode, ...oppdateringer };
+        await db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
+
+        logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
+
+        return HttpResponse.json(oppdatertPeriode, { status: 200 });
+      }
+    ),
   ];
 }

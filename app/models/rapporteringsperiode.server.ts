@@ -84,3 +84,29 @@ export async function korrigerPeriode(request: Request, periode: IRapporteringsp
     throw new Response("rapportering-feilmelding-hent-periode", { status: 500 });
   }
 }
+
+export async function oppdaterPeriode(
+  request: Request,
+  periodeId: string,
+  oppdateringer: Partial<IRapporteringsperiode>
+) {
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/${periodeId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      body: JSON.stringify(oppdateringer),
+    });
+
+    if (!response.ok) {
+      throw "rapportering-feilmelding-oppdater-periode";
+    }
+
+    const oppdatertPeriode: IRapporteringsperiode = await response.json();
+    return oppdatertPeriode;
+  } catch (error) {
+    logger.error(`Feil ved oppdatering av rapporteringsperiode: ${error}`);
+    throw new Response("rapportering-feilmelding-oppdater-periode", { status: 500 });
+  }
+}
