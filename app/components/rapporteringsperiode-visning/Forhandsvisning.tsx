@@ -1,8 +1,8 @@
 import { getWeekDays } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
+import { Dag } from "./Dag";
 import styles from "./Forhandsvisning.module.css";
-import { Uke } from "./Uke";
 
 interface IProps {
   periode: IRapporteringsperiode;
@@ -28,8 +28,16 @@ export function Forhandsvisning({ periode }: IProps) {
         </tr>
       </thead>
       <tbody>
-        <Uke uke={forsteUke} />
-        <Uke uke={andreUke} />
+        <tr>
+          {forsteUke.map((dag) => (
+            <Dag key={dag.dato} dag={dag} />
+          ))}
+        </tr>
+        <tr>
+          {andreUke.map((dag) => (
+            <Dag key={dag.dato} dag={dag} />
+          ))}
+        </tr>
       </tbody>
     </table>
   );

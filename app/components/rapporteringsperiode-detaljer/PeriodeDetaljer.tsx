@@ -18,18 +18,21 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
   });
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalId;
+  const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
 
   return (
     <div className={styles.periodeDetaljer}>
       <dl className={styles.detailList}>
-        <dt>Svar på spørsmål om arbeidssøkerregistrering:</dt>
-        <dd>
-          {periode.registrertArbeidssoker && (
-            <Tag variant={erArbeidssoker ? "success" : "error"} size="small">
-              {erArbeidssoker ? "Arbeidssøker" : "Ikke arbeidssøker"}
-            </Tag>
-          )}
-        </dd>
+        {periode.registrertArbeidssoker && (
+          <>
+            <dt>Svar på spørsmål om arbeidssøkerregistrering:</dt>
+            <dd>
+              <Tag variant={erArbeidssoker ? "success" : "error"} size="small">
+                {erArbeidssoker ? "Arbeidssøker" : "Ikke arbeidssøker"}
+              </Tag>
+            </dd>
+          </>
+        )}
         {erKorrigert && (
           <>
             <dt>Korrigering av meldekort:</dt>
@@ -79,14 +82,26 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
         </Alert>
       )}
       <div>
-        <Button
-          as="a"
-          href={`/person/${personId}/periode/${periode.id}`}
-          className={styles.korrigerKnapp}
-          size="small"
-        >
-          Korriger meldekort
-        </Button>
+        {kanFyllesUt ? (
+          <Button
+            as="a"
+            href={`/person/${personId}/periode/${periode.id}/fyll-ut`}
+            className={styles.korrigerKnapp}
+            size="small"
+            variant="primary"
+          >
+            Fyll ut meldekort
+          </Button>
+        ) : (
+          <Button
+            as="a"
+            href={`/person/${personId}/periode/${periode.id}/korriger`}
+            className={styles.korrigerKnapp}
+            size="small"
+          >
+            Korriger meldekort
+          </Button>
+        )}
       </div>
     </div>
   );
