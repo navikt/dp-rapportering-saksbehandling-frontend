@@ -1,4 +1,5 @@
 import { useRouteLoaderData, useSearchParams } from "react-router";
+import invariant from "tiny-invariant";
 
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { RapporteringsperiodeListeByYear } from "~/components/rapporteringsperiode-liste/PeriodeListe";
@@ -14,8 +15,9 @@ export async function loader({
   request,
   params,
 }: Route.LoaderArgs): Promise<{ perioder: IRapporteringsperiode[] }> {
-  const personId = params.personId;
-  const perioder = await hentRapporteringsperioder(request, personId);
+  invariant(params.personId, "rapportering-feilmelding-periode-id-mangler-i-url");
+
+  const perioder = await hentRapporteringsperioder(request, params.personId);
 
   return { perioder };
 }
@@ -45,7 +47,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
               <RapporteringsperiodeVisning perioder={[periode]} />
             </div>
             <div className={styles.detaljer}>
-              <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId} />
+              <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId!!} />
             </div>
           </div>
         ))}

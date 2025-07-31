@@ -1,4 +1,5 @@
 import { Outlet, redirect, useLoaderData } from "react-router";
+import invariant from "tiny-invariant";
 
 import PersonInformasjon from "~/components/header-meny/PersonInformasjon";
 import { hentPerson } from "~/models/person.server";
@@ -10,6 +11,8 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   if (request.url.endsWith(`/person/${params.personId}`)) {
     return redirect(`/person/${params.personId}/perioder`);
   }
+
+  invariant(params.personId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
   const person = await hentPerson(request, params.personId);
   const perioder = await hentRapporteringsperioder(request, params.personId);
