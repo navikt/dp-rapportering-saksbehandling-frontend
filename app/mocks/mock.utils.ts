@@ -84,22 +84,23 @@ export function lagRapporteringsperiode(
   const meldekort: IRapporteringsperiode = {
     id: createId(),
     ident: person?.ident || createFnr().ident,
+    status: RAPPORTERINGSPERIODE_STATUS.Klar,
     type: KORT_TYPE.Elektronisk,
     periode: {
       fraOgMed,
       tilOgMed,
     },
     dager: lagDager(),
-    sisteFristForTrekk: "",
-    kanSendesFra: "",
     kanSendes: true,
     kanEndres: true,
+    kanSendesFra: "",
+    sisteFristForTrekk: "",
     begrunnelseEndring: "",
-    status: RAPPORTERINGSPERIODE_STATUS.Klar,
-    innsendtTidspunkt: null,
-    registrertArbeidssoker: null,
+    opprettetAv: "Arena",
     originalId: null,
     kilde: props.kilde ?? null,
+    innsendtTidspunkt: null,
+    registrertArbeidssoker: null,
     ...props,
   };
 
