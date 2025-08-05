@@ -164,8 +164,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-bruker-2-correction",
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
-        begrunnelseEndring: "Feil antall arbeidstimer. Hadde jobbet full tid",
-        originalId: "periode-korrigert-bruker-2-original",
+        korrigering: {
+          korrigererMeldekortId: "period-korrigert-bruker-2-original",
+          begrunnelse: "Feil antall arbeidstimer. Hadde jobbet full tid",
+        },
         kilde: {
           rolle: "Bruker" as const,
           ident: "987654321",
@@ -201,8 +203,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-saksbehandler-2-correction",
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
-        begrunnelseEndring: "Feil antall arbeidstimer",
-        originalId: "period-korrigert-saksbehandler-2-original",
+        korrigering: {
+          korrigererMeldekortId: "period-korrigert-saksbehandler-2-original",
+          begrunnelse: "Feil antall arbeidstimer",
+        },
         kilde: {
           rolle: "Saksbehandler" as const,
           ident: "Z123456",
@@ -475,7 +479,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
-        begrunnelseEndring: "Glemt å føre aktiviteter.",
+        korrigering: {
+          korrigererMeldekortId: "period-korrigert-bruker-2-original",
+          begrunnelse: "Glemt å føre aktiviteter.",
+        },
         innsendtTidspunkt: null, // Vil bli satt automatisk basert på perioden
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
@@ -647,7 +654,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
-        begrunnelseEndring: "Glemt å føre aktiviteter.",
+        korrigering: {
+          korrigererMeldekortId: "period-korrigert-bruker-2-original",
+          begrunnelse: "Glemt å føre aktiviteter.",
+        },
         innsendtTidspunkt: null, // Vil bli satt automatisk basert på perioden
         kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
       },

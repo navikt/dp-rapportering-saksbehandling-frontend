@@ -13,7 +13,7 @@ interface IProps {
 
 export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
-  const erKorrigert = !!periode.originalId;
+  const erKorrigert = !!periode.korrigering?.korrigererMeldekortId;
   const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
 
   return (
@@ -59,10 +59,10 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
           </>
         )}
 
-        {periode.begrunnelseEndring && (
+        {periode.korrigering?.begrunnelse && (
           <>
             <dt>Grunn til endring:</dt>
-            <dd>{periode.begrunnelseEndring}</dd>
+            <dd>{periode.korrigering?.begrunnelse}</dd>
           </>
         )}
       </dl>

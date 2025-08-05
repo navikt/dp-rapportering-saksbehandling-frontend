@@ -75,8 +75,10 @@ export interface IRapporteringsperiode {
   kanSendesFra: string;
   sisteFristForTrekk: string;
   opprettetAv: string;
-  begrunnelseEndring: string | null;
-  originalId: string | null;
+  korrigering?: {
+    korrigererMeldekortId: string;
+    begrunnelse: string;
+  };
   kilde: {
     rolle: "Bruker" | "Saksbehandler";
     ident: string;

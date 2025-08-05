@@ -59,8 +59,10 @@ class SessionRecord {
         kanSendesFra: () => faker.date.recent().toISOString(),
         sisteFristForTrekk: nullable(() => faker.date.recent().toISOString()),
         opprettetAv: nullable(faker.string.alpha),
-        begrunnelseEndring: nullable(faker.string.sample),
-        originalId: nullable(faker.string.numeric),
+        korrigering: nullable({
+          korrigererMeldekortId: nullable(faker.string.numeric),
+          begrunnelse: nullable(faker.string.sample),
+        }),
         kilde: nullable({
           rolle: nullable(faker.string.alpha),
           ident: nullable(faker.string.alpha),

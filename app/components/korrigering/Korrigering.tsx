@@ -53,7 +53,10 @@ export function Korrigering({
       innsendtTidspunkt: new Date().toISOString(),
       status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
-      begrunnelseEndring: korrigertBegrunnelse,
+      korrigering: {
+        korrigererMeldekortId: prev.id,
+        begrunnelse: korrigertBegrunnelse,
+      },
       kilde: {
         rolle: "Saksbehandler",
         ident: saksbehandler.onPremisesSamAccountName,
