@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const getVariant = (
-  status: TRapporteringsperiodeStatus
+  status: TRapporteringsperiodeStatus,
 ): "info" | "success" | "warning" | "error" | "neutral" => {
   switch (status) {
     case RAPPORTERINGSPERIODE_STATUS.Opprettet:
@@ -17,12 +17,6 @@ const getVariant = (
       return "info";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "success";
-    case RAPPORTERINGSPERIODE_STATUS.Korrigert:
-      return "warning";
-    case RAPPORTERINGSPERIODE_STATUS.Ferdig:
-      return "success";
-    case RAPPORTERINGSPERIODE_STATUS.Feilet:
-      return "error";
     default:
       return "neutral";
   }
@@ -36,12 +30,6 @@ const getStatusText = (status: TRapporteringsperiodeStatus): string => {
       return "Klar til utfylling";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "Innsendt";
-    case RAPPORTERINGSPERIODE_STATUS.Korrigert:
-      return "Korrigert";
-    case RAPPORTERINGSPERIODE_STATUS.Ferdig:
-      return "Beregning utført";
-    case RAPPORTERINGSPERIODE_STATUS.Feilet:
-      return "Feilet";
     default:
       return "Ukjent status";
   }

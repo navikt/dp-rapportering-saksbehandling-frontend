@@ -95,6 +95,7 @@ export function lagRapporteringsperiode(
     kanEndres: true,
     kanSendesFra: "",
     sisteFristForTrekk: "",
+    korrigering: null,
     opprettetAv: "Arena",
     kilde: props.kilde ?? null,
     innsendtTidspunkt: null,

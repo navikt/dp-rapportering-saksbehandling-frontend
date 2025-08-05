@@ -2,7 +2,7 @@ import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 
-import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { AKTIVITET_TYPE } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
@@ -51,7 +51,6 @@ export function Korrigering({
     setKorrigertPeriode((prev) => ({
       ...prev,
       innsendtTidspunkt: new Date().toISOString(),
-      status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       korrigering: {
         korrigererMeldekortId: prev.id,

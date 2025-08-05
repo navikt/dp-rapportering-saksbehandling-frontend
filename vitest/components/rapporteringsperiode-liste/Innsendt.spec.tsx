@@ -18,23 +18,7 @@ describe("Innsendt", () => {
       <Innsendt
         innsendtTidspunkt={innsendtTidspunkt}
         tilOgMed={tilOgMed}
-        status={RAPPORTERINGSPERIODE_STATUS.Feilet}
-      />,
-    );
-
-    expect(screen.getByText(mottatDatoFormattert)).toBeInTheDocument();
-  });
-
-  test("skal ikke vise error tag hvis SISTE_FRIST ikke er passert", () => {
-    const tilOgMed = "2025-02-09";
-    const innsendtTidspunkt = formatereDato(addDays(new Date(tilOgMed), 1));
-    const mottatDatoFormattert = formatterDato({ dato: innsendtTidspunkt });
-
-    render(
-      <Innsendt
-        innsendtTidspunkt={innsendtTidspunkt}
-        tilOgMed={tilOgMed}
-        status={RAPPORTERINGSPERIODE_STATUS.Ferdig}
+        status={RAPPORTERINGSPERIODE_STATUS.Innsendt}
       />,
     );
 

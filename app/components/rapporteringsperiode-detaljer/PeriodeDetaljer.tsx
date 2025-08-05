@@ -1,4 +1,4 @@
-import { Alert, Button, Tag } from "@navikt/ds-react";
+import { Button, Tag } from "@navikt/ds-react";
 
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
@@ -66,13 +66,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
           </>
         )}
       </dl>
-      {periode.status === RAPPORTERINGSPERIODE_STATUS.Feilet && (
-        <Alert variant={"info"} size="small">
-          Det har skjedd en teknisk feil. Beskrive den tekniske feilen og forklare saksbehandler hva
-          hen kan gjøre for å rette opp i det. Evt. om noen må varsles eller om det vil bli rettet
-          opp av seg selv.
-        </Alert>
-      )}
+
       <div>
         {kanFyllesUt ? (
           <Button
