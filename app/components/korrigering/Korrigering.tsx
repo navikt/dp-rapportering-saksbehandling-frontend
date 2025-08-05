@@ -32,7 +32,7 @@ export function Korrigering({
   saksbehandler,
 }: IProps) {
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
-    korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet)
+    korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet),
   );
   const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
@@ -50,7 +50,7 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
-      mottattDato: new Date().toISOString(),
+      innsendtTidspunkt: new Date().toISOString(),
       status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       begrunnelseEndring: korrigertBegrunnelse,

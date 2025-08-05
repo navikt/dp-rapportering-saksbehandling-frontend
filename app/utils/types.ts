@@ -66,25 +66,23 @@ export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
 export interface IRapporteringsperiode {
   id: string;
   ident: string;
+  status: TRapporteringsperiodeStatus;
   type: TKortType;
   periode: IPeriode;
   dager: IRapporteringsperiodeDag[];
-  sisteFristForTrekk: string;
-  kanSendesFra: string;
   kanSendes: boolean;
   kanEndres: boolean;
-  bruttoBelop: number | null;
+  kanSendesFra: string;
+  sisteFristForTrekk: string;
   begrunnelseEndring: string | null;
-  status: TRapporteringsperiodeStatus;
-  mottattDato: string | null;
-  registrertArbeidssoker: boolean | null;
   originalId: string | null;
-  html: string | null;
-  rapporteringstype: TRapporteringstype | null;
+  opprettetAv?: string;
   kilde: {
     rolle: "Bruker" | "Saksbehandler";
     ident: string;
   } | null;
+  innsendtTidspunkt: string | null;
+  registrertArbeidssoker: boolean | null;
 }
 
 export interface ISikkerhetstiltak {

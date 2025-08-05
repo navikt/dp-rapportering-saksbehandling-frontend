@@ -61,7 +61,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 3150,
       },
       ukerFraIDag: UKER_FRA_AARSSKIFTE.uke06_07, // Uke 06-07 (nyest)
       innsendtEtterTilOgMed: 1,
@@ -86,7 +85,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 4250,
       },
       ukerFraIDag: UKER_FRA_AARSSKIFTE.uke04_05, // Uke 04-05
       innsendtEtterTilOgMed: 1,
@@ -148,7 +146,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-bruker-1",
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 8750,
       },
       ukerFraIDag: 10,
       innsendtEtterTilOgMed: 1,
@@ -158,7 +155,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "periode-korrigert-bruker-2-original",
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 6500,
       },
       ukerFraIDag: 8,
       innsendtEtterTilOgMed: 1,
@@ -169,7 +165,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
         begrunnelseEndring: "Feil antall arbeidstimer. Hadde jobbet full tid",
-        bruttoBelop: 0,
         originalId: "periode-korrigert-bruker-2-original",
         kilde: {
           rolle: "Bruker" as const,
@@ -188,7 +183,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-saksbehandler-1",
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 8750,
       },
       ukerFraIDag: 10,
       innsendtEtterTilOgMed: 1,
@@ -198,7 +192,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-saksbehandler-2-original",
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 2800,
       },
       ukerFraIDag: 8,
       innsendtEtterTilOgMed: 1,
@@ -209,7 +202,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
         begrunnelseEndring: "Feil antall arbeidstimer",
-        bruttoBelop: 1200,
         originalId: "period-korrigert-saksbehandler-2-original",
         kilde: {
           rolle: "Saksbehandler" as const,
@@ -242,7 +234,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 6800,
       },
       ukerFraIDag: 5,
       innsendtEtterTilOgMed: 1,
@@ -251,7 +242,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 6800,
       },
       ukerFraIDag: 7,
       innsendtEtterTilOgMed: 9, // 9 dager etter frist
@@ -260,7 +250,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 6800,
       },
       ukerFraIDag: 9,
       innsendtEtterTilOgMed: 1,
@@ -280,7 +269,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 1800,
       },
       ukerFraIDag: 4,
       innsendtEtterTilOgMed: 1,
@@ -290,7 +278,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 2700,
       },
       ukerFraIDag: 6,
       innsendtEtterTilOgMed: 1,
@@ -303,7 +290,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 4750,
       },
       ukerFraIDag: 2,
       innsendtEtterTilOgMed: 1,
@@ -312,7 +298,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 4900,
       },
       ukerFraIDag: 4,
       innsendtEtterTilOgMed: 1,
@@ -321,7 +306,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 4673,
       },
       ukerFraIDag: 6,
       innsendtEtterTilOgMed: 1,
@@ -330,7 +314,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 4800,
       },
       ukerFraIDag: 8,
       innsendtEtterTilOgMed: 1,
@@ -339,7 +322,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Ferdig,
         registrertArbeidssoker: true,
-        bruttoBelop: 5200,
       },
       ukerFraIDag: 10,
       innsendtEtterTilOgMed: 1,
@@ -494,7 +476,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
         begrunnelseEndring: "Glemt å føre aktiviteter.",
-        mottattDato: null, // Vil bli satt automatisk basert på perioden
+        innsendtTidspunkt: null, // Vil bli satt automatisk basert på perioden
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
       ukerFraIDag: 46, // uke 23-24 (samme som over, korrigering)
@@ -666,7 +648,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
         registrertArbeidssoker: true,
         begrunnelseEndring: "Glemt å føre aktiviteter.",
-        mottattDato: null, // Vil bli satt automatisk basert på perioden
+        innsendtTidspunkt: null, // Vil bli satt automatisk basert på perioden
         kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
       },
       ukerFraIDag: 30, // uke 39-40 (samme som under, korrigering)
@@ -920,7 +902,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
  */
 function byggRapporteringsperioderFraKonfigurasjon(
   person: IPerson,
-  periodedefinisjon: PeriodeConfig[]
+  periodedefinisjon: PeriodeConfig[],
 ): IRapporteringsperiode[] {
   const rapporteringsperioder: IRapporteringsperiode[] = [];
 
@@ -952,12 +934,12 @@ function byggRapporteringsperioderFraKonfigurasjon(
       {
         periode: { fraOgMed, tilOgMed },
         dager,
-        mottattDato:
-          periode.mottattDato ??
+        innsendtTidspunkt:
+          periode.innsendtTidspunkt ??
           format(addDays(new Date(tilOgMed), innsendtEtterTilOgMed), "yyyy-MM-dd"),
         ...periode,
       },
-      person
+      person,
     );
 
     rapporteringsperioder.push(rapporteringsperiode);
@@ -971,14 +953,14 @@ function byggRapporteringsperioderFraKonfigurasjon(
  */
 export function hentRapporteringsperioderForScenario(
   person: IPerson,
-  scenario: ScenarioType
+  scenario: ScenarioType,
 ): IRapporteringsperiode[] {
   const config = SCENARIO_CONFIGS[scenario];
   if (!config) {
     console.warn(`Unknown scenario: ${scenario}, falling back to BEREGNING_FEILET`);
     return byggRapporteringsperioderFraKonfigurasjon(
       person,
-      SCENARIO_CONFIGS[ScenarioType.BEREGNING_FEILET]
+      SCENARIO_CONFIGS[ScenarioType.BEREGNING_FEILET],
     );
   }
 

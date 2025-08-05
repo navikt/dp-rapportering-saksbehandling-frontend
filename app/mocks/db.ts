@@ -13,7 +13,7 @@ function hentAlleRapporteringsperioder(db: Database) {
         },
       },
       {
-        mottattDato: "desc",
+        innsendtTidspunkt: "desc",
       },
       {
         originalId: "desc",
@@ -47,7 +47,7 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
 function oppdaterPeriode(
   db: Database,
   periodeId: string,
-  oppdateringer: Partial<IRapporteringsperiode>
+  oppdateringer: Partial<IRapporteringsperiode>,
 ) {
   const eksisterendePeriode = hentRapporteringsperiodeMedId(db, periodeId);
 

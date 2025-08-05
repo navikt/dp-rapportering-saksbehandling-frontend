@@ -12,10 +12,6 @@ interface IProps {
 }
 
 export function PeriodeDetaljer({ periode, personId }: IProps) {
-  const numberFormat = new Intl.NumberFormat("nb-NO", {
-    style: "currency",
-    currency: "NOK",
-  });
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalId;
   const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
@@ -49,11 +45,14 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
                 ? `Saksbehandler (${periode?.kilde?.ident})`
                 : periode?.kilde?.rolle}
             </dd>
-            {periode.mottattDato && (
+            {periode.innsendtTidspunkt && (
               <>
                 <dt>Korrigering innsendt:</dt>
                 <dd>
-                  {formatterDato({ dato: periode.mottattDato, format: DatoFormat.DagMndAarLang })}
+                  {formatterDato({
+                    dato: periode.innsendtTidspunkt,
+                    format: DatoFormat.DagMndAarLang,
+                  })}
                 </dd>
               </>
             )}
@@ -64,13 +63,6 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
           <>
             <dt>Grunn til endring:</dt>
             <dd>{periode.begrunnelseEndring}</dd>
-          </>
-        )}
-
-        {typeof periode.bruttoBelop === "number" && (
-          <>
-            <dt>Utbetaling av dagpenger:</dt>
-            <dd>{numberFormat.format(periode.bruttoBelop)}</dd>
           </>
         )}
       </dl>
