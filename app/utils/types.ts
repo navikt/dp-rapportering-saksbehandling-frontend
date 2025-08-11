@@ -61,6 +61,7 @@ export interface IRapporteringsperiodeDag {
 export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
 
 export interface IRapporteringsperiode {
+  begrunnelse: string; // TODO: må avklare om dette er riktig approach
   id: string;
   ident: string;
   status: TRapporteringsperiodeStatus;

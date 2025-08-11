@@ -69,6 +69,7 @@ class SessionRecord {
         }),
         innsendtTidspunkt: nullable(() => faker.date.recent().toISOString()),
         registrertArbeidssoker: nullable(faker.datatype.boolean),
+        begrunnelse: faker.string.sample,
       },
       personer: {
         ident: primaryKey(faker.string.alpha),

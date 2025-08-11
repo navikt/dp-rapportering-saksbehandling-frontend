@@ -77,7 +77,7 @@ export function lagDager(): IRapporteringsperiodeDag[] {
 
 export function lagRapporteringsperiode(
   props: Partial<IRapporteringsperiode> = {},
-  person?: IPerson,
+  person?: IPerson
 ): IRapporteringsperiode {
   const { fraOgMed, tilOgMed } = beregnNåværendePeriodeDato();
 
@@ -100,13 +100,14 @@ export function lagRapporteringsperiode(
     kilde: props.kilde ?? null,
     innsendtTidspunkt: null,
     registrertArbeidssoker: null,
+    begrunnelse: "",
     ...props,
   };
 
   meldekort.kanSendesFra = format(subDays(new Date(meldekort.periode.tilOgMed), 1), "yyyy-MM-dd");
   meldekort.sisteFristForTrekk = format(
     addDays(new Date(meldekort.periode.tilOgMed), 8),
-    "yyyy-MM-dd",
+    "yyyy-MM-dd"
   );
 
   if (!props.dager) {
@@ -152,7 +153,7 @@ export function lagSaksbehandler(props: Partial<ISaksbehandler> = {}) {
 
 // Hjelpefunksjon for å lage ett meldekort
 export const lagArbeidUker = (
-  timer: string,
+  timer: string
 ): Array<null | Pick<IAktivitet, "type" | "timer">[]> => [
   // Uke 1
   [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Mandag
@@ -174,7 +175,7 @@ export const lagArbeidUker = (
 
 // Hjelpefunksjon for å lage ett meldekort med arbeid annen hver dag
 export const lagAlternerendeArbeidsUker = (
-  timer: string,
+  timer: string
 ): Array<null | Pick<IAktivitet, "type" | "timer">[]> => [
   // Uke 1
   [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Mandag

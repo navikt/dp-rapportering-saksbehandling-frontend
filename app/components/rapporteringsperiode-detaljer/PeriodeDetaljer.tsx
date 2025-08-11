@@ -14,6 +14,7 @@ interface IProps {
 export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.korrigering?.korrigererMeldekortId;
+  const erUtfyltAvSaksbehandler = periode.kilde?.rolle === "Saksbehandler" && !erKorrigert;
   const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
 
   return (
@@ -54,6 +55,34 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
                     format: DatoFormat.DagMndAarLang,
                   })}
                 </dd>
+              </>
+            )}
+          </>
+        )}
+
+        {erUtfyltAvSaksbehandler && (
+          <>
+            <dt>Utfylt av:</dt>
+            <dd>
+              {periode?.kilde?.rolle === "Saksbehandler"
+                ? `Saksbehandler (${periode?.kilde?.ident})`
+                : periode?.kilde?.rolle}
+            </dd>
+            {periode.innsendtTidspunkt && (
+              <>
+                <dt>Meldekort innsendt:</dt>
+                <dd>
+                  {formatterDato({
+                    dato: periode.innsendtTidspunkt,
+                    format: DatoFormat.DagMndAarLang,
+                  })}
+                </dd>
+              </>
+            )}
+            {periode.begrunnelse && (
+              <>
+                <dt>Begrunnelse:</dt>
+                <dd>{periode.begrunnelse}</dd>
               </>
             )}
           </>

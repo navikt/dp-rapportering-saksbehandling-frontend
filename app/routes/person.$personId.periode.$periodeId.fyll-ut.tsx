@@ -19,6 +19,7 @@ import {
 } from "~/components/korrigering/korrigering.utils";
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
+import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
@@ -48,6 +49,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const dagerData = formData.get("dager") as string;
 
   try {
+    const saksbehandler = await hentSaksbehandler(request);
     const dager = JSON.parse(dagerData);
     const oppdatertPeriode = {
       innsendtTidspunkt: meldedato,
@@ -57,7 +59,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       dager: dager.map(konverterTimerTilISO8601Varighet),
       kilde: {
         rolle: "Saksbehandler" as const,
-        ident: "Z123456", // TODO: Hent fra autentisert bruker
+        ident: saksbehandler.onPremisesSamAccountName,
       },
     };
 
