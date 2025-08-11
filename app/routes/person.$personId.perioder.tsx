@@ -47,7 +47,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
               <RapporteringsperiodeVisning perioder={[periode]} />
             </div>
             <div className={styles.detaljer}>
-              <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId!!} />
+              <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId!} />
             </div>
           </div>
         ))}
