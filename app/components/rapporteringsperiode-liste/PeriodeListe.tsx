@@ -1,5 +1,5 @@
 import { Accordion, Button, Table } from "@navikt/ds-react";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -37,7 +37,7 @@ function RapporteringsperiodeTabell({
   onTogglePeriode,
   maksValgte,
 }: PropsWithSharedState) {
-  const tableInstructionsId = `table-instructions-${Math.random().toString(36).substring(2, 11)}`;
+  const tableInstructionsId = useId();
 
   return (
     <div className={styles.periodeListe}>

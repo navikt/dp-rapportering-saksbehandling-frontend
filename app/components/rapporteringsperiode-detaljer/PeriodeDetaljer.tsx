@@ -48,7 +48,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
             </dd>
             {periode.innsendtTidspunkt && (
               <>
-                <dt>Korrigering innsendt:</dt>
+                <dt>Dato for korrigering:</dt>
                 <dd>
                   {formatterDato({
                     dato: periode.innsendtTidspunkt,
@@ -90,8 +90,8 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
 
         {periode.korrigering?.begrunnelse && (
           <>
-            <dt>Grunn til endring:</dt>
-            <dd>{periode.korrigering?.begrunnelse}</dd>
+            <dt>Grunn til korrigering:</dt>
+            <dd>{periode.korrigering.begrunnelse}</dd>
           </>
         )}
       </dl>
