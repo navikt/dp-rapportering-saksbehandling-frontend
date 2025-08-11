@@ -1,28 +1,20 @@
 import { BodyShort, Heading, LinkPanel } from "@navikt/ds-react";
 import { useLoaderData } from "react-router";
 
-import { getScenarioForPerson } from "~/mocks/data/mock-persons";
-import { hentPersoner } from "~/models/person.server";
+import { getPersonByScenario } from "~/mocks/data/mock-persons";
 import { usesMsw } from "~/utils/env.utils";
-import { SCENARIOS } from "~/utils/scenario.types";
+import { ScenarioType } from "~/utils/scenario.types";
 
-import type { Route } from "../+types/root";
-
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader() {
   if (usesMsw) {
-    const personer = await hentPersoner(request);
-    return { personer };
+    const fullDemoPerson = getPersonByScenario(ScenarioType.FULL_DEMO);
+    return { personer: fullDemoPerson ? [fullDemoPerson] : [] };
   }
   return { personer: [] };
 }
 
 export default function Rapportering() {
   const data = useLoaderData<typeof loader>();
-
-  const getScenarioInfo = (personId: string) => {
-    const scenario = getScenarioForPerson(personId);
-    return SCENARIOS.find((s) => s.type === scenario);
-  };
 
   return (
     <div
@@ -39,14 +31,12 @@ export default function Rapportering() {
       {data.personer.length > 0 ? (
         <>
           <BodyShort size="small">
-            Velkommen til demoversjonen av saksbehandlerflaten for meldekort. <br /> Her kan du
-            velge en person med et forhåndsdefinert scenario. Når du klikker på en person, får du se
-            hele rapporteringsperioden deres.
+            Velkommen til demoversjonen av saksbehandlerflaten for meldekort. <br />
+            Klikk på personen under for å se hele rapporteringsperioden deres.
           </BodyShort>
 
           <ul style={{ listStyle: "none", padding: 0 }}>
             {data.personer.map((person) => {
-              const scenarioInfo = getScenarioInfo(person.ident);
               const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
                 person.etternavn
               }`;
@@ -54,16 +44,9 @@ export default function Rapportering() {
 
               return (
                 <li key={person.fodselsdato} style={{ marginBottom: "1rem" }}>
-                  <LinkPanel
-                    href={link}
-                    border
-                    aria-label={`Gå til perioder for ${navn}. ${scenarioInfo?.tittel ?? ""}`}
-                  >
-                    <LinkPanel.Title> {navn}</LinkPanel.Title>
-
-                    {scenarioInfo && (
-                      <LinkPanel.Description>{scenarioInfo.tittel}</LinkPanel.Description>
-                    )}
+                  <LinkPanel href={link} border aria-label={`Gå til perioder for ${navn}`}>
+                    <LinkPanel.Title>{navn}</LinkPanel.Title>
+                    <LinkPanel.Description>Full demo med alle scenarioer</LinkPanel.Description>
                   </LinkPanel>
                 </li>
               );
