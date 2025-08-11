@@ -80,7 +80,7 @@ export default function FyllUtPeriode() {
   const { periode } = useLoaderData<typeof loader>();
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
-    periode.dager.map(konverterTimerFraISO8601Varighet),
+    periode.dager.map(konverterTimerFraISO8601Varighet)
   );
 
   const setKorrigerteDager: SetKorrigerteDager = setDager;
@@ -166,6 +166,19 @@ export default function FyllUtPeriode() {
               Send inn meldekort
             </Button>
           </div>
+          {/* Skjulte input felter for form data */}
+          <input
+            type="hidden"
+            name="meldedato"
+            value={valgtDato ? valgtDato.toISOString().split("T")[0] : ""}
+          />
+          <input
+            type="hidden"
+            name="registrertArbeidssoker"
+            value={registrertArbeidssoker?.toString() || ""}
+          />
+          <input type="hidden" name="begrunnelse" value={begrunnelse} />
+          <input type="hidden" name="dager" value={JSON.stringify(dager)} />
         </Form>
       </div>
     </div>
