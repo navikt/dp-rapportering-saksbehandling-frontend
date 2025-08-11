@@ -3,7 +3,6 @@ import type { SetupWorker } from "msw/browser";
 import type {
   AKTIVITET_TYPE,
   KJONN,
-  KORT_TYPE,
   RAPPORTERING_TYPE,
   RAPPORTERINGSPERIODE_STATUS,
 } from "./constants";
@@ -59,32 +58,30 @@ export interface IRapporteringsperiodeDag {
   aktiviteter: IAktivitet[];
 }
 
-type TKortType = (typeof KORT_TYPE)[keyof typeof KORT_TYPE];
-
 export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
 
 export interface IRapporteringsperiode {
   id: string;
   ident: string;
-  type: TKortType;
+  status: TRapporteringsperiodeStatus;
+  type: string;
   periode: IPeriode;
   dager: IRapporteringsperiodeDag[];
-  sisteFristForTrekk: string;
-  kanSendesFra: string;
   kanSendes: boolean;
   kanEndres: boolean;
-  bruttoBelop: number | null;
-  begrunnelseEndring: string | null;
-  status: TRapporteringsperiodeStatus;
-  mottattDato: string | null;
-  registrertArbeidssoker: boolean | null;
-  originalId: string | null;
-  html: string | null;
-  rapporteringstype: TRapporteringstype | null;
+  kanSendesFra: string;
+  sisteFristForTrekk: string;
+  opprettetAv: string;
+  korrigering: {
+    korrigererMeldekortId: string;
+    begrunnelse: string;
+  } | null;
   kilde: {
     rolle: "Bruker" | "Saksbehandler";
     ident: string;
   } | null;
+  innsendtTidspunkt: string | null;
+  registrertArbeidssoker: boolean | null;
 }
 
 export interface ISikkerhetstiltak {

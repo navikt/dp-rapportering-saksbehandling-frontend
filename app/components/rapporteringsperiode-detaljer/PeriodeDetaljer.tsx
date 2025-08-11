@@ -1,4 +1,4 @@
-import { Alert, Button, Tag } from "@navikt/ds-react";
+import { Button, Tag } from "@navikt/ds-react";
 
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
@@ -12,12 +12,8 @@ interface IProps {
 }
 
 export function PeriodeDetaljer({ periode, personId }: IProps) {
-  const numberFormat = new Intl.NumberFormat("nb-NO", {
-    style: "currency",
-    currency: "NOK",
-  });
   const erArbeidssoker = periode.registrertArbeidssoker;
-  const erKorrigert = !!periode.originalId;
+  const erKorrigert = !!periode.korrigering?.korrigererMeldekortId;
   const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
 
   return (
@@ -49,38 +45,28 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
                 ? `Saksbehandler (${periode?.kilde?.ident})`
                 : periode?.kilde?.rolle}
             </dd>
-            {periode.mottattDato && (
+            {periode.innsendtTidspunkt && (
               <>
                 <dt>Korrigering innsendt:</dt>
                 <dd>
-                  {formatterDato({ dato: periode.mottattDato, format: DatoFormat.DagMndAarLang })}
+                  {formatterDato({
+                    dato: periode.innsendtTidspunkt,
+                    format: DatoFormat.DagMndAarLang,
+                  })}
                 </dd>
               </>
             )}
           </>
         )}
 
-        {periode.begrunnelseEndring && (
+        {periode.korrigering?.begrunnelse && (
           <>
             <dt>Grunn til endring:</dt>
-            <dd>{periode.begrunnelseEndring}</dd>
-          </>
-        )}
-
-        {typeof periode.bruttoBelop === "number" && (
-          <>
-            <dt>Utbetaling av dagpenger:</dt>
-            <dd>{numberFormat.format(periode.bruttoBelop)}</dd>
+            <dd>{periode.korrigering?.begrunnelse}</dd>
           </>
         )}
       </dl>
-      {periode.status === RAPPORTERINGSPERIODE_STATUS.Feilet && (
-        <Alert variant={"info"} size="small">
-          Det har skjedd en teknisk feil. Beskrive den tekniske feilen og forklare saksbehandler hva
-          hen kan gjøre for å rette opp i det. Evt. om noen må varsles eller om det vil bli rettet
-          opp av seg selv.
-        </Alert>
-      )}
+
       <div>
         {kanFyllesUt ? (
           <Button

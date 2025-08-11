@@ -51,12 +51,12 @@ export default function Periode() {
             </Tag>
           </div>
           <Forhandsvisning periode={periode} />
-          {periode.begrunnelseEndring && (
+          {periode.korrigering?.begrunnelse && (
             <div className={styles.begrunnelseVisning}>
               <Heading level="4" size="small">
                 Begrunnelse for korrigering
               </Heading>
-              <p>{periode.begrunnelseEndring}</p>
+              <p>{periode.korrigering?.begrunnelse}</p>
             </div>
           )}
         </div>
@@ -72,8 +72,8 @@ export default function Periode() {
             <Heading level="4" size="xsmall">
               Saksbehandlers begrunnelse for korrigering
             </Heading>
-            <p className={!korrigertPeriode.begrunnelseEndring ? styles.obligatorisk : ""}>
-              {korrigertPeriode.begrunnelseEndring || "Obligatorisk"}
+            <p className={!korrigertPeriode.korrigering?.begrunnelse ? styles.obligatorisk : ""}>
+              {korrigertPeriode.korrigering?.begrunnelse || "Obligatorisk"}
             </p>
           </div>
         </div>

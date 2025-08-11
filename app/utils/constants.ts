@@ -7,9 +7,6 @@ export const RAPPORTERINGSPERIODE_STATUS = {
   Opprettet: "MeldekortOpprettet",
   Klar: "KlarTilUtfylling",
   Innsendt: "Innsendt",
-  Korrigert: "Korrigert",
-  Ferdig: "BeregingUtført",
-  Feilet: "Feilet",
 } as const;
 
 export const AKTIVITET_TYPE = {

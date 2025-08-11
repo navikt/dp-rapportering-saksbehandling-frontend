@@ -22,31 +22,4 @@ describe("Status", () => {
     const text = screen.getByText("Innsendt");
     expect(text).toBeInTheDocument();
   });
-
-  test("skal vise warning tag for status Korrigert", () => {
-    const { container } = render(<Status status={RAPPORTERINGSPERIODE_STATUS.Korrigert} />);
-
-    expect(container.querySelector(".navds-tag--warning")).toBeInTheDocument();
-
-    const text = screen.getByText("Korrigert");
-    expect(text).toBeInTheDocument();
-  });
-
-  test("skal vise success tag for status Ferdig", () => {
-    const { container } = render(<Status status={RAPPORTERINGSPERIODE_STATUS.Ferdig} />);
-
-    expect(container.querySelector(".navds-tag--success")).toBeInTheDocument();
-
-    const text = screen.getByText("Beregning utført");
-    expect(text).toBeInTheDocument();
-  });
-
-  test("skal vise error tag for status Feilet", () => {
-    const { container } = render(<Status status={RAPPORTERINGSPERIODE_STATUS.Feilet} />);
-
-    expect(container.querySelector(".navds-tag--error")).toBeInTheDocument();
-
-    const text = screen.getByText("Feilet");
-    expect(text).toBeInTheDocument();
-  });
 });

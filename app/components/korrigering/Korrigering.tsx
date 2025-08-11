@@ -2,7 +2,7 @@ import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 
-import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { AKTIVITET_TYPE } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
@@ -32,7 +32,7 @@ export function Korrigering({
   saksbehandler,
 }: IProps) {
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
-    korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet)
+    korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet),
   );
   const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
@@ -50,10 +50,12 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
-      mottattDato: new Date().toISOString(),
-      status: RAPPORTERINGSPERIODE_STATUS.Korrigert,
+      innsendtTidspunkt: new Date().toISOString(),
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
-      begrunnelseEndring: korrigertBegrunnelse,
+      korrigering: {
+        korrigererMeldekortId: prev.id,
+        begrunnelse: korrigertBegrunnelse,
+      },
       kilde: {
         rolle: "Saksbehandler",
         ident: saksbehandler.onPremisesSamAccountName,

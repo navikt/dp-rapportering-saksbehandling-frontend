@@ -46,7 +46,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         }
       }}
       aria-label={`${valgt ? "Avvelg" : "Velg"} rapporteringsperiode uke ${ukenummer(
-        periode
+        periode,
       )}, ${periodeDatoTekst}`}
       aria-pressed={valgt}
     >
@@ -81,7 +81,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
       </Table.DataCell>
       <Table.DataCell textSize="small" className={radKlasse}>
         <Innsendt
-          mottattDato={periode.mottattDato ?? ""}
+          innsendtTidspunkt={periode.innsendtTidspunkt ?? ""}
           tilOgMed={periode.periode.tilOgMed}
           status={periode.status}
         />

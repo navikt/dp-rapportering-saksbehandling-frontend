@@ -50,7 +50,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   try {
     const dager = JSON.parse(dagerData);
     const oppdatertPeriode = {
-      mottattDato: meldedato,
+      innsendtTidspunkt: meldedato,
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
@@ -80,7 +80,7 @@ export default function FyllUtPeriode() {
   const { periode } = useLoaderData<typeof loader>();
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
-    periode.dager.map(konverterTimerFraISO8601Varighet)
+    periode.dager.map(konverterTimerFraISO8601Varighet),
   );
 
   const setKorrigerteDager: SetKorrigerteDager = setDager;
