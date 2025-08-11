@@ -231,9 +231,7 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
       <Accordion size="small" headingSize="xsmall">
         {years.map((year) => (
           <Accordion.Item key={year} defaultOpen={year === years[0]}>
-            <Accordion.Header>
-              Meldekort for: {year} ({groupedPeriods[year].length} perioder)
-            </Accordion.Header>
+            <Accordion.Header>Meldekort for {year}</Accordion.Header>
             <Accordion.Content style={{ padding: 0 }}>
               <RapporteringsperiodeTabell
                 perioder={groupedPeriods[year]}

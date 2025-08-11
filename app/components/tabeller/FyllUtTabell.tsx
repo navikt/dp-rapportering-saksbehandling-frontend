@@ -21,8 +21,8 @@ interface IProps {
 const aktiviteter = [
   { type: AKTIVITET_TYPE.Arbeid, label: "Jobb" },
   { type: AKTIVITET_TYPE.Syk, label: "Syk" },
-  { type: AKTIVITET_TYPE.Fravaer, label: "Ferie/fravær" },
-  { type: AKTIVITET_TYPE.Utdanning, label: "Kurs/utdanning" },
+  { type: AKTIVITET_TYPE.Fravaer, label: "Ferie, fravær eller utenlandsopphold" },
+  { type: AKTIVITET_TYPE.Utdanning, label: "Tiltak, kurs eller utdanning" },
 ];
 
 export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
@@ -62,9 +62,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
       <tbody>
         {aktiviteter.map(({ type, label }) => {
           const hoverClass = styles[`trHover${type.charAt(0).toUpperCase() + type.slice(1)}`];
-
           const aktivitetClass = styles[`aktivitet${type.charAt(0).toUpperCase() + type.slice(1)}`];
-
           return (
             <tr key={type} className={hoverClass}>
               <th scope="row" className={classNames(styles.aktivitet, aktivitetClass)}>
@@ -93,7 +91,6 @@ export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
                     </td>
                   );
                 }
-
                 return (
                   <td key={dag.dato}>
                     <Checkbox
