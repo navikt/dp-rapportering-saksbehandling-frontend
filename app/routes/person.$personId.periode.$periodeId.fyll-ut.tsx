@@ -7,10 +7,11 @@ import {
   RadioGroup,
   Textarea,
 } from "@navikt/ds-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
+import { BekreftModal } from "~/components/korrigering/BekreftModal";
 import {
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
@@ -77,6 +78,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 export default function FyllUtPeriode() {
   const dagensDato = new Date();
   const navigate = useNavigate();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const { periode } = useLoaderData<typeof loader>();
 
@@ -88,6 +90,8 @@ export default function FyllUtPeriode() {
   const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(null);
   const [begrunnelse, setBegrunnelse] = useState<string>("");
   const [valgtDato, setValgtDato] = useState<Date | undefined>(dagensDato);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"avbryt" | "fullfor" | null>(null);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
@@ -97,10 +101,26 @@ export default function FyllUtPeriode() {
     setValgtDato(date);
   };
 
+  const openModal = (type: "avbryt" | "fullfor") => {
+    setModalType(type);
+    setModalOpen(true);
+  };
+
+  const handleBekreft = () => {
+    if (modalType === "avbryt") {
+      navigate(`/person/${periode.ident}/perioder`);
+    } else if (modalType === "fullfor") {
+      // Submit form using React ref
+      if (formRef.current) {
+        formRef.current.submit();
+      }
+    }
+  };
+
   const handleAvbryt = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/person/${periode.ident}/perioder`);
+    openModal("avbryt");
   };
 
   return (
@@ -115,7 +135,7 @@ export default function FyllUtPeriode() {
         <Heading level="2" size="small" className={styles.skjemaTittel}>
           Fyll ut meldekort
         </Heading>
-        <Form method="post">
+        <Form method="post" ref={formRef}>
           <div className={styles.details}>
             <div>
               <DatePicker
@@ -164,10 +184,11 @@ export default function FyllUtPeriode() {
               Avbryt utfylling
             </Button>
             <Button
-              type="submit"
+              type="button"
               variant="primary"
               size="small"
               disabled={registrertArbeidssoker === null || !valgtDato || begrunnelse.trim() === ""}
+              onClick={() => openModal("fullfor")}
             >
               Send inn meldekort
             </Button>
@@ -186,6 +207,23 @@ export default function FyllUtPeriode() {
           <input type="hidden" name="begrunnelse" value={begrunnelse} />
           <input type="hidden" name="dager" value={JSON.stringify(dager)} />
         </Form>
+
+        <BekreftModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          type={modalType}
+          tittel={
+            modalType === "avbryt" ? "Vil du avbryte utfyllingen?" : "Vil du sende inn meldekortet?"
+          }
+          tekst={
+            modalType === "avbryt"
+              ? "Du er i ferd med å avbryte utfyllingen av meldekortet. Er du sikker på at du vil avbryte? Endringene du har gjort så langt vil ikke lagres."
+              : 'Du er i ferd med å sende inn meldekortet. Ved å trykke "Ja" vil meldekortet sendes til behandling.'
+          }
+          bekreftTekst={modalType === "avbryt" ? "Ja, avbryt" : "Ja, send inn"}
+          avbrytTekst={modalType === "avbryt" ? "Nei, fortsett" : "Nei, avbryt"}
+          onBekreft={handleBekreft}
+        />
       </div>
     </div>
   );

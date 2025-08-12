@@ -1,6 +1,7 @@
 import { Button, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
+import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { hentUkerFraPeriode } from "~/utils/dato.utils";
@@ -31,8 +32,13 @@ export function Korrigering({
   person,
   saksbehandler,
 }: IProps) {
+  const fetcher = useFetcher();
+  const navigate = useNavigate();
+  const revalidator = useRevalidator();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
-    korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet),
+    korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet)
   );
   const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
   const [startUke, sluttUke] = hentUkerFraPeriode(originalPeriode.periode);
@@ -45,6 +51,38 @@ export function Korrigering({
   function openModal(type: "avbryt" | "fullfor") {
     setModalType(type);
     setModalOpen(true);
+  }
+
+  useEffect(() => {
+    if (isSubmitting && fetcher.state === "idle" && fetcher.data) {
+      const nyPeriodeId = fetcher.data?.id || korrigertPeriode.id;
+
+      // Revalider data for å oppdatere listen
+      revalidator.revalidate();
+
+      navigate(`/person/${person.ident}/perioder?updated=${nyPeriodeId}`);
+      setIsSubmitting(false);
+    }
+  }, [
+    fetcher.state,
+    fetcher.data,
+    navigate,
+    person.ident,
+    isSubmitting,
+    korrigertPeriode.id,
+    revalidator,
+  ]);
+
+  function handleBekreft() {
+    if (modalType === "fullfor") {
+      setIsSubmitting(true);
+      fetcher.submit(
+        { rapporteringsperiode: JSON.stringify(korrigertPeriode) },
+        { method: "post", action: "/api/rapportering" }
+      );
+    } else if (modalType === "avbryt") {
+      navigate(`/person/${person.ident}/perioder`);
+    }
   }
 
   useEffect(() => {
@@ -152,8 +190,19 @@ export function Korrigering({
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           type={modalType}
-          korrigertPeriode={korrigertPeriode}
-          person={person}
+          tittel={
+            modalType === "avbryt"
+              ? "Vil du avbryte korrigeringen?"
+              : "Vil du fullføre korrigeringen?"
+          }
+          tekst={
+            modalType === "avbryt"
+              ? "Du er i ferd med å avbryte korrigeringen du har begynt på. Er du sikker på at du vil avbryte? Endringene du har gjort så langt vil ikke lagres."
+              : 'Du er i ferd med å fullføre korrigeringen. Ved å trykke "Ja" vil korrigeringen sendes til beregning.'
+          }
+          bekreftTekst={modalType === "avbryt" ? "Ja, avbryt" : "Ja, fullfør"}
+          avbrytTekst={modalType === "avbryt" ? "Nei, fortsett" : "Nei, avbryt"}
+          onBekreft={handleBekreft}
         />
       </div>
     </div>
