@@ -8,7 +8,7 @@ import {
   Textarea,
 } from "@navikt/ds-react";
 import { useState } from "react";
-import { Form, redirect, useLoaderData } from "react-router";
+import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import {
@@ -78,6 +78,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function FyllUtPeriode() {
   const dagensDato = new Date();
+  const navigate = useNavigate();
 
   const { periode } = useLoaderData<typeof loader>();
 
@@ -97,6 +98,10 @@ export default function FyllUtPeriode() {
   const handleDateSelect = (date?: Date) => {
     console.log("Date selected:", date);
     setValgtDato(date);
+  };
+
+  const handleAvbryt = () => {
+    navigate(`/person/${periode.ident}/perioder`);
   };
 
   return (
@@ -156,7 +161,7 @@ export default function FyllUtPeriode() {
           </div>
           <FyllUtTabell dager={dager} setKorrigerteDager={setKorrigerteDager} />
           <div className={styles.handlinger}>
-            <Button variant="secondary" size="small">
+            <Button variant="secondary" size="small" onClick={handleAvbryt}>
               Avbryt utfylling
             </Button>
             <Button

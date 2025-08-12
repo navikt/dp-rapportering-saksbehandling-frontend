@@ -1,5 +1,5 @@
 import { Button, Modal } from "@navikt/ds-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFetcher, useNavigate } from "react-router";
 
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
@@ -15,12 +15,15 @@ interface IProps {
 export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: IProps) {
   const fetcher = useFetcher();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (fetcher.state === "idle" && fetcher.data) {
+    if (isSubmitting && fetcher.state === "idle" && fetcher.data) {
+      console.log("Korrigering fullført, navigerer tilbake");
       navigate(`/person/${person.ident}/perioder`);
+      setIsSubmitting(false);
     }
-  }, [fetcher.state, fetcher.data, navigate, person.ident]);
+  }, [fetcher.state, fetcher.data, navigate, person.ident, isSubmitting]);
 
   if (!type) return null;
 
@@ -36,10 +39,16 @@ export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: 
     if (!type) return;
 
     if (type === "fullfor") {
+      setIsSubmitting(true);
       fetcher.submit(
         { rapporteringsperiode: JSON.stringify(korrigertPeriode) },
         { method: "post", action: "/api/rapportering" }
       );
+      onClose();
+      navigate(`/person/${person.ident}/perioder`);
+    } else if (type === "avbryt") {
+      console.log("Avbryter korrigering...");
+      onClose();
       navigate(`/person/${person.ident}/perioder`);
     }
   }
