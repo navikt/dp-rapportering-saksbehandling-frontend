@@ -25,7 +25,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
             <dt>Svar på spørsmål om arbeidssøkerregistrering:</dt>
             <dd>
               <Tag variant={erArbeidssoker ? "success" : "error"} size="small">
-                {erArbeidssoker ? "Arbeidssøker" : "Ikke arbeidssøker"}
+                {erArbeidssoker ? "Ja" : "Nei"}
               </Tag>
             </dd>
           </>

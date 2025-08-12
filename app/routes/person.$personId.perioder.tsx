@@ -33,7 +33,10 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       .get("rapporteringsid")
       ?.split(",")
       .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
-      .filter((periode) => periode) ?? [];
+      .filter((periode) => periode)
+      .sort(
+        (a, b) => new Date(b.periode.fraOgMed).getTime() - new Date(a.periode.fraOgMed).getTime()
+      ) ?? [];
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { Accordion, Button, Table } from "@navikt/ds-react";
+import { Accordion, Table } from "@navikt/ds-react";
 import { useEffect, useId, useState } from "react";
 import { useSearchParams } from "react-router";
 
@@ -78,107 +78,6 @@ function RapporteringsperiodeTabell({
           })}
         </Table.Body>
       </Table>
-    </div>
-  );
-}
-
-export function RapporteringsperiodeListe({ perioder }: Props) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [valgteIds, setValgteIds] = useState<string[]>([]);
-
-  const gyldigeIds = new Set(perioder.map((p) => p.id));
-  const tableInstructionsId = `table-instructions-${Math.random().toString(36).substring(2, 11)}`;
-
-  // Les én gang ved mount eller når searchParams endrer seg
-  useEffect(() => {
-    const raw = searchParams.get("rapporteringsid")?.split(",") ?? [];
-    const filtrerte = raw.filter((id) => gyldigeIds.has(id));
-    setValgteIds(filtrerte);
-  }, [searchParams, perioder]);
-
-  // Fjernet automatisk URL-oppdatering - brukeren må trykke knapp
-
-  const togglePeriode = (id: string) => {
-    setValgteIds((prev) => {
-      const alleredeValgt = prev.includes(id);
-      if (!alleredeValgt && prev.length >= MAKS_VALGTE_PERIODER) return prev;
-      return alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
-    });
-  };
-
-  const visValgteperioder = () => {
-    const params = new URLSearchParams(searchParams);
-    if (valgteIds.length === 0) {
-      params.delete("rapporteringsid");
-    } else {
-      params.set("rapporteringsid", valgteIds.join(","));
-    }
-    setSearchParams(params, { replace: true });
-  };
-
-  return (
-    <div className={styles.periodeListe}>
-      <div id={tableInstructionsId} className="sr-only">
-        Du kan velge maksimalt {MAKS_VALGTE_PERIODER} perioder for sammenligning. Bruk mellomrom
-        eller enter for å velge/avvelge en periode.
-      </div>
-      <Table aria-describedby={tableInstructionsId}>
-        <Table.Header>
-          <Table.Row>
-            {KOLONNE_TITLER.map((kolonne, index) => {
-              const className = kolonne.erFørste
-                ? `${styles.periodeListe__header} ${styles["periodeListe__header--first"]}`
-                : styles.periodeListe__header;
-
-              return (
-                <Table.HeaderCell key={index} scope="col" className={className} textSize="small">
-                  {kolonne.tekst}
-                </Table.HeaderCell>
-              );
-            })}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {perioder.map((periode) => (
-            <PeriodeRad
-              key={periode.id}
-              periode={periode}
-              valgt={valgteIds.includes(periode.id)}
-              toggle={togglePeriode}
-              valgteAntall={valgteIds.length}
-              maksValgte={MAKS_VALGTE_PERIODER}
-            />
-          ))}
-        </Table.Body>
-      </Table>
-
-      {/* Vis valgte perioder knapp */}
-      {valgteIds.length > 0 && (
-        <div className={styles.periodeListe__actions}>
-          <Button
-            variant="primary"
-            size="small"
-            onClick={visValgteperioder}
-            aria-describedby="selected-count"
-          >
-            Vis valgte perioder ({valgteIds.length})
-          </Button>
-        </div>
-      )}
-
-      {/* Skjermleservennlig statusmelding */}
-      <div role="status" aria-live="polite" className="sr-only">
-        {valgteIds.length > 0 && (
-          <span id="selected-count">
-            {valgteIds.length} av {MAKS_VALGTE_PERIODER} rapporteringsperioder valgt.
-          </span>
-        )}
-        {valgteIds.length >= MAKS_VALGTE_PERIODER && (
-          <span id="max-selected-message">
-            Maksimalt antall perioder valgt. Du kan ikke velge flere.
-          </span>
-        )}
-      </div>
     </div>
   );
 }
