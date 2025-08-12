@@ -65,8 +65,8 @@ export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
           const aktivitetClass = styles[`aktivitet${type.charAt(0).toUpperCase() + type.slice(1)}`];
           return (
             <tr key={type} className={hoverClass}>
-              <th scope="row" className={classNames(styles.aktivitet, aktivitetClass)}>
-                {label}
+              <th scope="row">
+                <div className={classNames(styles.aktivitet, aktivitetClass)}> {label}</div>
               </th>
               <td aria-hidden="true" className={styles.gap}></td>
               {/* Uke 1: Første 7 dager */}
