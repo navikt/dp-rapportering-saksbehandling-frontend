@@ -97,7 +97,9 @@ export default function FyllUtPeriode() {
     setValgtDato(date);
   };
 
-  const handleAvbryt = () => {
+  const handleAvbryt = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     navigate(`/person/${periode.ident}/perioder`);
   };
 
