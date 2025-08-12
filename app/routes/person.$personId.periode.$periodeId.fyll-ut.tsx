@@ -76,7 +76,6 @@ export async function action({ request, params }: Route.ActionArgs) {
 }
 
 export default function FyllUtPeriode() {
-  const dagensDato = new Date();
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -89,7 +88,7 @@ export default function FyllUtPeriode() {
   const setKorrigerteDager: SetKorrigerteDager = setDager;
   const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(null);
   const [begrunnelse, setBegrunnelse] = useState<string>("");
-  const [valgtDato, setValgtDato] = useState<Date | undefined>(dagensDato);
+  const [valgtDato, setValgtDato] = useState<Date | undefined>();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"avbryt" | "fullfor" | null>(null);
 
@@ -146,7 +145,7 @@ export default function FyllUtPeriode() {
                 toDate={new Date()}
               >
                 <DatePicker.Input
-                  label="Velg dato for innsending"
+                  label="Sett meldedato"
                   placeholder="dd.mm.åååå"
                   size="small"
                   value={
@@ -156,6 +155,8 @@ export default function FyllUtPeriode() {
                   }
                 />
               </DatePicker>
+            </div>
+            <div>
               <RadioGroup
                 size="small"
                 legend="Vil bruker fortsatt være registrert som arbeidssøker?"

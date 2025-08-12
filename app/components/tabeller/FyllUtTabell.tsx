@@ -28,7 +28,7 @@ const aktiviteter = [
 export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
   return (
     <table>
-      <caption className={styles.label}>Registrer aktiviteter</caption>
+      <caption className={styles.label}>Registrer aktiviteter:</caption>
       <thead>
         <tr>
           <th scope="col" className="sr-only">
@@ -51,11 +51,15 @@ export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
           <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
           <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
           {dager.slice(0, 7).map((dag) => (
-            <th key={`ukedag-${dag.dato}`}>{hentUkedag(dag.dato)}</th>
+            <th key={`ukedag-${dag.dato}`} className={styles.ukedag}>
+              {hentUkedag(dag.dato)}
+            </th>
           ))}
           <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
           {dager.slice(7, 14).map((dag) => (
-            <th key={`ukedag-${dag.dato}`}>{hentUkedag(dag.dato)}</th>
+            <th key={`ukedag-${dag.dato}`} className={styles.ukedag}>
+              {hentUkedag(dag.dato)}
+            </th>
           ))}
         </tr>
       </thead>
@@ -161,16 +165,18 @@ export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
                   </td>
                 );
               })}
-              <td aria-hidden="true" className={styles.gap}></td>
+              <td aria-hidden="true" className={styles.gap}>
+                =
+              </td>
               {/* Oppsummeringscelle */}
               <td>
                 {type === AKTIVITET_TYPE.Arbeid
-                  ? `= ${dager.reduce((sum, dag) => {
+                  ? `${dager.reduce((sum, dag) => {
                       const aktivitet = dag.aktiviteter.find((a) => a.type === type);
                       const timer = aktivitet?.timer ? parseFloat(aktivitet.timer) || 0 : 0;
                       return sum + timer;
                     }, 0)} timer`
-                  : `= ${
+                  : `${
                       dager.filter((dag) => dag.aktiviteter.some((a) => a.type === type)).length
                     } dager`}
               </td>

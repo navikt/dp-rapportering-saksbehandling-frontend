@@ -114,3 +114,7 @@ table th {
   align-items: center;
   margin: 0 auto;
 }
+
+.ukedag {
+  text-transform: capitalize;
+}
