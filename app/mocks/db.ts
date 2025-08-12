@@ -92,7 +92,7 @@ function hentPersoner(db: Database) {
   return db.personer.findMany({
     orderBy: [
       {
-        fodselsdato: "desc",
+        ident: "desc",
       },
     ],
   }) as IPerson[];

@@ -8,7 +8,7 @@ import { getDatabase } from "./db.utils";
 
 export function mockPersonregister(database?: ReturnType<typeof withDb>) {
   return [
-    http.get(`${getEnv("DP_PERSONREGISTER_URL")}/person/:id`, ({ cookies, params }) => {
+    http.get(`${getEnv("DP_PERSONREGISTER_URL")}/sb/person/:id`, ({ cookies, params }) => {
       const db = database || getDatabase(cookies);
 
       const personId = params.id as string;
@@ -25,7 +25,7 @@ export function mockPersonregister(database?: ReturnType<typeof withDb>) {
       return HttpResponse.json(person);
     }),
 
-    http.get(`${getEnv("DP_PERSONREGISTER_URL")}/personer`, ({ cookies }) => {
+    http.get(`${getEnv("DP_PERSONREGISTER_URL")}/sb/personer`, ({ cookies }) => {
       const db = database || getDatabase(cookies);
 
       const personer = db.hentPersoner();

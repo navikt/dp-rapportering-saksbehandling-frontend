@@ -73,13 +73,9 @@ class SessionRecord {
       },
       personer: {
         ident: primaryKey(faker.string.alpha),
-        alder: faker.number.int,
         etternavn: faker.string.alpha,
-        fodselsdato: faker.string.alphanumeric,
         fornavn: faker.string.alpha,
-        kjonn: faker.string.alpha,
         mellomnavn: faker.string.alpha,
-        sikkerhetstiltak: Array,
         statsborgerskap: faker.string.alpha,
       },
       saksbehandlere: {

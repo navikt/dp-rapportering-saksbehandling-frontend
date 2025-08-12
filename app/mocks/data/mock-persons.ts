@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { ScenarioType } from "~/utils/scenario.types";
 import type { IPerson } from "~/utils/types";
 
-import { getKjonnFromFnr, lagPerson } from "../mock.utils";
+import { lagPerson } from "../mock.utils";
 
 const personData = [
   {
@@ -59,16 +59,14 @@ const personData = [
 
 export const mockPersons: Array<IPerson & { scenario: ScenarioType }> = personData.map((data) => {
   const ident = `${format(data.birthdate, "ddMMyy")}${data.pnr}`;
-  const kjonn = getKjonnFromFnr(ident);
 
   const person = lagPerson(
     {
-      kjonn,
       ident,
       fornavn: data.fornavn,
       etternavn: data.etternavn,
     },
-    data.birthdate
+    data.birthdate,
   );
 
   return {

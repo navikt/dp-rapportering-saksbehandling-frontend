@@ -1,11 +1,6 @@
 import type { SetupWorker } from "msw/browser";
 
-import type {
-  AKTIVITET_TYPE,
-  KJONN,
-  RAPPORTERING_TYPE,
-  RAPPORTERINGSPERIODE_STATUS,
-} from "./constants";
+import type { AKTIVITET_TYPE, RAPPORTERING_TYPE, RAPPORTERINGSPERIODE_STATUS } from "./constants";
 
 declare global {
   interface Window {
@@ -58,8 +53,6 @@ export interface IRapporteringsperiodeDag {
   aktiviteter: IAktivitet[];
 }
 
-export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
-
 export interface IRapporteringsperiode {
   begrunnelse: string; // TODO: må avklare om dette er riktig approach
   id: string;
@@ -85,21 +78,12 @@ export interface IRapporteringsperiode {
   registrertArbeidssoker: boolean | null;
 }
 
-export interface ISikkerhetstiltak {
-  beskrivelse: string;
-  gyldigTom: string;
-}
-
 export interface IPerson {
   ident: string;
   fornavn: string;
   etternavn: string;
   mellomnavn?: string;
-  kjonn: TKjonn;
-  fodselsdato: string;
-  alder: number;
   statsborgerskap: string;
-  sikkerhetstiltak?: ISikkerhetstiltak[];
 }
 
 export const boolskeVerdier = ["true", "false"] as const;

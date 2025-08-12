@@ -1,6 +1,6 @@
 import { addDays, format, startOfWeek, subDays, subYears } from "date-fns";
 
-import { AKTIVITET_TYPE, KJONN, KORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { AKTIVITET_TYPE, KORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import type {
   IAktivitet,
@@ -9,7 +9,6 @@ import type {
   IRapporteringsperiode,
   IRapporteringsperiodeDag,
   ISaksbehandler,
-  TKjonn,
 } from "~/utils/types";
 
 export function randomDate(start: Date, end: Date): Date {
@@ -26,13 +25,7 @@ export function getRandomBirthDate() {
   return randomDate(from, to);
 }
 
-export function getKjonnFromFnr(fnr: string): TKjonn {
-  return (Number(fnr.substring(fnr.length, fnr.length - 1)) || 1) % 2 === 0
-    ? KJONN.KVINNE
-    : KJONN.MANN;
-}
-
-export function createFnr(birthdate?: Date): { ident: string; kjonn: TKjonn } {
+export function createFnr(birthdate?: Date): { ident: string } {
   if (!birthdate) {
     birthdate = getRandomBirthDate();
   }
@@ -42,7 +35,6 @@ export function createFnr(birthdate?: Date): { ident: string; kjonn: TKjonn } {
 
   return {
     ident,
-    kjonn: getKjonnFromFnr(ident),
   };
 }
 
@@ -125,18 +117,14 @@ export function lagPerson(props: Partial<IPerson> = {}, birthdate?: Date): IPers
     birthdate = getRandomBirthDate();
   }
 
-  const { ident, kjonn } = createFnr(birthdate);
+  const { ident } = createFnr(birthdate);
 
   return {
-    alder: subYears(new Date(), birthdate.getFullYear()).getFullYear(),
-    fodselsdato: format(birthdate, "dd.MM.yyyy"),
-    kjonn,
     statsborgerskap: "Norsk",
     fornavn: "",
     mellomnavn: "",
     etternavn: "",
     ident,
-    sikkerhetstiltak: [],
     ...props,
   };
 }

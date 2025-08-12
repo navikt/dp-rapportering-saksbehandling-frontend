@@ -7,7 +7,7 @@ import { logger } from "./logger.server";
 
 export async function hentPersoner(request: Request): Promise<IPerson[]> {
   try {
-    const url = `${getEnv("DP_PERSONREGISTER_URL")}/personer`;
+    const url = `${getEnv("DP_PERSONREGISTER_URL")}/sb/personer`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -24,7 +24,7 @@ export async function hentPersoner(request: Request): Promise<IPerson[]> {
 
 export async function hentPerson(request: Request, personId: string): Promise<IPerson> {
   try {
-    const url = `${getEnv("DP_PERSONREGISTER_URL")}/person/${personId}`;
+    const url = `${getEnv("DP_PERSONREGISTER_URL")}/sb/person/${personId}`;
 
     const response = await fetch(url, {
       method: "GET",
