@@ -1,5 +1,7 @@
 import { Checkbox, Table } from "@navikt/ds-react";
 import classNames from "classnames";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -18,9 +20,35 @@ interface Props {
 }
 
 export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }: Props) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isHighlighted, setIsHighlighted] = useState(false);
+
+  useEffect(() => {
+    const updatedId = searchParams.get("updated");
+    console.log("PeriodeRad checking highlight:", {
+      updatedId,
+      periodeId: periode.id,
+      match: updatedId === periode.id,
+    });
+
+    if (updatedId === periode.id) {
+      console.log("HIGHLIGHTING periode:", periode.id);
+      setIsHighlighted(true);
+      // Fjern URL parameter
+      searchParams.delete("updated");
+      setSearchParams(searchParams, { replace: true });
+
+      // Fjern highlight etter 2 blinkninger (1 sekund + buffer)
+      setTimeout(() => {
+        console.log("Removing highlight for periode:", periode.id);
+        setIsHighlighted(false);
+      }, 1200);
+    }
+  }, [searchParams, setSearchParams, periode.id]);
   const radKlasse = classNames({
     [styles["periodeListe__row--selected"]]: valgt,
     [styles["periodeListe__row"]]: true, // Alle rader får basis klasse
+    [styles["periodeListe__row--highlighted"]]: isHighlighted,
   });
   const ukeKlasse = classNames(styles.periodeListe__week, {
     [styles["periodeListe__week--selected"]]: valgt,
@@ -46,7 +74,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         }
       }}
       aria-label={`${valgt ? "Avvelg" : "Velg"} rapporteringsperiode uke ${ukenummer(
-        periode,
+        periode
       )}, ${periodeDatoTekst}`}
       aria-pressed={valgt}
     >

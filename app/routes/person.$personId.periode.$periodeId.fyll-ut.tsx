@@ -69,7 +69,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     console.log("Periode oppdatert:", params.periodeId, oppdatertPeriode);
 
     // Redirect tilbake til perioder siden
-    return redirect(`/person/${params.personId}/perioder`);
+    return redirect(`/person/${params.personId}/perioder?updated=${params.periodeId}`);
   } catch (error) {
     console.error("Feil ved oppdatering av periode:", error);
     throw new Error("Kunne ikke oppdatere periode");

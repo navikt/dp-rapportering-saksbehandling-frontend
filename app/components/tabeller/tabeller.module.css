@@ -66,3 +66,49 @@ thead, tr, th {
   background: transparent;
   pointer-events: none; /* Forhindrer at gap-cellen er interaktiv */
 }
+
+/* Konsistent styling for checkbox og input felt */
+table .navds-text-field__input {
+  width: 64px;
+  height: 48px;
+  min-width: 64px;
+  min-height: 48px;
+  text-align: center;
+  padding: 8px;
+  font-size: 14px;
+}
+
+table .navds-checkbox {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+table .navds-checkbox__input {
+  width: 20px;
+  height: 20px;
+  margin: 0 auto;
+}
+
+table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 4px;
+}
+
+table th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.checkboxWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}

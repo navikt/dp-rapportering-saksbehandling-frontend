@@ -79,9 +79,12 @@ export async function korrigerPeriode(request: Request, periode: IRapporteringsp
     if (!response.ok) {
       throw "rapportering-feilmelding-korriger-periode";
     }
+
+    const korrigertPeriode = await response.json();
+    return korrigertPeriode;
   } catch (error) {
-    logger.error(`Feil ved henting av rapporteringsperiode: ${error}`);
-    throw new Response("rapportering-feilmelding-hent-periode", { status: 500 });
+    logger.error(`Feil ved korrigering av rapporteringsperiode: ${error}`);
+    throw new Response("rapportering-feilmelding-korriger-periode", { status: 500 });
   }
 }
 

@@ -1,6 +1,6 @@
 import { Button, Modal } from "@navikt/ds-react";
 import { useEffect, useState } from "react";
-import { useFetcher, useNavigate } from "react-router";
+import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
@@ -15,15 +15,33 @@ interface IProps {
 export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: IProps) {
   const fetcher = useFetcher();
   const navigate = useNavigate();
+  const revalidator = useRevalidator();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isSubmitting && fetcher.state === "idle" && fetcher.data) {
-      console.log("Korrigering fullført, navigerer tilbake");
-      navigate(`/person/${person.ident}/perioder`);
+      console.log("Korrigering fullført!");
+      console.log("fetcher.data:", fetcher.data);
+      console.log("original periode ID:", korrigertPeriode.id);
+
+      const nyPeriodeId = fetcher.data?.id || korrigertPeriode.id;
+      console.log("Vil navigere med ID:", nyPeriodeId);
+
+      // Revalider data for å oppdatere listen
+      revalidator.revalidate();
+
+      navigate(`/person/${person.ident}/perioder?updated=${nyPeriodeId}`);
       setIsSubmitting(false);
     }
-  }, [fetcher.state, fetcher.data, navigate, person.ident, isSubmitting]);
+  }, [
+    fetcher.state,
+    fetcher.data,
+    navigate,
+    person.ident,
+    isSubmitting,
+    korrigertPeriode.id,
+    revalidator,
+  ]);
 
   if (!type) return null;
 
@@ -39,13 +57,14 @@ export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: 
     if (!type) return;
 
     if (type === "fullfor") {
+      console.log("Starting korrigering with periode ID:", korrigertPeriode.id);
       setIsSubmitting(true);
+      onClose();
       fetcher.submit(
         { rapporteringsperiode: JSON.stringify(korrigertPeriode) },
         { method: "post", action: "/api/rapportering" }
       );
-      onClose();
-      navigate(`/person/${person.ident}/perioder`);
+      // DON'T navigate here - let useEffect handle it
     } else if (type === "avbryt") {
       console.log("Avbryter korrigering...");
       onClose();

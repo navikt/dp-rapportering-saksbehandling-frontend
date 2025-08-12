@@ -93,22 +93,24 @@ export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
                 }
                 return (
                   <td key={dag.dato}>
-                    <Checkbox
-                      id={inputId}
-                      value={type}
-                      hideLabel
-                      checked={!!aktiv}
-                      readOnly={erDisabled}
-                      onChange={(event) => {
-                        const checked = event.target.checked;
-                        const updated = checked
-                          ? [...aktivitetstyper, type]
-                          : aktivitetstyper.filter((a) => a !== type);
-                        endreDag(updated, dag, setKorrigerteDager);
-                      }}
-                    >
-                      {`${label}, ${formatterDag(dag.dato)}`}
-                    </Checkbox>
+                    <div className={styles.checkboxWrapper}>
+                      <Checkbox
+                        id={inputId}
+                        value={type}
+                        hideLabel
+                        checked={!!aktiv}
+                        readOnly={erDisabled}
+                        onChange={(event) => {
+                          const checked = event.target.checked;
+                          const updated = checked
+                            ? [...aktivitetstyper, type]
+                            : aktivitetstyper.filter((a) => a !== type);
+                          endreDag(updated, dag, setKorrigerteDager);
+                        }}
+                      >
+                        {`${label}, ${formatterDag(dag.dato)}`}
+                      </Checkbox>
+                    </div>
                   </td>
                 );
               })}
@@ -138,22 +140,24 @@ export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
 
                 return (
                   <td key={dag.dato}>
-                    <Checkbox
-                      id={inputId}
-                      value={type}
-                      hideLabel
-                      checked={!!aktiv}
-                      readOnly={erDisabled}
-                      onChange={(event) => {
-                        const checked = event.target.checked;
-                        const updated = checked
-                          ? [...aktivitetstyper, type]
-                          : aktivitetstyper.filter((a) => a !== type);
-                        endreDag(updated, dag, setKorrigerteDager);
-                      }}
-                    >
-                      {`${label}, ${formatterDag(dag.dato)}`}
-                    </Checkbox>
+                    <div className={styles.checkboxWrapper}>
+                      <Checkbox
+                        id={inputId}
+                        value={type}
+                        hideLabel
+                        checked={!!aktiv}
+                        readOnly={erDisabled}
+                        onChange={(event) => {
+                          const checked = event.target.checked;
+                          const updated = checked
+                            ? [...aktivitetstyper, type]
+                            : aktivitetstyper.filter((a) => a !== type);
+                          endreDag(updated, dag, setKorrigerteDager);
+                        }}
+                      >
+                        {`${label}, ${formatterDag(dag.dato)}`}
+                      </Checkbox>
+                    </div>
                   </td>
                 );
               })}

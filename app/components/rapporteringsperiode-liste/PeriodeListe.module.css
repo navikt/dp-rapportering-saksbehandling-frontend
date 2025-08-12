@@ -28,6 +28,10 @@
   background-color: var(--a-lightblue-100);
 }
 
+.periodeListe__row--highlighted {
+  animation: highlightBlink 2s linear;
+}
+
 /* === Klikkbar rad === */
 .navds-table__row[role="button"] {
   cursor: pointer;
@@ -74,12 +78,20 @@
   height: 4px;
   background-color: var(--a-orange-500);
   border-radius: 50%;
-  animation: pulse 2s infinite;
+  animation: pulse 2s linear infinite;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+@keyframes highlightBlink {
+  0% { background-color: transparent; }
+  25% { background-color:   var(--a-surface-action-subtle); }
+  50% { background-color: transparent; }
+  75% { background-color:   var(--a-surface-action-subtle); }
+  100% { background-color: transparent; }
 }
 
 /* === Checkbox-sentrering === */
