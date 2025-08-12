@@ -69,12 +69,13 @@ export function lagDager(): IRapporteringsperiodeDag[] {
 
 export function lagRapporteringsperiode(
   props: Partial<IRapporteringsperiode> = {},
-  person?: IPerson
+  person?: IPerson,
 ): IRapporteringsperiode {
   const { fraOgMed, tilOgMed } = beregnNåværendePeriodeDato();
 
   const meldekort: IRapporteringsperiode = {
     id: createId(),
+    personId: person?.id || createId(),
     ident: person?.ident || createFnr().ident,
     status: RAPPORTERINGSPERIODE_STATUS.Klar,
     type: KORT_TYPE.Elektronisk,
@@ -99,7 +100,7 @@ export function lagRapporteringsperiode(
   meldekort.kanSendesFra = format(subDays(new Date(meldekort.periode.tilOgMed), 1), "yyyy-MM-dd");
   meldekort.sisteFristForTrekk = format(
     addDays(new Date(meldekort.periode.tilOgMed), 8),
-    "yyyy-MM-dd"
+    "yyyy-MM-dd",
   );
 
   if (!props.dager) {
@@ -110,23 +111,6 @@ export function lagRapporteringsperiode(
   }
 
   return meldekort;
-}
-
-export function lagPerson(props: Partial<IPerson> = {}, birthdate?: Date): IPerson {
-  if (!birthdate) {
-    birthdate = getRandomBirthDate();
-  }
-
-  const { ident } = createFnr(birthdate);
-
-  return {
-    statsborgerskap: "Norsk",
-    fornavn: "",
-    mellomnavn: "",
-    etternavn: "",
-    ident,
-    ...props,
-  };
 }
 
 export function lagSaksbehandler(props: Partial<ISaksbehandler> = {}) {
@@ -141,7 +125,7 @@ export function lagSaksbehandler(props: Partial<ISaksbehandler> = {}) {
 
 // Hjelpefunksjon for å lage ett meldekort
 export const lagArbeidUker = (
-  timer: string
+  timer: string,
 ): Array<null | Pick<IAktivitet, "type" | "timer">[]> => [
   // Uke 1
   [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Mandag
@@ -163,7 +147,7 @@ export const lagArbeidUker = (
 
 // Hjelpefunksjon for å lage ett meldekort med arbeid annen hver dag
 export const lagAlternerendeArbeidsUker = (
-  timer: string
+  timer: string,
 ): Array<null | Pick<IAktivitet, "type" | "timer">[]> => [
   // Uke 1
   [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet(timer) }], // Mandag

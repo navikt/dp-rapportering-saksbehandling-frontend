@@ -16,14 +16,17 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const personId = params.personId as string;
 
         const allePerioder = db.hentAlleRapporteringsperioder();
-        const rapporteringsperioder = allePerioder.filter((periode) => periode.ident === personId);
+
+        const rapporteringsperioder = allePerioder.filter(
+          (periode) => periode.personId == personId,
+        );
 
         logger.info(
-          `Hentet ${rapporteringsperioder.length} rapporteringsperioder for person ${personId}`
+          `Hentet ${rapporteringsperioder.length} rapporteringsperioder for person ${personId}`,
         );
 
         return HttpResponse.json(rapporteringsperioder);
-      }
+      },
     ),
 
     http.get(
@@ -42,7 +45,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         logger.info(`Hentet rapporteringsperiode ${rapporteringsperiodeId}`);
 
         return HttpResponse.json(rapporteringsperiode);
-      }
+      },
     ),
 
     http.post(
@@ -57,7 +60,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         logger.info("Lagrer rapporteringsperiode");
 
         return HttpResponse.json(korrigertPeriode, { status: 200 });
-      }
+      },
     ),
 
     http.put(
@@ -80,7 +83,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
 
         return HttpResponse.json(oppdatertPeriode, { status: 200 });
-      }
+      },
     ),
   ];
 }

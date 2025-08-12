@@ -33,6 +33,7 @@ class SessionRecord {
 
         // Generer perioder basert på personens scenario
         const periods = hentRapporteringsperioderForScenario(createdPerson, scenario);
+
         periods.forEach((rapporteringsperiode) => {
           db.rapporteringsperioder.create(rapporteringsperiode);
         });
@@ -46,6 +47,7 @@ class SessionRecord {
     return factory({
       rapporteringsperioder: {
         id: primaryKey(faker.string.numeric),
+        personId: faker.string.alpha,
         ident: faker.string.alpha,
         status: faker.string.alpha,
         type: faker.string.numeric,
@@ -73,6 +75,7 @@ class SessionRecord {
       },
       personer: {
         ident: primaryKey(faker.string.alpha),
+        id: faker.string.alpha,
         etternavn: faker.string.alpha,
         fornavn: faker.string.alpha,
         mellomnavn: faker.string.alpha,

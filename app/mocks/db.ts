@@ -81,7 +81,7 @@ function leggTilRapporteringsperiode(db: Database, rapporteringsperiode: IRappor
 function hentPerson(db: Database, personId: string) {
   return db.personer.findFirst({
     where: {
-      ident: {
+      id: {
         equals: personId,
       },
     },

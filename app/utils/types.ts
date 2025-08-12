@@ -56,6 +56,7 @@ export interface IRapporteringsperiodeDag {
 export interface IRapporteringsperiode {
   begrunnelse: string; // TODO: må avklare om dette er riktig approach
   id: string;
+  personId: string;
   ident: string;
   status: TRapporteringsperiodeStatus;
   type: string;
@@ -80,6 +81,7 @@ export interface IRapporteringsperiode {
 
 export interface IPerson {
   ident: string;
+  id: string;
   fornavn: string;
   etternavn: string;
   mellomnavn?: string;

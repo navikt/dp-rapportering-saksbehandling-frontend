@@ -1,13 +1,12 @@
 import { BodyShort, Heading, LinkPanel } from "@navikt/ds-react";
 import { useLoaderData } from "react-router";
 
-import { getPersonByScenario } from "~/mocks/data/mock-persons";
+import { getFullDemoPerson } from "~/mocks/data/mock-persons";
 import { usesMsw } from "~/utils/env.utils";
-import { ScenarioType } from "~/utils/scenario.types";
 
 export async function loader() {
   if (usesMsw) {
-    const fullDemoPerson = getPersonByScenario(ScenarioType.FULL_DEMO);
+    const fullDemoPerson = getFullDemoPerson();
     return { personer: fullDemoPerson ? [fullDemoPerson] : [] };
   }
   return { personer: [] };
@@ -40,7 +39,7 @@ export default function Rapportering() {
               const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
                 person.etternavn
               }`;
-              const link = `/person/${person.ident}/perioder`;
+              const link = `/person/${person.id}/perioder`;
 
               return (
                 <li key={person.ident} style={{ marginBottom: "1rem" }}>
