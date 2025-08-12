@@ -66,8 +66,6 @@ export async function action({ request, params }: Route.ActionArgs) {
     // Oppdater perioden via mock/backend
     await oppdaterPeriode(request, params.periodeId, oppdatertPeriode);
 
-    console.log("Periode oppdatert:", params.periodeId, oppdatertPeriode);
-
     // Redirect tilbake til perioder siden
     return redirect(`/person/${params.personId}/perioder?updated=${params.periodeId}`);
   } catch (error) {
@@ -96,7 +94,6 @@ export default function FyllUtPeriode() {
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
   const handleDateSelect = (date?: Date) => {
-    console.log("Date selected:", date);
     setValgtDato(date);
   };
 

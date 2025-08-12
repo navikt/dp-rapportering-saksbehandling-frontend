@@ -25,14 +25,8 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
 
   useEffect(() => {
     const updatedId = searchParams.get("updated");
-    console.log("PeriodeRad checking highlight:", {
-      updatedId,
-      periodeId: periode.id,
-      match: updatedId === periode.id,
-    });
 
     if (updatedId === periode.id) {
-      console.log("HIGHLIGHTING periode:", periode.id);
       setIsHighlighted(true);
       // Fjern URL parameter
       searchParams.delete("updated");
@@ -40,7 +34,6 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
 
       // Fjern highlight etter 2 blinkninger (1 sekund + buffer)
       setTimeout(() => {
-        console.log("Removing highlight for periode:", periode.id);
         setIsHighlighted(false);
       }, 1200);
     }

@@ -20,12 +20,7 @@ export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: 
 
   useEffect(() => {
     if (isSubmitting && fetcher.state === "idle" && fetcher.data) {
-      console.log("Korrigering fullført!");
-      console.log("fetcher.data:", fetcher.data);
-      console.log("original periode ID:", korrigertPeriode.id);
-
       const nyPeriodeId = fetcher.data?.id || korrigertPeriode.id;
-      console.log("Vil navigere med ID:", nyPeriodeId);
 
       // Revalider data for å oppdatere listen
       revalidator.revalidate();
@@ -57,7 +52,6 @@ export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: 
     if (!type) return;
 
     if (type === "fullfor") {
-      console.log("Starting korrigering with periode ID:", korrigertPeriode.id);
       setIsSubmitting(true);
       onClose();
       fetcher.submit(
@@ -66,7 +60,6 @@ export function BekreftModal({ open, onClose, type, korrigertPeriode, person }: 
       );
       // DON'T navigate here - let useEffect handle it
     } else if (type === "avbryt") {
-      console.log("Avbryter korrigering...");
       onClose();
       navigate(`/person/${person.ident}/perioder`);
     }
