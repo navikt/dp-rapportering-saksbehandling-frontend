@@ -7,48 +7,6 @@ import { lagPerson } from "../mock.utils";
 
 const personData = [
   {
-    scenario: ScenarioType.BEREGNING_FEILET,
-    fornavn: "Lars",
-    etternavn: "Eriksen",
-    birthdate: new Date("1985-03-15"),
-    pnr: "12345",
-  },
-  {
-    scenario: ScenarioType.KORRIGERT_AV_BRUKER,
-    fornavn: "Kari",
-    etternavn: "Johansen",
-    birthdate: new Date("1978-11-02"),
-    pnr: "67890",
-  },
-  {
-    scenario: ScenarioType.KORRIGERT_AV_SAKSBEHANDLER,
-    fornavn: "Per",
-    etternavn: "Andersen",
-    birthdate: new Date("1990-07-18"),
-    pnr: "24680",
-  },
-  {
-    scenario: ScenarioType.SENDT_FOR_SENT,
-    fornavn: "Lise",
-    etternavn: "Nilsen",
-    birthdate: new Date("1983-09-30"),
-    pnr: "13579",
-  },
-  {
-    scenario: ScenarioType.IKKE_SENDT_INN,
-    fornavn: "Ole",
-    etternavn: "Larsen",
-    birthdate: new Date("1975-12-08"),
-    pnr: "86420",
-  },
-  {
-    scenario: ScenarioType.FLERE_BEREGNEDE,
-    fornavn: "Eva",
-    etternavn: "Svendsen",
-    birthdate: new Date("1988-04-12"),
-    pnr: "97531",
-  },
-  {
     scenario: ScenarioType.FULL_DEMO,
     fornavn: "Full",
     etternavn: "Demo",
