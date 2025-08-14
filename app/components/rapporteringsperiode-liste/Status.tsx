@@ -1,14 +1,14 @@
 import { Tag } from "@navikt/ds-react";
 
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
-import type { TRapporteringsperiodeStatus } from "~/utils/types";
+import type { IRapporteringsperiode, TRapporteringsperiodeStatus } from "~/utils/types";
 
 interface IProps {
-  status: TRapporteringsperiodeStatus;
+  periode: IRapporteringsperiode;
 }
 
 const getVariant = (
-  status: TRapporteringsperiodeStatus,
+  status: TRapporteringsperiodeStatus
 ): "info" | "success" | "warning" | "error" | "neutral" => {
   switch (status) {
     case RAPPORTERINGSPERIODE_STATUS.Opprettet:
@@ -35,10 +35,19 @@ const getStatusText = (status: TRapporteringsperiodeStatus): string => {
   }
 };
 
-export function Status({ status }: IProps) {
+export function Status({ periode }: IProps) {
+  const erKorrigert = periode.korrigering !== null;
+
   return (
-    <Tag variant={getVariant(status)} size="small">
-      {getStatusText(status)}
-    </Tag>
+    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+      <Tag variant={getVariant(periode.status)} size="small">
+        {getStatusText(periode.status)}
+      </Tag>
+      {erKorrigert && (
+        <Tag variant="warning" size="small">
+          Korrigert
+        </Tag>
+      )}
+    </div>
   );
 }

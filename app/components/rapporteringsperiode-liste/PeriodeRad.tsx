@@ -95,7 +95,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         {periodeDatoTekst}
       </Table.DataCell>
       <Table.DataCell textSize="small" className={radKlasse}>
-        <Status status={periode.status} />
+        <Status periode={periode} />
       </Table.DataCell>
       <Table.DataCell textSize="small" className={radKlasse}>
         <TypeAktivitet periode={periode} />

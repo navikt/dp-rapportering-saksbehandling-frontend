@@ -2,7 +2,8 @@ import { Checkbox, TextField } from "@navikt/ds-react";
 import classNames from "classnames";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
-import { formatterDag, hentUkedag } from "~/utils/dato.utils";
+import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
+import type { IPeriode } from "~/utils/types";
 
 import {
   endreArbeid,
@@ -16,6 +17,7 @@ import styles from "./tabeller.module.css";
 interface IProps {
   dager: IKorrigertDag[];
   setKorrigerteDager: SetKorrigerteDager;
+  periode: IPeriode;
 }
 
 const aktiviteter = [
@@ -25,7 +27,8 @@ const aktiviteter = [
   { type: AKTIVITET_TYPE.Utdanning, label: "Tiltak, kurs eller utdanning" },
 ];
 
-export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
+export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
+  const [uke1, uke2] = hentUkerFraPeriode(periode);
   return (
     <table>
       <caption className={styles.label}>Registrer aktiviteter:</caption>
@@ -36,11 +39,11 @@ export function FyllUtTabell({ dager, setKorrigerteDager }: IProps) {
           </th>
           <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
           <th colSpan={7} className={styles.label}>
-            Uke 1
+            Uke {uke1}
           </th>
           <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
           <th colSpan={7} className={styles.label}>
-            Uke 2
+            Uke {uke2}
           </th>
           <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
           <th scope="col" className="sr-only">

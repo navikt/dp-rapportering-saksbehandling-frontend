@@ -171,7 +171,6 @@ export default function FyllUtPeriode() {
               <Textarea
                 size="small"
                 label="Begrunnelse"
-                placeholder="Legg til begrunnelse om meldekortet..."
                 value={begrunnelse}
                 onChange={(e) => setBegrunnelse(e.target.value)}
                 rows={3}
@@ -179,7 +178,11 @@ export default function FyllUtPeriode() {
               />
             </div>
           </div>
-          <FyllUtTabell dager={dager} setKorrigerteDager={setKorrigerteDager} />
+          <FyllUtTabell
+            dager={dager}
+            setKorrigerteDager={setKorrigerteDager}
+            periode={periode.periode}
+          />
           <div className={styles.handlinger}>
             <Button variant="secondary" size="small" onClick={handleAvbryt}>
               Avbryt utfylling
