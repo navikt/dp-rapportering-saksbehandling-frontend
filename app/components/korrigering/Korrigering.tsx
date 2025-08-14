@@ -4,8 +4,8 @@ import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
+import { BekreftModal } from "../../modals/BekreftModal";
 import { FyllUtTabell } from "../tabeller/FyllUtTabell";
-import { BekreftModal } from "./BekreftModal";
 import styles from "./Korrigering.module.css";
 import {
   type IKorrigertDag,

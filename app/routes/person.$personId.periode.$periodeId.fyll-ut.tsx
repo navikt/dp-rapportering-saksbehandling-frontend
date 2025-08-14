@@ -11,7 +11,6 @@ import { useRef, useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
-import { BekreftModal } from "~/components/korrigering/BekreftModal";
 import {
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
@@ -19,6 +18,7 @@ import {
   type SetKorrigerteDager,
 } from "~/components/korrigering/korrigering.utils";
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
+import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
@@ -58,6 +58,10 @@ export async function action({ request, params }: Route.ActionArgs) {
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       dager: dager.map(konverterTimerTilISO8601Varighet),
+      korrigering: {
+        korrigererMeldekortId: params.periodeId,
+        begrunnelse: begrunnelse,
+      },
       kilde: {
         rolle: "Saksbehandler" as const,
         ident: saksbehandler.onPremisesSamAccountName,
@@ -82,7 +86,7 @@ export default function FyllUtPeriode() {
   const { periode } = useLoaderData<typeof loader>();
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
-    periode.dager.map(konverterTimerFraISO8601Varighet)
+    periode.dager.map(konverterTimerFraISO8601Varighet),
   );
 
   const setKorrigerteDager: SetKorrigerteDager = setDager;
