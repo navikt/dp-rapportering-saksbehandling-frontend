@@ -55,13 +55,15 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
           <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
           {dager.slice(0, 7).map((dag) => (
             <th key={`ukedag-${dag.dato}`} className={styles.ukedag}>
-              {hentUkedag(dag.dato)}
+              <div>{hentUkedag(dag.dato)}</div>
+              <div>{formatterDag(dag.dato)}</div>
             </th>
           ))}
           <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
           {dager.slice(7, 14).map((dag) => (
             <th key={`ukedag-${dag.dato}`} className={styles.ukedag}>
-              {hentUkedag(dag.dato)}
+              <div>{hentUkedag(dag.dato)}</div>
+              <div>{formatterDag(dag.dato)}</div>
             </th>
           ))}
         </tr>
