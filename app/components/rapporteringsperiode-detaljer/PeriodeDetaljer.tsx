@@ -15,7 +15,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.korrigering?.korrigererMeldekortId;
   const erUtfyltAvSaksbehandler = periode.kilde?.rolle === "Saksbehandler" && !erKorrigert;
-  const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
+  const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Klar;
 
   return (
     <div className={styles.periodeDetaljer}>

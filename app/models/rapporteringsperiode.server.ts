@@ -7,9 +7,9 @@ import { logger } from "./logger.server";
 
 export async function hentRapporteringsperioder(
   request: Request,
-  personId: string
+  personId: string,
 ): Promise<IRapporteringsperiode[]> {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/person/${personId}/rapporteringsperioder`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort`;
 
   try {
     const response = await fetch(url, {
@@ -19,7 +19,7 @@ export async function hentRapporteringsperioder(
 
     if (!response.ok) {
       logger.error(
-        `Feil ved henting av rapporteringsperioder, status: ${response.status}, statusText: ${response.statusText}`
+        `Feil ved henting av rapporteringsperioder, status: ${response.status}, statusText: ${response.statusText}`,
       );
 
       throw "rapportering-feilmelding-hent-perioder";
@@ -41,7 +41,7 @@ export async function hentRapporteringsperioder(
 
 export async function hentPeriode(
   request: Request,
-  periodeId: string
+  periodeId: string,
 ): Promise<IRapporteringsperiode> {
   const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/${periodeId}`;
 
@@ -91,7 +91,7 @@ export async function korrigerPeriode(request: Request, periode: IRapporteringsp
 export async function oppdaterPeriode(
   request: Request,
   periodeId: string,
-  oppdateringer: Partial<IRapporteringsperiode>
+  oppdateringer: Partial<IRapporteringsperiode>,
 ) {
   const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/${periodeId}`;
 

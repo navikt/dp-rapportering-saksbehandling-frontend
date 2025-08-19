@@ -20,6 +20,8 @@ export function Innsendt({ innsendtTidspunkt, tilOgMed, status }: IProps) {
   const dagerForskjell = differenceInDays(parseISO(innsendtTidspunkt), parseISO(tilOgMed));
   const forSent = dagerForskjell >= SISTE_FRIST;
 
+  if (!innsendtTidspunkt) return null;
+
   return forSent ? (
     <Tag variant="error" size="small">
       {formatterDato({ dato: innsendtTidspunkt })}

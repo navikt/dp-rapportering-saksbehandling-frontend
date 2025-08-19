@@ -24,7 +24,7 @@ export async function hentPersoner(request: Request): Promise<IPerson[]> {
 
 export async function hentPerson(request: Request, personId: string): Promise<IPerson> {
   try {
-    const url = `${getEnv("DP_PERSONREGISTER_URL")}/sb/person/${personId}`;
+    const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}`;
 
     const response = await fetch(url, {
       method: "GET",

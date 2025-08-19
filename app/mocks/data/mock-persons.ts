@@ -5,7 +5,7 @@ const personData = [
   {
     scenario: ScenarioType.FULL_DEMO,
     ident: "0201020012345",
-    id: "4803250984",
+    id: "2277730",
     fornavn: "Full",
     mellomnavn: "",
     etternavn: "Demo",
