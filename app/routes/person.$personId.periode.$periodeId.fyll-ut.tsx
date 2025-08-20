@@ -156,6 +156,7 @@ export default function FyllUtPeriode() {
                 selected={valgtDato}
                 onSelect={handleDateSelect}
                 toDate={new Date()}
+                defaultMonth={new Date(periode.periode.tilOgMed)}
               >
                 <DatePicker.Input
                   label="Sett meldedato"
