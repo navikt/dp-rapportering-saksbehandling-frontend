@@ -54,7 +54,6 @@ export interface IRapporteringsperiodeDag {
 }
 
 export interface IRapporteringsperiode {
-  begrunnelse: string; // TODO: må avklare om dette er riktig approach
   id: string;
   personId: string;
   ident: string;
@@ -67,9 +66,9 @@ export interface IRapporteringsperiode {
   kanSendesFra: string;
   sisteFristForTrekk: string;
   opprettetAv: string;
+  begrunnelse?: string;
   korrigering: {
     korrigererMeldekortId: string;
-    begrunnelse: string;
   } | null;
   kilde: {
     rolle: "Bruker" | "Saksbehandler";

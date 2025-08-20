@@ -164,9 +164,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-bruker-2-correction",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        begrunnelse: "Feil antall arbeidstimer. Hadde jobbet full tid",
         korrigering: {
           korrigererMeldekortId: "period-korrigert-bruker-2-original",
-          begrunnelse: "Feil antall arbeidstimer. Hadde jobbet full tid",
         },
         kilde: {
           rolle: "Bruker" as const,
@@ -203,9 +203,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-saksbehandler-2-correction",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        begrunnelse: "Feil antall arbeidstimer",
         korrigering: {
           korrigererMeldekortId: "period-korrigert-saksbehandler-2-original",
-          begrunnelse: "Feil antall arbeidstimer",
         },
         kilde: {
           rolle: "Saksbehandler" as const,
@@ -479,9 +479,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        begrunnelse: "Glemt å føre aktiviteter.",
         korrigering: {
           korrigererMeldekortId: "period-korrigert-bruker-2-original",
-          begrunnelse: "Glemt å føre aktiviteter.",
         },
         innsendtTidspunkt: null, // Vil bli satt automatisk basert på perioden
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
@@ -654,9 +654,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        begrunnelse: "Glemt å føre aktiviteter.",
         korrigering: {
           korrigererMeldekortId: "period-korrigert-bruker-2-original",
-          begrunnelse: "Glemt å føre aktiviteter.",
         },
         innsendtTidspunkt: null, // Vil bli satt automatisk basert på perioden
         kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
@@ -889,9 +889,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 28. Opprettet, uke 9-10, ikke registrert arbeidssøker
     {
       periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Opprettet,
+        status: RAPPORTERINGSPERIODE_STATUS.Klar,
         registrertArbeidssoker: false,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        kanSendes: true,
       },
       ukerFraIDag: 8, // uke 9-10
       innsendtEtterTilOgMed: 0,
@@ -900,6 +901,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Opprettet,
+        kanSendes: false,
       },
       ukerFraIDag: 6, // uke 11-12
       innsendtEtterTilOgMed: 0,

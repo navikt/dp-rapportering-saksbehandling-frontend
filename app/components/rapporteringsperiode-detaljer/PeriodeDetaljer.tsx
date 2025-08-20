@@ -14,90 +14,16 @@ interface IProps {
 export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.korrigering?.korrigererMeldekortId;
-  const erUtfyltAvSaksbehandler = periode.kilde?.rolle === "Saksbehandler" && !erKorrigert;
-  const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
+  const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Klar;
+
+  if (periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet) {
+    return null;
+  }
 
   return (
     <div className={styles.periodeDetaljer}>
-      <dl className={styles.detailList}>
-        {periode.registrertArbeidssoker && (
-          <>
-            <dt>Svar på spørsmål om arbeidssøkerregistrering:</dt>
-            <dd>
-              <Tag variant={erArbeidssoker ? "success" : "error"} size="small">
-                {erArbeidssoker ? "Ja" : "Nei"}
-              </Tag>
-            </dd>
-          </>
-        )}
-        {erKorrigert && (
-          <>
-            <dt>Korrigering av meldekort:</dt>
-            <dd>
-              {periode.registrertArbeidssoker && (
-                <Tag variant="success" size="small">
-                  Ja
-                </Tag>
-              )}
-            </dd>
-            <dt>Korrigert av:</dt>
-            <dd>
-              {periode?.kilde?.rolle === "Saksbehandler"
-                ? `Saksbehandler (${periode?.kilde?.ident})`
-                : periode?.kilde?.rolle}
-            </dd>
-            {periode.innsendtTidspunkt && (
-              <>
-                <dt>Dato for korrigering:</dt>
-                <dd>
-                  {formatterDato({
-                    dato: periode.innsendtTidspunkt,
-                    format: DatoFormat.DagMndAarLang,
-                  })}
-                </dd>
-              </>
-            )}
-          </>
-        )}
-
-        {erUtfyltAvSaksbehandler && (
-          <>
-            <dt>Utfylt av:</dt>
-            <dd>
-              {periode?.kilde?.rolle === "Saksbehandler"
-                ? `Saksbehandler (${periode?.kilde?.ident})`
-                : periode?.kilde?.rolle}
-            </dd>
-            {periode.innsendtTidspunkt && (
-              <>
-                <dt>Meldekort innsendt:</dt>
-                <dd>
-                  {formatterDato({
-                    dato: periode.innsendtTidspunkt,
-                    format: DatoFormat.DagMndAarLang,
-                  })}
-                </dd>
-              </>
-            )}
-            {periode.begrunnelse && (
-              <>
-                <dt>Begrunnelse:</dt>
-                <dd>{periode.begrunnelse}</dd>
-              </>
-            )}
-          </>
-        )}
-
-        {periode.korrigering?.begrunnelse && (
-          <>
-            <dt>Grunn til korrigering:</dt>
-            <dd>{periode.korrigering.begrunnelse}</dd>
-          </>
-        )}
-      </dl>
-
-      <div>
-        {kanFyllesUt ? (
+      {kanFyllesUt ? (
+        <div>
           <Button
             as="a"
             href={`/person/${personId}/periode/${periode.id}/fyll-ut`}
@@ -107,17 +33,56 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
           >
             Fyll ut meldekort
           </Button>
-        ) : (
-          <Button
-            as="a"
-            href={`/person/${personId}/periode/${periode.id}/korriger`}
-            className={styles.korrigerKnapp}
-            size="small"
-          >
-            Korriger meldekort
-          </Button>
-        )}
-      </div>
+        </div>
+      ) : (
+        <>
+          <dl className={styles.detailList}>
+            {periode.innsendtTidspunkt && (
+              <>
+                <dt>Dato for innsending:</dt>
+                <dd>
+                  {formatterDato({
+                    dato: periode.innsendtTidspunkt,
+                    format: DatoFormat.DagMndAarLang,
+                  })}
+                </dd>
+              </>
+            )}
+            <dt>{erKorrigert ? "Korrigert" : "Innsendt"} av:</dt>
+            <dd>
+              {periode?.kilde?.rolle === "Saksbehandler"
+                ? periode?.kilde?.ident
+                : periode?.kilde?.rolle}
+            </dd>
+            {periode.begrunnelse && (
+              <>
+                <dt>Begrunnelse:</dt>
+                <dd>{periode.begrunnelse}</dd>
+              </>
+            )}
+            {periode.registrertArbeidssoker && (
+              <>
+                <dt>Svar på spørsmål om arbeidssøkerregistrering:</dt>
+                <dd>
+                  <Tag variant={erArbeidssoker ? "success" : "error"} size="small">
+                    {erArbeidssoker ? "Ja" : "Nei"}
+                  </Tag>
+                </dd>
+              </>
+            )}
+          </dl>
+          <div>
+            <Button
+              as="a"
+              href={`/person/${personId}/periode/${periode.id}/korriger`}
+              className={styles.korrigerKnapp}
+              size="small"
+            >
+              Korriger meldekort
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
