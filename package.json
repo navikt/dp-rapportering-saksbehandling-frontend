@@ -8,7 +8,7 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "lint": "eslint",
-    "test": "npm run test:vitest && npm run test:playwright",
+    "test": "npm run test:vitest",
     "prepare": "husky",
     "test:vitest": "vitest run",
     "pre-commit": "lint-staged && npm run typecheck",

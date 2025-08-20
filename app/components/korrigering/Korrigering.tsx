@@ -53,14 +53,14 @@ export function Korrigering({
       // Revalider data for å oppdatere listen
       revalidator.revalidate();
 
-      navigate(`/person/${person.ident}/perioder?updated=${nyPeriodeId}`);
+      navigate(`/person/${person.id}/perioder?updated=${nyPeriodeId}`);
       setIsSubmitting(false);
     }
   }, [
     fetcher.state,
     fetcher.data,
     navigate,
-    person.ident,
+    person.id,
     isSubmitting,
     korrigertPeriode.id,
     revalidator,
@@ -74,7 +74,7 @@ export function Korrigering({
         { method: "post", action: "/api/rapportering" },
       );
     } else if (modalType === "avbryt") {
-      navigate(`/person/${person.ident}/perioder`);
+      navigate(`/person/${person.id}/perioder`);
     }
   }
 
