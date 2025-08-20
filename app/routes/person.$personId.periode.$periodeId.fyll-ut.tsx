@@ -52,17 +52,25 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   try {
     const saksbehandler = await hentSaksbehandler(request);
+    const eksisterendePeriode = await hentPeriode(request, params.periodeId);
     const dager = JSON.parse(dagerData);
+
+    // Sjekk om dette er en ekte korrigering (perioden har allerede data) eller første gangs utfylling
+    const erKorrigering = eksisterendePeriode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
+
     const oppdatertPeriode = {
       innsendtTidspunkt: meldedato,
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       dager: dager.map(konverterTimerTilISO8601Varighet),
-      korrigering: {
-        korrigererMeldekortId: params.periodeId,
-        begrunnelse: begrunnelse,
-      },
+      // Kun sett korrigering hvis dette faktisk er en korrigering av innsendt periode
+      ...(erKorrigering && {
+        korrigering: {
+          korrigererMeldekortId: params.periodeId,
+          begrunnelse: begrunnelse,
+        },
+      }),
       kilde: {
         rolle: "Saksbehandler" as const,
         ident: saksbehandler.onPremisesSamAccountName,
