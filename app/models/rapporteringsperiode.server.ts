@@ -68,7 +68,7 @@ export async function hentPeriode(
 }
 
 export async function korrigerPeriode(request: Request, periode: IRapporteringsperiode) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${periode.personId}/meldekort/${periode.id}/korriger`;
 
   try {
     const response = await fetch(url, {
@@ -98,7 +98,7 @@ export async function oppdaterPeriode(
 
   try {
     const response = await fetch(url, {
-      method: "PUT",
+      method: "POST",
       headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
       body: JSON.stringify(oppdateringer),
     });

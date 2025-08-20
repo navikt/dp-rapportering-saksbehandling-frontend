@@ -53,7 +53,7 @@ export function Korrigering({
       // Revalider data for å oppdatere listen
       revalidator.revalidate();
 
-      navigate(`/person/${person.ident}/perioder?updated=${nyPeriodeId}`);
+      navigate(`/person/${person.id}/perioder?updated=${nyPeriodeId}`);
       setIsSubmitting(false);
     }
   }, [

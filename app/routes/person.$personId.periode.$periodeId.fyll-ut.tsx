@@ -44,6 +44,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.periodeId, "Periode ID mangler");
 
   const formData = await request.formData();
+  const personId = formData.get("personId") as string;
   const meldedato = formData.get("meldedato") as string;
   const registrertArbeidssoker = formData.get("registrertArbeidssoker") === "true";
   const begrunnelse = formData.get("begrunnelse") as string;
@@ -53,15 +54,12 @@ export async function action({ request, params }: Route.ActionArgs) {
     const saksbehandler = await hentSaksbehandler(request);
     const dager = JSON.parse(dagerData);
     const oppdatertPeriode = {
+      personId,
       innsendtTidspunkt: meldedato,
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       dager: dager.map(konverterTimerTilISO8601Varighet),
-      korrigering: {
-        korrigererMeldekortId: params.periodeId,
-        begrunnelse: begrunnelse,
-      },
       kilde: {
         rolle: "Saksbehandler" as const,
         ident: saksbehandler.onPremisesSamAccountName,
@@ -202,6 +200,7 @@ export default function FyllUtPeriode() {
             </Button>
           </div>
           {/* Skjulte input felter for form data */}
+          <input type="hidden" name="personId" value={periode.personId} />
           <input
             type="hidden"
             name="meldedato"

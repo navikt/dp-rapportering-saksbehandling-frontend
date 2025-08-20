@@ -49,22 +49,29 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
     ),
 
     http.post(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:meldekortId`,
-      async ({ request, cookies }) => {
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId`,
+      async ({ params, request, cookies }) => {
         const db = database || getDatabase(cookies);
+        const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
+        const oppdateringer = (await request.json()) as Partial<IRapporteringsperiode>;
 
-        const rapporteringsperiode = (await request.json()) as IRapporteringsperiode;
+        const eksisterendePeriode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
 
-        const korrigertPeriode = await db.korrigerPeriode(rapporteringsperiode);
+        if (!eksisterendePeriode) {
+          logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`);
+          return HttpResponse.json(null, { status: 404 });
+        }
+        const oppdatertPeriode = { ...eksisterendePeriode, ...oppdateringer };
+        db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
 
-        logger.info("Lagrer rapporteringsperiode");
+        logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
 
-        return HttpResponse.json(korrigertPeriode, { status: 200 });
+        return HttpResponse.json(oppdatertPeriode, { status: 200 });
       },
     ),
 
-    http.put(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
+    http.post(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId/korriger`,
       async ({ params, request, cookies }) => {
         const db = database || getDatabase(cookies);
         const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
@@ -78,7 +85,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         }
 
         const oppdatertPeriode = { ...eksisterendePeriode, ...oppdateringer };
-        await db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
+        db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
 
         logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
 
