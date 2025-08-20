@@ -9,6 +9,7 @@ import { PeriodeMedUke } from "~/components/rapporteringsperiode-visning/Periode
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
+import type { loader as personLoader } from "~/routes/person.$personId";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
@@ -29,13 +30,17 @@ export async function loader({
 
 export default function Periode() {
   const { periode, saksbehandler } = useLoaderData<typeof loader>();
-  const { person } = useRouteLoaderData("routes/person.$personId");
+  const personData = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
 
   const [korrigertPeriode, setKorrigertPeriode] = useState<IRapporteringsperiode>(periode);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
+
+  if (!personData?.person) {
+    return <div>Persondata ikke funnet</div>;
+  }
 
   return (
     <div className={styles.rapporteringsperiode}>
@@ -83,7 +88,7 @@ export default function Periode() {
           korrigertPeriode={korrigertPeriode}
           setKorrigertPeriode={setKorrigertPeriode}
           originalPeriode={periode}
-          person={person}
+          person={personData.person}
           saksbehandler={saksbehandler}
         />
       </div>

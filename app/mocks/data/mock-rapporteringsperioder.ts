@@ -944,12 +944,12 @@ function byggRapporteringsperioderFraKonfigurasjon(
 
     const rapporteringsperiode = lagRapporteringsperiode(
       {
+        ...periode,
         periode: { fraOgMed, tilOgMed },
         dager,
         innsendtTidspunkt:
           periode.innsendtTidspunkt ??
           format(addDays(new Date(tilOgMed), innsendtEtterTilOgMed), "yyyy-MM-dd"),
-        ...periode,
       },
       person,
     );

@@ -60,7 +60,7 @@ export function Korrigering({
     fetcher.state,
     fetcher.data,
     navigate,
-    person.ident,
+    person.id,
     isSubmitting,
     korrigertPeriode.id,
     revalidator,
@@ -74,7 +74,7 @@ export function Korrigering({
         { method: "post", action: "/api/rapportering" },
       );
     } else if (modalType === "avbryt") {
-      navigate(`/person/${person.ident}/perioder`);
+      navigate(`/person/${person.id}/perioder`);
     }
   }
 

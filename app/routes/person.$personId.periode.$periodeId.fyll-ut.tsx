@@ -8,7 +8,7 @@ import {
   Textarea,
 } from "@navikt/ds-react";
 import { useRef, useState } from "react";
-import { Form, redirect, useLoaderData, useNavigate } from "react-router";
+import { Form, redirect, useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import {
@@ -22,6 +22,7 @@ import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
+import type { loader as personLoader } from "~/routes/person.$personId";
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -53,6 +54,9 @@ export async function action({ request, params }: Route.ActionArgs) {
   try {
     const saksbehandler = await hentSaksbehandler(request);
     const dager = JSON.parse(dagerData);
+
+    // Sjekk om dette er en ekte korrigering (perioden har allerede data) eller første gangs utfylling
+
     const oppdatertPeriode = {
       personId,
       innsendtTidspunkt: meldedato,
@@ -82,6 +86,7 @@ export default function FyllUtPeriode() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const { periode } = useLoaderData<typeof loader>();
+  const personData = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -109,7 +114,7 @@ export default function FyllUtPeriode() {
 
   const handleBekreft = () => {
     if (modalType === "avbryt") {
-      navigate(`/person/${periode.ident}/perioder`);
+      navigate(`/person/${personData?.person.id}/perioder`);
     } else if (modalType === "fullfor") {
       // Submit form using React ref
       if (formRef.current) {
@@ -143,7 +148,6 @@ export default function FyllUtPeriode() {
                 mode="single"
                 selected={valgtDato}
                 onSelect={handleDateSelect}
-                fromDate={new Date(tilOgMed)}
                 toDate={new Date()}
               >
                 <DatePicker.Input

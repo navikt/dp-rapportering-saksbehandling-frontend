@@ -42,7 +42,7 @@ export default function Rapportering() {
               const link = `/person/${person.id}/perioder`;
 
               return (
-                <li key={person.ident} style={{ marginBottom: "1rem" }}>
+                <li key={person.id} style={{ marginBottom: "1rem" }}>
                   <LinkPanel href={link} border aria-label={`Gå til perioder for ${navn}`}>
                     <LinkPanel.Title>{navn}</LinkPanel.Title>
                     <LinkPanel.Description>Full demo med alle scenarioer</LinkPanel.Description>
