@@ -901,7 +901,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Klar,
-        kanSendes: false,
+        kanSendes: true,
       },
       ukerFraIDag: 6, // uke 11-12
       innsendtEtterTilOgMed: 0,

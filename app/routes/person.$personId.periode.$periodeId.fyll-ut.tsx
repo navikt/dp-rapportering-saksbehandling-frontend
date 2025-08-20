@@ -34,7 +34,7 @@ export async function loader({
 }: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode }> {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
-  const periode = await hentPeriode(request, params.periodeId);
+  const periode = await hentPeriode(request, params.personId, params.periodeId);
 
   return { periode };
 }

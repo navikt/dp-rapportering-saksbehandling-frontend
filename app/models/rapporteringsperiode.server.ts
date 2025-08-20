@@ -41,9 +41,10 @@ export async function hentRapporteringsperioder(
 
 export async function hentPeriode(
   request: Request,
+  personId: string,
   periodeId: string,
 ): Promise<IRapporteringsperiode> {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/${periodeId}`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periodeId}`;
 
   try {
     const response = await fetch(url, {
@@ -93,7 +94,7 @@ export async function oppdaterPeriode(
   periodeId: string,
   oppdateringer: Partial<IRapporteringsperiode>,
 ) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/${periodeId}`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${oppdateringer.personId}/meldekort/${periodeId}`;
 
   try {
     const response = await fetch(url, {

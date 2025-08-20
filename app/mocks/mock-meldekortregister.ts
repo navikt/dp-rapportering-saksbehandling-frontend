@@ -10,7 +10,7 @@ import { getDatabase } from "./db.utils";
 export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
   return [
     http.get(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/person/:personId/rapporteringsperioder`,
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort`,
       ({ params, cookies }) => {
         const db = database || getDatabase(cookies);
         const personId = params.personId as string;
@@ -30,26 +30,26 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
     ),
 
     http.get(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode/:rapporteringsperiodeId`,
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:meldekortId`,
       ({ params, cookies }) => {
         const db = database || getDatabase(cookies);
 
-        const rapporteringsperiodeId: string = params.rapporteringsperiodeId as string;
-        const rapporteringsperiode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
+        const meldekortId: string = params.meldekortId as string;
+        const rapporteringsperiode = db.hentRapporteringsperiodeMedId(meldekortId);
 
         if (!rapporteringsperiode) {
-          logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId}`);
+          logger.error(`Fant ikke rapporteringsperiode ${meldekortId}`);
           return HttpResponse.json(null, { status: 404 });
         }
 
-        logger.info(`Hentet rapporteringsperiode ${rapporteringsperiodeId}`);
+        logger.info(`Hentet rapporteringsperiode ${meldekortId}`);
 
         return HttpResponse.json(rapporteringsperiode);
       },
     ),
 
     http.post(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/rapporteringsperiode`,
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:meldekortId`,
       async ({ request, cookies }) => {
         const db = database || getDatabase(cookies);
 
