@@ -73,14 +73,6 @@ export default function Periode() {
             </Tag>
           </div>
           <Forhandsvisning periode={korrigertPeriode} />
-          <div className={styles.begrunnelseVisning}>
-            <Heading level="4" size="xsmall">
-              Saksbehandlers begrunnelse for korrigering
-            </Heading>
-            <p className={!korrigertPeriode.begrunnelse ? styles.obligatorisk : ""}>
-              {korrigertPeriode.begrunnelse || "Obligatorisk"}
-            </p>
-          </div>
         </div>
       </div>
       <div className={styles.korrigering}>
