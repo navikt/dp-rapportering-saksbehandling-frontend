@@ -141,13 +141,7 @@ export default function FyllUtPeriode() {
         <Form method="post" ref={formRef}>
           <div className={styles.details}>
             <div>
-              <DatePicker
-                mode="single"
-                selected={valgtDato}
-                onSelect={handleDateSelect}
-                fromDate={new Date(tilOgMed)}
-                toDate={new Date()}
-              >
+              <DatePicker mode="single" selected={valgtDato} onSelect={handleDateSelect}>
                 <DatePicker.Input
                   label="Sett meldedato"
                   placeholder="dd.mm.åååå"
