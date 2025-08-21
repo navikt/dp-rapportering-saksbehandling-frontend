@@ -1,28 +1,33 @@
 import { Tag } from "@navikt/ds-react";
-import { differenceInDays, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { formatterDato } from "~/utils/dato.utils";
-import type { TRapporteringsperiodeStatus } from "~/utils/types";
+import type { IRapporteringsperiode } from "~/utils/types";
 
 interface IProps {
-  innsendtTidspunkt: string;
-  tilOgMed: string;
-  status: TRapporteringsperiodeStatus;
+  periode: IRapporteringsperiode;
 }
 
-export const SISTE_FRIST = 7; // TODO: Endre til hvor mange dager det skal være for sent
+export function Innsendt({ periode }: IProps) {
+  const { innsendtTidspunkt, status, sisteFristForTrekk } = periode;
 
-export function Innsendt({ innsendtTidspunkt, tilOgMed, status }: IProps) {
-  if (!innsendtTidspunkt) {
-    return null;
-  }
+  const ikkeSendtInn =
+    status === RAPPORTERINGSPERIODE_STATUS.Klar || status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
+  if (ikkeSendtInn || !innsendtTidspunkt) return null;
 
-  const tilUtfylling = status === RAPPORTERINGSPERIODE_STATUS.Klar;
-  if (tilUtfylling) return null;
+  // Sjekk om det er en korrigering eller utfylling av saksbehandler
+  const erKorrigering = periode.korrigering !== null;
+  const erUtfyltAvSaksbehandler = periode.kilde?.rolle === "Saksbehandler";
 
-  const dagerForskjell = differenceInDays(parseISO(innsendtTidspunkt), parseISO(tilOgMed));
-  const forSent = dagerForskjell >= SISTE_FRIST;
+  // Ikke vis "for sent" for korreksjon eller saksbehandler-utfylling
+  const skalIgnorereFrist = erKorrigering || erUtfyltAvSaksbehandler;
+
+  // Bruk sisteFristForTrekk hvis tilgjengelig, ellers sammenlign med periode slutt
+  const forSent =
+    !skalIgnorereFrist && sisteFristForTrekk
+      ? parseISO(innsendtTidspunkt) > parseISO(sisteFristForTrekk)
+      : false;
 
   return forSent ? (
     <Tag variant="error" size="small">
