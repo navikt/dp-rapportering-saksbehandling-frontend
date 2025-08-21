@@ -1,5 +1,6 @@
 import { Button, DatePicker, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
@@ -90,23 +91,24 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
-      innsendtTidspunkt: korrigertMeldedato!.toISOString().split("T")[0], // Dette føles som en hack, må forbedres
+      innsendtTidspunkt: korrigertMeldedato
+        ? format(korrigertMeldedato, "yyyy-MM-dd")
+        : prev.innsendtTidspunkt,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       korrigering: {
         korrigererMeldekortId: prev.id,
         begrunnelse: korrigertBegrunnelse,
       },
-      innsendtDato: korrigertMeldedato?.toISOString(),
       kilde: {
         rolle: "Saksbehandler",
         ident: saksbehandler.onPremisesSamAccountName,
       },
     }));
-  }, [korrigerteDager, korrigertBegrunnelse, saksbehandler]);
+  }, [korrigerteDager, korrigertBegrunnelse, korrigertMeldedato, saksbehandler]);
 
   const harEndringer =
-    korrigertMeldedato?.toISOString() !==
-      new Date(originalPeriode.innsendtTidspunkt!).toISOString() ||
+    (korrigertMeldedato &&
+      format(korrigertMeldedato, "yyyy-MM-dd") !== originalPeriode.innsendtTidspunkt) ||
     JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(originalPeriode.dager);
 
   useEffect(() => {
@@ -137,10 +139,14 @@ export function Korrigering({
             label="Manuell meldedato"
             description="Ved behov for å korrigere meldedato"
             size="small"
-            value={formatterDato({
-              dato: korrigertMeldedato!.toISOString(),
-              format: DatoFormat.Kort,
-            })}
+            value={
+              korrigertMeldedato
+                ? formatterDato({
+                    dato: korrigertMeldedato.toISOString(),
+                    format: DatoFormat.Kort,
+                  })
+                : undefined
+            }
           />
         </DatePicker>
         <div className={styles.begrunnelse}>
