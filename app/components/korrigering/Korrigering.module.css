@@ -1,17 +1,13 @@
 .korrigering {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-content: flex-end;
-    align-items: flex-end;
-    gap: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
 }
 
 .rad {
-    gap: 48px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  gap: 48px;
+  display: flex;
+  flex-direction: row;
 }
 
 .skjema {
@@ -20,11 +16,10 @@
 
 .begrunnelse {
   flex: 1;
+  max-width: 33%;
 }
 
 .knapper {
-   gap: 12px;
-  display: flex;
-    flex-direction: row;
+  gap: 12px;
+  align-self: flex-end;
 }
-

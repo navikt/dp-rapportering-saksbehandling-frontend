@@ -59,7 +59,7 @@ p {
 }
 
 /* Overskriver Aksel */
-.transparrent-tag .navds-tag--neutral {
+/* .transparrent-tag .navds-tag--neutral {
   background-color: transparent;
   border-color: transparent;
 }
@@ -73,11 +73,6 @@ p {
   justify-self: center;
 }
 
-.korrigering-tekstfelt textarea.navds-textarea__input {
-  height: 80%;
-  margin-top: var(--a-spacing-6);
-}
-
 .korrigering-tekstfelt.navds-form-field {
   display: block;
   height: 100%;
@@ -89,4 +84,4 @@ p {
 
 .nytt-meldekort-knapp .navds-label--small {
   font-weight: normal;
-}
+} */

@@ -67,7 +67,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         }
       }}
       aria-label={`${valgt ? "Avvelg" : "Velg"} rapporteringsperiode uke ${ukenummer(
-        periode
+        periode,
       )}, ${periodeDatoTekst}`}
       aria-pressed={valgt}
     >

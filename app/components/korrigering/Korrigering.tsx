@@ -1,7 +1,10 @@
-import { Button, Textarea } from "@navikt/ds-react";
+import { Button, DatePicker, Textarea } from "@navikt/ds-react";
+import classNames from "classnames";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
+import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
 import { BekreftModal } from "../../modals/BekreftModal";
@@ -35,6 +38,9 @@ export function Korrigering({
 
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
     korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet),
+  );
+  const [korrigertMeldedato, setKorrigertMeldedato] = useState<Date | undefined>(
+    originalPeriode.innsendtTidspunkt ? new Date(originalPeriode.innsendtTidspunkt) : undefined,
   );
   const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
 
@@ -78,10 +84,16 @@ export function Korrigering({
     }
   }
 
+  function handleDateSelect(date?: Date) {
+    setKorrigertMeldedato(date);
+  }
+
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
-      innsendtTidspunkt: new Date().toISOString(),
+      innsendtTidspunkt: korrigertMeldedato
+        ? format(korrigertMeldedato, "yyyy-MM-dd")
+        : prev.innsendtTidspunkt,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       korrigering: {
         korrigererMeldekortId: prev.id,
@@ -92,9 +104,11 @@ export function Korrigering({
         ident: saksbehandler.onPremisesSamAccountName,
       },
     }));
-  }, [korrigerteDager, korrigertBegrunnelse, saksbehandler]);
+  }, [korrigerteDager, korrigertBegrunnelse, korrigertMeldedato, saksbehandler]);
 
   const harEndringer =
+    (korrigertMeldedato &&
+      format(korrigertMeldedato, "yyyy-MM-dd") !== originalPeriode.innsendtTidspunkt) ||
     JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(originalPeriode.dager);
 
   useEffect(() => {
@@ -114,6 +128,36 @@ export function Korrigering({
   return (
     <div className={styles.korrigering}>
       <div className={styles.rad}>
+        <DatePicker
+          mode="single"
+          selected={korrigertMeldedato}
+          onSelect={handleDateSelect}
+          defaultMonth={korrigertMeldedato}
+          toDate={new Date()}
+        >
+          <DatePicker.Input
+            label="Sett meldedato"
+            size="small"
+            value={
+              korrigertMeldedato
+                ? formatterDato({
+                    dato: korrigertMeldedato.toISOString(),
+                    format: DatoFormat.Kort,
+                  })
+                : undefined
+            }
+          />
+        </DatePicker>
+        <div className={styles.begrunnelse}>
+          <Textarea
+            size="small"
+            label="Begrunnelse"
+            onChange={(event) => setKorrigertBegrunnelse(event.target.value)}
+            className="korrigering-tekstfelt"
+          ></Textarea>
+        </div>
+      </div>
+      <div className={styles.rad}>
         <div className={styles.skjema}>
           <FyllUtTabell
             dager={korrigerteDager}
@@ -121,17 +165,8 @@ export function Korrigering({
             periode={originalPeriode.periode}
           />
         </div>
-        <div className={styles.begrunnelse}>
-          <Textarea
-            label="Begrunnelse:"
-            placeholder="Obligatorisk"
-            onChange={(event) => setKorrigertBegrunnelse(event.target.value)}
-            className="korrigering-tekstfelt"
-          ></Textarea>
-        </div>
       </div>
-
-      <div className={styles.knapper}>
+      <div className={classNames(styles.rad, styles.knapper)}>
         <Button variant="secondary" onClick={() => openModal("avbryt")} size="small">
           Avbryt korrigering
         </Button>
