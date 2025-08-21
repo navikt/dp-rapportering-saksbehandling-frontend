@@ -232,12 +232,16 @@ export default function FyllUtPeriode() {
           onClose={() => setModalOpen(false)}
           type={modalType}
           tittel={
-            modalType === "avbryt" ? "Vil du avbryte utfyllingen?" : "Vil du sende inn meldekortet?"
+            modalType === "avbryt" ? "Vil du avbryte utfyllingen?" : "Vil du fullføre utfyllingen?"
           }
           tekst={
-            modalType === "avbryt"
-              ? "Du er i ferd med å avbryte utfyllingen av meldekortet. Er du sikker på at du vil avbryte? Endringene du har gjort så langt vil ikke lagres."
-              : 'Du er i ferd med å sende inn meldekortet. Ved å trykke "Ja" vil meldekortet sendes til behandling.'
+            modalType === "avbryt" ? (
+              <>
+                Hvis du avbryter, vil <strong>ikke</strong> det du har fylt ut så langt lagres
+              </>
+            ) : (
+              "Ved å trykke “Ja” vil utfyllingen sendes inn."
+            )
           }
           bekreftTekst={modalType === "avbryt" ? "Ja, avbryt" : "Ja, send inn"}
           avbrytTekst={modalType === "avbryt" ? "Nei, fortsett" : "Nei, avbryt"}

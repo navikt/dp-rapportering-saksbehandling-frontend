@@ -190,9 +190,14 @@ export function Korrigering({
             : "Vil du fullføre korrigeringen?"
         }
         tekst={
-          modalType === "avbryt"
-            ? "Du er i ferd med å avbryte korrigeringen du har begynt på. Er du sikker på at du vil avbryte? Endringene du har gjort så langt vil ikke lagres."
-            : 'Du er i ferd med å fullføre korrigeringen. Ved å trykke "Ja" vil korrigeringen sendes til beregning.'
+          modalType === "avbryt" ? (
+            <>
+              Hvis du avbryter, vil <strong>ikke</strong> endringene du har gjort så langt
+              korrigeres
+            </>
+          ) : (
+            "Ved å trykke “Ja” vil korrigeringen sendes inn."
+          )
         }
         bekreftTekst={modalType === "avbryt" ? "Ja, avbryt" : "Ja, fullfør"}
         avbrytTekst={modalType === "avbryt" ? "Nei, fortsett" : "Nei, avbryt"}

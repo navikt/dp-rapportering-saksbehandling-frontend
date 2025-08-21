@@ -5,7 +5,7 @@ interface IProps {
   onClose: () => void;
   type: "avbryt" | "fullfor" | null;
   tittel: string;
-  tekst: string;
+  tekst: React.ReactNode;
   bekreftTekst: string;
   avbrytTekst: string;
   onBekreft: () => void;
