@@ -3,7 +3,7 @@ import { Button, Modal } from "@navikt/ds-react";
 interface IProps {
   open: boolean;
   onClose: () => void;
-  type: "avbryt" | "fullfor" | null;
+  type: string | null;
   tittel: string;
   tekst: React.ReactNode;
   bekreftTekst: string;
