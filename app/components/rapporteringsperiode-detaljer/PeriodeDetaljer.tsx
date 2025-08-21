@@ -37,27 +37,33 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
       ) : (
         <>
           <dl className={styles.detailList}>
-            {periode.innsendtTidspunkt && (
+            {(erKorrigert || periode?.kilde?.rolle === "Saksbehandler") && (
               <>
-                <dt>Dato for innsending:</dt>
+                {periode.innsendtTidspunkt && (
+                  <>
+                    <dt>Dato for innsending:</dt>
+                    <dd>
+                      {formatterDato({
+                        dato: periode.innsendtTidspunkt,
+                        format: DatoFormat.DagMndAarLang,
+                      })}
+                    </dd>
+                  </>
+                )}
+
+                <dt>{erKorrigert ? "Korrigert" : "Innsendt"} av:</dt>
                 <dd>
-                  {formatterDato({
-                    dato: periode.innsendtTidspunkt,
-                    format: DatoFormat.DagMndAarLang,
-                  })}
+                  {periode?.kilde?.rolle === "Saksbehandler"
+                    ? periode?.kilde?.ident
+                    : periode?.kilde?.rolle}
                 </dd>
-              </>
-            )}
-            <dt>{erKorrigert ? "Korrigert" : "Innsendt"} av:</dt>
-            <dd>
-              {periode?.kilde?.rolle === "Saksbehandler"
-                ? periode?.kilde?.ident
-                : periode?.kilde?.rolle}
-            </dd>
-            {periode.begrunnelse && (
-              <>
-                <dt>Begrunnelse:</dt>
-                <dd>{periode.begrunnelse}</dd>
+
+                {periode.begrunnelse && (
+                  <>
+                    <dt>Begrunnelse:</dt>
+                    <dd>{periode.begrunnelse}</dd>
+                  </>
+                )}
               </>
             )}
             {periode.registrertArbeidssoker && (
@@ -78,7 +84,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
               className={styles.korrigerKnapp}
               size="small"
             >
-              Korriger meldekort
+              Se og endre meldekort
             </Button>
           </div>
         </>

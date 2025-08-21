@@ -31,7 +31,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
   const [uke1, uke2] = hentUkerFraPeriode(periode);
   return (
     <table>
-      <caption className={styles.label}>Registrer aktiviteter:</caption>
+      <caption className="sr-only">Registrer aktiviteter</caption>
       <thead>
         <tr>
           <th scope="col" className="sr-only">

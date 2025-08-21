@@ -136,8 +136,7 @@ export function Korrigering({
           toDate={new Date()}
         >
           <DatePicker.Input
-            label="Manuell meldedato"
-            description="Ved behov for å korrigere meldedato"
+            label="Sett meldedato"
             size="small"
             value={
               korrigertMeldedato
@@ -151,8 +150,8 @@ export function Korrigering({
         </DatePicker>
         <div className={styles.begrunnelse}>
           <Textarea
-            label="Begrunnelse:"
-            placeholder="Obligatorisk"
+            size="small"
+            label="Begrunnelse"
             onChange={(event) => setKorrigertBegrunnelse(event.target.value)}
             className="korrigering-tekstfelt"
           ></Textarea>

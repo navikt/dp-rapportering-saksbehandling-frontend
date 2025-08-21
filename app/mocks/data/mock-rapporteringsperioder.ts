@@ -47,7 +47,7 @@ function beregnUkerFraAarsskifte(): {
 type PeriodeConfig = {
   periode: Partial<IRapporteringsperiode>;
   ukerFraIDag: number;
-  innsendtEtterTilOgMed: number;
+  innsendtEtterTilOgMed?: number;
   aktiviteter?: Array<null | Pick<IAktivitet, "type" | "timer">[]>;
 };
 
@@ -895,7 +895,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanSendes: true,
       },
       ukerFraIDag: 8, // uke 9-10
-      innsendtEtterTilOgMed: 0,
     },
     // 29. Opprettet, uke 11-12, ingen data ennå
     {
@@ -904,7 +903,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanSendes: false,
       },
       ukerFraIDag: 6, // uke 11-12
-      innsendtEtterTilOgMed: 0,
     },
   ],
 };
@@ -947,9 +945,11 @@ function byggRapporteringsperioderFraKonfigurasjon(
         ...periode,
         periode: { fraOgMed, tilOgMed },
         dager,
-        innsendtTidspunkt:
-          periode.innsendtTidspunkt ??
-          format(addDays(new Date(tilOgMed), innsendtEtterTilOgMed), "yyyy-MM-dd"),
+        innsendtTidspunkt: periode.innsendtTidspunkt
+          ? periode.innsendtTidspunkt
+          : innsendtEtterTilOgMed !== undefined
+            ? format(addDays(new Date(tilOgMed), innsendtEtterTilOgMed), "yyyy-MM-dd")
+            : null,
       },
       person,
     );
