@@ -7,6 +7,7 @@ import {
   RadioGroup,
   Textarea,
 } from "@navikt/ds-react";
+import { format } from "date-fns";
 import { useRef, useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
@@ -156,6 +157,7 @@ export default function FyllUtPeriode() {
                 selected={valgtDato}
                 onSelect={handleDateSelect}
                 toDate={new Date()}
+                defaultMonth={new Date(periode.periode.tilOgMed)}
               >
                 <DatePicker.Input
                   label="Sett meldedato"
@@ -214,7 +216,7 @@ export default function FyllUtPeriode() {
           <input
             type="hidden"
             name="meldedato"
-            value={valgtDato ? valgtDato.toISOString().split("T")[0] : ""}
+            value={valgtDato ? format(valgtDato, "yyyy-MM-dd") : ""}
           />
           <input
             type="hidden"
