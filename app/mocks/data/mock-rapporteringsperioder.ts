@@ -940,13 +940,6 @@ function byggRapporteringsperioderFraKonfigurasjon(
       };
     });
 
-    console.log(
-      periode.innsendtTidspunkt
-        ? periode.innsendtTidspunkt
-        : innsendtEtterTilOgMed !== undefined
-          ? format(addDays(new Date(tilOgMed), innsendtEtterTilOgMed), "yyyy-MM-dd")
-          : undefined,
-    );
     const rapporteringsperiode = lagRapporteringsperiode(
       {
         ...periode,
