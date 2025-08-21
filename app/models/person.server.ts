@@ -1,4 +1,7 @@
-import { DP_PERSONREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
+import {
+  DP_MELDEKORTREGISTER_AUDIENCE,
+  DP_PERSONREGISTER_AUDIENCE,
+} from "~/utils/auth.utils.server";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import type { IPerson } from "~/utils/types";
@@ -28,7 +31,7 @@ export async function hentPerson(request: Request, personId: string): Promise<IP
 
     const response = await fetch(url, {
       method: "GET",
-      headers: await getHeaders({ request, audience: DP_PERSONREGISTER_AUDIENCE }),
+      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
     });
 
     return await response.json();
