@@ -186,7 +186,6 @@ export default function FyllUtPeriode() {
               <Textarea
                 size="small"
                 label="Begrunnelse"
-                placeholder="Obligatorisk"
                 value={begrunnelse}
                 onChange={(e) => setBegrunnelse(e.target.value)}
                 rows={3}

@@ -152,7 +152,6 @@ export function Korrigering({
           <Textarea
             size="small"
             label="Begrunnelse"
-            placeholder="Obligatorisk"
             onChange={(event) => setKorrigertBegrunnelse(event.target.value)}
             className="korrigering-tekstfelt"
           ></Textarea>
