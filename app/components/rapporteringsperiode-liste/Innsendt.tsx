@@ -14,6 +14,10 @@ interface IProps {
 export const SISTE_FRIST = 7; // TODO: Endre til hvor mange dager det skal være for sent
 
 export function Innsendt({ innsendtTidspunkt, tilOgMed, status }: IProps) {
+  if (!innsendtTidspunkt) {
+    return null;
+  }
+
   const tilUtfylling = status === RAPPORTERINGSPERIODE_STATUS.Klar;
   if (tilUtfylling) return null;
 

@@ -68,22 +68,21 @@
   color: var(--a-text-subtle);
 }
 
-
 .fyllroot {
-    gap: 15px;
-    flex-direction: column;
-    margin: 15px;
-    display: flex;
+  gap: 15px;
+  flex-direction: column;
+  margin: 15px;
+  display: flex;
 }
 
-.top{
+.top {
   display: flex;
   padding: 32px;
   flex-direction: column;
   align-items: center;
   gap: 48px;
   align-self: stretch;
-  background: #FFF;
+  background: #fff;
   @media (min-width: 1024px) {
     flex-direction: row;
     justify-content: space-between;
@@ -106,48 +105,42 @@
   align-items: flex-end;
   gap: 34px;
   border-radius: 6px;
-  border: 8px solid #DDE9F5;
+  border: 8px solid #dde9f5;
 }
 
-.skjema{
+.skjema {
   width: 100%;
   display: flex;
   padding: 32px;
   flex-direction: column;
   gap: 46px;
-  background: #FFF;
+  background: #fff;
   form {
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 64px;
   }
 }
 
-.details{
-    display: flex;
-      flex-direction: column;
-      gap: 32px;
-      @media (min-width: 1024px) {
-      flex-direction: row;
-      gap: 22px;
-    }
-}
-
-.details > div {
-  flex: 1;
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
 }
 
 .begrunnelse {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+  flex: 1;
+  max-width: 33%;
 }
 
 .handlinger {
-    display: flex;
-    gap: 22px;
-    justify-content: space-between;
-      @media (min-width: 1024px) {
+  display: flex;
+  gap: 22px;
+  justify-content: space-between;
+  @media (min-width: 1024px) {
     justify-content: flex-end;
   }
 }

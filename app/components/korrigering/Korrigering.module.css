@@ -1,7 +1,7 @@
 .korrigering {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 64px;
 }
 
 .rad {
@@ -16,11 +16,10 @@
 
 .begrunnelse {
   flex: 1;
-  max-width: 50%;
+  max-width: 33%;
 }
 
 .knapper {
   gap: 12px;
   align-self: flex-end;
 }
-

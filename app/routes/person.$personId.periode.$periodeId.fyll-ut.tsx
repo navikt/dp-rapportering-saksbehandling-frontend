@@ -142,13 +142,13 @@ export default function FyllUtPeriode() {
       <div className={styles.skjema}>
         <div className={styles.title}>
           <Heading level="1" size="medium">
-            Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
+            Fyll ut meldekort
           </Heading>
-          <BodyShort size="small">(utfylles av saksbehandler)</BodyShort>
+          <BodyShort size="small">
+            Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
+          </BodyShort>
         </div>
-        <Heading level="2" size="small" className={styles.skjemaTittel}>
-          Fyll ut meldekort
-        </Heading>
+
         <Form method="post" ref={formRef}>
           <div className={styles.details}>
             <div>
@@ -182,14 +182,14 @@ export default function FyllUtPeriode() {
                 <Radio value="false">Nei</Radio>
               </RadioGroup>
             </div>
-            <div>
+            <div className={styles.begrunnelse}>
               <Textarea
                 size="small"
                 label="Begrunnelse"
+                placeholder="Obligatorisk"
                 value={begrunnelse}
                 onChange={(e) => setBegrunnelse(e.target.value)}
                 rows={3}
-                className={styles.begrunnelse}
               />
             </div>
           </div>
