@@ -32,10 +32,10 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
       searchParams.delete("updated");
       setSearchParams(searchParams, { replace: true });
 
-      // Fjern highlight etter 2 blinkninger (1 sekund + buffer)
+      // Fjern highlight etter animasjonen er ferdig
       setTimeout(() => {
         setIsHighlighted(false);
-      }, 1200);
+      }, 3600);
     }
   }, [searchParams, setSearchParams, periode.id]);
   const radKlasse = classNames({
@@ -101,11 +101,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         <TypeAktivitet periode={periode} />
       </Table.DataCell>
       <Table.DataCell textSize="small" className={radKlasse}>
-        <Innsendt
-          innsendtTidspunkt={periode.innsendtTidspunkt ?? ""}
-          tilOgMed={periode.periode.tilOgMed}
-          status={periode.status}
-        />
+        <Innsendt periode={periode} />
       </Table.DataCell>
       <Table.DataCell textSize="small" className={radKlasse}>
         {periode.sisteFristForTrekk ? formatterDato({ dato: periode.sisteFristForTrekk }) : ""}

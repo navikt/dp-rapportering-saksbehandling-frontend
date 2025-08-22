@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
+import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
@@ -45,9 +46,9 @@ export function Korrigering({
   const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"avbryt" | "fullfor" | null>(null);
+  const [modalType, setModalType] = useState<string | null>(null);
 
-  function openModal(type: "avbryt" | "fullfor") {
+  function openModal(type: string) {
     setModalType(type);
     setModalOpen(true);
   }
@@ -73,13 +74,13 @@ export function Korrigering({
   ]);
 
   function handleBekreft() {
-    if (modalType === "fullfor") {
+    if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       setIsSubmitting(true);
       fetcher.submit(
         { rapporteringsperiode: JSON.stringify(korrigertPeriode) },
         { method: "post", action: "/api/rapportering" },
       );
-    } else if (modalType === "avbryt") {
+    } else if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       navigate(`/person/${person.id}/perioder`);
     }
   }
@@ -167,12 +168,16 @@ export function Korrigering({
         </div>
       </div>
       <div className={classNames(styles.rad, styles.knapper)}>
-        <Button variant="secondary" onClick={() => openModal("avbryt")} size="small">
+        <Button
+          variant="secondary"
+          onClick={() => openModal(MODAL_ACTION_TYPE.AVBRYT)}
+          size="small"
+        >
           Avbryt korrigering
         </Button>
         <Button
           variant="primary"
-          onClick={() => openModal("fullfor")}
+          onClick={() => openModal(MODAL_ACTION_TYPE.FULLFOR)}
           disabled={!korrigertBegrunnelse.trim() || !harEndringer}
           size="small"
         >
@@ -184,17 +189,22 @@ export function Korrigering({
         onClose={() => setModalOpen(false)}
         type={modalType}
         tittel={
-          modalType === "avbryt"
+          modalType === MODAL_ACTION_TYPE.AVBRYT
             ? "Vil du avbryte korrigeringen?"
             : "Vil du fullføre korrigeringen?"
         }
         tekst={
-          modalType === "avbryt"
-            ? "Du er i ferd med å avbryte korrigeringen du har begynt på. Er du sikker på at du vil avbryte? Endringene du har gjort så langt vil ikke lagres."
-            : 'Du er i ferd med å fullføre korrigeringen. Ved å trykke "Ja" vil korrigeringen sendes til beregning.'
+          modalType === MODAL_ACTION_TYPE.AVBRYT ? (
+            <>
+              Hvis du avbryter, vil <strong>ikke</strong> endringene du har gjort så langt
+              korrigeres
+            </>
+          ) : (
+            "Ved å trykke “Ja” vil korrigeringen sendes inn."
+          )
         }
-        bekreftTekst={modalType === "avbryt" ? "Ja, avbryt" : "Ja, fullfør"}
-        avbrytTekst={modalType === "avbryt" ? "Nei, fortsett" : "Nei, avbryt"}
+        bekreftTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, fullfør"}
+        avbrytTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"}
         onBekreft={handleBekreft}
       />
     </div>

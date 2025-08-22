@@ -43,11 +43,10 @@ function beregnUkerFraAarsskifte(): {
   };
 }
 
-// Type definition for periode configuration
+// Typedefinisjon for periodekonfigurasjon
 type PeriodeConfig = {
   periode: Partial<IRapporteringsperiode>;
   ukerFraIDag: number;
-  innsendtEtterTilOgMed?: number;
   aktiviteter?: Array<null | Pick<IAktivitet, "type" | "timer">[]>;
 };
 
@@ -61,9 +60,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-02-13", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: UKER_FRA_AARSSKIFTE.uke06_07, // Uke 06-07 (nyest)
-      innsendtEtterTilOgMed: 1,
       aktiviteter: [
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("3") }],
@@ -85,18 +84,18 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-01-29", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: UKER_FRA_AARSSKIFTE.uke04_05, // Uke 04-05
-      innsendtEtterTilOgMed: 1,
       aktiviteter: lagArbeidUker("5"),
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-01-15", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: UKER_FRA_AARSSKIFTE.uke02_03, // Uke 02-03 (beregning feilet)
-      innsendtEtterTilOgMed: 1,
       aktiviteter: [
         [{ type: AKTIVITET_TYPE.Utdanning }], // Mandag
         null,
@@ -118,9 +117,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-01-01", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: UKER_FRA_AARSSKIFTE.uke52_01, // Uke 52-01 (eldst, fra årsskiftet)
-      innsendtEtterTilOgMed: 1,
       aktiviteter: [
         [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("3") }], // Mandag
         null,
@@ -146,18 +145,18 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-bruker-1",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-06-17", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 10,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
         id: "periode-korrigert-bruker-2-original",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-06-29", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 8,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
@@ -172,9 +171,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
           rolle: "Bruker" as const,
           ident: "987654321",
         },
+        innsendtTidspunkt: "2024-07-01", // 3 dager etter tilOgMed (korrigering sendt inn senere)
       },
       ukerFraIDag: 8,
-      innsendtEtterTilOgMed: 3, // Korrigert 3 dager senere
       aktiviteter: lagArbeidUker("7.5"), // Korrigert: 7.5 timer/dag
     },
   ],
@@ -185,18 +184,18 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "period-korrigert-saksbehandler-1",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-06-17", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 10,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
         id: "period-korrigert-saksbehandler-2-original",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-06-29", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 8,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
@@ -211,6 +210,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
           rolle: "Saksbehandler" as const,
           ident: "Z123456",
         },
+        innsendtTidspunkt: "2024-07-03", // 5 dager etter tilOgMed (saksbehandlerkorrigering)
       },
       aktiviteter: [
         null,
@@ -229,7 +229,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 8,
-      innsendtEtterTilOgMed: 5, // Saksbehandler korrigerte 5 dager senere
     },
   ],
 
@@ -238,25 +237,26 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-07-22", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 5,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2025-08-20", // Nylig dato - sen innlevering
+        sisteFristForTrekk: "2025-08-19", // Dagen før innlevering - skal vises som sen
       },
       ukerFraIDag: 7,
-      innsendtEtterTilOgMed: 9, // 9 dager etter frist
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-06-24", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 9,
-      innsendtEtterTilOgMed: 1,
     },
   ],
 
@@ -265,26 +265,26 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Klar,
         registrertArbeidssoker: true,
+        // Merk: Klar-status perioder har ikke innsendtTidspunkt ennå
       },
       ukerFraIDag: 2,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-08-05", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 4,
-      innsendtEtterTilOgMed: 1,
       aktiviteter: lagAlternerendeArbeidsUker("2"),
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-07-22", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 6,
-      innsendtEtterTilOgMed: 1,
       aktiviteter: lagArbeidUker("3"),
     },
   ],
@@ -294,41 +294,41 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-08-19", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 2,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-08-05", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 4,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-07-22", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 6,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-07-08", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 8,
-      innsendtEtterTilOgMed: 1,
     },
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
+        innsendtTidspunkt: "2024-06-24", // 1 dag etter tilOgMed (eksempeldato)
       },
       ukerFraIDag: 10,
-      innsendtEtterTilOgMed: 1,
     },
   ],
 
@@ -339,10 +339,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: "2023-03-26", // Samme dag som tilOgMed (i tide)
       },
       aktiviteter: lagArbeidUker("4"),
       ukerFraIDag: 58, // uke 11-12
-      innsendtEtterTilOgMed: 0,
     },
     // 2. Ferdig beregnet, uke 13-14, Arbeid 4 timer hver onsdag
     {
@@ -350,6 +350,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: "2023-04-09", // Samme dag som tilOgMed (i tide)
       },
       aktiviteter: [
         null,
@@ -368,7 +369,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 56, // uke 13-14
-      innsendtEtterTilOgMed: 0,
     },
     // 3. Ferdig beregnet, uke 15-16, Arbeid 4 timer hver onsdag
     {
@@ -376,6 +376,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: "2023-04-23", // Samme dag som tilOgMed (i tide)
       },
       aktiviteter: [
         null,
@@ -394,7 +395,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 54, // uke 15-16
-      innsendtEtterTilOgMed: 0,
     },
     // 4. Ferdig beregnet, uke 17-18, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
@@ -402,6 +402,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: "2023-05-07", // Samme dag som tilOgMed (i tide)
       },
       aktiviteter: [
         null, // mandag uke 1
@@ -420,7 +421,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null, // helg
       ],
       ukerFraIDag: 52, // uke 17-18
-      innsendtEtterTilOgMed: 0,
     },
     // 5. Ferdig beregnet, uke 19-20, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
@@ -428,6 +428,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: "2023-05-21", // Samme dag som tilOgMed (i tide)
       },
       aktiviteter: [
         null, // mandag uke 1
@@ -446,7 +447,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null, // helg
       ],
       ukerFraIDag: 50, // uke 19-20
-      innsendtEtterTilOgMed: 0,
     },
     // 6. Ferdig beregnet, uke 21-22, Syk torsdag uke 22, Sendt inn en dag etter fristen
     {
@@ -454,6 +454,8 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: "2025-08-22", // Sen innlevering - etter sisteFristForTrekk
+        sisteFristForTrekk: "2025-08-21", // Tilpasset frist - skal vises som rød tag
       },
       aktiviteter: [
         null,
@@ -472,7 +474,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 48, // uke 21-22
-      innsendtEtterTilOgMed: 1,
     },
     // 7. Korrigering Innsendt, uke 23-24, Glemt å føre aktiviteter
     {
@@ -483,11 +484,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         korrigering: {
           korrigererMeldekortId: "period-korrigert-bruker-2-original",
         },
-        innsendtTidspunkt: null, // Vil bli satt automatisk basert på perioden
+        innsendtTidspunkt: "2023-06-09", // 4 dager etter tilOgMed (korrigering)
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
       ukerFraIDag: 46, // uke 23-24 (samme som over, korrigering)
-      innsendtEtterTilOgMed: 4,
     },
     // 8. Ferdig beregnet, uke 23-24, Ferie hele uke 23
     {
@@ -495,6 +495,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         [{ type: AKTIVITET_TYPE.Fravaer }],
@@ -513,7 +514,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 46, // uke 23-24
-      innsendtEtterTilOgMed: 0,
     },
     // 9. Ferdig beregnet, uke 25-26, Arbeid 4 timer hver onsdag
     {
@@ -521,6 +521,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -539,7 +540,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 44, // uke 25-26
-      innsendtEtterTilOgMed: 0,
     },
     // 10. Ferdig beregnet, uke 27-28, Arbeid 4 timer hver onsdag
     {
@@ -547,6 +547,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -565,7 +566,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 42, // uke 27-28
-      innsendtEtterTilOgMed: 0,
     },
     // 11. Ferdig beregnet, uke 29-30, ingen aktiviteter
     {
@@ -573,9 +573,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       ukerFraIDag: 40, // uke 29-30
-      innsendtEtterTilOgMed: 0,
     },
     // 12. Ferdig beregnet, uke 31-32, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
@@ -583,6 +583,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -601,7 +602,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 38, // uke 31-32
-      innsendtEtterTilOgMed: 0,
     },
     // 13. Ferdig beregnet, uke 33-34, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
@@ -609,6 +609,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -627,7 +628,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 36, // uke 33-34
-      innsendtEtterTilOgMed: 0,
     },
     // 14. Ferdig beregnet, uke 35-36, ingen aktiviteter
     {
@@ -635,9 +635,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       ukerFraIDag: 34, // uke 35-36
-      innsendtEtterTilOgMed: 0,
     },
     // 15. Ferdig beregnet, uke 37-38, ingen aktiviteter
     {
@@ -645,9 +645,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       ukerFraIDag: 32, // uke 37-38
-      innsendtEtterTilOgMed: 0,
     },
     // 16. Korrigering Innsendt, uke 39-40, Glemt å føre aktiviteter, Saksbehandler
     {
@@ -658,11 +658,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         korrigering: {
           korrigererMeldekortId: "period-korrigert-bruker-2-original",
         },
-        innsendtTidspunkt: null, // Vil bli satt automatisk basert på perioden
+        innsendtTidspunkt: "2023-10-03", // 1 dag etter tilOgMed (saksbehandlerkorrigering)
         kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
       },
       ukerFraIDag: 30, // uke 39-40 (samme som under, korrigering)
-      innsendtEtterTilOgMed: 1,
     },
     // 17. Ferdig beregnet, uke 39-40, Arbeid 4h onsdag, Syk torsdag-fredag uke 40
     {
@@ -670,6 +669,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -688,7 +688,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 30, // uke 39-40
-      innsendtEtterTilOgMed: 0,
     },
     // 18. Ferdig beregnet, uke 41-42, ingen aktiviteter
     {
@@ -696,9 +695,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       ukerFraIDag: 28, // uke 41-42
-      innsendtEtterTilOgMed: 0,
     },
     // 19. Ferdig beregnet, uke 43-44, Arbeid 4 timer hver onsdag
     {
@@ -706,6 +705,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -724,7 +724,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 26, // uke 43-44
-      innsendtEtterTilOgMed: 0,
     },
     // 20. Ferdig beregnet, uke 45-46, ingen aktiviteter
     {
@@ -732,9 +731,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       ukerFraIDag: 24, // uke 45-46
-      innsendtEtterTilOgMed: 0,
     },
     // 21. Ferdig beregnet, uke 47-48, Arbeid 4 timer hver onsdag
     {
@@ -742,6 +741,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -760,7 +760,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 22, // uke 47-48
-      innsendtEtterTilOgMed: 0,
     },
     // 22. Ferdig beregnet, uke 49-50, ingen aktiviteter
     {
@@ -768,9 +767,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       ukerFraIDag: 20, // uke 49-50
-      innsendtEtterTilOgMed: 0,
     },
     // 23. Ferdig beregnet, uke 51-52, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
@@ -778,6 +777,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -796,7 +796,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 18, // uke 51-52
-      innsendtEtterTilOgMed: 0,
     },
     // 24. Ferdig beregnet, uke 1-2, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
@@ -804,6 +803,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -822,7 +822,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 16, // uke 1-2
-      innsendtEtterTilOgMed: 0,
     },
     // 25. Ferdig beregnet, uke 3-4, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
@@ -830,6 +829,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -848,7 +848,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 14, // uke 3-4
-      innsendtEtterTilOgMed: 0,
     },
     // 26. Ferdig beregnet, uke 5-6, Arbeid 4 timer hver onsdag
     {
@@ -856,6 +855,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       aktiviteter: [
         null,
@@ -874,7 +874,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
       ],
       ukerFraIDag: 12, // uke 5-6
-      innsendtEtterTilOgMed: 0,
     },
     // 27. Feilet, uke 7-8
     {
@@ -882,9 +881,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        innsendtTidspunkt: null, // Blir beregnet dynamisk basert på periode.tilOgMed
       },
       ukerFraIDag: 10, // uke 7-8
-      innsendtEtterTilOgMed: 0,
     },
     // 28. Opprettet, uke 9-10, ikke registrert arbeidssøker
     {
@@ -894,6 +893,8 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanSendes: false,
         registrertArbeidssoker: false,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        kanSendes: true,
+        // Merk: Ikke sendt ennå, så ingen innsendtTidspunkt
       },
       ukerFraIDag: 8, // uke 9-10
     },
@@ -902,6 +903,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Klar,
         kanSendes: false,
+        // Merk: Ikke opprettet ennå, så ingen innsendtTidspunkt
       },
       ukerFraIDag: 6, // uke 11-12
     },
@@ -917,7 +919,7 @@ function byggRapporteringsperioderFraKonfigurasjon(
 ): IRapporteringsperiode[] {
   const rapporteringsperioder: IRapporteringsperiode[] = [];
 
-  periodedefinisjon.forEach(({ periode, ukerFraIDag, innsendtEtterTilOgMed, aktiviteter }) => {
+  periodedefinisjon.forEach(({ periode, ukerFraIDag, aktiviteter }) => {
     const dagensDato = new Date();
     const startDato =
       ukerFraIDag >= 0
@@ -946,11 +948,8 @@ function byggRapporteringsperioderFraKonfigurasjon(
         ...periode,
         periode: { fraOgMed, tilOgMed },
         dager,
-        innsendtTidspunkt: periode.innsendtTidspunkt
-          ? periode.innsendtTidspunkt
-          : innsendtEtterTilOgMed !== undefined
-            ? format(addDays(new Date(tilOgMed), innsendtEtterTilOgMed), "yyyy-MM-dd")
-            : null,
+        innsendtTidspunkt:
+          periode.innsendtTidspunkt === null ? tilOgMed : periode.innsendtTidspunkt,
       },
       person,
     );
