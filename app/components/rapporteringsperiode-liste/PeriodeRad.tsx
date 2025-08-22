@@ -101,11 +101,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         <TypeAktivitet periode={periode} />
       </Table.DataCell>
       <Table.DataCell textSize="small" className={radKlasse}>
-        <Innsendt
-          innsendtTidspunkt={periode.innsendtTidspunkt ?? ""}
-          tilOgMed={periode.periode.tilOgMed}
-          status={periode.status}
-        />
+        <Innsendt periode={periode} />
       </Table.DataCell>
       <Table.DataCell textSize="small" className={radKlasse}>
         {periode.sisteFristForTrekk ? formatterDato({ dato: periode.sisteFristForTrekk }) : ""}
