@@ -27,3 +27,8 @@ export const KORT_TYPE = {
   Manuell_arena: "09",
   Korrigert_elektronisk: "10",
 } as const;
+
+export const MODAL_ACTION_TYPE = {
+  AVBRYT: "avbryt",
+  FULLFOR: "fullfor",
+} as const;

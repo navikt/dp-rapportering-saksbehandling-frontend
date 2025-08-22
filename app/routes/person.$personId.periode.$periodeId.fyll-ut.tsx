@@ -24,7 +24,7 @@ import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.serv
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MODAL_ACTION_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -105,7 +105,7 @@ export default function FyllUtPeriode() {
   const [begrunnelse, setBegrunnelse] = useState<string>("");
   const [valgtDato, setValgtDato] = useState<Date | undefined>();
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"avbryt" | "fullfor" | null>(null);
+  const [modalType, setModalType] = useState<string | null>(null);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
@@ -115,15 +115,15 @@ export default function FyllUtPeriode() {
     setValgtDato(date);
   };
 
-  const openModal = (type: "avbryt" | "fullfor") => {
+  const openModal = (type: string) => {
     setModalType(type);
     setModalOpen(true);
   };
 
   const handleBekreft = () => {
-    if (modalType === "avbryt") {
+    if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       navigate(`/person/${personData?.person.id}/perioder`);
-    } else if (modalType === "fullfor") {
+    } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       // Submit form using React ref
       if (formRef.current) {
         formRef.current.submit();
@@ -134,7 +134,7 @@ export default function FyllUtPeriode() {
   const handleAvbryt = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    openModal("avbryt");
+    openModal(MODAL_ACTION_TYPE.AVBRYT);
   };
 
   return (
@@ -206,7 +206,7 @@ export default function FyllUtPeriode() {
               variant="primary"
               size="small"
               disabled={registrertArbeidssoker === null || !valgtDato || begrunnelse.trim() === ""}
-              onClick={() => openModal("fullfor")}
+              onClick={() => openModal(MODAL_ACTION_TYPE.FULLFOR)}
             >
               Send inn meldekort
             </Button>
@@ -231,15 +231,21 @@ export default function FyllUtPeriode() {
           onClose={() => setModalOpen(false)}
           type={modalType}
           tittel={
-            modalType === "avbryt" ? "Vil du avbryte utfyllingen?" : "Vil du sende inn meldekortet?"
+            modalType === MODAL_ACTION_TYPE.AVBRYT
+              ? "Vil du avbryte utfyllingen?"
+              : "Vil du fullføre utfyllingen?"
           }
           tekst={
-            modalType === "avbryt"
-              ? "Du er i ferd med å avbryte utfyllingen av meldekortet. Er du sikker på at du vil avbryte? Endringene du har gjort så langt vil ikke lagres."
-              : 'Du er i ferd med å sende inn meldekortet. Ved å trykke "Ja" vil meldekortet sendes til behandling.'
+            modalType === MODAL_ACTION_TYPE.AVBRYT ? (
+              <>
+                Hvis du avbryter, vil <strong>ikke</strong> det du har fylt ut så langt lagres
+              </>
+            ) : (
+              "Ved å trykke “Ja” vil utfyllingen sendes inn."
+            )
           }
-          bekreftTekst={modalType === "avbryt" ? "Ja, avbryt" : "Ja, send inn"}
-          avbrytTekst={modalType === "avbryt" ? "Nei, fortsett" : "Nei, avbryt"}
+          bekreftTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, send inn"}
+          avbrytTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"}
           onBekreft={handleBekreft}
         />
       </div>
