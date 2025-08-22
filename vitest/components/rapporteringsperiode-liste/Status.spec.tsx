@@ -7,7 +7,7 @@ import type { IRapporteringsperiode, TRapporteringsperiodeStatus } from "~/utils
 
 const createMockPeriode = (
   status: TRapporteringsperiodeStatus,
-  korrigering: { korrigererMeldekortId: string; begrunnelse: string } | null = null
+  korrigering: { korrigererMeldekortId: string; begrunnelse: string } | null = null,
 ): IRapporteringsperiode => ({
   id: "test-id",
   ident: "test-ident",
@@ -33,7 +33,7 @@ const createMockPeriode = (
 
 describe("Status", () => {
   test("skal vise info tag for status TilUtfylling", () => {
-    const mockPeriode = createMockPeriode(RAPPORTERINGSPERIODE_STATUS.Klar);
+    const mockPeriode = createMockPeriode(RAPPORTERINGSPERIODE_STATUS.TilUtfylling);
     const { container } = render(<Status periode={mockPeriode} />);
 
     expect(container.querySelector(".navds-tag--info")).toBeInTheDocument();

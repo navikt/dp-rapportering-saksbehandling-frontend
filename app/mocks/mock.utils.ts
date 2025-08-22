@@ -77,7 +77,7 @@ export function lagRapporteringsperiode(
     id: createId(),
     personId: person?.id || createId(),
     ident: person?.ident || createFnr().ident,
-    status: RAPPORTERINGSPERIODE_STATUS.Klar,
+    status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
     type: KORT_TYPE.Elektronisk,
     periode: {
       fraOgMed,
@@ -98,9 +98,13 @@ export function lagRapporteringsperiode(
   };
 
   meldekort.kanSendesFra = format(subDays(new Date(meldekort.periode.tilOgMed), 1), "yyyy-MM-dd");
-  meldekort.sisteFristForTrekk =
-    meldekort.sisteFristForTrekk ||
-    format(addDays(new Date(meldekort.periode.tilOgMed), 8), "yyyy-MM-dd");
+
+  // Korrigerte meldekort skal ikke ha sisteFristForTrekk
+  if (!meldekort.korrigering) {
+    meldekort.sisteFristForTrekk =
+      meldekort.sisteFristForTrekk ||
+      format(addDays(new Date(meldekort.periode.tilOgMed), 8), "yyyy-MM-dd");
+  }
 
   if (!props.dager) {
     meldekort.dager = meldekort.dager.map((dag, index) => ({

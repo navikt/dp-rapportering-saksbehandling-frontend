@@ -1,7 +1,7 @@
-import { Button, Tag } from "@navikt/ds-react";
+import { Alert, Button, Tag } from "@navikt/ds-react";
 
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
+import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import styles from "./PeriodeDetaljer.module.css";
@@ -14,17 +14,13 @@ interface IProps {
 export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.korrigering?.korrigererMeldekortId;
-  const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Klar;
+  const kanSendes = periode.kanSendes;
+  const kanEndres = periode.kanEndres;
+  const erSendtForSent = erMeldekortSendtForSent(periode);
 
-  const forTidligInnsending =
-    !periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Klar;
-
-  if (forTidligInnsending) {
-    return null;
-  }
   return (
     <div className={styles.periodeDetaljer}>
-      {kanFyllesUt ? (
+      {kanSendes ? (
         <div>
           <Button
             as="a"
@@ -39,7 +35,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
       ) : (
         <>
           <dl className={styles.detailList}>
-            {(erKorrigert || periode?.kilde?.rolle === "Saksbehandler") && (
+            {erKorrigert && (
               <>
                 {periode.innsendtTidspunkt && (
                   <>
@@ -53,7 +49,12 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
                   </>
                 )}
 
-                <dt>{erKorrigert ? "Korrigert" : "Innsendt"} av:</dt>
+                <dt>
+                  {erKorrigert && periode?.kilde?.rolle === "Saksbehandler"
+                    ? "Korrigert"
+                    : "Innsendt"}{" "}
+                  av:
+                </dt>
                 <dd>
                   {periode?.kilde?.rolle === "Saksbehandler"
                     ? periode?.kilde?.ident
@@ -79,16 +80,21 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
               </>
             )}
           </dl>
-          <div>
-            <Button
-              as="a"
-              href={`/person/${personId}/periode/${periode.id}/korriger`}
-              className={styles.korrigerKnapp}
-              size="small"
-            >
-              Korriger meldekort
-            </Button>
-          </div>
+          {erSendtForSent && (
+            <Alert variant="warning">Dette meldekortet er sendt inn etter fristen</Alert>
+          )}
+          {kanEndres && (
+            <div>
+              <Button
+                as="a"
+                href={`/person/${personId}/periode/${periode.id}/korriger`}
+                className={styles.korrigerKnapp}
+                size="small"
+              >
+                Korriger meldekort
+              </Button>
+            </div>
+          )}
         </>
       )}
     </div>

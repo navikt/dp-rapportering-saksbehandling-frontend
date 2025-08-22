@@ -7,16 +7,12 @@ interface IProps {
   periode: IRapporteringsperiode;
 }
 
-const getVariant = (
-  status: TRapporteringsperiodeStatus,
-): "info" | "success" | "warning" | "error" | "neutral" => {
+const getVariant = (status: TRapporteringsperiodeStatus): "info" | "success" => {
   switch (status) {
-    case RAPPORTERINGSPERIODE_STATUS.Klar:
-      return "info";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "success";
     default:
-      return "neutral";
+      return "info";
   }
 };
 
@@ -25,7 +21,7 @@ const getStatusText = (periode: IRapporteringsperiode): string => {
     return "Innsendt";
   }
 
-  if (periode.status === RAPPORTERINGSPERIODE_STATUS.Klar && periode.kanSendes) {
+  if (periode.kanSendes) {
     return "Klar til utfylling";
   }
 
