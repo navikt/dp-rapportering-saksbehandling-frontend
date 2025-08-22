@@ -12,9 +12,7 @@ interface IProps {
 export function Innsendt({ periode }: IProps) {
   const { innsendtTidspunkt, status, sisteFristForTrekk } = periode;
 
-  const ikkeSendtInn =
-    status === RAPPORTERINGSPERIODE_STATUS.Klar || status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
-  if (ikkeSendtInn || !innsendtTidspunkt) return null;
+  if (status === RAPPORTERINGSPERIODE_STATUS.Klar || !innsendtTidspunkt) return null;
 
   // Sjekk om det er en korrigering eller utfylling av saksbehandler
   const erKorrigering = periode.korrigering !== null;
