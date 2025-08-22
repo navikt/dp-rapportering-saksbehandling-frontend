@@ -46,7 +46,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.periodeId, "Periode ID mangler");
 
   const formData = await request.formData();
-  const personId = formData.get("personId") as string;
+  const personId = params.personId;
   const meldedato = formData.get("meldedato") as string;
   const registrertArbeidssoker = formData.get("registrertArbeidssoker") === "true";
   const begrunnelse = formData.get("begrunnelse") as string;
@@ -54,13 +54,17 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   try {
     const saksbehandler = await hentSaksbehandler(request);
+
     const dager = JSON.parse(dagerData);
 
     // Sjekk om dette er en ekte korrigering (perioden har allerede data) eller første gangs utfylling
 
+    const periode = await hentPeriode(request, personId, params.periodeId);
+
     const oppdatertPeriode = {
+      ...periode,
       personId,
-      innsendtTidspunkt: meldedato,
+      innsendtTidspunkt: new Date().toISOString(),
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
@@ -69,6 +73,8 @@ export async function action({ request, params }: Route.ActionArgs) {
         rolle: "Saksbehandler" as const,
         ident: saksbehandler.onPremisesSamAccountName,
       },
+      referanseId: periode.id,
+      meldedato,
     };
 
     // Oppdater perioden via mock/backend
