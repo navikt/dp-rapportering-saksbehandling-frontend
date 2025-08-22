@@ -84,7 +84,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
               className={styles.korrigerKnapp}
               size="small"
             >
-              Se og endre meldekort
+              Korriger meldekort
             </Button>
           </div>
         </>

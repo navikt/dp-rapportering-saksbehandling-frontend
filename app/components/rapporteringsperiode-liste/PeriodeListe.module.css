@@ -48,7 +48,6 @@
   background-color: var(--a-surface-hover);
 }
 
-
 /* === Fallback for alle table rows i periode-listen === */
 .periodeListe .navds-table__row {
   cursor: pointer;
@@ -69,7 +68,7 @@
 }
 
 .periodeListe__week--pendingChange::after {
-  content: '';
+  content: "";
   position: absolute;
   left: -8px;
   top: 50%;
@@ -82,16 +81,31 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes highlightBlink {
-  0% { background-color: transparent; }
-  25% { background-color:   var(--a-surface-action-subtle); }
-  50% { background-color: transparent; }
-  75% { background-color:   var(--a-surface-action-subtle); }
-  100% { background-color: transparent; }
+  0% {
+    background-color: transparent;
+  }
+  25% {
+    background-color: var(--a-surface-action-subtle);
+  }
+  50% {
+    background-color: transparent;
+  }
+  75% {
+    background-color: var(--a-surface-action-subtle);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 /* === Checkbox-sentrering === */
@@ -125,13 +139,13 @@
   border-top: 2px solid var(--a-border-action);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  
+
   /* Smooth transitions for show/hide */
   transform: translateY(0);
   opacity: 1;
   visibility: visible;
   max-height: 200px;
-  transition: 
+  transition:
     transform 0.4s ease-out,
     opacity 0.4s ease-out,
     visibility 0.4s ease-out,
@@ -184,7 +198,7 @@
 }
 
 .changeIndicator::after {
-  content: '';
+  content: "";
   position: absolute;
   top: -6px;
   right: -6px;
@@ -199,7 +213,7 @@
 /* Button animation */
 .yearGrouped__actions button {
   animation: slideUpFadeIn 0.4s ease-out;
-  transition: 
+  transition:
     transform 0.2s ease-out,
     background-color 0.25s ease-out,
     border-color 0.25s ease-out,

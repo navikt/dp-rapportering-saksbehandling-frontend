@@ -59,6 +59,15 @@ p {
 }
 
 /* Overskriver Aksel */
+.navds-table__row:has(+ .navds-table__row--selected)
+  :is(.navds-table__header-cell, .navds-table__data-cell) {
+  border-left-color: transparent !important;
+}
+
+.navds-table__row--selected :is(.navds-table__header-cell, .navds-table__data-cell) {
+  border-left-color: transparent !important;
+}
+
 /* .transparrent-tag .navds-tag--neutral {
   background-color: transparent;
   border-color: transparent;
