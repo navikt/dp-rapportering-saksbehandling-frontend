@@ -94,27 +94,28 @@
   0% {
     background-color: var(--a-blue-100);
   }
-  10% { 
+  10% {
     background-color: transparent;
   }
-  20% { 
+  20% {
     background-color: var(--a-blue-100);
   }
-  30% { 
+  30% {
     background-color: transparent;
   }
-  40% { 
+  40% {
     background-color: var(--a-blue-100);
   }
-  50% { 
+  50% {
     background-color: var(--a-blue-100);
   }
   75% {
     background-color: var(--a-surface-action-subtle);
   }
-  100% { 
+  100% {
     background-color: transparent;
   }
+}
 
 /* === Checkbox-sentrering === */
 .periodeListe__checkbox {

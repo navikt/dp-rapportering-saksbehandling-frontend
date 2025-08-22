@@ -888,12 +888,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 28. Opprettet, uke 9-10, ikke registrert arbeidssøker
     {
       periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Klar,
         status: RAPPORTERINGSPERIODE_STATUS.Opprettet,
         kanSendes: false,
         registrertArbeidssoker: false,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
-        kanSendes: true,
         // Merk: Ikke sendt ennå, så ingen innsendtTidspunkt
       },
       ukerFraIDag: 8, // uke 9-10
