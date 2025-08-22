@@ -8,11 +8,9 @@ interface IProps {
 }
 
 const getVariant = (
-  status: TRapporteringsperiodeStatus
+  status: TRapporteringsperiodeStatus,
 ): "info" | "success" | "warning" | "error" | "neutral" => {
   switch (status) {
-    case RAPPORTERINGSPERIODE_STATUS.Opprettet:
-      return "info";
     case RAPPORTERINGSPERIODE_STATUS.Klar:
       return "info";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
@@ -22,17 +20,16 @@ const getVariant = (
   }
 };
 
-const getStatusText = (status: TRapporteringsperiodeStatus): string => {
-  switch (status) {
-    case RAPPORTERINGSPERIODE_STATUS.Opprettet:
-      return "Meldekort opprettet";
-    case RAPPORTERINGSPERIODE_STATUS.Klar:
-      return "Klar til utfylling";
-    case RAPPORTERINGSPERIODE_STATUS.Innsendt:
-      return "Innsendt";
-    default:
-      return "Ukjent status";
+const getStatusText = (periode: IRapporteringsperiode): string => {
+  if (periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt) {
+    return "Innsendt";
   }
+
+  if (periode.status === RAPPORTERINGSPERIODE_STATUS.Klar && periode.kanSendes) {
+    return "Klar til utfylling";
+  }
+
+  return "Meldekort opprettet";
 };
 
 export function Status({ periode }: IProps) {
@@ -41,7 +38,7 @@ export function Status({ periode }: IProps) {
   return (
     <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
       <Tag variant={getVariant(periode.status)} size="small">
-        {getStatusText(periode.status)}
+        {getStatusText(periode)}
       </Tag>
       {erKorrigert && (
         <Tag variant="warning" size="small">

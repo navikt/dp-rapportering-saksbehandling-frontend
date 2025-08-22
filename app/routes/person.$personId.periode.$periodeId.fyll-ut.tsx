@@ -36,7 +36,7 @@ export async function loader({
 }: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode }> {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
-  const periode = await hentPeriode(request, params.periodeId);
+  const periode = await hentPeriode(request, params.personId, params.periodeId);
 
   return { periode };
 }
@@ -46,6 +46,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.periodeId, "Periode ID mangler");
 
   const formData = await request.formData();
+  const personId = formData.get("personId") as string;
   const meldedato = formData.get("meldedato") as string;
   const registrertArbeidssoker = formData.get("registrertArbeidssoker") === "true";
   const begrunnelse = formData.get("begrunnelse") as string;
@@ -53,25 +54,17 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   try {
     const saksbehandler = await hentSaksbehandler(request);
-    const eksisterendePeriode = await hentPeriode(request, params.periodeId);
     const dager = JSON.parse(dagerData);
 
     // Sjekk om dette er en ekte korrigering (perioden har allerede data) eller første gangs utfylling
-    const erKorrigering = eksisterendePeriode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
 
     const oppdatertPeriode = {
+      personId,
       innsendtTidspunkt: meldedato,
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       dager: dager.map(konverterTimerTilISO8601Varighet),
-      // Kun sett korrigering hvis dette faktisk er en korrigering av innsendt periode
-      ...(erKorrigering && {
-        korrigering: {
-          korrigererMeldekortId: params.periodeId,
-          begrunnelse: begrunnelse,
-        },
-      }),
       kilde: {
         rolle: "Saksbehandler" as const,
         ident: saksbehandler.onPremisesSamAccountName,
@@ -212,6 +205,7 @@ export default function FyllUtPeriode() {
             </Button>
           </div>
           {/* Skjulte input felter for form data */}
+          <input type="hidden" name="personId" value={periode.personId} />
           <input
             type="hidden"
             name="meldedato"
