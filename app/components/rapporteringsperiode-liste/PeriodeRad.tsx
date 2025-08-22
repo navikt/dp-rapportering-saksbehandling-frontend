@@ -32,10 +32,10 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
       searchParams.delete("updated");
       setSearchParams(searchParams, { replace: true });
 
-      // Fjern highlight etter 2 blinkninger (1 sekund + buffer)
+      // Fjern highlight etter animasjonen er ferdig
       setTimeout(() => {
         setIsHighlighted(false);
-      }, 1200);
+      }, 3600);
     }
   }, [searchParams, setSearchParams, periode.id]);
   const radKlasse = classNames({
