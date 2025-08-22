@@ -4,8 +4,7 @@ export const RAPPORTERING_TYPE = {
 } as const;
 
 export const RAPPORTERINGSPERIODE_STATUS = {
-  Opprettet: "MeldekortOpprettet",
-  Klar: "KlarTilUtfylling",
+  Klar: "TilUtfylling",
   Innsendt: "Innsendt",
 } as const;
 
@@ -26,4 +25,9 @@ export const KORT_TYPE = {
   Maskinelt_oppdatert: "08",
   Manuell_arena: "09",
   Korrigert_elektronisk: "10",
+} as const;
+
+export const MODAL_ACTION_TYPE = {
+  AVBRYT: "avbryt",
+  FULLFOR: "fullfor",
 } as const;

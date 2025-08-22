@@ -16,10 +16,12 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erKorrigert = !!periode.korrigering?.korrigererMeldekortId;
   const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Klar;
 
-  if (periode.status === RAPPORTERINGSPERIODE_STATUS.Opprettet) {
+  const forTidligInnsending =
+    !periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Klar;
+
+  if (forTidligInnsending) {
     return null;
   }
-
   return (
     <div className={styles.periodeDetaljer}>
       {kanFyllesUt ? (

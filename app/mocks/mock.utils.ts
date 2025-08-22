@@ -98,10 +98,9 @@ export function lagRapporteringsperiode(
   };
 
   meldekort.kanSendesFra = format(subDays(new Date(meldekort.periode.tilOgMed), 1), "yyyy-MM-dd");
-  meldekort.sisteFristForTrekk = format(
-    addDays(new Date(meldekort.periode.tilOgMed), 8),
-    "yyyy-MM-dd",
-  );
+  meldekort.sisteFristForTrekk =
+    meldekort.sisteFristForTrekk ||
+    format(addDays(new Date(meldekort.periode.tilOgMed), 8), "yyyy-MM-dd");
 
   if (!props.dager) {
     meldekort.dager = meldekort.dager.map((dag, index) => ({

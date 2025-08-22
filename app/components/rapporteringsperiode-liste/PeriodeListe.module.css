@@ -29,7 +29,7 @@
 }
 
 .periodeListe__row--highlighted {
-  animation: highlightBlink 2s linear;
+  animation: highlightBlinkAndFade 3.5s ease-out;
 }
 
 /* === Klikkbar rad === */
@@ -90,23 +90,31 @@
   }
 }
 
-@keyframes highlightBlink {
+@keyframes highlightBlinkAndFade {
   0% {
+    background-color: var(--a-blue-100);
+  }
+  10% { 
     background-color: transparent;
   }
-  25% {
-    background-color: var(--a-surface-action-subtle);
+  20% { 
+    background-color: var(--a-blue-100);
   }
-  50% {
+  30% { 
     background-color: transparent;
+  }
+  40% { 
+    background-color: var(--a-blue-100);
+  }
+  50% { 
+    background-color: var(--a-blue-100);
   }
   75% {
     background-color: var(--a-surface-action-subtle);
   }
-  100% {
+  100% { 
     background-color: transparent;
   }
-}
 
 /* === Checkbox-sentrering === */
 .periodeListe__checkbox {

@@ -24,7 +24,7 @@ import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.serv
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MODAL_ACTION_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -36,7 +36,7 @@ export async function loader({
 }: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode }> {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
-  const periode = await hentPeriode(request, params.periodeId);
+  const periode = await hentPeriode(request, params.personId, params.periodeId);
 
   return { periode };
 }
@@ -46,6 +46,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.periodeId, "Periode ID mangler");
 
   const formData = await request.formData();
+  const personId = formData.get("personId") as string;
   const meldedato = formData.get("meldedato") as string;
   const registrertArbeidssoker = formData.get("registrertArbeidssoker") === "true";
   const begrunnelse = formData.get("begrunnelse") as string;
@@ -53,25 +54,17 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   try {
     const saksbehandler = await hentSaksbehandler(request);
-    const eksisterendePeriode = await hentPeriode(request, params.periodeId);
     const dager = JSON.parse(dagerData);
 
     // Sjekk om dette er en ekte korrigering (perioden har allerede data) eller første gangs utfylling
-    const erKorrigering = eksisterendePeriode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
 
     const oppdatertPeriode = {
+      personId,
       innsendtTidspunkt: meldedato,
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       dager: dager.map(konverterTimerTilISO8601Varighet),
-      // Kun sett korrigering hvis dette faktisk er en korrigering av innsendt periode
-      ...(erKorrigering && {
-        korrigering: {
-          korrigererMeldekortId: params.periodeId,
-          begrunnelse: begrunnelse,
-        },
-      }),
       kilde: {
         rolle: "Saksbehandler" as const,
         ident: saksbehandler.onPremisesSamAccountName,
@@ -105,7 +98,7 @@ export default function FyllUtPeriode() {
   const [begrunnelse, setBegrunnelse] = useState<string>("");
   const [valgtDato, setValgtDato] = useState<Date | undefined>();
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"avbryt" | "fullfor" | null>(null);
+  const [modalType, setModalType] = useState<string | null>(null);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
@@ -115,15 +108,15 @@ export default function FyllUtPeriode() {
     setValgtDato(date);
   };
 
-  const openModal = (type: "avbryt" | "fullfor") => {
+  const openModal = (type: string) => {
     setModalType(type);
     setModalOpen(true);
   };
 
   const handleBekreft = () => {
-    if (modalType === "avbryt") {
+    if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       navigate(`/person/${personData?.person.id}/perioder`);
-    } else if (modalType === "fullfor") {
+    } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       // Submit form using React ref
       if (formRef.current) {
         formRef.current.submit();
@@ -134,7 +127,7 @@ export default function FyllUtPeriode() {
   const handleAvbryt = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    openModal("avbryt");
+    openModal(MODAL_ACTION_TYPE.AVBRYT);
   };
 
   return (
@@ -206,12 +199,13 @@ export default function FyllUtPeriode() {
               variant="primary"
               size="small"
               disabled={registrertArbeidssoker === null || !valgtDato || begrunnelse.trim() === ""}
-              onClick={() => openModal("fullfor")}
+              onClick={() => openModal(MODAL_ACTION_TYPE.FULLFOR)}
             >
               Send inn meldekort
             </Button>
           </div>
           {/* Skjulte input felter for form data */}
+          <input type="hidden" name="personId" value={periode.personId} />
           <input
             type="hidden"
             name="meldedato"
@@ -231,15 +225,21 @@ export default function FyllUtPeriode() {
           onClose={() => setModalOpen(false)}
           type={modalType}
           tittel={
-            modalType === "avbryt" ? "Vil du avbryte utfyllingen?" : "Vil du sende inn meldekortet?"
+            modalType === MODAL_ACTION_TYPE.AVBRYT
+              ? "Vil du avbryte utfyllingen?"
+              : "Vil du fullføre utfyllingen?"
           }
           tekst={
-            modalType === "avbryt"
-              ? "Du er i ferd med å avbryte utfyllingen av meldekortet. Er du sikker på at du vil avbryte? Endringene du har gjort så langt vil ikke lagres."
-              : 'Du er i ferd med å sende inn meldekortet. Ved å trykke "Ja" vil meldekortet sendes til behandling.'
+            modalType === MODAL_ACTION_TYPE.AVBRYT ? (
+              <>
+                Hvis du avbryter, vil <strong>ikke</strong> det du har fylt ut så langt lagres
+              </>
+            ) : (
+              "Ved å trykke “Ja” vil utfyllingen sendes inn."
+            )
           }
-          bekreftTekst={modalType === "avbryt" ? "Ja, avbryt" : "Ja, send inn"}
-          avbrytTekst={modalType === "avbryt" ? "Nei, fortsett" : "Nei, avbryt"}
+          bekreftTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, send inn"}
+          avbrytTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"}
           onBekreft={handleBekreft}
         />
       </div>
