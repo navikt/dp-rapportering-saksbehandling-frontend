@@ -1,6 +1,5 @@
 import { parseISO } from "date-fns";
 
-import { RAPPORTERINGSPERIODE_STATUS } from "./constants";
 import type { IRapporteringsperiode } from "./types";
 
 /**
@@ -11,10 +10,10 @@ import type { IRapporteringsperiode } from "./types";
  * @returns true hvis meldekortet ble sendt inn etter fristen
  */
 export function erMeldekortSendtForSent(periode: IRapporteringsperiode): boolean {
-  const { status, innsendtTidspunkt, sisteFristForTrekk, korrigering, kilde } = periode;
+  const { innsendtTidspunkt, sisteFristForTrekk, korrigering, kilde } = periode;
 
   // Ikke innsendte meldekort kan ikke være for sent
-  if (status === RAPPORTERINGSPERIODE_STATUS.Opprettet || !innsendtTidspunkt) {
+  if (!innsendtTidspunkt) {
     return false;
   }
 

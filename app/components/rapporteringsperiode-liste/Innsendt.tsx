@@ -12,9 +12,7 @@ interface IProps {
 export function Innsendt({ periode }: IProps) {
   const { innsendtTidspunkt, status } = periode;
 
-  const ikkeSendtInn =
-    status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling ||
-    status === RAPPORTERINGSPERIODE_STATUS.Opprettet;
+  const ikkeSendtInn = status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling;
   if (ikkeSendtInn || !innsendtTidspunkt) return null;
 
   const forSent = erMeldekortSendtForSent(periode);
