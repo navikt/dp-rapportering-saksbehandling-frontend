@@ -890,7 +890,8 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Klar,
-        kanSendes: true,
+        status: RAPPORTERINGSPERIODE_STATUS.Opprettet,
+        kanSendes: false,
         registrertArbeidssoker: false,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
       },
