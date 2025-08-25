@@ -47,6 +47,8 @@ function beregnUkerFraAarsskifte(): {
 type PeriodeConfig = {
   periode: Partial<IRapporteringsperiode>;
   ukerFraIDag: number;
+  meldedatoRelativTilPeriodeSlutt?: number | null;
+  innsendtTidspunktRelativTilPeriodeSlutt?: number | null;
   aktiviteter?: Array<null | Pick<IAktivitet, "type" | "timer">[]>;
 };
 
@@ -146,7 +148,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
   [ScenarioType.KORRIGERT_AV_BRUKER]: [
     {
       periode: {
-        id: "period-korrigert-bruker-1",
+        id: "periode-korrigert-bruker-1",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -166,11 +168,11 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
     {
       periode: {
-        id: "period-korrigert-bruker-2-correction",
+        id: "periode-korrigert-bruker-2-correction",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse: "Feil antall arbeidstimer. Hadde jobbet full tid",
-        originalMeldekortId: "period-korrigert-bruker-2-original",
+        originalMeldekortId: "periode-korrigert-bruker-2-original",
         kilde: {
           rolle: "Bruker" as const,
           ident: "987654321",
@@ -178,6 +180,8 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanSendes: false,
         kanEndres: true, // Korrigering kan endres
       },
+      meldedatoRelativTilPeriodeSlutt: 1,
+      innsendtTidspunktRelativTilPeriodeSlutt: 3,
       ukerFraIDag: 8,
       aktiviteter: lagArbeidUker("7.5"), // Korrigert: 7.5 timer/dag
     },
@@ -186,7 +190,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
   [ScenarioType.KORRIGERT_AV_SAKSBEHANDLER]: [
     {
       periode: {
-        id: "period-korrigert-saksbehandler-1",
+        id: "periode-korrigert-saksbehandler-1",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -196,7 +200,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
     {
       periode: {
-        id: "period-korrigert-saksbehandler-2-original",
+        id: "periode-korrigert-saksbehandler-2-original",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -206,11 +210,11 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
     {
       periode: {
-        id: "period-korrigert-saksbehandler-2-correction",
+        id: "periode-korrigert-saksbehandler-2-correction",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse: "Feil antall arbeidstimer",
-        originalMeldekortId: "period-korrigert-saksbehandler-2-original",
+        originalMeldekortId: "periode-korrigert-saksbehandler-2-original",
         kilde: {
           rolle: "Saksbehandler" as const,
           ident: "Z123456",
@@ -234,6 +238,8 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null,
       ],
+      meldedatoRelativTilPeriodeSlutt: 1,
+      innsendtTidspunktRelativTilPeriodeSlutt: 5,
       ukerFraIDag: 8,
     },
   ],
@@ -252,10 +258,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
-        sisteFristForTrekk: "2025-08-19", // Dagen før innlevering - skal vises som sen
         kanSendes: false,
         kanEndres: true,
       },
+      innsendtTidspunktRelativTilPeriodeSlutt: 9, // 1 dag etter sisteFristForTrekk
       ukerFraIDag: 7,
     },
     {
@@ -360,6 +366,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanEndres: true,
       },
       aktiviteter: lagArbeidUker("4"),
+      innsendtTidspunktRelativTilPeriodeSlutt: 0,
       ukerFraIDag: 58, // uke 11-12
     },
     // 2. Ferdig beregnet, uke 13-14, Arbeid 4 timer hver onsdag
@@ -387,6 +394,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null,
       ],
+      innsendtTidspunktRelativTilPeriodeSlutt: 0,
       ukerFraIDag: 56, // uke 13-14
     },
     // 3. Ferdig beregnet, uke 15-16, Arbeid 4 timer hver onsdag
@@ -414,6 +422,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null,
       ],
+      innsendtTidspunktRelativTilPeriodeSlutt: 0,
       ukerFraIDag: 54, // uke 15-16
     },
     // 4. Ferdig beregnet, uke 17-18, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
@@ -441,6 +450,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null, // helg
       ],
+      innsendtTidspunktRelativTilPeriodeSlutt: 0,
       ukerFraIDag: 52, // uke 17-18
     },
     // 5. Ferdig beregnet, uke 19-20, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
@@ -468,6 +478,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null, // helg
       ],
+      innsendtTidspunktRelativTilPeriodeSlutt: 0,
       ukerFraIDag: 50, // uke 19-20
     },
     // 6. Ferdig beregnet, uke 21-22, Syk torsdag uke 22, Sendt inn en dag etter fristen
@@ -495,26 +506,17 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null,
       ],
+      innsendtTidspunktRelativTilPeriodeSlutt: 5,
       ukerFraIDag: 48, // uke 21-22
     },
     // 7. Korrigering Innsendt, uke 23-24, Glemt å føre aktiviteter
     {
       periode: {
+        id: "periode-korrigert-av-bruker-1-korrigert-1",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse: "Glemt å føre aktiviteter.",
-        originalMeldekortId: "period-korrigert-bruker-2-original",
-        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
-        kanSendes: false,
-        kanEndres: true,
-      },
-      ukerFraIDag: 46, // uke 23-24 (samme som over, korrigering)
-    },
-    // 8. Ferdig beregnet, uke 23-24, Ferie hele uke 23
-    {
-      periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-        registrertArbeidssoker: true,
+        originalMeldekortId: "periode-korrigert-av-bruker-1-original",
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
         kanSendes: false,
         kanEndres: true,
@@ -535,6 +537,20 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null,
       ],
+      meldedatoRelativTilPeriodeSlutt: 1,
+      innsendtTidspunktRelativTilPeriodeSlutt: 4,
+      ukerFraIDag: 46, // uke 23-24 (samme som over, korrigering)
+    },
+    // 8. Ferdig beregnet, uke 23-24, Ferie hele uke 23
+    {
+      periode: {
+        id: "periode-korrigert-av-bruker-1-original",
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        kanSendes: false,
+        kanEndres: true,
+      },
       ukerFraIDag: 46, // uke 23-24
     },
     // 9. Ferdig beregnet, uke 25-26, Arbeid 4 timer hver onsdag
@@ -681,22 +697,12 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 16. Korrigering Innsendt, uke 39-40, Glemt å føre aktiviteter, Saksbehandler
     {
       periode: {
+        id: "periode-korrigert-av-bruker-2-korrigert-1",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse: "Glemt å føre aktiviteter.",
-        originalMeldekortId: "period-korrigert-bruker-2-original",
+        originalMeldekortId: "periode-korrigert-av-bruker-2-original",
         kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
-        kanSendes: false,
-        kanEndres: true,
-      },
-      ukerFraIDag: 30, // uke 39-40 (samme som under, korrigering)
-    },
-    // 17. Ferdig beregnet, uke 39-40, Arbeid 4h onsdag, Syk torsdag-fredag uke 40
-    {
-      periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-        registrertArbeidssoker: true,
-        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
         kanSendes: false,
         kanEndres: true,
       },
@@ -716,6 +722,20 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null,
       ],
+      meldedatoRelativTilPeriodeSlutt: 1,
+      innsendtTidspunktRelativTilPeriodeSlutt: 3,
+      ukerFraIDag: 30, // uke 39-40 (samme som under, korrigering)
+    },
+    // 17. Ferdig beregnet, uke 39-40, Arbeid 4h onsdag, Syk torsdag-fredag uke 40
+    {
+      periode: {
+        id: "periode-korrigert-av-bruker-2-original",
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
+        kanSendes: false,
+        kanEndres: true,
+      },
       ukerFraIDag: 30, // uke 39-40
     },
     // 18. Ferdig beregnet, uke 41-42, ingen aktiviteter
@@ -838,7 +858,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kilde: { rolle: "Bruker" as const, ident: "1234567891011" },
-        meldedato: null, // Blir beregnet dynamisk basert på periode.tilOgMed
         kanSendes: false,
         kanEndres: true,
       },
@@ -951,17 +970,34 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
 };
 
 // TODO: Legg til klokkeslett på innsendtTidspunkt
+// Default meldedato og innsendtTidspunkt er 1 dag etter tilOgMed
 function lagMeldedatoer(
   meldekort: Partial<IRapporteringsperiode>,
   tilOgMed: string,
+  meldedatoRelativTilPeriodeSlutt?: number | null,
+  innsendtTidspunktRelativTilPeriodeSlutt?: number | null,
 ): {
   meldedato: string;
   innsendtTidspunkt: string;
 } {
-  const { meldedato, innsendtTidspunkt } = meldekort;
+  let { meldedato, innsendtTidspunkt } = meldekort;
+
+  if (!meldedato && meldedatoRelativTilPeriodeSlutt) {
+    meldedato = format(addDays(new Date(tilOgMed), meldedatoRelativTilPeriodeSlutt), "yyyy-MM-dd");
+  }
+
+  if (!innsendtTidspunkt && innsendtTidspunktRelativTilPeriodeSlutt) {
+    innsendtTidspunkt = addDays(
+      new Date(tilOgMed),
+      innsendtTidspunktRelativTilPeriodeSlutt,
+    ).toISOString();
+  }
 
   if (!meldedato && !innsendtTidspunkt && tilOgMed) {
-    return { meldedato: tilOgMed, innsendtTidspunkt: new Date(tilOgMed).toISOString() };
+    return {
+      meldedato: format(addDays(tilOgMed, 1), "yyyy-MM-dd"),
+      innsendtTidspunkt: new Date(addDays(tilOgMed, 1)).toISOString(),
+    };
   }
 
   if (meldedato && !innsendtTidspunkt) {
@@ -990,42 +1026,55 @@ function byggRapporteringsperioderFraKonfigurasjon(
 ): IRapporteringsperiode[] {
   const rapporteringsperioder: IRapporteringsperiode[] = [];
 
-  periodedefinisjon.forEach(({ periode, ukerFraIDag, aktiviteter }) => {
-    const dagensDato = new Date();
-    const startDato =
-      ukerFraIDag >= 0
-        ? subWeeks(dagensDato, ukerFraIDag)
-        : addWeeks(dagensDato, Math.abs(ukerFraIDag));
-    const { fraOgMed, tilOgMed } = lagPeriodeDatoFor(startDato);
+  periodedefinisjon.forEach(
+    ({
+      periode,
+      ukerFraIDag,
+      aktiviteter,
+      meldedatoRelativTilPeriodeSlutt,
+      innsendtTidspunktRelativTilPeriodeSlutt,
+    }) => {
+      const dagensDato = new Date();
+      const startDato =
+        ukerFraIDag >= 0
+          ? subWeeks(dagensDato, ukerFraIDag)
+          : addWeeks(dagensDato, Math.abs(ukerFraIDag));
+      const { fraOgMed, tilOgMed } = lagPeriodeDatoFor(startDato);
 
-    const dager = lagDager().map((dag, index) => {
-      const dato = format(addDays(new Date(fraOgMed), index), "yyyy-MM-dd");
+      const dager = lagDager().map((dag, index) => {
+        const dato = format(addDays(new Date(fraOgMed), index), "yyyy-MM-dd");
 
-      return {
-        ...dag,
-        dato,
-        aktiviteter:
-          aktiviteter?.[index]?.map(({ type, timer = "" }) => ({
-            id: uuidv7(),
-            type,
-            dato,
-            timer,
-          })) ?? [],
-      };
-    });
+        return {
+          ...dag,
+          dato,
+          aktiviteter:
+            aktiviteter?.[index]?.map(({ type, timer = "" }) => ({
+              id: uuidv7(),
+              type,
+              dato,
+              timer,
+            })) ?? [],
+        };
+      });
 
-    const rapporteringsperiode = lagRapporteringsperiode(
-      {
-        ...periode,
-        periode: { fraOgMed, tilOgMed },
-        dager,
-        ...lagMeldedatoer(periode, tilOgMed),
-      },
-      person,
-    );
+      const rapporteringsperiode = lagRapporteringsperiode(
+        {
+          ...periode,
+          periode: { fraOgMed, tilOgMed },
+          dager,
+          ...lagMeldedatoer(
+            periode,
+            tilOgMed,
+            meldedatoRelativTilPeriodeSlutt,
+            innsendtTidspunktRelativTilPeriodeSlutt,
+          ),
+        },
+        person,
+      );
 
-    rapporteringsperioder.push(rapporteringsperiode);
-  });
+      rapporteringsperioder.push(rapporteringsperiode);
+    },
+  );
 
   return rapporteringsperioder;
 }
