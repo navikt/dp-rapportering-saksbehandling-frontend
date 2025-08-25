@@ -24,7 +24,8 @@ describe("Innsendt", () => {
         tilOgMed,
       },
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-      innsendtTidspunkt: formatereDato(new Date(tilOgMed)) as string,
+      innsendtTidspunkt: new Date(tilOgMed).toISOString(),
+      meldedato: formatereDato(new Date(tilOgMed)) as string,
       registrertArbeidssoker: true,
       begrunnelse: undefined,
       sisteFristForTrekk: sisteFrist,
@@ -33,7 +34,7 @@ describe("Innsendt", () => {
       kanEndres: false,
       kanSendesFra: "2025-02-10",
       opprettetAv: "test-user",
-      korrigering: null,
+      originalMeldekortId: null,
       kilde: null,
       ...overrides,
     };
@@ -41,10 +42,10 @@ describe("Innsendt", () => {
 
   test("skal vise error tag hvis sisteFristForTrekk er passert", () => {
     const sisteFrist = "2025-02-16";
-    const innsendtTidspunkt = formatereDato(addDays(new Date(sisteFrist), 1)); // 1 dag for sent
-    const mottatDatoFormattert = formatterDato({ dato: innsendtTidspunkt });
+    const meldedato = formatereDato(addDays(new Date(sisteFrist), 1)); // 1 dag for sent
+    const mottatDatoFormattert = formatterDato({ dato: meldedato });
     const periode = createMockPeriode({
-      innsendtTidspunkt,
+      meldedato,
       sisteFristForTrekk: sisteFrist,
     });
 
@@ -55,14 +56,12 @@ describe("Innsendt", () => {
 
   test("skal ikke vise error tag for korrigering selv om sisteFristForTrekk er passert", () => {
     const sisteFrist = "2025-02-16";
-    const innsendtTidspunkt = formatereDato(addDays(new Date(sisteFrist), 1)); // 1 dag for sent
-    const mottatDatoFormattert = formatterDato({ dato: innsendtTidspunkt });
+    const meldedato = formatereDato(addDays(new Date(sisteFrist), 1)); // 1 dag for sent
+    const mottatDatoFormattert = formatterDato({ dato: meldedato });
     const periode = createMockPeriode({
-      innsendtTidspunkt,
+      meldedato,
       sisteFristForTrekk: sisteFrist,
-      korrigering: {
-        korrigererMeldekortId: "original-id",
-      },
+      originalMeldekortId: "original-id",
     });
 
     render(<Innsendt periode={periode} />);
@@ -73,10 +72,10 @@ describe("Innsendt", () => {
 
   test("skal ikke vise error tag for saksbehandler utfylling selv om sisteFristForTrekk er passert", () => {
     const sisteFrist = "2025-02-16";
-    const innsendtTidspunkt = formatereDato(addDays(new Date(sisteFrist), 1)); // 1 dag for sent
-    const mottatDatoFormattert = formatterDato({ dato: innsendtTidspunkt });
+    const meldedato = formatereDato(addDays(new Date(sisteFrist), 1)); // 1 dag for sent
+    const mottatDatoFormattert = formatterDato({ dato: meldedato });
     const periode = createMockPeriode({
-      innsendtTidspunkt,
+      meldedato,
       sisteFristForTrekk: sisteFrist,
       kilde: {
         rolle: "Saksbehandler",
@@ -92,8 +91,8 @@ describe("Innsendt", () => {
 
   test("skal returnere null for perioder som er til utfylling", () => {
     const periode = createMockPeriode({
-      status: RAPPORTERINGSPERIODE_STATUS.Klar,
-      innsendtTidspunkt: undefined,
+      status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+      meldedato: null,
     });
 
     const { container } = render(<Innsendt periode={periode} />);

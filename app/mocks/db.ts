@@ -16,9 +16,7 @@ function hentAlleRapporteringsperioder(db: Database) {
         innsendtTidspunkt: "desc",
       },
       {
-        korrigering: {
-          korrigererMeldekortId: "desc",
-        },
+        originalMeldekortId: "asc",
       },
     ],
   }) as IRapporteringsperiode[];
@@ -40,10 +38,8 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
   db.rapporteringsperioder.create({
     ...rapporteringsperiode,
     id,
-    korrigering: {
-      korrigererMeldekortId: rapporteringsperiode.id,
-      begrunnelse: "",
-    },
+    originalMeldekortId: rapporteringsperiode.id,
+    begrunnelse: "",
   });
 
   return hentRapporteringsperiodeMedId(db, id);

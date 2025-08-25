@@ -7,7 +7,7 @@ import type { IRapporteringsperiode, TRapporteringsperiodeStatus } from "~/utils
 
 const createMockPeriode = (
   status: TRapporteringsperiodeStatus,
-  korrigering: { korrigererMeldekortId: string; begrunnelse: string } | null = null
+  periode?: Partial<IRapporteringsperiode>,
 ): IRapporteringsperiode => ({
   id: "test-id",
   ident: "test-ident",
@@ -24,16 +24,18 @@ const createMockPeriode = (
   kanSendesFra: "2025-01-15",
   sisteFristForTrekk: "2025-01-20",
   opprettetAv: "test-user",
-  korrigering,
   kilde: null,
   innsendtTidspunkt: null,
+  meldedato: null,
   registrertArbeidssoker: null,
+  originalMeldekortId: null,
   begrunnelse: "",
+  ...periode,
 });
 
 describe("Status", () => {
   test("skal vise info tag for status TilUtfylling", () => {
-    const mockPeriode = createMockPeriode(RAPPORTERINGSPERIODE_STATUS.Klar);
+    const mockPeriode = createMockPeriode(RAPPORTERINGSPERIODE_STATUS.TilUtfylling);
     const { container } = render(<Status periode={mockPeriode} />);
 
     expect(container.querySelector(".navds-tag--info")).toBeInTheDocument();
@@ -54,7 +56,7 @@ describe("Status", () => {
 
   test("skal vise korrigert tag når periode er korrigert", () => {
     const mockPeriode = createMockPeriode(RAPPORTERINGSPERIODE_STATUS.Innsendt, {
-      korrigererMeldekortId: "original-id",
+      originalMeldekortId: "original-id",
       begrunnelse: "Korrigering begrunnelse",
     });
     const { container } = render(<Status periode={mockPeriode} />);

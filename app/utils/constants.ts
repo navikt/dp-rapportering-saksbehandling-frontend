@@ -4,7 +4,7 @@ export const RAPPORTERING_TYPE = {
 } as const;
 
 export const RAPPORTERINGSPERIODE_STATUS = {
-  Klar: "TilUtfylling",
+  TilUtfylling: "TilUtfylling",
   Innsendt: "Innsendt",
 } as const;
 

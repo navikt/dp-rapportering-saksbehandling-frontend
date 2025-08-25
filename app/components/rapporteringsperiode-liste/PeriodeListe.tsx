@@ -26,7 +26,7 @@ const KOLONNE_TITLER = [
   { tekst: "Dato", erFørste: false },
   { tekst: "Status", erFørste: false },
   { tekst: "Aktiviteter", erFørste: false },
-  { tekst: "Innsendt", erFørste: false },
+  { tekst: "Meldedato", erFørste: false },
   { tekst: "Frist", erFørste: false },
 ] as const;
 

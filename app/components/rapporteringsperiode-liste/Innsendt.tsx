@@ -10,12 +10,12 @@ interface IProps {
 }
 
 export function Innsendt({ periode }: IProps) {
-  const { innsendtTidspunkt, status, sisteFristForTrekk } = periode;
+  const { meldedato, status, sisteFristForTrekk } = periode;
 
-  if (status === RAPPORTERINGSPERIODE_STATUS.Klar || !innsendtTidspunkt) return null;
+  if (status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling || !meldedato) return null;
 
   // Sjekk om det er en korrigering eller utfylling av saksbehandler
-  const erKorrigering = periode.korrigering !== null;
+  const erKorrigering = !!periode.originalMeldekortId;
   const erUtfyltAvSaksbehandler = periode.kilde?.rolle === "Saksbehandler";
 
   // Ikke vis "for sent" for korreksjon eller saksbehandler-utfylling
@@ -24,14 +24,14 @@ export function Innsendt({ periode }: IProps) {
   // Bruk sisteFristForTrekk hvis tilgjengelig, ellers sammenlign med periode slutt
   const forSent =
     !skalIgnorereFrist && sisteFristForTrekk
-      ? parseISO(innsendtTidspunkt) > parseISO(sisteFristForTrekk)
+      ? parseISO(meldedato) > parseISO(sisteFristForTrekk)
       : false;
 
   return forSent ? (
     <Tag variant="error" size="small">
-      {formatterDato({ dato: innsendtTidspunkt })}
+      {formatterDato({ dato: meldedato })}
     </Tag>
   ) : (
-    formatterDato({ dato: innsendtTidspunkt })
+    formatterDato({ dato: meldedato })
   );
 }

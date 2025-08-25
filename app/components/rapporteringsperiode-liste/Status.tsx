@@ -11,7 +11,7 @@ const getVariant = (
   status: TRapporteringsperiodeStatus,
 ): "info" | "success" | "warning" | "error" | "neutral" => {
   switch (status) {
-    case RAPPORTERINGSPERIODE_STATUS.Klar:
+    case RAPPORTERINGSPERIODE_STATUS.TilUtfylling:
       return "info";
     case RAPPORTERINGSPERIODE_STATUS.Innsendt:
       return "success";
@@ -25,7 +25,7 @@ const getStatusText = (periode: IRapporteringsperiode): string => {
     return "Innsendt";
   }
 
-  if (periode.status === RAPPORTERINGSPERIODE_STATUS.Klar && periode.kanSendes) {
+  if (periode.status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling && periode.kanSendes) {
     return "Klar til utfylling";
   }
 
@@ -33,7 +33,7 @@ const getStatusText = (periode: IRapporteringsperiode): string => {
 };
 
 export function Status({ periode }: IProps) {
-  const erKorrigert = periode.korrigering !== null;
+  const erKorrigert = !!periode.originalMeldekortId;
 
   return (
     <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>

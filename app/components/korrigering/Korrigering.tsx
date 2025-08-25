@@ -41,7 +41,7 @@ export function Korrigering({
     korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet),
   );
   const [korrigertMeldedato, setKorrigertMeldedato] = useState<Date | undefined>(
-    originalPeriode.innsendtTidspunkt ? new Date(originalPeriode.innsendtTidspunkt) : undefined,
+    originalPeriode.meldedato ? new Date(originalPeriode.meldedato) : undefined,
   );
   const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
 
@@ -92,9 +92,7 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
-      innsendtTidspunkt: korrigertMeldedato
-        ? format(korrigertMeldedato, "yyyy-MM-dd")
-        : prev.innsendtTidspunkt,
+      meldedato: korrigertMeldedato ? format(korrigertMeldedato, "yyyy-MM-dd") : prev.meldedato,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       korrigering: {
         korrigererMeldekortId: prev.id,
@@ -109,7 +107,7 @@ export function Korrigering({
 
   const harEndringer =
     (korrigertMeldedato &&
-      format(korrigertMeldedato, "yyyy-MM-dd") !== originalPeriode.innsendtTidspunkt) ||
+      format(korrigertMeldedato, "yyyy-MM-dd") !== originalPeriode.meldedato) ||
     JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(originalPeriode.dager);
 
   useEffect(() => {

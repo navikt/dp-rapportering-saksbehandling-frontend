@@ -61,17 +61,15 @@ class SessionRecord {
         kanSendesFra: () => faker.date.recent().toISOString(),
         sisteFristForTrekk: nullable(() => faker.date.recent().toISOString()),
         opprettetAv: nullable(faker.string.alpha),
-        korrigering: nullable({
-          korrigererMeldekortId: nullable(faker.string.numeric),
-          begrunnelse: nullable(faker.string.sample),
-        }),
+        originalMeldekortId: nullable(faker.string.numeric),
         kilde: nullable({
           rolle: nullable(faker.string.alpha),
           ident: nullable(faker.string.alpha),
         }),
         innsendtTidspunkt: nullable(() => faker.date.recent().toISOString()),
+        meldedato: nullable(() => faker.date.recent().toISOString()),
         registrertArbeidssoker: nullable(faker.datatype.boolean),
-        begrunnelse: faker.string.sample,
+        begrunnelse: nullable(faker.string.sample),
       },
       personer: {
         ident: primaryKey(faker.string.alpha),

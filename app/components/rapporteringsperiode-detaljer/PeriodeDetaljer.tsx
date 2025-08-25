@@ -13,11 +13,12 @@ interface IProps {
 
 export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
-  const erKorrigert = !!periode.korrigering?.korrigererMeldekortId;
-  const kanFyllesUt = periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Klar;
+  const erKorrigert = !!periode.originalMeldekortId;
+  const kanFyllesUt =
+    periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling;
 
   const forTidligInnsending =
-    !periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.Klar;
+    !periode.kanSendes && periode.status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling;
 
   if (forTidligInnsending) {
     return null;
@@ -39,20 +40,30 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
       ) : (
         <>
           <dl className={styles.detailList}>
+            {periode.meldedato && (
+              <>
+                <dt>Meldedato:</dt>
+                <dd>
+                  {formatterDato({
+                    dato: periode.meldedato,
+                    format: DatoFormat.DagMndAarLang,
+                  })}
+                </dd>
+              </>
+            )}
+            {periode.innsendtTidspunkt && (
+              <>
+                <dt>Dato for {erKorrigert ? "korrigering" : "innsending"}:</dt>
+                <dd>
+                  {formatterDato({
+                    dato: periode.innsendtTidspunkt,
+                    format: DatoFormat.DagMndAarLang,
+                  })}
+                </dd>
+              </>
+            )}
             {(erKorrigert || periode?.kilde?.rolle === "Saksbehandler") && (
               <>
-                {periode.innsendtTidspunkt && (
-                  <>
-                    <dt>Dato for innsending:</dt>
-                    <dd>
-                      {formatterDato({
-                        dato: periode.innsendtTidspunkt,
-                        format: DatoFormat.DagMndAarLang,
-                      })}
-                    </dd>
-                  </>
-                )}
-
                 <dt>{erKorrigert ? "Korrigert" : "Innsendt"} av:</dt>
                 <dd>
                   {periode?.kilde?.rolle === "Saksbehandler"

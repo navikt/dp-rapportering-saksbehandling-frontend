@@ -1,6 +1,7 @@
 import type { SetupWorker } from "msw/browser";
 
-import type { AKTIVITET_TYPE, RAPPORTERING_TYPE, RAPPORTERINGSPERIODE_STATUS } from "./constants";
+import type { AKTIVITET_TYPE, RAPPORTERING_TYPE } from "./constants";
+import { RAPPORTERINGSPERIODE_STATUS } from "./constants";
 
 declare global {
   interface Window {
@@ -67,16 +68,51 @@ export interface IRapporteringsperiode {
   sisteFristForTrekk: string;
   opprettetAv: string;
   begrunnelse?: string;
-  korrigering: {
-    korrigererMeldekortId: string;
-  } | null;
   kilde: {
     rolle: "Bruker" | "Saksbehandler";
     ident: string;
   } | null;
+  originalMeldekortId: string | null;
+  /** InnsendtTidspunkt er et ISO timestamp, og settes av backend hvis ikke frontend gjør det */
   innsendtTidspunkt: string | null;
+  /** yyyy-mm-dd, dato for når meldekortet skal regnes som registrert, kan settes av saksbehandler ellers følger det av innsendtTidspunkt */
+  meldedato: string | null;
   registrertArbeidssoker: boolean | null;
 }
+
+export interface ITilUtfyllingMeldekort extends IRapporteringsperiode {
+  status: (typeof RAPPORTERINGSPERIODE_STATUS)["TilUtfylling"];
+}
+
+export interface IInnsendtMeldekort extends IRapporteringsperiode {
+  status: (typeof RAPPORTERINGSPERIODE_STATUS)["Innsendt"];
+}
+
+export interface IKorrigertMeldekort extends IRapporteringsperiode {
+  status: (typeof RAPPORTERINGSPERIODE_STATUS)["Innsendt"];
+  begrunnelse: string;
+  originalMeldekortId: string;
+}
+
+export interface IBrukerInnsendtMeldekort extends IRapporteringsperiode {
+  status: (typeof RAPPORTERINGSPERIODE_STATUS)["Innsendt"];
+  begrunnelse?: string;
+  kilde: {
+    rolle: "Bruker";
+    ident: string;
+  };
+}
+
+export interface ISaksbehandlerInnsendtMeldekort extends IRapporteringsperiode {
+  status: (typeof RAPPORTERINGSPERIODE_STATUS)["Innsendt"];
+  begrunnelse: string;
+  kilde: {
+    rolle: "Saksbehandler";
+    ident: string;
+  };
+}
+
+export type Meldekort = IInnsendtMeldekort | ITilUtfyllingMeldekort;
 
 export interface IPerson {
   ident: string;
