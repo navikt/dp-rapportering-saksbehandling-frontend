@@ -173,7 +173,7 @@ export default function FyllUtPeriode() {
             <div>
               <RadioGroup
                 size="small"
-                legend="Vil bruker fortsatt være registrert som arbeidssøker?"
+                legend="Registrert som arbeidssøker de neste 14 dagene?"
                 value={registrertArbeidssoker?.toString() || ""}
                 onChange={(val) => setRegistrertArbeidssoker(val === "true")}
               >
