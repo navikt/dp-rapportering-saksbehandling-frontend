@@ -10,17 +10,17 @@ import type { IRapporteringsperiode } from "./types";
  * @returns true hvis meldekortet ble sendt inn etter fristen
  */
 export function erMeldekortSendtForSent(periode: IRapporteringsperiode): boolean {
-  const { innsendtTidspunkt, sisteFristForTrekk, korrigering, kilde } = periode;
+  const { meldedato, sisteFristForTrekk, originalMeldekortId, kilde } = periode;
 
   // Ikke innsendte meldekort kan ikke være for sent
-  if (!innsendtTidspunkt) {
+  if (!meldedato) {
     return false;
   }
 
   // Korrigeringer og saksbehandler-utfyllinger har ikke frist
-  if (korrigering || kilde?.rolle === "Saksbehandler") {
+  if (originalMeldekortId || kilde?.rolle === "Saksbehandler") {
     return false;
   }
 
-  return parseISO(innsendtTidspunkt) > parseISO(sisteFristForTrekk);
+  return parseISO(meldedato) > parseISO(sisteFristForTrekk);
 }

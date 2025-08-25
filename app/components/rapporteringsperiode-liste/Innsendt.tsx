@@ -10,18 +10,19 @@ interface IProps {
 }
 
 export function Innsendt({ periode }: IProps) {
-  const { innsendtTidspunkt, status } = periode;
+  const { innsendtTidspunkt, status, meldedato } = periode;
 
   const ikkeSendtInn = status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling;
-  if (ikkeSendtInn || !innsendtTidspunkt) return null;
+
+  if (ikkeSendtInn || !innsendtTidspunkt || !meldedato) return null;
 
   const forSent = erMeldekortSendtForSent(periode);
 
   return forSent ? (
     <Tag variant="error" size="small">
-      {formatterDato({ dato: innsendtTidspunkt })}
+      {formatterDato({ dato: meldedato })}
     </Tag>
   ) : (
-    formatterDato({ dato: innsendtTidspunkt })
+    formatterDato({ dato: meldedato })
   );
 }

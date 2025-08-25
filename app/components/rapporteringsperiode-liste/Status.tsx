@@ -29,7 +29,7 @@ const getStatusText = (periode: IRapporteringsperiode): string => {
 };
 
 export function Status({ periode }: IProps) {
-  const erKorrigert = !!periode.korrigering;
+  const erKorrigert = !!periode.originalMeldekortId;
 
   return (
     <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>

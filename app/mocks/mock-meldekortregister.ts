@@ -61,7 +61,11 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`);
           return HttpResponse.json(null, { status: 404 });
         }
-        const oppdatertPeriode = { ...eksisterendePeriode, ...oppdateringer };
+        const oppdatertPeriode = {
+          ...eksisterendePeriode,
+          innsendtTidspunkt: new Date().toISOString(),
+          ...oppdateringer,
+        };
         db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
 
         logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
@@ -84,7 +88,11 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           return HttpResponse.json(null, { status: 404 });
         }
 
-        const oppdatertPeriode = { ...eksisterendePeriode, ...oppdateringer };
+        const oppdatertPeriode = {
+          ...eksisterendePeriode,
+          innsendtTidspunkt: new Date().toISOString(),
+          ...oppdateringer,
+        };
         db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
 
         logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);

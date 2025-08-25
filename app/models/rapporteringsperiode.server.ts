@@ -1,7 +1,7 @@
 import { DP_MELDEKORTREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IRapporteringsperiode, Meldekort } from "~/utils/types";
 
 import { logger } from "./logger.server";
 
@@ -39,11 +39,11 @@ export async function hentRapporteringsperioder(
   }
 }
 
-export async function hentPeriode(
+export async function hentPeriode<T extends Meldekort>(
   request: Request,
   personId: string,
   periodeId: string,
-): Promise<IRapporteringsperiode> {
+): Promise<T> {
   const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periodeId}`;
 
   try {
@@ -57,7 +57,7 @@ export async function hentPeriode(
       throw "rapportering-feilmelding-hent-periode";
     }
 
-    const rapporteringsperiode: IRapporteringsperiode = await response.json();
+    const rapporteringsperiode: T = await response.json();
 
     return rapporteringsperiode;
   } catch (error) {

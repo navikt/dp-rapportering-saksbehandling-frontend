@@ -11,17 +11,17 @@ import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
-import type { IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
+import type { IInnsendtMeldekort, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
 import type { Route } from "../+types/root";
 
 export async function loader({
   request,
   params,
-}: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode; saksbehandler: ISaksbehandler }> {
+}: Route.LoaderArgs): Promise<{ periode: IInnsendtMeldekort; saksbehandler: ISaksbehandler }> {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
-  const periode = await hentPeriode(request, params.personId, params.periodeId);
+  const periode = await hentPeriode<IInnsendtMeldekort>(request, params.personId, params.periodeId);
   const saksbehandler = await hentSaksbehandler(request);
 
   // TODO: Håndter feil i hentPeriode
@@ -42,6 +42,8 @@ export default function Periode() {
     return <div>Persondata ikke funnet</div>;
   }
 
+  const erKorrigering = !!periode.originalMeldekortId;
+
   return (
     <div className={styles.rapporteringsperiode}>
       <div className={styles.grid}>
@@ -59,7 +61,7 @@ export default function Periode() {
           {periode.begrunnelse && (
             <div className={styles.begrunnelseVisning}>
               <Heading level="4" size="small">
-                Begrunnelse for korrigering
+                Begrunnelse for {erKorrigering ? "korrigering" : "innsending"}
               </Heading>
               <p>{periode.begrunnelse}</p>
             </div>

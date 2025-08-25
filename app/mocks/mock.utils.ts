@@ -88,10 +88,11 @@ export function lagRapporteringsperiode(
     kanEndres: true,
     kanSendesFra: "",
     sisteFristForTrekk: "",
-    korrigering: null,
+    originalMeldekortId: null,
     opprettetAv: "Arena",
     kilde: props.kilde ?? null,
     innsendtTidspunkt: null,
+    meldedato: null,
     registrertArbeidssoker: null,
     begrunnelse: "",
     ...props,
@@ -100,7 +101,7 @@ export function lagRapporteringsperiode(
   meldekort.kanSendesFra = format(subDays(new Date(meldekort.periode.tilOgMed), 1), "yyyy-MM-dd");
 
   // Korrigerte meldekort skal ikke ha sisteFristForTrekk
-  if (!meldekort.korrigering) {
+  if (!meldekort.originalMeldekortId) {
     meldekort.sisteFristForTrekk =
       meldekort.sisteFristForTrekk ||
       format(addDays(new Date(meldekort.periode.tilOgMed), 8), "yyyy-MM-dd");
