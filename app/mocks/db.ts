@@ -40,6 +40,7 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
     id,
     originalMeldekortId: rapporteringsperiode.id,
     begrunnelse: "",
+    innsendtTidspunkt: new Date().toISOString(),
   });
 
   return hentRapporteringsperiodeMedId(db, id);
@@ -56,7 +57,11 @@ function oppdaterPeriode(
     throw new Error(`Periode ${periodeId} ikke funnet`);
   }
 
-  const oppdatertPeriode = { ...eksisterendePeriode, ...oppdateringer };
+  const oppdatertPeriode = {
+    ...eksisterendePeriode,
+    ...oppdateringer,
+    innsendtTidspunkt: new Date().toISOString(),
+  };
 
   db.rapporteringsperioder.update({
     where: {

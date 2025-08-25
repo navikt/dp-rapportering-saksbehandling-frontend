@@ -95,10 +95,7 @@ export function Korrigering({
       ...prev,
       meldedato: korrigertMeldedato ? format(korrigertMeldedato, "yyyy-MM-dd") : prev.meldedato,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
-      korrigering: {
-        korrigererMeldekortId: prev.id,
-        begrunnelse: korrigertBegrunnelse,
-      },
+      begrunnelse: korrigertBegrunnelse,
       kilde: {
         rolle: "Saksbehandler",
         ident: saksbehandler.onPremisesSamAccountName,
