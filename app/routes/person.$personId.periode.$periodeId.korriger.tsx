@@ -1,4 +1,5 @@
-import { Heading, Tag } from "@navikt/ds-react";
+import { BodyShort, Heading, Tag } from "@navikt/ds-react";
+import classNames from "classnames";
 import { useState } from "react";
 import { useLoaderData, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
@@ -47,9 +48,14 @@ export default function Periode() {
   return (
     <div className={styles.rapporteringsperiode}>
       <div className={styles.grid}>
-        <Heading level="2" size="medium" className={styles.periodeOverskrift}>
-          Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-        </Heading>
+        <div className={classNames(styles.periodeOverskrift, styles.title)}>
+          <Heading level="1" size="medium">
+            Korriger meldekort
+          </Heading>
+          <BodyShort size="small">
+            Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
+          </BodyShort>
+        </div>
         <div className={styles.uendretPeriode}>
           <div className={styles.periodeOgTag}>
             <PeriodeMedUke periode={periode} />
