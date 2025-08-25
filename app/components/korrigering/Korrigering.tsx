@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
+import { useNavigationWarning } from "~/hooks/useNavigationWarning";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
@@ -110,19 +111,8 @@ export function Korrigering({
       format(korrigertMeldedato, "yyyy-MM-dd") !== originalPeriode.meldedato) ||
     JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(originalPeriode.dager);
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (harEndringer || korrigertBegrunnelse.trim()) {
-        event.preventDefault();
-        event.returnValue = ""; // For moderne nettlesere
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [harEndringer, korrigertBegrunnelse]);
+  const hasChanges = harEndringer || korrigertBegrunnelse.trim() !== "";
+  useNavigationWarning({ hasChanges });
 
   return (
     <div className={styles.korrigering}>

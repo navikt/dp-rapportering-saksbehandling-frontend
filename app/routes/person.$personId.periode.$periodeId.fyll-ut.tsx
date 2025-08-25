@@ -19,6 +19,7 @@ import {
   type SetKorrigerteDager,
 } from "~/components/korrigering/korrigering.utils";
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
+import { useNavigationWarning } from "~/hooks/useNavigationWarning";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
@@ -105,6 +106,11 @@ export default function FyllUtPeriode() {
   const [valgtDato, setValgtDato] = useState<Date | undefined>();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
+
+  // Sjekk om det finnes ulagrede endringer
+  const hasChanges =
+    registrertArbeidssoker !== null || begrunnelse.trim() !== "" || valgtDato !== undefined;
+  useNavigationWarning({ hasChanges });
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
