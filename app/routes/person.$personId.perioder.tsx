@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 import invariant from "tiny-invariant";
 
@@ -45,7 +46,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       </div>
       <div className={styles.grid}>
         {valgteRapporteringsperiode.map((periode) => (
-          <div key={periode.id} className={`${styles.periodeContainer} ${styles.fadeIn}`}>
+          <div key={periode.id} className={classNames(styles.periodeContainer, styles.fadeIn)}>
             <div className={styles.forhandsvisning}>
               <RapporteringsperiodeVisning perioder={[periode]} />
             </div>

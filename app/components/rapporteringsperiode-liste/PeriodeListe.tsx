@@ -127,10 +127,12 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
       <h2 id="periode-heading" className="sr-only">
         Rapporteringsperioder gruppert etter år
       </h2>
-      <Accordion size="small" headingSize="xsmall">
+      <Accordion size="small" headingSize="medium">
         {years.map((year) => (
           <Accordion.Item key={year} defaultOpen={year === years[0]}>
-            <Accordion.Header>Meldekort for {year}</Accordion.Header>
+            <Accordion.Header className={styles.accordionHeader}>
+              Meldekort for {year}
+            </Accordion.Header>
             <Accordion.Content style={{ padding: 0 }}>
               <RapporteringsperiodeTabell
                 perioder={groupedPeriods[year]}

@@ -366,7 +366,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanEndres: true,
       },
       aktiviteter: lagArbeidUker("4"),
-      innsendtTidspunktRelativTilPeriodeSlutt: 0,
       ukerFraIDag: 58,
     },
     // 2. Ferdig beregnet
@@ -393,7 +392,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null,
       ],
-      innsendtTidspunktRelativTilPeriodeSlutt: 0,
       ukerFraIDag: 56,
     },
     // 3. Ferdig beregnet, Arbeid 4 timer hver onsdag
@@ -420,7 +418,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null,
         null,
       ],
-      innsendtTidspunktRelativTilPeriodeSlutt: 0,
+      innsendtTidspunktRelativTilPeriodeSlutt: 6,
       ukerFraIDag: 54,
     },
     // 4. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
@@ -507,11 +505,11 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 7. Korrigering Innsendt, Glemt å føre aktiviteter
     {
       periode: {
-        id: "periode-korrigert-av-bruker-1-korrigert-1",
+        id: "periode-korrigert-av-saksbehandler-1-korrigert-1",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse: "Glemt å føre aktiviteter.",
-        originalMeldekortId: "periode-korrigert-av-bruker-1-original",
+        originalMeldekortId: "periode-korrigert-av-saksbehandler-1-original",
         kanSendes: false,
         kanEndres: true,
       },
@@ -533,12 +531,13 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       ],
       meldedatoRelativTilPeriodeSlutt: 1,
       innsendtTidspunktRelativTilPeriodeSlutt: 4,
+      rolle: "Saksbehandler",
       ukerFraIDag: 46, // samme som under, korrigering
     },
     // 8. Ferdig beregnet
     {
       periode: {
-        id: "periode-korrigert-av-bruker-1-original",
+        id: "periode-korrigert-av-saksbehandler-1-original",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
