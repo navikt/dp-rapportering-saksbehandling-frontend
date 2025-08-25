@@ -116,7 +116,7 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
       } else {
         newParams.delete("rapporteringsid");
       }
-      setSearchParams(newParams, { replace: true });
+      setSearchParams(newParams, { replace: true, preventScrollReset: true });
 
       return nyeIds;
     });
