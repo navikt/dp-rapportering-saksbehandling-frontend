@@ -92,7 +92,7 @@ describe("Innsendt", () => {
 
   test("skal returnere null for perioder som er til utfylling", () => {
     const periode = createMockPeriode({
-      status: RAPPORTERINGSPERIODE_STATUS.Klar,
+      status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
       innsendtTidspunkt: undefined,
     });
 
