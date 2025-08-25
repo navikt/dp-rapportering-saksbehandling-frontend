@@ -26,3 +26,7 @@
   padding-bottom: var(--a-spacing-5);
   border-bottom: 3px solid var(--a-gray-50);
 }
+
+.detailList dd {
+  padding-left: var(--a-spacing-4);
+}
