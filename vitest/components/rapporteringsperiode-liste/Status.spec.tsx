@@ -7,7 +7,7 @@ import type { IRapporteringsperiode, TRapporteringsperiodeStatus } from "~/utils
 
 const createMockPeriode = (
   status: TRapporteringsperiodeStatus,
-  periode?: Partial<IRapporteringsperiode>,
+  overrides?: Partial<IRapporteringsperiode>,
 ): IRapporteringsperiode => ({
   id: "test-id",
   ident: "test-ident",
@@ -30,7 +30,7 @@ const createMockPeriode = (
   registrertArbeidssoker: null,
   originalMeldekortId: null,
   begrunnelse: "",
-  ...periode,
+  ...overrides,
 });
 
 describe("Status", () => {

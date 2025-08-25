@@ -93,6 +93,7 @@ describe("Innsendt", () => {
     const periode = createMockPeriode({
       status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
       meldedato: null,
+      innsendtTidspunkt: null,
     });
 
     const { container } = render(<Innsendt periode={periode} />);
