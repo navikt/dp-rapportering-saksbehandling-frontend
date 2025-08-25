@@ -39,7 +39,6 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
     ...rapporteringsperiode,
     id,
     originalMeldekortId: rapporteringsperiode.id,
-    begrunnelse: "",
     innsendtTidspunkt: new Date().toISOString(),
   });
 
