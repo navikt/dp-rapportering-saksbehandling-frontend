@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { factory, nullable, primaryKey } from "@mswjs/data";
 
-import type { IPerson } from "~/utils/types";
+import type { IPerson, ISaksbehandler } from "~/utils/types";
 
 import { mockPersons } from "./data/mock-persons";
 import { hentRapporteringsperioderForScenario } from "./data/mock-rapporteringsperioder";
@@ -24,7 +24,7 @@ class SessionRecord {
 
       this.sessions.set(sessionId, db);
 
-      db.saksbehandlere.create(mockSaksbehandler);
+      const createdSaksbehandler = db.saksbehandlere.create(mockSaksbehandler) as ISaksbehandler;
 
       // Lag personer med perioder
       mockPersons.forEach((personData) => {
@@ -32,7 +32,11 @@ class SessionRecord {
         const createdPerson = db.personer.create(person) as IPerson;
 
         // Generer perioder basert på personens scenario
-        const periods = hentRapporteringsperioderForScenario(createdPerson, scenario);
+        const periods = hentRapporteringsperioderForScenario(
+          scenario,
+          createdPerson,
+          createdSaksbehandler,
+        );
 
         periods.forEach((rapporteringsperiode) => {
           db.rapporteringsperioder.create(rapporteringsperiode);
