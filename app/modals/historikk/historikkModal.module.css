@@ -1,12 +1,7 @@
 .list {
   list-style: none;
   margin: 0;
-  padding: 0;
-      padding-left: 22px;
-    padding-right: 22px;
-    padding-top: 0;
-        padding-bottom: 0;
-
+  padding: 0 22px;
   display: flex;
   flex-direction: column;
 }
@@ -15,7 +10,7 @@
   display: grid;
   grid-template-columns: auto auto 2fr; 
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   margin: 0;
 }
 
