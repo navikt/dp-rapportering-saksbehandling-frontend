@@ -7,7 +7,7 @@ import {
   RadioGroup,
   Textarea,
 } from "@navikt/ds-react";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { useRef, useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
@@ -162,6 +162,7 @@ export default function FyllUtPeriode() {
                 selected={valgtDato}
                 onSelect={handleDateSelect}
                 toDate={new Date()}
+                fromDate={subDays(periode.periode.tilOgMed, 1)}
                 defaultMonth={new Date(periode.periode.tilOgMed)}
               >
                 <DatePicker.Input
