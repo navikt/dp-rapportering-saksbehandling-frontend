@@ -4,7 +4,7 @@ import { useState } from "react";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
-import { type Hendelse, HistorikkModal } from "../../modals/historikk/HistorikkModal";
+import { HistorikkModal, type IHendelse } from "../../modals/historikk/HistorikkModal";
 import styles from "./PersonInformasjon.module.css";
 
 interface IProps {
@@ -12,7 +12,7 @@ interface IProps {
   perioder?: IRapporteringsperiode[];
 }
 
-const transformPerioderToHistoryEvents = (perioder: IRapporteringsperiode[]): Hendelse[] => {
+const transformPerioderToHistoryEvents = (perioder: IRapporteringsperiode[]): IHendelse[] => {
   return perioder
     .filter((periode) => periode.innsendtTidspunkt) // Kun innsendte meldekort
     .sort(
@@ -27,6 +27,7 @@ const transformPerioderToHistoryEvents = (perioder: IRapporteringsperiode[]): He
         time: innsendtDato.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" }),
         event: `Meldekort uke ${ukenummerTekst} innsendt`,
         type: "Elektronisk",
+        kategori: "Meldekort",
       };
     });
 };
@@ -34,7 +35,7 @@ const transformPerioderToHistoryEvents = (perioder: IRapporteringsperiode[]): He
 export default function PersonInformasjon({ person, perioder = [] }: IProps) {
   const fulltNavn = [person.fornavn, person.mellomnavn, person.etternavn].join(" ");
   const [modalOpen, setModalOpen] = useState(false);
-  const [events, setEvents] = useState<Hendelse[]>([]);
+  const [events, setEvents] = useState<IHendelse[]>([]);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -43,14 +44,15 @@ export default function PersonInformasjon({ person, perioder = [] }: IProps) {
     const historyEvents = transformPerioderToHistoryEvents(perioder);
 
     // TODO: Dette skal komme fra endepunktet senere
-    const registrertSomArbeidssøkerEvent: Hendelse = {
+    const registrertSomArbeidssøkerEvent: IHendelse = {
       date: formatterDato({ dato: "2024-01-15T08:30:00.000Z", format: DatoFormat.DagMndAar }),
       time: new Date("2024-01-15T08:30:00.000Z").toLocaleTimeString("nb-NO", {
         hour: "2-digit",
         minute: "2-digit",
       }),
       event: "Registrert som arbeidssøker",
-      type: "System",
+      type: "Elektronisk",
+      kategori: "System",
     };
 
     setEvents([...historyEvents, registrertSomArbeidssøkerEvent]);
@@ -77,7 +79,7 @@ export default function PersonInformasjon({ person, perioder = [] }: IProps) {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         fulltNavn={fulltNavn}
-        hendelse={events}
+        hendelser={events}
       />
     </div>
   );
