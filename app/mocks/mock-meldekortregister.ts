@@ -63,8 +63,10 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         }
         const oppdatertPeriode = {
           ...eksisterendePeriode,
-          innsendtTidspunkt: new Date().toISOString(),
           ...oppdateringer,
+          kanSendes: false,
+          kanEndres: true,
+          innsendtTidspunkt: new Date().toISOString(),
         };
 
         db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
@@ -92,6 +94,8 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const oppdatertPeriode = {
           ...eksisterendePeriode,
           ...oppdateringer,
+          kanSendes: false,
+          kanEndres: true,
         };
 
         db.korrigerPeriode(oppdatertPeriode);
