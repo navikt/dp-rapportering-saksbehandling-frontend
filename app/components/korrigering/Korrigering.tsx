@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
-import { MODAL_ACTION_TYPE } from "~/utils/constants";
+import { MODAL_ACTION_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
@@ -93,6 +93,8 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
+      personId: person.id,
+      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       meldedato: korrigertMeldedato ? format(korrigertMeldedato, "yyyy-MM-dd") : prev.meldedato,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       begrunnelse: korrigertBegrunnelse,

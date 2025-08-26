@@ -68,7 +68,7 @@ export async function hentPeriode<T extends Meldekort>(
 }
 
 export async function korrigerPeriode(request: Request, periode: IRapporteringsperiode) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${periode.personId}/meldekort/${periode.id}/korriger`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/meldekort/korriger`;
 
   try {
     const response = await fetch(url, {
@@ -89,12 +89,12 @@ export async function korrigerPeriode(request: Request, periode: IRapporteringsp
   }
 }
 
-export async function oppdaterPeriode(
+export async function sendInnPeriode(
   request: Request,
   periodeId: string,
   oppdateringer: Partial<IRapporteringsperiode>,
 ) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${oppdateringer.personId}/meldekort/${periodeId}`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/meldekort`;
 
   try {
     const response = await fetch(url, {

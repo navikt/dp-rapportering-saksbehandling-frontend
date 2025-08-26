@@ -21,7 +21,7 @@ import {
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
 import { BekreftModal } from "~/modals/BekreftModal";
-import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
+import { hentPeriode, sendInnPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
@@ -62,24 +62,22 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     const periode = await hentPeriode(request, personId, params.periodeId);
 
-    const oppdatertPeriode = {
+    const oppdatertPeriode: IRapporteringsperiode = {
       ...periode,
       personId,
-      innsendtTidspunkt: new Date().toISOString(),
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       dager: dager.map(konverterTimerTilISO8601Varighet),
       kilde: {
-        rolle: "Saksbehandler" as const,
+        rolle: "Saksbehandler",
         ident: saksbehandler.onPremisesSamAccountName,
       },
-      referanseId: periode.id,
       meldedato,
     };
 
     // Oppdater perioden via mock/backend
-    await oppdaterPeriode(request, params.periodeId, oppdatertPeriode);
+    await sendInnPeriode(request, params.periodeId, oppdatertPeriode);
 
     // Redirect tilbake til perioder siden
     return redirect(`/person/${params.personId}/perioder?updated=${params.periodeId}`);

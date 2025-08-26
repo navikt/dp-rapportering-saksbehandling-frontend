@@ -49,54 +49,55 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
     ),
 
     http.post(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId`,
-      async ({ params, request, cookies }) => {
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/meldekort`,
+      async ({ request, cookies }) => {
         const db = database || getDatabase(cookies);
-        const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
-        const oppdateringer = (await request.json()) as Partial<IRapporteringsperiode>;
+        const oppdatering = (await request.json()) as Partial<IRapporteringsperiode>;
+        const meldekortId = oppdatering.id as string;
 
-        const eksisterendePeriode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
+        const eksisterendePeriode = db.hentRapporteringsperiodeMedId(meldekortId);
 
         if (!eksisterendePeriode) {
-          logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`);
+          logger.error(`Fant ikke meldekort med ID ${meldekortId} for innsending`);
           return HttpResponse.json(null, { status: 404 });
         }
         const oppdatertPeriode = {
           ...eksisterendePeriode,
+          ...oppdatering,
           innsendtTidspunkt: new Date().toISOString(),
-          ...oppdateringer,
         };
 
-        db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
+        db.oppdaterPeriode(meldekortId, oppdatertPeriode);
 
-        logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
+        logger.info(`Sendte inn meldekort med ID ${meldekortId}`);
 
         return HttpResponse.json(oppdatertPeriode, { status: 200 });
       },
     ),
 
     http.post(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId/korriger`,
-      async ({ params, request, cookies }) => {
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/meldekort/korriger`,
+      async ({ request, cookies }) => {
         const db = database || getDatabase(cookies);
-        const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
-        const oppdateringer = (await request.json()) as Partial<IRapporteringsperiode>;
+        const oppdatering = (await request.json()) as Partial<IRapporteringsperiode>;
+        const meldekortId = oppdatering.id as string;
 
-        const eksisterendePeriode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
+        const eksisterendePeriode = db.hentRapporteringsperiodeMedId(meldekortId);
 
         if (!eksisterendePeriode) {
-          logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`);
+          logger.error(`Fant ikke meldekort med ID ${meldekortId} for korrigering`);
           return HttpResponse.json(null, { status: 404 });
         }
 
         const oppdatertPeriode = {
           ...eksisterendePeriode,
-          ...oppdateringer,
+          ...oppdatering,
+          innsendtTidspunkt: new Date().toISOString(),
         };
 
         db.korrigerPeriode(oppdatertPeriode);
 
-        logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
+        logger.info(`Korrigerte meldekort med ID ${meldekortId}, ny ID er ${oppdatertPeriode.id}`);
 
         return HttpResponse.json(oppdatertPeriode, { status: 200 });
       },
