@@ -40,7 +40,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       ) ?? [];
 
   return (
-    <>
+    <div>
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListeByYear perioder={perioder} />
       </div>
@@ -56,6 +56,6 @@ export default function Rapportering({ params }: Route.ComponentProps) {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }

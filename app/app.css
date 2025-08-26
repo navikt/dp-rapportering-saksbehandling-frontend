@@ -68,29 +68,6 @@ p {
   border-left-color: transparent !important;
 }
 
-/* .transparrent-tag .navds-tag--neutral {
-  background-color: transparent;
-  border-color: transparent;
+.navds-accordion--small .navds-accordion__header {
+  padding: var(--a-spacing-4) var(--a-spacing-3) !important;
 }
-.navds-table__row--selected {
-  background-color: transparent !important;
-}
-
-.arbeidInput.navds-form-field {
-  min-width: 50px;
-  max-width: 75px;
-  justify-self: center;
-}
-
-.korrigering-tekstfelt.navds-form-field {
-  display: block;
-  height: 100%;
-}
-
-.styledArbeidInput .navds-text-field__input {
-  background-color: var(--a-blue-200);
-}
-
-.nytt-meldekort-knapp .navds-label--small {
-  font-weight: normal;
-} */
