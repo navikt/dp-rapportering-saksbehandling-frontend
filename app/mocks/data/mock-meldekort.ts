@@ -1083,7 +1083,7 @@ function byggRapporteringsperioderFraKonfigurasjon(
 /**
  * Hent rapporteringsperioder for person basert på scenario-type
  */
-export function hentRapporteringsperioderForScenario(
+export function hentMeldekortForScenario(
   scenario: ScenarioType,
   person: IPerson,
   saksbehandler: ISaksbehandler,

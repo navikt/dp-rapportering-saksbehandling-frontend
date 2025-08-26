@@ -77,7 +77,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     };
 
     // Oppdater perioden via mock/backend
-    await sendInnPeriode(request, params.periodeId, oppdatertPeriode);
+    await sendInnPeriode(request, oppdatertPeriode);
 
     // Redirect tilbake til perioder siden
     return redirect(`/person/${params.personId}/perioder?updated=${params.periodeId}`);

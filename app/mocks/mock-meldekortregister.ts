@@ -15,17 +15,13 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const db = database || getDatabase(cookies);
         const personId = params.personId as string;
 
-        const allePerioder = db.hentAlleRapporteringsperioder();
+        const alleMeldekort = db.hentAlleMeldekort();
 
-        const rapporteringsperioder = allePerioder.filter(
-          (periode) => periode.personId == personId,
-        );
+        const meldekort = alleMeldekort.filter((mk) => mk.personId == personId);
 
-        logger.info(
-          `Hentet ${rapporteringsperioder.length} rapporteringsperioder for person ${personId}`,
-        );
+        logger.info(`Hentet ${meldekort.length} meldekort for person ${personId}`);
 
-        return HttpResponse.json(rapporteringsperioder);
+        return HttpResponse.json(meldekort);
       },
     ),
 
@@ -35,16 +31,16 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const db = database || getDatabase(cookies);
 
         const meldekortId: string = params.meldekortId as string;
-        const rapporteringsperiode = db.hentRapporteringsperiodeMedId(meldekortId);
+        const meldekort = db.hentMeldekortMedId(meldekortId);
 
-        if (!rapporteringsperiode) {
-          logger.error(`Fant ikke rapporteringsperiode ${meldekortId}`);
+        if (!meldekort) {
+          logger.error(`Fant ikke meldekort ${meldekortId}`);
           return HttpResponse.json(null, { status: 404 });
         }
 
-        logger.info(`Hentet rapporteringsperiode ${meldekortId}`);
+        logger.info(`Hentet meldekort ${meldekortId}`);
 
-        return HttpResponse.json(rapporteringsperiode);
+        return HttpResponse.json(meldekort);
       },
     ),
 
@@ -55,25 +51,21 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const oppdatering = (await request.json()) as Partial<IRapporteringsperiode>;
         const meldekortId = oppdatering.id as string;
 
-        const eksisterendePeriode = db.hentRapporteringsperiodeMedId(meldekortId);
+        const eksisterendeMeldekort = db.hentMeldekortMedId(meldekortId);
 
-        if (!eksisterendePeriode) {
+        if (!eksisterendeMeldekort) {
           logger.error(`Fant ikke meldekort med ID ${meldekortId} for innsending`);
           return HttpResponse.json(null, { status: 404 });
         }
-        const oppdatertPeriode: IRapporteringsperiode = {
-          ...eksisterendePeriode,
-          ...oppdatering,
-          kanSendes: false,
-          kanEndres: true,
-          innsendtTidspunkt: new Date().toISOString(),
-        };
 
-        db.oppdaterPeriode(meldekortId, oppdatertPeriode);
+        const oppdatertMeldekort = db.sendInnMeldekort(meldekortId, {
+          ...eksisterendeMeldekort,
+          ...oppdatering,
+        });
 
         logger.info(`Sendte inn meldekort med ID ${meldekortId}`);
 
-        return HttpResponse.json(oppdatertPeriode, { status: 200 });
+        return HttpResponse.json(oppdatertMeldekort, { status: 200 });
       },
     ),
 
@@ -84,25 +76,23 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const oppdatering = (await request.json()) as Partial<IRapporteringsperiode>;
         const meldekortId = oppdatering.id as string;
 
-        const eksisterendePeriode = db.hentRapporteringsperiodeMedId(meldekortId);
+        const eksisterendeMeldekort = db.hentMeldekortMedId(meldekortId);
 
-        if (!eksisterendePeriode) {
+        if (!eksisterendeMeldekort) {
           logger.error(`Fant ikke meldekort med ID ${meldekortId} for korrigering`);
           return HttpResponse.json(null, { status: 404 });
         }
 
-        const oppdatertPeriode: IRapporteringsperiode = {
-          ...eksisterendePeriode,
+        const oppdatertMeldekort = db.korrigerMeldekort({
+          ...eksisterendeMeldekort,
           ...oppdatering,
-          kanSendes: false,
-          kanEndres: true,
-        };
+        });
 
-        db.korrigerPeriode(oppdatertPeriode);
+        logger.info(
+          `Korrigerte meldekort med ID ${meldekortId}, ny ID er ${oppdatertMeldekort.id}`,
+        );
 
-        logger.info(`Korrigerte meldekort med ID ${meldekortId}, ny ID er ${oppdatertPeriode.id}`);
-
-        return HttpResponse.json(oppdatertPeriode, { status: 200 });
+        return HttpResponse.json(oppdatertMeldekort, { status: 200 });
       },
     ),
   ];

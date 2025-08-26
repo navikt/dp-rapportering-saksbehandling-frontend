@@ -91,7 +91,6 @@ export async function korrigerPeriode(request: Request, periode: IRapporteringsp
 
 export async function sendInnPeriode(
   request: Request,
-  periodeId: string,
   oppdateringer: Partial<IRapporteringsperiode>,
 ) {
   const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/meldekort`;

@@ -1,7 +1,7 @@
 import { BodyShort, Heading, LinkPanel } from "@navikt/ds-react";
 import { useLoaderData } from "react-router";
 
-import { getFullDemoPerson } from "~/mocks/data/mock-persons";
+import { getFullDemoPerson } from "~/mocks/data/mock-personer";
 import { usesMsw } from "~/utils/env.utils";
 
 export async function loader() {
