@@ -76,12 +76,15 @@ export function Korrigering({
 
   function handleBekreft() {
     if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
+      disableWarning();
       setIsSubmitting(true);
       fetcher.submit(
         { rapporteringsperiode: JSON.stringify(korrigertPeriode) },
         { method: "post", action: "/api/rapportering" },
       );
     } else if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
+      // Skru av navigation warning før man sender inn korrigert meldekort
+      disableWarning();
       navigate(`/person/${person.id}/perioder`);
     }
   }
@@ -109,7 +112,7 @@ export function Korrigering({
     JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(originalPeriode.dager);
 
   const hasChanges = harEndringer || korrigertBegrunnelse.trim() !== "";
-  useNavigationWarning({ hasChanges });
+  const { disableWarning } = useNavigationWarning({ hasChanges });
 
   return (
     <div className={styles.korrigering}>
