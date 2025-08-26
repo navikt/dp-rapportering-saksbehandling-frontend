@@ -1,7 +1,6 @@
-import { uuidv7 } from "uuidv7";
-
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
+import { createId } from "./mock.utils";
 import { type Database } from "./session";
 
 function hentAlleRapporteringsperioder(db: Database) {
@@ -33,7 +32,7 @@ function hentRapporteringsperiodeMedId(db: Database, id: string) {
 }
 
 function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
-  const id = uuidv7();
+  const id = createId();
 
   db.rapporteringsperioder.create({
     ...rapporteringsperiode,

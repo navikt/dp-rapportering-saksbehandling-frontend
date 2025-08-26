@@ -86,12 +86,14 @@ export interface ITilUtfyllingMeldekort extends IRapporteringsperiode {
 
 export interface IInnsendtMeldekort extends IRapporteringsperiode {
   status: (typeof RAPPORTERINGSPERIODE_STATUS)["Innsendt"];
+  kanSendes: false;
 }
 
 export interface IKorrigertMeldekort extends IRapporteringsperiode {
   status: (typeof RAPPORTERINGSPERIODE_STATUS)["Innsendt"];
   begrunnelse: string;
   originalMeldekortId: string;
+  kanSendes: false;
 }
 
 export interface IBrukerInnsendtMeldekort extends IRapporteringsperiode {
