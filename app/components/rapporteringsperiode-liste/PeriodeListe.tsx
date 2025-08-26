@@ -21,13 +21,13 @@ interface PropsWithSharedState extends Props {
 const MAKS_VALGTE_PERIODER = 3;
 
 const KOLONNE_TITLER = [
-  { tekst: "Vis", erFørste: true },
-  { tekst: "Uke", erFørste: false },
-  { tekst: "Dato", erFørste: false },
-  { tekst: "Status", erFørste: false },
-  { tekst: "Aktiviteter", erFørste: false },
-  { tekst: "Meldedato", erFørste: false },
-  { tekst: "Frist", erFørste: false },
+  { tekst: "Vis", erFørste: true, width: "5%" },
+  { tekst: "Uke", erFørste: false, width: "5%" },
+  { tekst: "Dato", erFørste: false, width: "10%" },
+  { tekst: "Status", erFørste: false, width: "10%" },
+  { tekst: "Aktiviteter", erFørste: false, width: "10%" },
+  { tekst: "Meldedato", erFørste: false, width: "10%" },
+  { tekst: "Frist", erFørste: false, width: "10%" },
 ] as const;
 
 // Intern komponent uten egen state for bruk i accordion
@@ -54,7 +54,13 @@ function RapporteringsperiodeTabell({
                 : styles.periodeListe__header;
 
               return (
-                <Table.HeaderCell key={index} scope="col" className={className} textSize="small">
+                <Table.HeaderCell
+                  key={index}
+                  scope="col"
+                  className={className}
+                  textSize="small"
+                  style={{ width: kolonne.width }}
+                >
                   {kolonne.tekst}
                 </Table.HeaderCell>
               );
