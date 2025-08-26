@@ -26,7 +26,11 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
   useEffect(() => {
     const updatedId = searchParams.get("updated");
 
-    if (updatedId === periode.id) {
+    // Highlight kun hvis dette er den oppdaterte perioden
+    // (korrigeringen, ikke det originale meldekortet)
+    const shouldHighlight = updatedId === periode.id;
+
+    if (shouldHighlight) {
       setIsHighlighted(true);
       // Fjern URL parameter
       searchParams.delete("updated");
@@ -37,7 +41,8 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         setIsHighlighted(false);
       }, 3600);
     }
-  }, [searchParams, setSearchParams, periode.id]);
+  }, [searchParams, setSearchParams, periode.id, periode.originalMeldekortId]);
+
   const radKlasse = classNames({
     [styles["periodeListe__row--selected"]]: valgt,
     [styles["periodeListe__row"]]: true, // Alle rader får basis klasse
