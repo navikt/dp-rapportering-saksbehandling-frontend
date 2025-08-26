@@ -1,30 +1,22 @@
-import { BodyShort, Heading, Modal, Tag } from "@navikt/ds-react";
+import { Heading, Modal } from "@navikt/ds-react";
 
 import styles from "./historikkModal.module.css";
 
-interface HistoryEvent {
+export interface Hendelse {
   date: string;
+  time: string;
   event: string;
-  tag?: string;
+  type?: string;
 }
 
 interface HistorikkModalProps {
   open: boolean;
   onClose: () => void;
   fulltNavn: string;
+  hendelse: Hendelse[];
 }
 
-const events: HistoryEvent[] = [
-  { date: "14. april 2025", event: "Meldekort uke 14 og 15 levert", tag: "Elektronisk" },
-  { date: "31. mars 2025", event: "Meldekort uke 12 og 13 levert", tag: "Elektronisk" },
-  { date: "20. mars 2025", event: `Meldegruppe “Dagpenger”` },
-  { date: "15. mars 2025", event: `Meldegruppe “Arbeidssøker uten ytelse”` },
-  { date: "15. mars 2025", event: "Registrert som arbeidssøker" },
-  { date: "12. mars 2025", event: "Inaktivert som arbeidssøker" },
-  { date: "10. mars 2025", event: "Registrert som arbeidssøker" },
-];
-
-export function HistorikkModal({ open, onClose, fulltNavn }: HistorikkModalProps) {
+export function HistorikkModal({ open, onClose, fulltNavn, hendelse }: HistorikkModalProps) {
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="historikk-heading" closeOnBackdropClick>
       <Modal.Header>
@@ -34,29 +26,28 @@ export function HistorikkModal({ open, onClose, fulltNavn }: HistorikkModalProps
       </Modal.Header>
       <Modal.Body>
         <ol className={styles.list}>
-          {events.map((item, idx) => {
-            const isCurrent = idx === 0;
-            const hasLine = idx !== events.length - 1;
-
-            return (
-              <li key={`${item.date}-${idx}`} className={styles.listItem}>
-                <div className={styles.timeline}>
-                  <span
-                    className={`${styles.circle} ${isCurrent ? styles.current : ""}`}
-                    aria-hidden="true"
-                  />
-                  {hasLine && <span className={styles.line} aria-hidden="true" />}
-                </div>
-                <div className={styles.content}>
-                  <BodyShort size="small" weight="semibold">
-                    {item.date}
-                  </BodyShort>
-                  <BodyShort size="small">{item.event}</BodyShort>
-                  {item.tag && <Tag variant="neutral">{item.tag}</Tag>}
-                </div>
-              </li>
-            );
-          })}
+          {hendelse.map((item, idx) => (
+            <li key={`${item.date}-${idx}`} className={styles.row}>
+              <dl className={styles.tidspunkt}>
+                <dt className="sr-only">Dato</dt>
+                <dd>{item.date}</dd>
+                <dt className="sr-only">Tid</dt>
+                <dd>kl {item.time}</dd>
+              </dl>
+              <div aria-hidden="true" className={styles.line}>
+                <span
+                  className={`${styles.marker} ${item.type === "Elektronisk" ? styles.meldekort : styles.andreHendelser}`}
+                />
+              </div>
+              <dl className={styles.hendelse}>
+                legg til innhold i historikk
+                <dt className="sr-only">Hendelse</dt>
+                <dd>{item.event}</dd>
+                <dt className="sr-only">Type</dt>
+                <dd className={styles.subtle}>{item.type || "x"}</dd>
+              </dl>
+            </li>
+          ))}
         </ol>
       </Modal.Body>
     </Modal>
