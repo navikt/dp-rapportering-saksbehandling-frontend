@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface UseNavigationWarningOptions {
   hasChanges: boolean;
@@ -9,11 +9,18 @@ interface UseNavigationWarningOptions {
  * Bruker browserens standard navigasjonsadvarsel
  *
  * @param hasChanges - Om det finnes ulagrede endringer
+ * @returns disableWarning - Funksjon for å midlertidig deaktivere advarselen
  */
 export function useNavigationWarning({ hasChanges }: UseNavigationWarningOptions) {
+  const isDisabledRef = useRef(false);
+
+  const disableWarning = () => {
+    isDisabledRef.current = true;
+  };
+
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (hasChanges) {
+      if (hasChanges && !isDisabledRef.current) {
         event.preventDefault();
         return "";
       }
@@ -25,4 +32,6 @@ export function useNavigationWarning({ hasChanges }: UseNavigationWarningOptions
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [hasChanges]);
+
+  return { disableWarning };
 }

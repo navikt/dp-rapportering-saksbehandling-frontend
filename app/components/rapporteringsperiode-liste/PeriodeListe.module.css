@@ -4,6 +4,12 @@
   height: 100%;
 }
 
+/* === Selection info === */
+.selectionInfo {
+  padding: var(--a-spacing-2) var(--a-spacing-4);
+  text-align: right;
+}
+
 /* === Sticky header === */
 .periodeListe__header {
   position: sticky;
@@ -50,6 +56,21 @@
   outline: 2px solid var(--a-border-focus);
   outline-offset: -2px;
   background-color: var(--a-surface-hover);
+}
+
+/* === Disabled rad styling === */
+.periodeListe__row--disabled {
+  cursor: default !important;
+}
+
+.periodeListe__row--disabled:hover {
+  background-color: transparent !important;
+  cursor: default !important;
+}
+
+/* Override NavDS hover effects for disabled rows */
+:global(.navds-table__row--shade-on-hover).periodeListe__row--disabled:hover {
+  background-color: transparent !important;
 }
 
 /* === Fallback for alle table rows i periode-listen === */

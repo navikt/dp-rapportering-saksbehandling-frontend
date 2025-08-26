@@ -61,9 +61,11 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           logger.error(`Fant ikke meldekort med ID ${meldekortId} for innsending`);
           return HttpResponse.json(null, { status: 404 });
         }
-        const oppdatertPeriode = {
+        const oppdatertPeriode: IRapporteringsperiode = {
           ...eksisterendePeriode,
           ...oppdatering,
+          kanSendes: false,
+          kanEndres: true,
           innsendtTidspunkt: new Date().toISOString(),
         };
 
@@ -89,10 +91,11 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           return HttpResponse.json(null, { status: 404 });
         }
 
-        const oppdatertPeriode = {
+        const oppdatertPeriode: IRapporteringsperiode = {
           ...eksisterendePeriode,
           ...oppdatering,
-          innsendtTidspunkt: new Date().toISOString(),
+          kanSendes: false,
+          kanEndres: true,
         };
 
         db.korrigerPeriode(oppdatertPeriode);

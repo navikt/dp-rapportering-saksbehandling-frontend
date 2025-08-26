@@ -26,23 +26,36 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
   useEffect(() => {
     const updatedId = searchParams.get("updated");
 
-    if (updatedId === periode.id) {
+    // Highlight kun hvis dette er den oppdaterte perioden
+    // (korrigeringen, ikke det originale meldekortet)
+    const shouldHighlight = updatedId === periode.id;
+
+    if (shouldHighlight) {
       setIsHighlighted(true);
-      // Fjern URL parameter
-      searchParams.delete("updated");
-      setSearchParams(searchParams, { replace: true });
+
+      // Fjern URL parameter i en setTimeout for å unngå rendering-konflikt
+      setTimeout(() => {
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.delete("updated");
+        setSearchParams(newSearchParams, { replace: true });
+      }, 0);
 
       // Fjern highlight etter animasjonen er ferdig
       setTimeout(() => {
         setIsHighlighted(false);
       }, 3600);
     }
-  }, [searchParams, setSearchParams, periode.id]);
+  }, [searchParams, setSearchParams, periode.id, periode.originalMeldekortId]);
+
+  const isDisabled = !valgt && valgteAntall >= maksValgte;
+
   const radKlasse = classNames({
     [styles["periodeListe__row--selected"]]: valgt,
     [styles["periodeListe__row"]]: true, // Alle rader får basis klasse
     [styles["periodeListe__row--highlighted"]]: isHighlighted,
+    [styles["periodeListe__row--disabled"]]: isDisabled,
   });
+
   const ukeKlasse = classNames(styles.periodeListe__week, {
     [styles["periodeListe__week--selected"]]: valgt,
     [styles["periodeListe__row--selected"]]: valgt,
@@ -57,15 +70,19 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
     <Table.Row
       selected={valgt}
       className={radKlasse}
-      onClick={() => toggle(periode.id)}
-      role="button"
-      tabIndex={!valgt && valgteAntall >= maksValgte ? -1 : 0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          toggle(periode.id);
-        }
-      }}
+      onClick={isDisabled ? undefined : () => toggle(periode.id)}
+      role={isDisabled ? undefined : "button"}
+      tabIndex={isDisabled ? -1 : 0}
+      onKeyDown={
+        isDisabled
+          ? undefined
+          : (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                toggle(periode.id);
+              }
+            }
+      }
       aria-label={`${valgt ? "Avvelg" : "Velg"} rapporteringsperiode uke ${ukenummer(
         periode,
       )}, ${periodeDatoTekst}`}

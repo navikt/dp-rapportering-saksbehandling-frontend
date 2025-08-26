@@ -108,7 +108,7 @@ export default function FyllUtPeriode() {
   // Sjekk om det finnes ulagrede endringer
   const hasChanges =
     registrertArbeidssoker !== null || begrunnelse.trim() !== "" || valgtDato !== undefined;
-  useNavigationWarning({ hasChanges });
+  const { disableWarning } = useNavigationWarning({ hasChanges });
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
@@ -125,9 +125,11 @@ export default function FyllUtPeriode() {
 
   const handleBekreft = () => {
     if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
+      disableWarning();
       navigate(`/person/${personData?.person.id}/perioder`);
     } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
-      // Submit form using React ref
+      // Skru av navigation warning før man sender inn meldekort
+      disableWarning();
       if (formRef.current) {
         formRef.current.submit();
       }
