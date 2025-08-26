@@ -954,10 +954,19 @@ function lagMeldedatoer(
   meldedatoRelativTilPeriodeSlutt?: number | null,
   innsendtTidspunktRelativTilPeriodeSlutt?: number | null,
 ): {
-  meldedato: string;
-  innsendtTidspunkt: string;
+  meldedato: string | null;
+  innsendtTidspunkt: string | null;
 } {
   let { meldedato, innsendtTidspunkt } = meldekort;
+  const { status } = meldekort;
+
+  // Hvis meldekort ikke er innsendt, skal meldedato og innsendtTidspunkt være null
+  if (status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling) {
+    return {
+      meldedato: null,
+      innsendtTidspunkt: null,
+    };
+  }
 
   if (
     !meldedato &&
@@ -978,6 +987,7 @@ function lagMeldedatoer(
     ).toISOString();
   }
 
+  // For innsendte meldekort uten eksplisitt dato, sett default
   if (!meldedato && !innsendtTidspunkt && tilOgMed) {
     return {
       meldedato: format(addDays(tilOgMed, 1), "yyyy-MM-dd"),
@@ -997,8 +1007,8 @@ function lagMeldedatoer(
   }
 
   return {
-    meldedato: meldedato ?? "",
-    innsendtTidspunkt: innsendtTidspunkt ?? "",
+    meldedato: meldedato ?? null,
+    innsendtTidspunkt: innsendtTidspunkt ?? null,
   };
 }
 
