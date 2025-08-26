@@ -21,11 +21,11 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 export default function Rapportering() {
-  const { person } = useLoaderData<typeof loader>();
+  const { person, perioder } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <PersonInformasjon person={person} />
+      <PersonInformasjon person={person} perioder={perioder} />
       <Outlet />
     </>
   );
