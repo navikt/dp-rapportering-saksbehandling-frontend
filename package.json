@@ -15,7 +15,7 @@
     "test:playwright": "playwright test --trace on"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.9.0",
+    "@faker-js/faker": "^10.0.0",
     "@mswjs/data": "^0.16.2",
     "@navikt/aksel-icons": "^7.28.1",
     "@navikt/ds-css": "^7.28.1",
