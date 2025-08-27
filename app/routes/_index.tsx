@@ -39,7 +39,7 @@ export default function Rapportering() {
               const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
                 person.etternavn
               }`;
-              const link = `/person/${person.id}/perioder`;
+              const link = `/person/${person.id}/meldekort`;
 
               return (
                 <li key={person.id} style={{ marginBottom: "1rem" }}>

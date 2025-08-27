@@ -39,7 +39,7 @@ export async function hentRapporteringsperioder(
   }
 }
 
-export async function hentPeriode<T extends Meldekort>(
+export async function hentMeldekort<T extends Meldekort>(
   request: Request,
   personId: string,
   periodeId: string,
@@ -67,7 +67,7 @@ export async function hentPeriode<T extends Meldekort>(
   }
 }
 
-export async function korrigerPeriode(request: Request, periode: IRapporteringsperiode) {
+export async function korrigerMeldekort(request: Request, periode: IRapporteringsperiode) {
   const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/meldekort/korriger`;
 
   try {
@@ -89,7 +89,7 @@ export async function korrigerPeriode(request: Request, periode: IRapporteringsp
   }
 }
 
-export async function sendInnPeriode(
+export async function sendInnMeldekort(
   request: Request,
   oppdateringer: Partial<IRapporteringsperiode>,
 ) {

@@ -21,7 +21,7 @@ import {
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
 import { BekreftModal } from "~/modals/BekreftModal";
-import { hentPeriode, sendInnPeriode } from "~/models/rapporteringsperiode.server";
+import { hentMeldekort, sendInnMeldekort } from "~/models/meldekort.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
@@ -29,7 +29,7 @@ import { MODAL_ACTION_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constant
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
+import type { Route } from "./+types/person.$personId.meldekort.$periodeId.fyll-ut";
 
 export async function loader({
   request,
@@ -37,7 +37,7 @@ export async function loader({
 }: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode }> {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
-  const periode = await hentPeriode(request, params.personId, params.periodeId);
+  const periode = await hentMeldekort(request, params.personId, params.periodeId);
 
   return { periode };
 }
@@ -60,7 +60,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     // Sjekk om dette er en ekte korrigering (perioden har allerede data) eller første gangs utfylling
 
-    const periode = await hentPeriode(request, personId, params.periodeId);
+    const periode = await hentMeldekort(request, personId, params.periodeId);
 
     const oppdatertPeriode: IRapporteringsperiode = {
       ...periode,
@@ -77,10 +77,10 @@ export async function action({ request, params }: Route.ActionArgs) {
     };
 
     // Oppdater perioden via mock/backend
-    await sendInnPeriode(request, oppdatertPeriode);
+    await sendInnMeldekort(request, oppdatertPeriode);
 
-    // Redirect tilbake til perioder siden
-    return redirect(`/person/${params.personId}/perioder?updated=${params.periodeId}`);
+    // Redirect tilbake til meldekort siden
+    return redirect(`/person/${params.personId}/meldekort?updated=${params.periodeId}`);
   } catch (error) {
     console.error("Feil ved oppdatering av periode:", error);
     throw new Error("Kunne ikke oppdatere periode");
@@ -126,7 +126,7 @@ export default function FyllUtPeriode() {
   const handleBekreft = () => {
     if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       disableWarning();
-      navigate(`/person/${personData?.person.id}/perioder`);
+      navigate(`/person/${personData?.person.id}/meldekort`);
     } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       // Skru av navigation warning før man sender inn meldekort
       disableWarning();

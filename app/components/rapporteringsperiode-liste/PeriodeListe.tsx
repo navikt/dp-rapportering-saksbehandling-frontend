@@ -104,7 +104,7 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
 
   // Les fra URL ved mount
   useEffect(() => {
-    const raw = searchParams.get("rapporteringsid")?.split(",") ?? [];
+    const raw = searchParams.get("meldekortid")?.split(",") ?? [];
     const filtrerte = raw.filter((id) => gyldigeIds.has(id));
     setValgteIds(filtrerte);
   }, [searchParams, perioder]);
@@ -118,9 +118,9 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
       // Oppdater URL automatisk når IDs endres
       const newParams = new URLSearchParams(searchParams);
       if (nyeIds.length > 0) {
-        newParams.set("rapporteringsid", nyeIds.join(","));
+        newParams.set("meldekortid", nyeIds.join(","));
       } else {
-        newParams.delete("rapporteringsid");
+        newParams.delete("meldekortid");
       }
       setSearchParams(newParams, { replace: true, preventScrollReset: true });
 

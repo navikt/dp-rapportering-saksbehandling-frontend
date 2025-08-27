@@ -5,12 +5,12 @@ import invariant from "tiny-invariant";
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { RapporteringsperiodeListeByYear } from "~/components/rapporteringsperiode-liste/PeriodeListe";
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
-import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
+import { hentRapporteringsperioder } from "~/models/meldekort.server";
 import styles from "~/route-styles/person.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-import type { Route } from "./+types/person.$personId.perioder";
+import type { Route } from "./+types/person.$personId.oversikt";
 
 export async function loader({
   request,
@@ -31,7 +31,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
 
   const valgteRapporteringsperiode =
     searchParams
-      .get("rapporteringsid")
+      .get("meldekortid")
       ?.split(",")
       .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
       .filter((periode) => periode)
