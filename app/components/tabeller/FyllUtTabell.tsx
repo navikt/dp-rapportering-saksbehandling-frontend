@@ -37,29 +37,29 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
           <th scope="col" className="sr-only">
             Aktivitet
           </th>
-          <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
+          <th aria-hidden="true" className={styles.gap}></th>
           <th colSpan={7} className={styles.label}>
             Uke {uke1}
           </th>
-          <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
+          <th aria-hidden="true" className={styles.gap}></th>
           <th colSpan={7} className={styles.label}>
             Uke {uke2}
           </th>
-          <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
+          <th aria-hidden="true" className={styles.gap}></th>
           <th scope="col" className="sr-only">
             Oppsummering
           </th>
         </tr>
         <tr>
-          <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
-          <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
+          <th aria-hidden="true" className={styles.gap}></th>
+          <th aria-hidden="true" className={styles.gap}></th>
           {dager.slice(0, 7).map((dag) => (
             <th key={`ukedag-${dag.dato}`} className={styles.ukedag}>
               <div>{hentUkedag(dag.dato)}</div>
               <div>{formatterDag(dag.dato)}</div>
             </th>
           ))}
-          <th aria-hidden="true" className={styles.gap}></th> {/* gap */}
+          <th aria-hidden="true" className={styles.gap}></th>
           {dager.slice(7, 14).map((dag) => (
             <th key={`ukedag-${dag.dato}`} className={styles.ukedag}>
               <div>{hentUkedag(dag.dato)}</div>
@@ -123,7 +123,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                   </td>
                 );
               })}
-              <td aria-hidden="true" className={styles.gap}></td> {/* gap */}
+              <td aria-hidden="true" className={styles.gap}></td>
               {/* Uke 2: Siste 7 dager */}
               {dager.slice(7, 14).map((dag) => {
                 const aktivitetstyper = dag.aktiviteter.map((a) => a.type);
