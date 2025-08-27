@@ -11,7 +11,7 @@
 
 .rapporteringsperiodeListe {
   background-color: var(--a-surface-default);
-  margin-bottom: var(--a-spacing-6);
+  margin-bottom: var(--a-spacing-12);
 }
 
 .forhandsvisning {
@@ -29,9 +29,9 @@
   padding: var(--a-spacing-6);
   padding-bottom: var(--a-spacing-10);
   margin-bottom: var(--a-spacing-6);
-  
+
   /* Smooth transitions for periode changes */
-  transition: 
+  transition:
     opacity 0.3s ease-out,
     transform 0.3s ease-out;
   opacity: 1;
@@ -83,4 +83,3 @@
 .fadeIn {
   animation: periodeFadeIn 0.4s ease-out;
 }
-
