@@ -10,6 +10,9 @@ replicas:
 use_msw: false
 is_localhost: false
 
+faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
+
+
 azure:
   tenant: trygdeetaten.no
   enabled: true

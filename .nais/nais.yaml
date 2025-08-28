@@ -45,6 +45,8 @@ spec:
       value: "{{use_msw}}"
     - name: VITE_IS_LOCALHOST
       value: "{{is_localhost}}"
+    - name: FARO_URL
+      value: "{{faro_url}}"
   accessPolicy:
     outbound:
       external:
@@ -74,3 +76,7 @@ spec:
     autoInstrumentation:
       enabled: true
       runtime: nodejs
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
