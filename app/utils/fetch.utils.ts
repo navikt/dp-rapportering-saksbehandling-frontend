@@ -3,7 +3,7 @@
 import { uuidv7 } from "uuidv7";
 
 import { getSessionId } from "../mocks/session";
-import { getOnBehalfOfToken, getSaksbehandlerOnBehalfOfToken } from "./auth.utils.server";
+import { getOnBehalfOfToken } from "./auth.utils.server";
 import { isLocalOrDemo } from "./env.utils";
 
 function generateCorrelationId() {
@@ -18,21 +18,6 @@ interface IProps {
   audience: string;
 }
 
-export async function getSaksbehandlerHeaders({ request, customHeaders = {}, audience }: IProps) {
-  const onBehalfOfToken = await getSaksbehandlerOnBehalfOfToken(request, audience);
-
-  const headers = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    Authorization: `Bearer ${onBehalfOfToken}`,
-    "X-Request-ID": generateCorrelationId(),
-    connection: "keep-alive",
-    Referer: request.url,
-    ...customHeaders,
-  };
-
-  return headers;
-}
 export async function getHeaders({ request, customHeaders = {}, audience }: IProps) {
   const onBehalfOfToken = await getOnBehalfOfToken(request, audience);
 

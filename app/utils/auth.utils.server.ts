@@ -11,9 +11,7 @@ const fallbackToken =
 
 const localToken = process.env.DP_MELDEKORTREGISTER_TOKEN ?? fallbackToken;
 
-export const DP_MELDEKORTREGISTER_AUDIENCE = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-meldekortregister`;
-export const DP_PERSONREGISTER_AUDIENCE = `${process.env.NAIS_CLUSTER_NAME}:teamdagpenger:dp-personregister`;
-export const MICROSOFT_AUDIENCE = `https://graph.microsoft.com/.default`;
+export const DP_MELDEKORTREGISTER_AUDIENCE = `api://${process.env.NAIS_CLUSTER_NAME}.teamdagpenger.dp-meldekortregister/.default`;
 
 export function sessionExpiresIn(request: Request) {
   const token = getEnv("IS_LOCALHOST") === "true" || usesMsw ? localToken : getToken(request);
@@ -33,35 +31,6 @@ export function sessionExpiresIn(request: Request) {
 export async function getOnBehalfOfToken(request: Request, audience: string) {
   if (isLocalhost || usesMsw) {
     return localToken;
-  }
-
-  const token = getToken(request);
-
-  if (!token) {
-    logger.error("Missing token");
-    throw new Response("Missing token", { status: 401 });
-  }
-
-  const validation = await validateToken(token);
-
-  if (!validation.ok) {
-    logger.error(`Failed to validate token: ${validation.error}`);
-    throw new Response("Token validation failed", { status: 401 });
-  }
-
-  const obo = await requestOboToken(token, audience);
-
-  if (!obo.ok) {
-    logger.error(`Failed to get OBO token: ${obo.error}`);
-    throw new Response("Unauthorized", { status: 401 });
-  }
-
-  return obo.token;
-}
-
-export async function getSaksbehandlerOnBehalfOfToken(request: Request, audience: string) {
-  if (isLocalhost || usesMsw) {
-    return process.env.MICROSOFT_TOKEN;
   }
 
   const token = getToken(request);

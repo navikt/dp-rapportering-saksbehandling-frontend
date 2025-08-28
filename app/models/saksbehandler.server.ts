@@ -1,5 +1,4 @@
-import { MICROSOFT_AUDIENCE } from "~/utils/auth.utils.server";
-import { getSaksbehandlerHeaders } from "~/utils/fetch.utils";
+import { getHeaders } from "~/utils/fetch.utils";
 import type { ISaksbehandler } from "~/utils/types";
 
 import { logger } from "./logger.server";
@@ -9,8 +8,10 @@ export async function hentSaksbehandler(request: Request): Promise<ISaksbehandle
     const url =
       "https://graph.microsoft.com/v1.0/me/?$select=onPremisesSamAccountName,givenName,displayName,mail";
 
+    const audience = `https://graph.microsoft.com/.default`;
+
     const data = await fetch(url, {
-      headers: await getSaksbehandlerHeaders({ request, audience: MICROSOFT_AUDIENCE }),
+      headers: await getHeaders({ request, audience }),
     });
 
     return await data.json();
