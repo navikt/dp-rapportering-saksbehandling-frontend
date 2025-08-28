@@ -53,6 +53,9 @@ spec:
         - host: amplitude.nav.no
         - host: graph.microsoft.com
         - host: login.microsoftonline.com
+      rules:
+        - application: dp-meldekortregister
+        
 
   azure:
     application:
@@ -67,3 +70,7 @@ spec:
     sidecar:
       enabled: {{azure.enabled}}
       autoLogin: true
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: nodejs
