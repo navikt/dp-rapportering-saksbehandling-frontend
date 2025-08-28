@@ -137,6 +137,7 @@ export interface IEnv {
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";
+  FARO_URL: string;
 }
 
 export interface ISaksbehandler {
