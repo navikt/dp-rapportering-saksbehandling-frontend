@@ -1,7 +1,7 @@
 import { BodyShort, Heading, LinkPanel } from "@navikt/ds-react";
 import { useLoaderData } from "react-router";
 
-import { getFullDemoPerson } from "~/mocks/data/mock-persons";
+import { getFullDemoPerson } from "~/mocks/data/mock-personer";
 import { usesMsw } from "~/utils/env.utils";
 
 export async function loader() {
@@ -39,7 +39,7 @@ export default function Rapportering() {
               const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
                 person.etternavn
               }`;
-              const link = `/person/${person.id}/perioder`;
+              const link = `/person/${person.id}/meldekort`;
 
               return (
                 <li key={person.id} style={{ marginBottom: "1rem" }}>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useFetcher, useNavigate, useRevalidator } from "react-router";
 
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
-import { MODAL_ACTION_TYPE } from "~/utils/constants";
+import { MODAL_ACTION_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
@@ -61,7 +61,7 @@ export function Korrigering({
       // Revalider data for å oppdatere listen
       revalidator.revalidate();
 
-      navigate(`/person/${person.id}/perioder?updated=${nyPeriodeId}`);
+      navigate(`/person/${person.id}/meldekort?updated=${nyPeriodeId}`);
       setIsSubmitting(false);
     }
   }, [
@@ -80,12 +80,12 @@ export function Korrigering({
       setIsSubmitting(true);
       fetcher.submit(
         { rapporteringsperiode: JSON.stringify(korrigertPeriode) },
-        { method: "post", action: "/api/rapportering" },
+        { method: "post", action: "/api/meldekort" },
       );
     } else if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       // Skru av navigation warning før man sender inn korrigert meldekort
       disableWarning();
-      navigate(`/person/${person.id}/perioder`);
+      navigate(`/person/${person.id}/meldekort`);
     }
   }
 
@@ -96,6 +96,8 @@ export function Korrigering({
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
+      personId: person.id,
+      status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       meldedato: korrigertMeldedato ? format(korrigertMeldedato, "yyyy-MM-dd") : prev.meldedato,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       begrunnelse: korrigertBegrunnelse,

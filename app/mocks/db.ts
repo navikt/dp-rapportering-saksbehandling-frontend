@@ -3,8 +3,8 @@ import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/typ
 import { createId } from "./mock.utils";
 import { type Database } from "./session";
 
-function hentAlleRapporteringsperioder(db: Database) {
-  return db.rapporteringsperioder.findMany({
+function hentAlleMeldekort(db: Database) {
+  return db.meldekort.findMany({
     orderBy: [
       {
         periode: {
@@ -21,8 +21,8 @@ function hentAlleRapporteringsperioder(db: Database) {
   }) as IRapporteringsperiode[];
 }
 
-function hentRapporteringsperiodeMedId(db: Database, id: string) {
-  return db.rapporteringsperioder.findFirst({
+function hentMeldekortMedId(db: Database, id: string) {
+  return db.meldekort.findFirst({
     where: {
       id: {
         equals: id,
@@ -31,50 +31,54 @@ function hentRapporteringsperiodeMedId(db: Database, id: string) {
   }) as IRapporteringsperiode;
 }
 
-function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
+function korrigerMeldekort(db: Database, meldekort: IRapporteringsperiode) {
   const id = createId();
 
-  db.rapporteringsperioder.create({
-    ...rapporteringsperiode,
+  db.meldekort.create({
+    ...meldekort,
     id,
-    originalMeldekortId: rapporteringsperiode.id,
+    originalMeldekortId: meldekort.id,
+    kanSendes: false,
+    kanEndres: true,
     innsendtTidspunkt: new Date().toISOString(),
   });
 
-  return hentRapporteringsperiodeMedId(db, id);
+  return hentMeldekortMedId(db, id);
 }
 
-function oppdaterPeriode(
+function sendInnMeldekort(
   db: Database,
-  periodeId: string,
+  meldekortId: string,
   oppdateringer: Partial<IRapporteringsperiode>,
 ) {
-  const eksisterendePeriode = hentRapporteringsperiodeMedId(db, periodeId);
+  const eksisterendeMeldekort = hentMeldekortMedId(db, meldekortId);
 
-  if (!eksisterendePeriode) {
-    throw new Error(`Periode ${periodeId} ikke funnet`);
+  if (!eksisterendeMeldekort) {
+    throw new Error(`Meldekort ${meldekortId} ikke funnet`);
   }
 
-  const oppdatertPeriode = {
-    ...eksisterendePeriode,
+  const oppdatertMeldekort = {
+    ...eksisterendeMeldekort,
     ...oppdateringer,
+    kanSendes: false,
+    kanEndres: true,
     innsendtTidspunkt: new Date().toISOString(),
   };
 
-  db.rapporteringsperioder.update({
+  db.meldekort.update({
     where: {
       id: {
-        equals: periodeId,
+        equals: meldekortId,
       },
     },
-    data: oppdatertPeriode,
+    data: oppdatertMeldekort,
   });
 
-  return hentRapporteringsperiodeMedId(db, periodeId);
+  return hentMeldekortMedId(db, meldekortId);
 }
 
-function leggTilRapporteringsperiode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
-  db.rapporteringsperioder.create(rapporteringsperiode);
+function leggTilMeldekort(db: Database, meldekort: IRapporteringsperiode) {
+  db.meldekort.create(meldekort);
 }
 
 function hentPerson(db: Database, personId: string) {
@@ -109,16 +113,14 @@ function hentSaksbehandler(db: Database, saksbehandlerId: string) {
 
 export function withDb(db: Database) {
   return {
-    leggTilRapporteringsperiode: (rapporteringsperiode: IRapporteringsperiode) =>
-      leggTilRapporteringsperiode(db, rapporteringsperiode),
-    hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
-    hentRapporteringsperiodeMedId: (id: string) => hentRapporteringsperiodeMedId(db, id),
+    leggTilMeldekort: (meldekort: IRapporteringsperiode) => leggTilMeldekort(db, meldekort),
+    hentAlleMeldekort: () => hentAlleMeldekort(db),
+    hentMeldekortMedId: (id: string) => hentMeldekortMedId(db, id),
     hentPerson: (personId: string) => hentPerson(db, personId),
     hentPersoner: () => hentPersoner(db),
     hentSaksbehandler: (saksbehandlerId: string) => hentSaksbehandler(db, saksbehandlerId),
-    korrigerPeriode: (rapporteringsperiode: IRapporteringsperiode) =>
-      korrigerPeriode(db, rapporteringsperiode),
-    oppdaterPeriode: (periodeId: string, oppdateringer: Partial<IRapporteringsperiode>) =>
-      oppdaterPeriode(db, periodeId, oppdateringer),
+    korrigerMeldekort: (meldekort: IRapporteringsperiode) => korrigerMeldekort(db, meldekort),
+    sendInnMeldekort: (meldekortId: string, oppdateringer: Partial<IRapporteringsperiode>) =>
+      sendInnMeldekort(db, meldekortId, oppdateringer),
   };
 }

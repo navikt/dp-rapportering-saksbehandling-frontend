@@ -7,7 +7,7 @@ import invariant from "tiny-invariant";
 import { Korrigering } from "~/components/korrigering/Korrigering";
 import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
 import { PeriodeMedUke } from "~/components/rapporteringsperiode-visning/PeriodeMedUke";
-import { hentPeriode } from "~/models/rapporteringsperiode.server";
+import { hentMeldekort } from "~/models/meldekort.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
@@ -22,10 +22,14 @@ export async function loader({
 }: Route.LoaderArgs): Promise<{ periode: IInnsendtMeldekort; saksbehandler: ISaksbehandler }> {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
-  const periode = await hentPeriode<IInnsendtMeldekort>(request, params.personId, params.periodeId);
+  const periode = await hentMeldekort<IInnsendtMeldekort>(
+    request,
+    params.personId,
+    params.periodeId,
+  );
   const saksbehandler = await hentSaksbehandler(request);
 
-  // TODO: Håndter feil i hentPeriode
+  // TODO: Håndter feil i hentMeldekort
   return { periode, saksbehandler };
 }
 

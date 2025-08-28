@@ -24,7 +24,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
         <div>
           <Button
             as="a"
-            href={`/person/${personId}/periode/${periode.id}/fyll-ut`}
+            href={`/person/${personId}/meldekort/${periode.id}/fyll-ut`}
             className={styles.korrigerKnapp}
             size="small"
             variant="primary"
@@ -92,7 +92,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
             <div>
               <Button
                 as="a"
-                href={`/person/${personId}/periode/${periode.id}/korriger`}
+                href={`/person/${personId}/meldekort/${periode.id}/korriger`}
                 className={styles.korrigerKnapp}
                 size="small"
               >

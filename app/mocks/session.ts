@@ -3,8 +3,8 @@ import { factory, nullable, primaryKey } from "@mswjs/data";
 
 import type { IPerson, ISaksbehandler } from "~/utils/types";
 
-import { mockPersons } from "./data/mock-persons";
-import { hentRapporteringsperioderForScenario } from "./data/mock-rapporteringsperioder";
+import { hentMeldekortForScenario } from "./data/mock-meldekort";
+import { mockPersons } from "./data/mock-personer";
 import { mockSaksbehandler } from "./data/mock-saksbehandler";
 
 export type Database = ReturnType<SessionRecord["createDatabase"]>;
@@ -31,15 +31,15 @@ class SessionRecord {
         const { scenario, ...person } = personData;
         const createdPerson = db.personer.create(person) as IPerson;
 
-        // Generer perioder basert på personens scenario
-        const periods = hentRapporteringsperioderForScenario(
+        // Generer meldekort basert på personens scenario
+        const meldekortListe = hentMeldekortForScenario(
           scenario,
           createdPerson,
           createdSaksbehandler,
         );
 
-        periods.forEach((rapporteringsperiode) => {
-          db.rapporteringsperioder.create(rapporteringsperiode);
+        meldekortListe.forEach((meldekort) => {
+          db.meldekort.create(meldekort);
         });
       });
     }
@@ -49,7 +49,7 @@ class SessionRecord {
 
   private createDatabase() {
     return factory({
-      rapporteringsperioder: {
+      meldekort: {
         id: primaryKey(faker.string.numeric),
         personId: faker.string.alpha,
         ident: faker.string.alpha,
