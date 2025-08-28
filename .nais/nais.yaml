@@ -80,6 +80,3 @@ spec:
       destinations:
         - id: loki
         - id: elastic
-    frontend:
-      generatedConfig:
-        mountPath: /app/build/client/nais.js
