@@ -114,7 +114,7 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
   );
 
   useEffect(() => {
-    const newParams = new URLSearchParams(window.location.search);
+    const newParams = new URLSearchParams(searchParams);
     if (valgteIds.length > 0) {
       newParams.set("rapporteringsid", valgteIds.join(","));
     } else {
@@ -124,7 +124,7 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
   }, [valgteIds]);
 
   useEffect(() => {
-    const newParams = new URLSearchParams(window.location.search);
+    const newParams = new URLSearchParams(searchParams);
     if (valgteAar.length > 0) {
       newParams.set("aar", valgteAar.join(","));
     } else {
