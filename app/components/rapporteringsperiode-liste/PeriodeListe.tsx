@@ -92,49 +92,74 @@ function RapporteringsperiodeTabell({
  * Main component that groups reporting periods by year in an accordion
  */
 export function RapporteringsperiodeListeByYear({ perioder }: Props) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [valgteIds, setValgteIds] = useState<string[]>([]);
-
+  const gyldigeIds = new Set(perioder.map((p) => p.id));
   const groupedPeriods = groupPeriodsByYear(perioder);
   const years = Object.keys(groupedPeriods)
     .map(Number)
     .sort((a, b) => b - a); // Nyeste år først
 
-  const gyldigeIds = new Set(perioder.map((p) => p.id));
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [valgteAar, setValgteAar] = useState<number[]>(
+    searchParams
+      .get("aar")
+      ?.split(",")
+      .map(Number)
+      .filter((aar) => years.includes(aar)) ?? [years[0]],
+  );
+  const [valgteIds, setValgteIds] = useState<string[]>(
+    searchParams
+      .get("rapporteringsid")
+      ?.split(",")
+      .filter((id) => gyldigeIds.has(id)) ?? [],
+  );
 
   useEffect(() => {
-    const raw = searchParams.get("rapporteringsid")?.split(",") ?? [];
-    const filtrerte = raw.filter((id) => gyldigeIds.has(id));
-    setValgteIds(filtrerte);
-  }, [searchParams, perioder]);
+    const newParams = new URLSearchParams(window.location.search);
+    if (valgteIds.length > 0) {
+      newParams.set("rapporteringsid", valgteIds.join(","));
+    } else {
+      newParams.delete("rapporteringsid");
+    }
+    setSearchParams(newParams, { replace: true, preventScrollReset: true });
+  }, [valgteIds]);
+
+  useEffect(() => {
+    const newParams = new URLSearchParams(window.location.search);
+    if (valgteAar.length > 0) {
+      newParams.set("aar", valgteAar.join(","));
+    } else {
+      newParams.delete("aar");
+    }
+    setSearchParams(newParams, { replace: true, preventScrollReset: true });
+  }, [valgteAar]);
 
   const togglePeriode = (id: string) => {
     setValgteIds((prev) => {
       const alleredeValgt = prev.includes(id);
       if (!alleredeValgt && prev.length >= MAKS_VALGTE_PERIODER) return prev;
-      const nyeValgte = alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
-
-      const newParams = new URLSearchParams(window.location.search);
-
-      if (nyeValgte.length > 0) {
-        newParams.set("rapporteringsid", nyeValgte.join(","));
-      } else {
-        newParams.delete("rapporteringsid");
-      }
-      setSearchParams(newParams, { replace: true, preventScrollReset: true });
-      return nyeValgte;
+      return alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
     });
   };
+
+  function toggleAr(year: number) {
+    setValgteAar((prev) =>
+      prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year],
+    );
+  }
 
   return (
     <div role="region" aria-labelledby="periode-heading">
       <h2 id="periode-heading" className="sr-only">
         Rapporteringsperioder gruppert etter år
       </h2>
-      <Accordion size="small" headingSize="medium">
+      <Accordion size="small">
         {years.map((year) => (
-          <Accordion.Item key={year} defaultOpen={year === years[0]}>
-            <Accordion.Header className={styles.accordionHeader}>
+          <Accordion.Item
+            key={year}
+            defaultOpen={year === years[0]}
+            open={valgteAar.includes(year)}
+          >
+            <Accordion.Header className={styles.accordionHeader} onClick={() => toggleAr(year)}>
               Meldekort for {year}
             </Accordion.Header>
             <Accordion.Content style={{ padding: 0 }}>
