@@ -65,7 +65,7 @@ export interface IRapporteringsperiode {
   kanSendes: boolean;
   kanEndres: boolean;
   kanSendesFra: string;
-  sisteFristForTrekk: string;
+  sisteFristForTrekk: string | null;
   opprettetAv: string;
   begrunnelse?: string;
   kilde: {
