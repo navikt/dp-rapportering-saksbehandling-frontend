@@ -102,7 +102,6 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
 
   const gyldigeIds = new Set(perioder.map((p) => p.id));
 
-  // Les fra URL ved mount
   useEffect(() => {
     const raw = searchParams.get("rapporteringsid")?.split(",") ?? [];
     const filtrerte = raw.filter((id) => gyldigeIds.has(id));
@@ -113,20 +112,19 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
     setValgteIds((prev) => {
       const alleredeValgt = prev.includes(id);
       if (!alleredeValgt && prev.length >= MAKS_VALGTE_PERIODER) return prev;
-      const nyeIds = alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
-
-      // Oppdater URL automatisk når IDs endres
-      const newParams = new URLSearchParams(searchParams);
-      if (nyeIds.length > 0) {
-        newParams.set("rapporteringsid", nyeIds.join(","));
-      } else {
-        newParams.delete("rapporteringsid");
-      }
-      setSearchParams(newParams, { replace: true, preventScrollReset: true });
-
-      return nyeIds;
+      return alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
     });
   };
+
+  useEffect(() => {
+    const newParams = new URLSearchParams(searchParams);
+    if (valgteIds.length > 0) {
+      newParams.set("rapporteringsid", valgteIds.join(","));
+    } else {
+      newParams.delete("rapporteringsid");
+    }
+    setSearchParams(newParams, { replace: true, preventScrollReset: true });
+  }, [valgteIds]);
 
   return (
     <div role="region" aria-labelledby="periode-heading">
