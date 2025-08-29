@@ -112,19 +112,19 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
     setValgteIds((prev) => {
       const alleredeValgt = prev.includes(id);
       if (!alleredeValgt && prev.length >= MAKS_VALGTE_PERIODER) return prev;
-      return alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
+      const nyeValgte = alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
+
+      const newParams = new URLSearchParams(window.location.search);
+
+      if (nyeValgte.length > 0) {
+        newParams.set("rapporteringsid", nyeValgte.join(","));
+      } else {
+        newParams.delete("rapporteringsid");
+      }
+      setSearchParams(newParams, { replace: true, preventScrollReset: true });
+      return nyeValgte;
     });
   };
-
-  useEffect(() => {
-    const newParams = new URLSearchParams(searchParams);
-    if (valgteIds.length > 0) {
-      newParams.set("rapporteringsid", valgteIds.join(","));
-    } else {
-      newParams.delete("rapporteringsid");
-    }
-    setSearchParams(newParams, { replace: true, preventScrollReset: true });
-  }, [valgteIds]);
 
   return (
     <div role="region" aria-labelledby="periode-heading">
