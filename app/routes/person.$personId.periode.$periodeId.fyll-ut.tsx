@@ -82,7 +82,9 @@ export async function action({ request, params }: Route.ActionArgs) {
     await oppdaterPeriode(request, params.periodeId, oppdatertPeriode);
 
     // Redirect tilbake til perioder siden
-    return redirect(`/person/${params.personId}/perioder?updated=${params.periodeId}`);
+    return redirect(
+      `/person/${params.personId}/perioder?aar=${new Date(periode.periode.fraOgMed).getFullYear()}&rapporteringsid=${params.periodeId}`,
+    );
   } catch (error) {
     console.error("Feil ved oppdatering av periode:", error);
     throw new Error("Kunne ikke oppdatere periode");
@@ -128,7 +130,9 @@ export default function FyllUtPeriode() {
   const handleBekreft = () => {
     if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       disableWarning();
-      navigate(`/person/${personData?.person.id}/perioder`);
+      navigate(
+        `/person/${personData?.person.id}/perioder?aar=${new Date(periode.periode.fraOgMed).getFullYear()}&rapporteringsid=${periode.id}`,
+      );
     } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       // Skru av navigation warning før man sender inn meldekort
       disableWarning();
