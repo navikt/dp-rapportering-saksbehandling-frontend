@@ -25,7 +25,8 @@ const transformPerioderToHistoryEvents = (perioder: IRapporteringsperiode[]): IH
       return {
         date: formatterDato({ dato: periode.innsendtTidspunkt!, format: DatoFormat.DagMndAar }),
         time: innsendtDato.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" }),
-        event: `Meldekort uke ${ukenummerTekst} ${periode.originalMeldekortId ? "korrigert" : "innsendt"}`,
+        event: `Meldekort uke ${ukenummerTekst} ${innsendtDato.getFullYear()}`,
+        hendelseType: periode.originalMeldekortId ? "Korrigert" : "Innsendt",
         type: "Elektronisk",
         kategori: "Meldekort",
       };
