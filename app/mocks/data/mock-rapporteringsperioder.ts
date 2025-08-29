@@ -541,7 +541,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
-        kanEndres: true,
+        kanEndres: false,
       },
       ukerFraIDag: 46,
     },
@@ -722,7 +722,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
-        kanEndres: true,
+        kanEndres: false, // Kan ikke endres fordi det finnes en korrigering av denne
       },
       ukerFraIDag: 30,
     },

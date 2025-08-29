@@ -66,7 +66,6 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           ...oppdateringer,
           kanSendes: false,
           kanEndres: true,
-          innsendtTidspunkt: new Date().toISOString(),
         };
 
         db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
@@ -82,7 +81,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
       async ({ params, request, cookies }) => {
         const db = database || getDatabase(cookies);
         const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
-        const oppdateringer = (await request.json()) as Partial<IRapporteringsperiode>;
+        const oppdateringer = (await request.json()) as IRapporteringsperiode;
 
         const eksisterendePeriode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
 
@@ -91,14 +90,8 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           return HttpResponse.json(null, { status: 404 });
         }
 
-        const oppdatertPeriode: IRapporteringsperiode = {
-          ...eksisterendePeriode,
-          ...oppdateringer,
-          kanSendes: false,
-          kanEndres: true,
-        };
-
-        db.korrigerPeriode(oppdatertPeriode);
+        const oppdatertPeriode = db.korrigerPeriode(oppdateringer);
+        db.periodeKanIkkeLengerSendes(rapporteringsperiodeId);
 
         logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
 

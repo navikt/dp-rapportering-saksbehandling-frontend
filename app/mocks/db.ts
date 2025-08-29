@@ -39,6 +39,9 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
     id,
     originalMeldekortId: rapporteringsperiode.id,
     innsendtTidspunkt: new Date().toISOString(),
+    kanSendes: false,
+    kanEndres: true,
+    sisteFristForTrekk: null,
   });
 
   return hentRapporteringsperiodeMedId(db, id);
@@ -73,8 +76,29 @@ function oppdaterPeriode(
   return hentRapporteringsperiodeMedId(db, periodeId);
 }
 
-function leggTilRapporteringsperiode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
-  db.rapporteringsperioder.create(rapporteringsperiode);
+function periodeKanIkkeLengerSendes(db: Database, periodeId: string) {
+  const eksisterendePeriode = hentRapporteringsperiodeMedId(db, periodeId);
+
+  if (!eksisterendePeriode) {
+    throw new Error(`Periode ${periodeId} ikke funnet`);
+  }
+
+  const oppdatertPeriode = {
+    ...eksisterendePeriode,
+    kanSendes: false,
+    kanEndres: false,
+  };
+
+  db.rapporteringsperioder.update({
+    where: {
+      id: {
+        equals: periodeId,
+      },
+    },
+    data: oppdatertPeriode,
+  });
+
+  return hentRapporteringsperiodeMedId(db, periodeId);
 }
 
 function hentPerson(db: Database, personId: string) {
@@ -109,16 +133,15 @@ function hentSaksbehandler(db: Database, saksbehandlerId: string) {
 
 export function withDb(db: Database) {
   return {
-    leggTilRapporteringsperiode: (rapporteringsperiode: IRapporteringsperiode) =>
-      leggTilRapporteringsperiode(db, rapporteringsperiode),
     hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
-    hentRapporteringsperiodeMedId: (id: string) => hentRapporteringsperiodeMedId(db, id),
     hentPerson: (personId: string) => hentPerson(db, personId),
     hentPersoner: () => hentPersoner(db),
+    hentRapporteringsperiodeMedId: (id: string) => hentRapporteringsperiodeMedId(db, id),
     hentSaksbehandler: (saksbehandlerId: string) => hentSaksbehandler(db, saksbehandlerId),
     korrigerPeriode: (rapporteringsperiode: IRapporteringsperiode) =>
       korrigerPeriode(db, rapporteringsperiode),
     oppdaterPeriode: (periodeId: string, oppdateringer: Partial<IRapporteringsperiode>) =>
       oppdaterPeriode(db, periodeId, oppdateringer),
+    periodeKanIkkeLengerSendes: (periodeId: string) => periodeKanIkkeLengerSendes(db, periodeId),
   };
 }

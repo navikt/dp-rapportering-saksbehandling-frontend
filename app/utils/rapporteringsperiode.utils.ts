@@ -13,7 +13,7 @@ export function erMeldekortSendtForSent(periode: IRapporteringsperiode): boolean
   const { meldedato, sisteFristForTrekk } = periode;
 
   // Ikke innsendte meldekort kan ikke være for sent
-  if (!meldedato) {
+  if (!meldedato || !sisteFristForTrekk) {
     return false;
   }
 

@@ -45,7 +45,7 @@ spec:
       value: "{{use_msw}}"
     - name: VITE_IS_LOCALHOST
       value: "{{is_localhost}}"
-    - name: FARO_URL
+    - name: VITE_FARO_URL
       value: "{{faro_url}}"
   accessPolicy:
     outbound:

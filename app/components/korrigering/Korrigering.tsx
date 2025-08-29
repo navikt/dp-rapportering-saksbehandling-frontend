@@ -61,7 +61,9 @@ export function Korrigering({
       // Revalider data for å oppdatere listen
       revalidator.revalidate();
 
-      navigate(`/person/${person.id}/perioder?updated=${nyPeriodeId}`);
+      navigate(
+        `/person/${person.id}/perioder?aar=${new Date(originalPeriode.periode.fraOgMed).getFullYear()}&rapporteringsid=${nyPeriodeId}`,
+      );
       setIsSubmitting(false);
     }
   }, [
@@ -85,7 +87,9 @@ export function Korrigering({
     } else if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       // Skru av navigation warning før man sender inn korrigert meldekort
       disableWarning();
-      navigate(`/person/${person.id}/perioder`);
+      navigate(
+        `/person/${person.id}/perioder?aar=${new Date(originalPeriode.periode.fraOgMed).getFullYear()}&rapporteringsid=${originalPeriode.id}`,
+      );
     }
   }
 
