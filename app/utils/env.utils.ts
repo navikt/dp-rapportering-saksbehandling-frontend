@@ -2,7 +2,10 @@ import type { IEnv } from "./types";
 
 export function getEnv<T>(key: keyof IEnv): T {
   const env =
-    process?.env.NODE_ENV === "test" || typeof window === "undefined" ? process.env : window.env;
+    typeof window === "undefined" ||
+    (typeof process !== "undefined" && process?.env.NODE_ENV === "test")
+      ? process.env
+      : window.env;
 
   const defaultEnv: IEnv = {
     IS_LOCALHOST: "false",
