@@ -41,6 +41,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
       NODE_ENV: getEnv("NODE_ENV"),
+      FARO_URL: getEnv("FARO_URL"),
     },
   };
 }
