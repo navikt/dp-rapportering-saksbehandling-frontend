@@ -512,6 +512,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         originalMeldekortId: "periode-korrigert-av-saksbehandler-1-original",
         kanSendes: false,
         kanEndres: true,
+        sisteFristForTrekk: null,
       },
       aktiviteter: [
         [{ type: AKTIVITET_TYPE.Fravaer }],
@@ -694,6 +695,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
         kanSendes: false,
         kanEndres: true,
+        sisteFristForTrekk: null,
       },
       aktiviteter: [
         null,
