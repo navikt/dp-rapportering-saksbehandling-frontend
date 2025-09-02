@@ -107,8 +107,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header saksbehandler={saksbehandler} antallOppgaverJegHarTilBehandling={2} />
-        <main>{children}</main>
+        <Header saksbehandler={saksbehandler} />
+        <main id="main-content">{children}</main>
         <ScrollRestoration />
         <Scripts />
         <script
