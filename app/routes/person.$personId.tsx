@@ -25,7 +25,9 @@ export default function Rapportering() {
 
   return (
     <>
-      <PersonInformasjon person={person} perioder={perioder} />
+      <aside aria-label="Informasjon om valgt person">
+        <PersonInformasjon person={person} perioder={perioder} />
+      </aside>
       <Outlet />
     </>
   );
