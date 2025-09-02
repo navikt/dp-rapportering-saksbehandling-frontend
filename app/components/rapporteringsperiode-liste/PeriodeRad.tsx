@@ -8,7 +8,7 @@ import type { IRapporteringsperiode } from "~/utils/types";
 
 import { Innsendt } from "./Innsendt";
 import styles from "./PeriodeListe.module.css";
-import { Status } from "./Status";
+import { getStatus, PERIODE_RAD_STATUS, Status } from "./Status";
 import { TypeAktivitet } from "./TypeAktivitet";
 
 interface Props {
@@ -47,7 +47,8 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
     }
   }, [searchParams, setSearchParams, periode.id, periode.originalMeldekortId]);
 
-  const isDisabled = !valgt && valgteAntall >= maksValgte;
+  const isDisabled =
+    (!valgt && valgteAntall >= maksValgte) || getStatus(periode) === PERIODE_RAD_STATUS.Opprettet;
 
   const radKlasse = classNames({
     [styles["periodeListe__row--selected"]]: valgt,
@@ -89,21 +90,23 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
       aria-pressed={valgt}
     >
       <Table.DataCell textSize="small" className={ukeKlasse}>
-        <Checkbox
-          className={styles.periodeListe__checkbox}
-          hideLabel
-          checked={valgt}
-          onChange={(e) => {
-            e.stopPropagation(); // Stopper click fra å gå til raden
-            handleCheckboxChange();
-          }}
-          onClick={(e) => e.stopPropagation()}
-          readOnly={!valgt && valgteAntall >= maksValgte}
-          aria-hidden="true"
-          tabIndex={-1}
-        >
-          {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
-        </Checkbox>
+        {getStatus(periode) !== PERIODE_RAD_STATUS.Opprettet && (
+          <Checkbox
+            className={styles.periodeListe__checkbox}
+            hideLabel
+            checked={valgt}
+            onChange={(e) => {
+              e.stopPropagation(); // Stopper click fra å gå til raden
+              handleCheckboxChange();
+            }}
+            onClick={(e) => e.stopPropagation()}
+            readOnly={isDisabled}
+            aria-hidden="true"
+            tabIndex={-1}
+          >
+            {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
+          </Checkbox>
+        )}
       </Table.DataCell>
       <Table.DataCell textSize="small" className={radKlasse}>
         {ukenummer(periode)}

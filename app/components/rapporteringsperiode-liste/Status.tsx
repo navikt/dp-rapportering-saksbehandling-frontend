@@ -16,12 +16,34 @@ const getVariant = (status: TRapporteringsperiodeStatus): "info" | "success" => 
   }
 };
 
-const getStatusText = (periode: IRapporteringsperiode): string => {
+export const PERIODE_RAD_STATUS = {
+  Innsendt: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+  TilUtfylling: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+  Opprettet: "Opprettet",
+  Korrigert: "Korrigert",
+} as const;
+
+export const getStatus = (
+  periode: IRapporteringsperiode,
+): "Innsendt" | "TilUtfylling" | "Opprettet" => {
   if (periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt) {
-    return "Innsendt";
+    return PERIODE_RAD_STATUS.Innsendt;
   }
 
   if (periode.kanSendes) {
+    return PERIODE_RAD_STATUS.TilUtfylling;
+  }
+
+  return PERIODE_RAD_STATUS.Opprettet;
+};
+
+const getStatusText = (periode: IRapporteringsperiode): string => {
+  const status = getStatus(periode);
+  if (status === PERIODE_RAD_STATUS.Innsendt) {
+    return "Innsendt";
+  }
+
+  if (status === PERIODE_RAD_STATUS.TilUtfylling) {
     return "Klar til utfylling";
   }
 
