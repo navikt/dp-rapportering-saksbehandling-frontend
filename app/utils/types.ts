@@ -56,7 +56,6 @@ export interface IRapporteringsperiodeDag {
 
 export interface IRapporteringsperiode {
   id: string;
-  personId: string;
   ident: string;
   status: TRapporteringsperiodeStatus;
   type: string;
@@ -118,7 +117,6 @@ export type Meldekort = IInnsendtMeldekort | ITilUtfyllingMeldekort;
 
 export interface IPerson {
   ident: string;
-  id: string;
   fornavn: string;
   etternavn: string;
   mellomnavn?: string;
@@ -132,8 +130,7 @@ export type TrueOrFalse = (typeof boolskeVerdier)[number];
 export interface IEnv {
   DP_MELDEKORTREGISTER_URL: string;
   DP_MELDEKORTREGISTER_TOKEN?: string;
-  DP_PERSONREGISTER_URL: string;
-  DP_PERSONREGISTER_TOKEN?: string;
+  MICROSOFT_TOKEN?: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";

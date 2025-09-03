@@ -13,8 +13,7 @@ export function getEnv<T>(key: keyof IEnv): T {
   const defaultEnv: IEnv = {
     IS_LOCALHOST: "false",
     USE_MSW: env.NODE_ENV === "test" ? "true" : "false",
-    DP_MELDEKORTREGISTER_URL: "https://dp-meldekortregister.intern.dev.navn.no",
-    DP_PERSONREGISTER_URL: "https://dp-personregister.intern.dev.nav.no",
+    DP_MELDEKORTREGISTER_URL: "https://dp-meldekortregister.intern.dev.nav.no",
     FARO_URL: "http://localhost:12347/collect",
   };
 

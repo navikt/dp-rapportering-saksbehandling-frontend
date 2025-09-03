@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
+import { QUERY_PARAMS } from "~/utils/constants";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -24,11 +25,13 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
   const [isHighlighted, setIsHighlighted] = useState(false);
 
   useEffect(() => {
-    const updatedId = searchParams.get("updated");
+    const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
 
     // Highlight kun hvis dette er den oppdaterte perioden
-    // (korrigeringen, ikke det originale meldekortet)
-    const shouldHighlight = updatedId === periode.id;
+    // (innsendt, eller korrigeringen og ikke det originale meldekortet)
+    const shouldHighlight =
+      (periode.originalMeldekortId && oppdatertId === periode.originalMeldekortId) ||
+      (oppdatertId === periode.id && !periode.originalMeldekortId);
 
     if (shouldHighlight) {
       setIsHighlighted(true);
@@ -36,7 +39,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
       // Fjern URL parameter i en setTimeout for å unngå rendering-konflikt
       setTimeout(() => {
         const newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.delete("updated");
+        newSearchParams.delete(QUERY_PARAMS.OPPDATERT);
         setSearchParams(newSearchParams, { replace: true });
       }, 0);
 

@@ -9,20 +9,38 @@ import { getDatabase } from "./db.utils";
 
 export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
   return [
+    http.get(`${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId`, ({ cookies, params }) => {
+      const db = database || getDatabase(cookies);
+
+      const personId = params.personId as string;
+      const person = db.hentPerson(personId);
+
+      if (!person) {
+        logger.error(`[mock meldekortregister]: Fant ikke person ${personId}`);
+
+        return HttpResponse.json(null, { status: 404 });
+      }
+
+      logger.info(`[mock meldekortregister]: Hentet person ${personId}`);
+
+      return HttpResponse.json(person);
+    }),
+
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort`,
       ({ params, cookies }) => {
         const db = database || getDatabase(cookies);
         const personId = params.personId as string;
+        const person = db.hentPerson(personId);
 
         const allePerioder = db.hentAlleRapporteringsperioder();
 
         const rapporteringsperioder = allePerioder.filter(
-          (periode) => periode.personId == personId,
+          (periode) => periode.ident === person.ident,
         );
 
         logger.info(
-          `Hentet ${rapporteringsperioder.length} rapporteringsperioder for person ${personId}`,
+          `[mock meldekortregister]: Hentet ${rapporteringsperioder.length} rapporteringsperioder for person ${personId}`,
         );
 
         return HttpResponse.json(rapporteringsperioder);
@@ -38,11 +56,11 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const rapporteringsperiode = db.hentRapporteringsperiodeMedId(meldekortId);
 
         if (!rapporteringsperiode) {
-          logger.error(`Fant ikke rapporteringsperiode ${meldekortId}`);
+          logger.error(`[mock meldekortregister]: Fant ikke rapporteringsperiode ${meldekortId}`);
           return HttpResponse.json(null, { status: 404 });
         }
 
-        logger.info(`Hentet rapporteringsperiode ${meldekortId}`);
+        logger.info(`[mock meldekortregister]: Hentet rapporteringsperiode ${meldekortId}`);
 
         return HttpResponse.json(rapporteringsperiode);
       },
@@ -53,26 +71,24 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
       async ({ params, request, cookies }) => {
         const db = database || getDatabase(cookies);
         const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
-        const oppdateringer = (await request.json()) as Partial<IRapporteringsperiode>;
+        const oppdateringer = (await request.json()) as IRapporteringsperiode;
 
         const eksisterendePeriode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
 
         if (!eksisterendePeriode) {
-          logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`);
+          logger.error(
+            `[mock meldekortregister]: Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`,
+          );
           return HttpResponse.json(null, { status: 404 });
         }
-        const oppdatertPeriode: IRapporteringsperiode = {
-          ...eksisterendePeriode,
-          ...oppdateringer,
-          kanSendes: false,
-          kanEndres: true,
-        };
 
-        db.oppdaterPeriode(rapporteringsperiodeId, oppdatertPeriode);
+        db.oppdaterPeriode(rapporteringsperiodeId, oppdateringer);
 
-        logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
+        logger.info(
+          `[mock meldekortregister]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
+        );
 
-        return HttpResponse.json(oppdatertPeriode, { status: 200 });
+        return HttpResponse.json(null, { status: 200 });
       },
     ),
 
@@ -86,16 +102,20 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const eksisterendePeriode = db.hentRapporteringsperiodeMedId(rapporteringsperiodeId);
 
         if (!eksisterendePeriode) {
-          logger.error(`Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`);
+          logger.error(
+            `[mock meldekortregister]: Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for korrigering`,
+          );
           return HttpResponse.json(null, { status: 404 });
         }
 
-        const oppdatertPeriode = db.korrigerPeriode(oppdateringer);
+        db.korrigerPeriode(oppdateringer);
         db.periodeKanIkkeLengerSendes(rapporteringsperiodeId);
 
-        logger.info(`Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`);
+        logger.info(
+          `[mock meldekortregister]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
+        );
 
-        return HttpResponse.json(oppdatertPeriode, { status: 200 });
+        return HttpResponse.json(null, { status: 200 });
       },
     ),
   ];

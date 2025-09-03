@@ -1,7 +1,7 @@
 import { BodyShort, Heading, Tag } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useState } from "react";
-import { useLoaderData, useRouteLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Korrigering } from "~/components/korrigering/Korrigering";
@@ -10,38 +10,30 @@ import { PeriodeMedUke } from "~/components/rapporteringsperiode-visning/Periode
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
-import type { loader as personLoader } from "~/routes/person.$personId";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
-import type { IInnsendtMeldekort, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
+import type { IInnsendtMeldekort, IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "../+types/root";
 
-export async function loader({
-  request,
-  params,
-}: Route.LoaderArgs): Promise<{ periode: IInnsendtMeldekort; saksbehandler: ISaksbehandler }> {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
+  const personId = params.personId;
 
-  const periode = await hentPeriode<IInnsendtMeldekort>(request, params.personId, params.periodeId);
+  const periode = await hentPeriode<IInnsendtMeldekort>(request, personId, params.periodeId);
   const saksbehandler = await hentSaksbehandler(request);
 
   // TODO: Håndter feil i hentPeriode
-  return { periode, saksbehandler };
+  return { periode, saksbehandler, personId };
 }
 
 export default function Periode() {
-  const { periode, saksbehandler } = useLoaderData<typeof loader>();
-  const personData = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
+  const { periode, saksbehandler, personId } = useLoaderData<typeof loader>();
 
   const [korrigertPeriode, setKorrigertPeriode] = useState<IRapporteringsperiode>(periode);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
-
-  if (!personData?.person) {
-    return <div>Persondata ikke funnet</div>;
-  }
 
   const erKorrigering = !!periode.originalMeldekortId;
 
@@ -88,7 +80,7 @@ export default function Periode() {
           korrigertPeriode={korrigertPeriode}
           setKorrigertPeriode={setKorrigertPeriode}
           originalPeriode={periode}
-          person={personData.person}
+          personId={personId}
           saksbehandler={saksbehandler}
         />
       </div>

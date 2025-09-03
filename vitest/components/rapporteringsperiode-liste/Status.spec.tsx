@@ -11,7 +11,6 @@ const createMockPeriode = (
 ): IRapporteringsperiode => ({
   id: "test-id",
   ident: "test-ident",
-  personId: "test-person-id",
   status,
   type: "test-type",
   periode: {

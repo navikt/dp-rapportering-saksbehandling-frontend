@@ -1,4 +1,5 @@
 import { addDays, format, startOfWeek, subDays, subYears } from "date-fns";
+import { uuidv7 } from "uuidv7";
 
 import { AKTIVITET_TYPE, KORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
@@ -38,10 +39,6 @@ export function createFnr(birthdate?: Date): { ident: string } {
   };
 }
 
-export function createId(): string {
-  return String(Math.floor(Math.random() * 10_000_000_000));
-}
-
 export function formatereDato(dato: Date): string {
   return format(dato, "yyyy-MM-dd");
 }
@@ -74,8 +71,7 @@ export function lagRapporteringsperiode(
   const { fraOgMed, tilOgMed } = beregnNåværendePeriodeDato();
 
   const meldekort: IRapporteringsperiode = {
-    id: createId(),
-    personId: person?.id || createId(),
+    id: uuidv7(),
     ident: person?.ident || createFnr().ident,
     status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
     type: KORT_TYPE.Elektronisk,

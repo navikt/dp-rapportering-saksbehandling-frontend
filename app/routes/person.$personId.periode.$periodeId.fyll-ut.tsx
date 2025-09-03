@@ -9,7 +9,7 @@ import {
 } from "@navikt/ds-react";
 import { format, subDays } from "date-fns";
 import { useRef, useState } from "react";
-import { Form, redirect, useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
+import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import {
@@ -24,22 +24,18 @@ import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
-import type { loader as personLoader } from "~/routes/person.$personId";
-import { MODAL_ACTION_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MODAL_ACTION_TYPE, QUERY_PARAMS, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
 
-export async function loader({
-  request,
-  params,
-}: Route.LoaderArgs): Promise<{ periode: IRapporteringsperiode }> {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
+  const personId = params.personId;
 
   const periode = await hentPeriode(request, params.personId, params.periodeId);
 
-  return { periode };
+  return { periode, personId };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
@@ -64,7 +60,6 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     const oppdatertPeriode = {
       ...periode,
-      personId,
       innsendtTidspunkt: new Date().toISOString(),
       registrertArbeidssoker,
       begrunnelse,
@@ -79,11 +74,15 @@ export async function action({ request, params }: Route.ActionArgs) {
     };
 
     // Oppdater perioden via mock/backend
-    await oppdaterPeriode(request, params.periodeId, oppdatertPeriode);
+    await oppdaterPeriode({
+      periode: oppdatertPeriode,
+      personId,
+      request,
+    });
 
     // Redirect tilbake til perioder siden
     return redirect(
-      `/person/${params.personId}/perioder?aar=${new Date(periode.periode.fraOgMed).getFullYear()}&rapporteringsid=${params.periodeId}`,
+      `/person/${params.personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${params.periodeId}`,
     );
   } catch (error) {
     console.error("Feil ved oppdatering av periode:", error);
@@ -95,8 +94,7 @@ export default function FyllUtPeriode() {
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const { periode } = useLoaderData<typeof loader>();
-  const personData = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
+  const { periode, personId } = useLoaderData<typeof loader>();
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -131,7 +129,7 @@ export default function FyllUtPeriode() {
     if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       disableWarning();
       navigate(
-        `/person/${personData?.person.id}/perioder?aar=${new Date(periode.periode.fraOgMed).getFullYear()}&rapporteringsid=${periode.id}`,
+        `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}&${QUERY_PARAMS.OPPDATERT}=${periode.id}`,
       );
     } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       // Skru av navigation warning før man sender inn meldekort
@@ -224,7 +222,6 @@ export default function FyllUtPeriode() {
             </Button>
           </div>
           {/* Skjulte input felter for form data */}
-          <input type="hidden" name="personId" value={periode.personId} />
           <input
             type="hidden"
             name="meldedato"

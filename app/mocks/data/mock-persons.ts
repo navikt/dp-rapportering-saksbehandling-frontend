@@ -13,12 +13,14 @@ const personData = [
   },
 ];
 
-export const mockPersons: Array<IPerson & { scenario: ScenarioType }> = personData.map((person) => {
-  return {
-    ...person,
-    scenario: ScenarioType.FULL_DEMO,
-  };
-});
+export const mockPersons: Array<IPerson & { scenario: ScenarioType; id: string }> = personData.map(
+  (person) => {
+    return {
+      ...person,
+      scenario: ScenarioType.FULL_DEMO,
+    };
+  },
+);
 
 export const getFullDemoPerson = () => {
   return mockPersons.find((person) => person.scenario === ScenarioType.FULL_DEMO);

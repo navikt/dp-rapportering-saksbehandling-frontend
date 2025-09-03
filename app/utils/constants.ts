@@ -31,3 +31,9 @@ export const MODAL_ACTION_TYPE = {
   AVBRYT: "avbryt",
   FULLFOR: "fullfor",
 } as const;
+
+export const QUERY_PARAMS = {
+  AAR: "aar",
+  RAPPORTERINGSID: "rapporteringsid",
+  OPPDATERT: "oppdatert",
+} as const;
