@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useFetcher, useNavigate } from "react-router";
 
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
-import { MODAL_ACTION_TYPE } from "~/utils/constants";
+import { MODAL_ACTION_TYPE, QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
@@ -64,7 +64,7 @@ export function Korrigering({
       // Skru av navigation warning før man sender inn korrigert meldekort
       disableWarning();
       navigate(
-        `/person/${personId}/perioder?aar=${new Date(originalPeriode.periode.fraOgMed).getFullYear()}&rapporteringsid=${originalPeriode.id}`,
+        `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(originalPeriode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${originalPeriode.id}`,
       );
     }
   }

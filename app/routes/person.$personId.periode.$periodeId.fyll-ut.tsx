@@ -24,7 +24,7 @@ import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
-import { MODAL_ACTION_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MODAL_ACTION_TYPE, QUERY_PARAMS, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
@@ -82,7 +82,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     // Redirect tilbake til perioder siden
     return redirect(
-      `/person/${params.personId}/perioder?aar=${new Date(periode.periode.fraOgMed).getFullYear()}&rapporteringsid=${params.periodeId}`,
+      `/person/${params.personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${params.periodeId}`,
     );
   } catch (error) {
     console.error("Feil ved oppdatering av periode:", error);
@@ -129,7 +129,7 @@ export default function FyllUtPeriode() {
     if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       disableWarning();
       navigate(
-        `/person/${personId}/perioder?aar=${new Date(periode.periode.fraOgMed).getFullYear()}&rapporteringsid=${periode.id}&oppdatert=${periode.id}`,
+        `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}&${QUERY_PARAMS.OPPDATERT}=${periode.id}`,
       );
     } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       // Skru av navigation warning før man sender inn meldekort
