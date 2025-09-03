@@ -1,6 +1,7 @@
 import "./app.css";
 import "@navikt/ds-css";
 
+import { BodyShort, Box, Heading, Link, List, Page } from "@navikt/ds-react";
 import {
   isRouteErrorResponse,
   Links,
@@ -126,28 +127,45 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
+  let title: string = "Det har skjedd en feil";
+  let description: string = "Vi beklager, men noe gikk galt.";
+  let stack: string | undefined = undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404 ? "The requested page could not be found." : error.statusText || details;
+    const { errorId, message } = error.data as { errorId: string; message: string };
+
+    title =
+      error.status === 404
+        ? "Siden du leter etter eksisterer ikke"
+        : "Beklager, det har skjedd en feil";
+    description = `${message ?? description} ${errorId ? `Om du trenger hjelp kan du oppgi feil-ID ${errorId}.` : ""}`;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
+    description = error.message;
     stack = error.stack;
   }
 
   return (
-    <main>
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre>
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <Page.Block as="main" width="xl" gutters>
+      <Box paddingBlock="20 16" data-aksel-template="404-v2">
+        <div>
+          <Heading level="1" size="large" spacing>
+            {title}
+          </Heading>
+          <BodyShort>{description}</BodyShort>
+          <List>
+            <List.Item>Bruk gjerne søket eller menyen</List.Item>
+            <List.Item>
+              <Link href="/">Gå til forsiden</Link>
+            </List.Item>
+          </List>
+
+          {stack && (
+            <pre>
+              <code>{stack}</code>
+            </pre>
+          )}
+        </div>
+      </Box>
+    </Page.Block>
   );
 }
