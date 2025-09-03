@@ -1,3 +1,5 @@
+import { uuidv7 } from "uuidv7";
+
 import { DP_MELDEKORTREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
@@ -18,24 +20,32 @@ export async function hentRapporteringsperioder(
     });
 
     if (!response.ok) {
-      logger.error(
-        `Feil ved henting av rapporteringsperioder, status: ${response.status}, statusText: ${response.statusText}`,
+      throw new Response(
+        `Feil ved henting av rapporteringsperioder for person med ID ${personId}`,
+        {
+          status: response.status,
+          statusText: response.statusText,
+        },
       );
-
-      throw "rapportering-feilmelding-hent-perioder";
-      // TODO: Logg feilmelding
     }
 
     const rapporteringsperioder: IRapporteringsperiode[] = await response.json();
 
     return rapporteringsperioder;
   } catch (error) {
-    logger.error(`Feil ved henting av rapporteringsperioder: ${error}`);
+    const errorId = uuidv7();
 
-    throw new Response("", {
-      status: 500,
-      statusText: "rapportering-feilmelding-hent-perioder",
-    });
+    if (error instanceof Response) {
+      logger.error(error.statusText, { errorId });
+      throw Response.json(
+        { errorId, message: error.statusText },
+        { status: error.status, statusText: error.statusText },
+      );
+    }
+
+    const melding = `Feil ved henting av rapporteringsperioder for person med ID ${personId}: ${error}`;
+    logger.error(melding, { errorId });
+    throw Response.json({ errorId, message: melding }, { status: 500 });
   }
 }
 
@@ -53,48 +63,49 @@ export async function hentPeriode<T extends Meldekort>(
     });
 
     if (!response.ok) {
-      // TODO: Logg feilmelding
-      throw "rapportering-feilmelding-hent-periode";
+      throw new Response(
+        `Feil ved henting av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}`,
+        {
+          status: response.status,
+          statusText: response.statusText,
+        },
+      );
     }
 
     const rapporteringsperiode: T = await response.json();
 
     return rapporteringsperiode;
   } catch (error) {
-    logger.error(`Feil ved henting av rapporteringsperiode: ${error}`);
+    const errorId = uuidv7();
+    const message = `Feil ved henting av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}: ${error}`;
 
-    throw new Response(`rapportering-feilmelding-hent-periode`, { status: 500 });
-  }
-}
-
-export async function korrigerPeriode(request: Request, periode: IRapporteringsperiode) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${periode.personId}/meldekort/${periode.id}/korriger`;
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
-      body: JSON.stringify(periode),
-    });
-
-    if (!response.ok) {
-      throw "rapportering-feilmelding-korriger-periode";
+    if (error instanceof Response) {
+      logger.error(message, { errorId });
+      throw Response.json(
+        { errorId, message: error.statusText },
+        { status: error.status, statusText: error.statusText },
+      );
     }
 
-    const korrigertPeriode = await response.json();
-    return korrigertPeriode;
-  } catch (error) {
-    logger.error(`Feil ved korrigering av rapporteringsperiode: ${error}`);
-    throw new Response("rapportering-feilmelding-korriger-periode", { status: 500 });
+    logger.error(message, { errorId });
+    throw Response.json({ errorId, message }, { status: 500 });
   }
 }
 
-export async function oppdaterPeriode(
-  request: Request,
-  periodeId: string,
-  oppdateringer: Partial<IRapporteringsperiode>,
-) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${oppdateringer.personId}/meldekort/${periodeId}`;
+type OppdaterPeriodeProps = {
+  request: Request;
+  periodeId: string;
+  oppdateringer: IRapporteringsperiode;
+  personId: string;
+};
+
+export async function oppdaterPeriode({
+  request,
+  periodeId,
+  oppdateringer,
+  personId,
+}: OppdaterPeriodeProps) {
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periodeId}`;
 
   try {
     const response = await fetch(url, {
@@ -104,13 +115,73 @@ export async function oppdaterPeriode(
     });
 
     if (!response.ok) {
-      throw "rapportering-feilmelding-oppdater-periode";
+      throw new Response(
+        `Feil ved oppdatering av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}`,
+        {
+          status: response.status,
+          statusText: response.statusText,
+        },
+      );
     }
 
-    const oppdatertPeriode: IRapporteringsperiode = await response.json();
-    return oppdatertPeriode;
+    return Promise.resolve();
   } catch (error) {
-    logger.error(`Feil ved oppdatering av rapporteringsperiode: ${error}`);
-    throw new Response("rapportering-feilmelding-oppdater-periode", { status: 500 });
+    const errorId = uuidv7();
+    const message = `Feil ved oppdatering av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}: ${error}`;
+
+    if (error instanceof Response) {
+      logger.error(message, { errorId });
+      throw Response.json(
+        { errorId, message: error.statusText },
+        { status: error.status, statusText: error.statusText },
+      );
+    }
+
+    logger.error(message, { errorId });
+    throw Response.json({ errorId, message }, { status: 500 });
+  }
+}
+
+type KorrigerPeriodeProps = {
+  request: Request;
+  periode: IRapporteringsperiode;
+  personId: string;
+};
+
+export async function korrigerPeriode({ request, periode, personId }: KorrigerPeriodeProps) {
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}/korriger`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      body: JSON.stringify(periode),
+    });
+
+    if (!response.ok) {
+      throw new Response(
+        `Feil ved korrigering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}`,
+        {
+          status: response.status,
+          statusText: response.statusText,
+        },
+      );
+    }
+
+    return Promise.resolve();
+  } catch (error) {
+    const errorId = uuidv7();
+    const message = `Feil ved korrigering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}: ${error}`;
+
+    if (error instanceof Response) {
+      logger.error(message, { errorId });
+      throw Response.json(
+        { errorId, message: error.statusText },
+        { status: error.status, statusText: error.statusText },
+      );
+    }
+
+    logger.error(message, { errorId });
+    throw Response.json({ errorId, message }, { status: 500 });
   }
 }
