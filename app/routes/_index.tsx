@@ -16,8 +16,8 @@ export default function Rapportering() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <section
-      aria-labelledby="page-title"
+    <main
+      id="main-content"
       style={{
         maxWidth: "800px",
         margin: "0 auto",
@@ -67,6 +67,6 @@ export default function Rapportering() {
           Ingen testpersoner tilgjengelig. Sørg for at MSW (Mock Service Worker) er aktivert.
         </BodyShort>
       )}
-    </section>
+    </main>
   );
 }

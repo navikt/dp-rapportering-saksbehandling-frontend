@@ -1,5 +1,5 @@
 import { Accordion, Table } from "@navikt/ds-react";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -37,15 +37,9 @@ function RapporteringsperiodeTabell({
   onTogglePeriode,
   maksValgte,
 }: PropsWithSharedState) {
-  const tableInstructionsId = useId();
-
   return (
     <div className={styles.periodeListe}>
-      <div id={tableInstructionsId} className="sr-only">
-        Du kan velge maksimalt {maksValgte} perioder for sammenligning. Bruk mellomrom eller enter
-        for å velge/avvelge en periode.
-      </div>
-      <Table aria-describedby={tableInstructionsId}>
+      <Table>
         <Table.Header>
           <Table.Row>
             {KOLONNE_TITLER.map((kolonne, index) => {
@@ -148,10 +142,7 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
   }
 
   return (
-    <div role="region" aria-labelledby="periode-heading">
-      <h2 id="periode-heading" className="sr-only">
-        Rapporteringsperioder gruppert etter år
-      </h2>
+    <section>
       <Accordion size="small">
         {years.map((year) => (
           <Accordion.Item
@@ -173,14 +164,15 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
           </Accordion.Item>
         ))}
       </Accordion>
-      {/* Skjermleservennlig statusmelding - mindre støy */}
-      <div role="status" aria-live="polite" className="sr-only">
-        {valgteIds.length >= MAKS_VALGTE_PERIODER && (
-          <span id="max-selected-message-year">
-            Maksimalt antall perioder valgt. Du kan ikke velge flere.
+      {/* Skjermleservennlig statusmelding */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {valgteIds.length > 0 && (
+          <span>
+            {valgteIds.length >= MAKS_VALGTE_PERIODER &&
+              "Maksimalt antall perioder valgt. Du kan ikke velge flere."}
           </span>
         )}
       </div>
-    </div>
+    </section>
   );
 }

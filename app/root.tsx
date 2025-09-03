@@ -108,7 +108,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Header saksbehandler={saksbehandler} />
-        <main id="main-content">{children}</main>
+        {children}
         <ScrollRestoration />
         <Scripts />
         <script
@@ -140,7 +140,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main>
+    <main id="main-content">
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
