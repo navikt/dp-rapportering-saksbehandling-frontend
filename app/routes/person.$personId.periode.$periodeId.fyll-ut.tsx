@@ -130,7 +130,7 @@ export default function FyllUtPeriode() {
     if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       disableWarning();
       navigate(
-        `/person/${personId}/perioder?aar=${new Date(periode.periode.fraOgMed).getFullYear()}&rapporteringsid=${periode.id}`,
+        `/person/${personId}/perioder?aar=${new Date(periode.periode.fraOgMed).getFullYear()}&rapporteringsid=${periode.id}&oppdatert=${periode.id}`,
       );
     } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       // Skru av navigation warning før man sender inn meldekort
