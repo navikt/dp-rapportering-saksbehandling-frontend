@@ -16,10 +16,11 @@ interface IProps {
   request: Request;
   customHeaders?: Record<string, string>;
   audience: string;
+  fallbackToken?: string;
 }
 
-export async function getHeaders({ request, customHeaders = {}, audience }: IProps) {
-  const onBehalfOfToken = await getOnBehalfOfToken(request, audience);
+export async function getHeaders({ request, customHeaders = {}, audience, fallbackToken }: IProps) {
+  const onBehalfOfToken = await getOnBehalfOfToken(request, audience, fallbackToken);
 
   const headers = {
     "Content-Type": "application/json",
