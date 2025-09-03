@@ -101,15 +101,6 @@ type OppdaterPeriodeProps = {
 export async function oppdaterPeriode({ periode, personId, request }: OppdaterPeriodeProps) {
   const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}`;
 
-  // @ts-expect-error Fjern felter som ikke skal sendes til backend
-  delete periode.kanEndres;
-  // @ts-expect-error Fjern felter som ikke skal sendes til backend
-  delete periode.kanSendes;
-  // @ts-expect-error Fjern felter som ikke skal sendes til backend
-  delete periode.type;
-  // @ts-expect-error Legger til felt som skal sendes til backend
-  periode.referanseId = periode.id;
-
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -153,16 +144,6 @@ type KorrigerPeriodeProps = {
 
 export async function korrigerPeriode({ periode, personId, request }: KorrigerPeriodeProps) {
   const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}/korriger`;
-
-  // @ts-expect-error Fjern felter som ikke skal sendes til backend
-  delete periode.kanEndres;
-  // @ts-expect-error Fjern felter som ikke skal sendes til backend
-  delete periode.kanSendes;
-  // @ts-expect-error Fjern felter som ikke skal sendes til backend
-  delete periode.type;
-
-  // @ts-expect-error Legger til felt som skal sendes til backend
-  periode.referanseId = periode.id;
 
   try {
     const response = await fetch(url, {
