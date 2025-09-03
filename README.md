@@ -17,6 +17,19 @@ Testene er satt opp med Vitest og Testing library for enhets- og komponenttester
 
 Saksbehandlerflaten er dokumentert i [dp-dokumentasjon](https://dagpenger-dokumentasjon.ansatt.nav.no/innbyggerflate/ramp/losninger/rapportering/saksbehandlerflate). Skissene finner du under [Saksbehandlerflate - dagpenger i Figma](https://www.figma.com/design/uQm809LGIjlDRt0kBrvBVl/Behandlingsl%C3%B8sningen?node-id=14138-57188&p=f&t=HJ4yDUkUNOCI48KW-0).
 
+### Slik kjører du appen mot backend i dev
+Sørg for at du har miljøvariablene `DP_MELDEKORTREGISTER_TOKEN=""`, `DP_MELDEKORTREGISTER_URL="https://dp-meldekortregister.intern.dev.nav.no"`, `NAIS_CLUSTER_NAME="dev-gcp"`, `MICROSOFT_TOKEN=""`, og `VITE_USE_MSW="false"`.
+
+For å få tak i token til `DP_MELDEKORTREGISTER_TOKEN` og `MICROSOFT_TOKEN` må du være på naisdevice og besøke disse sidene, og kopiere med deg tokenet:
+* [meldekortregister_token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp.teamdagpenger.dp-meldekortregister)
+* [microsoft_token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=https://graph.microsoft.com/.default)
+
+Tokenet er gyldig i 1 time før du må generere nytt token.
+
+Du trenger også en saksbehandler fra [IDA](https://ida.intern.nav.no/). Om du mangler tilgang til IDA sender du e-post til NAV IT identhåndtering.
+
+
 ## TODO
 
 - Legge til scrolling i table body i `periodeVisning.tsx`
+
