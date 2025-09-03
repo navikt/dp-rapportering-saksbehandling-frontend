@@ -29,6 +29,7 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
 
     // Highlight kun hvis dette er den oppdaterte perioden
     // (innsendt, eller korrigeringen og ikke det originale meldekortet)
+    const shouldHighlight =
       (periode.originalMeldekortId && oppdatertId === periode.originalMeldekortId) ||
       (oppdatertId === periode.id && !periode.originalMeldekortId);
 
