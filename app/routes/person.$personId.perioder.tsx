@@ -40,22 +40,26 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       ) ?? [];
 
   return (
-    <div>
+    <>
       <div className={styles.rapporteringsperiodeListe}>
         <RapporteringsperiodeListeByYear perioder={perioder} />
       </div>
-      <div className={styles.grid}>
+      <section aria-label="Valgte perioder" className={styles.grid}>
         {valgteRapporteringsperiode.map((periode) => (
-          <div key={periode.id} className={classNames(styles.periodeContainer, styles.fadeIn)}>
+          <article
+            key={periode.id}
+            aria-label={`Periode ${periode.periode.fraOgMed}`}
+            className={classNames(styles.periodeContainer, styles.fadeIn)}
+          >
             <div className={styles.forhandsvisning}>
               <RapporteringsperiodeVisning perioder={[periode]} />
             </div>
             <div className={styles.detaljer}>
               <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId} />
             </div>
-          </div>
+          </article>
         ))}
-      </div>
-    </div>
+      </section>
+    </>
   );
 }

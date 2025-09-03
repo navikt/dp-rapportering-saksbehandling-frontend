@@ -71,49 +71,23 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
   })}`;
 
   return (
-    <Table.Row
-      selected={valgt}
-      className={radKlasse}
-      onClick={isDisabled ? undefined : () => toggle(periode.id)}
-      role={isDisabled ? undefined : "button"}
-      tabIndex={isDisabled ? -1 : 0}
-      onKeyDown={
-        isDisabled
-          ? undefined
-          : (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggle(periode.id);
-              }
-            }
-      }
-      aria-label={`${valgt ? "Avvelg" : "Velg"} rapporteringsperiode uke ${ukenummer(
-        periode,
-      )}, ${periodeDatoTekst}`}
-      aria-pressed={valgt}
-    >
+    <Table.Row selected={valgt} className={radKlasse}>
       <Table.DataCell textSize="small" className={ukeKlasse}>
         {getStatus(periode) !== PERIODE_RAD_STATUS.Opprettet && (
           <Checkbox
             className={styles.periodeListe__checkbox}
-            hideLabel
             checked={valgt}
-            onChange={(e) => {
-              e.stopPropagation(); // Stopper click fra å gå til raden
-              handleCheckboxChange();
-            }}
-            onClick={(e) => e.stopPropagation()}
-            readOnly={isDisabled}
-            aria-hidden="true"
-            tabIndex={-1}
+            onChange={handleCheckboxChange}
+            disabled={isDisabled}
+            hideLabel
           >
-            {`Velg rapporteringsperiode uke ${ukenummer(periode)}`}
+            Uke {ukenummer(periode)}
           </Checkbox>
         )}
       </Table.DataCell>
-      <Table.DataCell textSize="small" className={radKlasse}>
+      <Table.HeaderCell scope="row" textSize="small" className={radKlasse}>
         {ukenummer(periode)}
-      </Table.DataCell>
+      </Table.HeaderCell>
       <Table.DataCell textSize="small" className={radKlasse}>
         {periodeDatoTekst}
       </Table.DataCell>

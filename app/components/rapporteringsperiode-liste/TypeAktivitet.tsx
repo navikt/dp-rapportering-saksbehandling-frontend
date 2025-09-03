@@ -14,7 +14,8 @@ export function TypeAktivitet({ periode }: IProps) {
     <ul className="aktiviteter">
       {sorterteAktiviteter.map((type) => (
         <li key={type} className={`aktivitet ${aktivitetMapping[type].color}`}>
-          {aktivitetMapping[type].label}
+          <span aria-hidden="true">{aktivitetMapping[type].label}</span>
+          <span className="sr-only">{aktivitetMapping[type].aria}</span>
         </li>
       ))}
     </ul>

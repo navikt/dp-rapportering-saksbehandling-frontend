@@ -107,8 +107,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header saksbehandler={saksbehandler} antallOppgaverJegHarTilBehandling={2} />
-        <main>{children}</main>
+        <Header saksbehandler={saksbehandler} />
+        {children}
         <ScrollRestoration />
         <Scripts />
         <script
@@ -144,7 +144,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <Page.Block as="main" width="xl" gutters>
+    <Page.Block as="main" width="xl" gutters id="main-content">
       <Box paddingBlock="20 16" data-aksel-template="404-v2">
         <div>
           <Heading level="1" size="large" spacing>

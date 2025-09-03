@@ -24,9 +24,11 @@ export default function Rapportering() {
   const { person, perioder } = useLoaderData<typeof loader>();
 
   return (
-    <>
-      <PersonInformasjon person={person} perioder={perioder} />
+    <main id="main-content">
+      <aside aria-label="Informasjon om valgt person">
+        <PersonInformasjon person={person} perioder={perioder} />
+      </aside>
       <Outlet />
-    </>
+    </main>
   );
 }
