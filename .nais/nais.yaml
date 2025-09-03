@@ -39,8 +39,6 @@ spec:
       value: "{{ingress}}"
     - name: VITE_DP_MELDEKORTREGISTER_URL
       value: http://dp-meldekortregister
-    - name: VITE_DP_PERSONREGISTER_URL
-      value: http://dp-personregister
     - name: VITE_USE_MSW
       value: "{{use_msw}}"
     - name: VITE_IS_LOCALHOST
