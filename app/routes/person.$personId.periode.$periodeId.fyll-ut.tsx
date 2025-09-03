@@ -75,8 +75,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     // Oppdater perioden via mock/backend
     await oppdaterPeriode({
-      oppdateringer: oppdatertPeriode,
-      periodeId: params.periodeId,
+      periode: oppdatertPeriode,
       personId,
       request,
     });

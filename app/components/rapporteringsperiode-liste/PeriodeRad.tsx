@@ -26,7 +26,6 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
 
   useEffect(() => {
     const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
-    console.log(oppdatertId, periode.originalMeldekortId, periode.id);
 
     // Highlight kun hvis dette er den oppdaterte perioden
     // (innsendt, eller korrigeringen og ikke det originale meldekortet)

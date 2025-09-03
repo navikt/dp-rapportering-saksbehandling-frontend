@@ -11,9 +11,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const periode = JSON.parse(rapporteringsperiode);
 
   await korrigerPeriode({
-    request,
     periode,
     personId,
+    request,
   });
 
   return redirect(

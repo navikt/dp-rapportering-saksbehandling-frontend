@@ -93,30 +93,33 @@ export async function hentPeriode<T extends Meldekort>(
 }
 
 type OppdaterPeriodeProps = {
-  request: Request;
-  periodeId: string;
-  oppdateringer: IRapporteringsperiode;
+  periode: IRapporteringsperiode;
   personId: string;
+  request: Request;
 };
 
-export async function oppdaterPeriode({
-  request,
-  periodeId,
-  oppdateringer,
-  personId,
-}: OppdaterPeriodeProps) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periodeId}`;
+export async function oppdaterPeriode({ periode, personId, request }: OppdaterPeriodeProps) {
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}`;
+
+  // @ts-expect-error Fjern felter som ikke skal sendes til backend
+  delete periode.kanEndres;
+  // @ts-expect-error Fjern felter som ikke skal sendes til backend
+  delete periode.kanSendes;
+  // @ts-expect-error Fjern felter som ikke skal sendes til backend
+  delete periode.type;
+  // @ts-expect-error Legger til felt som skal sendes til backend
+  periode.referanseId = periode.id;
 
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
-      body: JSON.stringify(oppdateringer),
+      body: JSON.stringify(periode),
     });
 
     if (!response.ok) {
       throw new Response(
-        `Feil ved oppdatering av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}`,
+        `Feil ved oppdatering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}`,
         {
           status: response.status,
           statusText: response.statusText,
@@ -127,7 +130,7 @@ export async function oppdaterPeriode({
     return Promise.resolve();
   } catch (error) {
     const errorId = uuidv7();
-    const message = `Feil ved oppdatering av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}: ${error}`;
+    const message = `Feil ved oppdatering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}: ${error}`;
 
     if (error instanceof Response) {
       logger.error(message, { errorId });
@@ -143,13 +146,23 @@ export async function oppdaterPeriode({
 }
 
 type KorrigerPeriodeProps = {
-  request: Request;
   periode: IRapporteringsperiode;
   personId: string;
+  request: Request;
 };
 
-export async function korrigerPeriode({ request, periode, personId }: KorrigerPeriodeProps) {
+export async function korrigerPeriode({ periode, personId, request }: KorrigerPeriodeProps) {
   const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}/korriger`;
+
+  // @ts-expect-error Fjern felter som ikke skal sendes til backend
+  delete periode.kanEndres;
+  // @ts-expect-error Fjern felter som ikke skal sendes til backend
+  delete periode.kanSendes;
+  // @ts-expect-error Fjern felter som ikke skal sendes til backend
+  delete periode.type;
+
+  // @ts-expect-error Legger til felt som skal sendes til backend
+  periode.referanseId = periode.id;
 
   try {
     const response = await fetch(url, {
@@ -171,7 +184,7 @@ export async function korrigerPeriode({ request, periode, personId }: KorrigerPe
     return Promise.resolve();
   } catch (error) {
     const errorId = uuidv7();
-    const message = `Feil ved korrigering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}: ${error}`;
+    const message = `Feil ved korrigering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}: ${JSON.stringify(error)}`;
 
     if (error instanceof Response) {
       logger.error(message, { errorId });
