@@ -2,12 +2,12 @@ import { Button, DatePicker, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
 import { format, subDays } from "date-fns";
 import { useEffect, useState } from "react";
-import { useFetcher, useNavigate, useRevalidator } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
-import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
+import type { IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
 import { BekreftModal } from "../../modals/BekreftModal";
 import { FyllUtTabell } from "../tabeller/FyllUtTabell";
@@ -22,21 +22,20 @@ interface IProps {
   korrigertPeriode: IRapporteringsperiode;
   setKorrigertPeriode: React.Dispatch<React.SetStateAction<IRapporteringsperiode>>;
   originalPeriode: IRapporteringsperiode;
-  person: IPerson;
   saksbehandler: ISaksbehandler;
+  personId: string;
 }
 
 export function Korrigering({
-  originalPeriode,
   korrigertPeriode,
-  setKorrigertPeriode,
-  person,
+  originalPeriode,
+
+  personId,
   saksbehandler,
+  setKorrigertPeriode,
 }: IProps) {
   const fetcher = useFetcher();
   const navigate = useNavigate();
-  const revalidator = useRevalidator();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
     korrigertPeriode.dager.map(konverterTimerFraISO8601Varighet),
@@ -54,41 +53,18 @@ export function Korrigering({
     setModalOpen(true);
   }
 
-  useEffect(() => {
-    if (isSubmitting && fetcher.state === "idle" && fetcher.data) {
-      const nyPeriodeId = fetcher.data?.id || korrigertPeriode.id;
-
-      // Revalider data for å oppdatere listen
-      revalidator.revalidate();
-
-      navigate(
-        `/person/${person.id}/perioder?aar=${new Date(originalPeriode.periode.fraOgMed).getFullYear()}&rapporteringsid=${nyPeriodeId}`,
-      );
-      setIsSubmitting(false);
-    }
-  }, [
-    fetcher.state,
-    fetcher.data,
-    navigate,
-    person.id,
-    isSubmitting,
-    korrigertPeriode.id,
-    revalidator,
-  ]);
-
   function handleBekreft() {
     if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
       disableWarning();
-      setIsSubmitting(true);
       fetcher.submit(
-        { rapporteringsperiode: JSON.stringify(korrigertPeriode) },
+        { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId },
         { method: "post", action: "/api/rapportering" },
       );
     } else if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
       // Skru av navigation warning før man sender inn korrigert meldekort
       disableWarning();
       navigate(
-        `/person/${person.id}/perioder?aar=${new Date(originalPeriode.periode.fraOgMed).getFullYear()}&rapporteringsid=${originalPeriode.id}`,
+        `/person/${personId}/perioder?aar=${new Date(originalPeriode.periode.fraOgMed).getFullYear()}&rapporteringsid=${originalPeriode.id}`,
       );
     }
   }

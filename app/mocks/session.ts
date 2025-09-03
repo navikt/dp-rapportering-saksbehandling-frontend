@@ -50,8 +50,7 @@ class SessionRecord {
   private createDatabase() {
     return factory({
       rapporteringsperioder: {
-        id: primaryKey(faker.string.numeric),
-        personId: faker.string.alpha,
+        id: primaryKey(faker.string.uuid),
         ident: faker.string.alpha,
         status: faker.string.alpha,
         type: faker.string.numeric,
@@ -65,7 +64,7 @@ class SessionRecord {
         kanSendesFra: () => faker.date.recent().toISOString(),
         sisteFristForTrekk: nullable(() => faker.date.recent().toISOString()),
         opprettetAv: nullable(faker.string.alpha),
-        originalMeldekortId: nullable(faker.string.numeric),
+        originalMeldekortId: nullable(faker.string.uuid),
         kilde: nullable({
           rolle: nullable(faker.string.alpha),
           ident: nullable(faker.string.alpha),

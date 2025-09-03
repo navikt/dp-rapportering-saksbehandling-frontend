@@ -1,6 +1,7 @@
+import { uuidv7 } from "uuidv7";
+
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
-import { createId } from "./mock.utils";
 import { type Database } from "./session";
 
 function hentAlleRapporteringsperioder(db: Database) {
@@ -32,7 +33,7 @@ function hentRapporteringsperiodeMedId(db: Database, id: string) {
 }
 
 function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
-  const id = createId();
+  const id = uuidv7();
 
   db.rapporteringsperioder.create({
     ...rapporteringsperiode,
@@ -43,15 +44,9 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
     kanEndres: true,
     sisteFristForTrekk: null,
   });
-
-  return hentRapporteringsperiodeMedId(db, id);
 }
 
-function oppdaterPeriode(
-  db: Database,
-  periodeId: string,
-  oppdateringer: Partial<IRapporteringsperiode>,
-) {
+function oppdaterPeriode(db: Database, periodeId: string, oppdateringer: IRapporteringsperiode) {
   const eksisterendePeriode = hentRapporteringsperiodeMedId(db, periodeId);
 
   if (!eksisterendePeriode) {
@@ -62,6 +57,8 @@ function oppdaterPeriode(
     ...eksisterendePeriode,
     ...oppdateringer,
     innsendtTidspunkt: new Date().toISOString(),
+    kanSendes: false,
+    kanEndres: true,
   };
 
   db.rapporteringsperioder.update({
@@ -72,8 +69,6 @@ function oppdaterPeriode(
     },
     data: oppdatertPeriode,
   });
-
-  return hentRapporteringsperiodeMedId(db, periodeId);
 }
 
 function periodeKanIkkeLengerSendes(db: Database, periodeId: string) {
@@ -111,16 +106,6 @@ function hentPerson(db: Database, personId: string) {
   }) as IPerson;
 }
 
-function hentPersoner(db: Database) {
-  return db.personer.findMany({
-    orderBy: [
-      {
-        ident: "desc",
-      },
-    ],
-  }) as IPerson[];
-}
-
 function hentSaksbehandler(db: Database, saksbehandlerId: string) {
   return db.saksbehandlere.findFirst({
     where: {
@@ -135,12 +120,11 @@ export function withDb(db: Database) {
   return {
     hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
     hentPerson: (personId: string) => hentPerson(db, personId),
-    hentPersoner: () => hentPersoner(db),
     hentRapporteringsperiodeMedId: (id: string) => hentRapporteringsperiodeMedId(db, id),
     hentSaksbehandler: (saksbehandlerId: string) => hentSaksbehandler(db, saksbehandlerId),
     korrigerPeriode: (rapporteringsperiode: IRapporteringsperiode) =>
       korrigerPeriode(db, rapporteringsperiode),
-    oppdaterPeriode: (periodeId: string, oppdateringer: Partial<IRapporteringsperiode>) =>
+    oppdaterPeriode: (periodeId: string, oppdateringer: IRapporteringsperiode) =>
       oppdaterPeriode(db, periodeId, oppdateringer),
     periodeKanIkkeLengerSendes: (periodeId: string) => periodeKanIkkeLengerSendes(db, periodeId),
   };

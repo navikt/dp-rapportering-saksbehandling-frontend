@@ -16,7 +16,6 @@ describe("Innsendt", () => {
     const sisteFrist = "2025-02-16"; // 7 dager etter periode slutt
     return {
       id: "test-periode",
-      personId: "test-person-123",
       ident: "12345678901",
       type: "meldekort",
       periode: {
