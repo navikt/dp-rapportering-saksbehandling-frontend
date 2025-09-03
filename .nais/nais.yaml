@@ -37,7 +37,7 @@ spec:
   env:
     - name: SELF_URL
       value: "{{ingress}}"
-    - name: VITE_DP_MELDEKORTREGISTER_URL
+    - name: DP_MELDEKORTREGISTER_URL
       value: http://dp-meldekortregister
     - name: VITE_USE_MSW
       value: "{{use_msw}}"
