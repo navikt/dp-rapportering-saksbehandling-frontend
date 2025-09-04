@@ -16,11 +16,7 @@ export function Forhandsvisning({ periode }: IProps) {
   const ukedager = getWeekDays();
 
   return (
-    <table
-      className={styles.rapporteringsperiodeTabell}
-      role="table"
-      aria-label={`Rapporteringsperiode for periode ${periode.id}`}
-    >
+    <table className={styles.rapporteringsperiodeTabell} role="table">
       <caption className="sr-only">Oversikt over rapporterte dager for perioden</caption>
       <thead>
         <tr>
