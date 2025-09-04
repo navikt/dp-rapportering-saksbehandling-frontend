@@ -21,6 +21,7 @@ export function Innsendt({ periode }: IProps) {
   return forSent ? (
     <Tag variant="error" size="small">
       {formatterDato({ dato: meldedato })}
+      <span className="sr-only">, sendt inn for sent </span>
     </Tag>
   ) : (
     formatterDato({ dato: meldedato })
