@@ -24,23 +24,49 @@ const dagKnappStyle = (dag: IRapporteringsperiodeDag) => ({
   [styles.sykFravaerOgUtdanning]: erAktivStil(dag, ["Syk", "Fravaer", "Utdanning"]),
 });
 
+const getAktivitetsBeskrivelse = (dag: IRapporteringsperiodeDag): string => {
+  const aktiviteter = dag.aktiviteter.map((a) => a.type);
+  if (aktiviteter.length === 0) return "Ingen aktiviteter registrert";
+
+  const beskrivelser: { [key: string]: string } = {
+    Arbeid: "Arbeid",
+    Syk: "Sykdom",
+    Fravaer: "Fravær",
+    Utdanning: "Utdanning",
+  };
+
+  return aktiviteter.map((a) => beskrivelser[a] || a).join(" og ");
+};
+
 export function Dag({ dag }: DagProps) {
+  const arbeidTimer = konverterFraISO8601Varighet(
+    dag.aktiviteter?.find((aktivitet) => aktivitet.type === "Arbeid")?.timer ?? "",
+  );
+
+  const aktivitetsBeskrivelse = getAktivitetsBeskrivelse(dag);
+
+  const harArbeidstimer = arbeidTimer && aktivitetsBeskrivelse === "Arbeid";
+  const screenReaderText = harArbeidstimer
+    ? `${arbeidTimer} timer arbeid`
+    : `${aktivitetsBeskrivelse}${arbeidTimer ? `, ${arbeidTimer} timer arbeid` : ""}`;
+
   return (
-    <td key={dag.dato} className={styles.dag}>
+    <td className={styles.dag}>
       <div className={styles.aktivitetContainer}>
-        <span className={classNames(styles.aktivitet, styles.dato, dagKnappStyle(dag))}>
+        <span
+          className={classNames(styles.aktivitet, styles.dato, dagKnappStyle(dag))}
+          aria-hidden="true"
+        >
           {formatterDag(dag.dato)}
         </span>
-        {konverterFraISO8601Varighet(
-          dag.aktiviteter?.find((aktivitet) => aktivitet.type === "Arbeid")?.timer ?? ""
-        ) && (
-          <span className={styles.timer}>
-            {konverterFraISO8601Varighet(
-              dag.aktiviteter?.find((aktivitet) => aktivitet.type === "Arbeid")?.timer ?? ""
-            )}
-            {"t"}
+        {arbeidTimer && (
+          <span className={styles.timer} aria-hidden="true">
+            {arbeidTimer}t
           </span>
         )}
+        <span className="sr-only">
+          {formatterDag(dag.dato)}, {screenReaderText}
+        </span>
       </div>
     </td>
   );
