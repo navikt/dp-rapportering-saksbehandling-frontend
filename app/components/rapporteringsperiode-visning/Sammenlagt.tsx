@@ -27,22 +27,34 @@ const aktivitettyper = [
 ];
 
 export function Sammenlagt({ periode }: IProps) {
+  const periodeId = `sammenlagt-${periode.id}`;
+
   return (
-    <>
-      <Heading level="4" size="xsmall" className={styles.tittel}>
+    <section aria-labelledby={periodeId} className={styles.sammenlagt}>
+      <Heading level="4" size="xsmall" className={styles.tittel} id={periodeId}>
         Sammenlagt for perioden
       </Heading>
-      {aktivitettyper.map(({ type, label, erDager, klasse }) => {
-        const total = beregnTotalt(periode, type, erDager);
-        return (
-          <div key={type} className={`${styles.aktivitet} ${klasse}`}>
-            <BodyShort size="small">{label}</BodyShort>
-            <BodyShort size="small">
-              {total} {erDager ? "dager" : "timer"}
-            </BodyShort>
-          </div>
-        );
-      })}
-    </>
+      <ul className={styles.aktivitetListe} aria-labelledby={periodeId}>
+        {aktivitettyper.map(({ type, label, erDager, klasse }) => {
+          const total = beregnTotalt(periode, type, erDager);
+          const enhet = erDager ? "dager" : "timer";
+
+          return (
+            <li
+              key={type}
+              className={`${styles.aktivitet} ${klasse}`}
+              aria-label={`${label}: ${total} ${enhet}`}
+            >
+              <BodyShort size="small" as="span" aria-hidden="true">
+                {label}
+              </BodyShort>
+              <BodyShort size="small" as="span" aria-hidden="true">
+                {total} {enhet}
+              </BodyShort>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
