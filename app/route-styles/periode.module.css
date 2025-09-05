@@ -121,8 +121,3 @@
   width: 45%;
   gap: var(--a-spacing-4);
 }
-
-
-.begrunnelse {
-  flex: 1;
-}
