@@ -113,7 +113,7 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
           </>
         )}
 
-        {periode.registrertArbeidssoker !== undefined &&
+        {periode.registrertArbeidssoker != null &&
           renderDetailItem(
             "arbeidssoker",
             `${ARIA_LABELS.arbeidssoker}: ${erArbeidssoker ? "Ja" : "Nei"}`,
