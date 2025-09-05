@@ -30,7 +30,6 @@
 }
 
 .endret-periode {
-  height: 100%;
   flex: 1;
   background-color: var(--a-white);
   height: -webkit-fill-available;
