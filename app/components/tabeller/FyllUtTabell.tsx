@@ -37,31 +37,31 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
           <th scope="col" className="sr-only">
             Aktivitet
           </th>
-          <th aria-hidden="true" className={styles.gap}></th>
-          <th colSpan={7} className={styles.label}>
+          <td className={styles.gap}></td>
+          <th colSpan={7} className={styles.label} scope="colgroup">
             Uke {uke1}
           </th>
-          <th aria-hidden="true" className={styles.gap}></th>
-          <th colSpan={7} className={styles.label}>
+          <td className={styles.gap}></td>
+          <th colSpan={7} className={styles.label} scope="colgroup">
             Uke {uke2}
           </th>
-          <th aria-hidden="true" className={styles.gap}></th>
+          <td className={styles.gap}></td>
           <th scope="col" className="sr-only">
             Oppsummering
           </th>
         </tr>
         <tr>
-          <th aria-hidden="true" className={styles.gap}></th>
-          <th aria-hidden="true" className={styles.gap}></th>
+          <td className={styles.gap}></td>
+          <td className={styles.gap}></td>
           {dager.slice(0, 7).map((dag) => (
-            <th key={`ukedag-${dag.dato}`} className={styles.ukedag}>
+            <th key={`ukedag-${dag.dato}`} className={styles.ukedag} scope="col">
               <div>{hentUkedag(dag.dato)}</div>
               <div>{formatterDag(dag.dato)}</div>
             </th>
           ))}
-          <th aria-hidden="true" className={styles.gap}></th>
+          <td className={styles.gap}></td>
           {dager.slice(7, 14).map((dag) => (
-            <th key={`ukedag-${dag.dato}`} className={styles.ukedag}>
+            <th key={`ukedag-${dag.dato}`} className={styles.ukedag} scope="col">
               <div>{hentUkedag(dag.dato)}</div>
               <div>{formatterDag(dag.dato)}</div>
             </th>
@@ -77,7 +77,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
               <th scope="row">
                 <div className={classNames(styles.aktivitet, aktivitetClass)}> {label}</div>
               </th>
-              <td aria-hidden="true" className={styles.gap}></td>
+              <td className={styles.gap}></td>
               {/* Uke 1: Første 7 dager */}
               {dager.slice(0, 7).map((dag) => {
                 const aktivitetstyper = dag.aktiviteter.map((a) => a.type);
@@ -123,7 +123,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                   </td>
                 );
               })}
-              <td aria-hidden="true" className={styles.gap}></td>
+              <td className={styles.gap}></td>
               {/* Uke 2: Siste 7 dager */}
               {dager.slice(7, 14).map((dag) => {
                 const aktivitetstyper = dag.aktiviteter.map((a) => a.type);

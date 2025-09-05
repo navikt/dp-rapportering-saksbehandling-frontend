@@ -147,10 +147,10 @@ export default function FyllUtPeriode() {
   };
 
   return (
-    <div className={styles.fyllroot}>
+    <section aria-labelledby="fyll-ut-heading" className={styles.fyllroot}>
       <div className={styles.skjema}>
         <div className={styles.title}>
-          <Heading level="1" size="medium">
+          <Heading level="1" size="medium" id="fyll-ut-heading">
             Fyll ut meldekort
           </Heading>
           <BodyShort size="small">
@@ -158,8 +158,16 @@ export default function FyllUtPeriode() {
           </BodyShort>
         </div>
 
-        <Form method="post" ref={formRef}>
-          <div className={styles.details}>
+        <Form
+          method="post"
+          ref={formRef}
+          onSubmit={(e) => {
+            e.preventDefault();
+            openModal(MODAL_ACTION_TYPE.FULLFOR);
+          }}
+        >
+          <fieldset className={styles.details}>
+            <legend className="sr-only">Grunnleggende informasjon</legend>
             <div>
               <DatePicker
                 mode="single"
@@ -201,22 +209,25 @@ export default function FyllUtPeriode() {
                 rows={3}
               />
             </div>
-          </div>
-          <FyllUtTabell
-            dager={dager}
-            setKorrigerteDager={setKorrigerteDager}
-            periode={periode.periode}
-          />
+          </fieldset>
+
+          <fieldset>
+            <legend className="sr-only">Aktiviteter per dag</legend>
+            <FyllUtTabell
+              dager={dager}
+              setKorrigerteDager={setKorrigerteDager}
+              periode={periode.periode}
+            />
+          </fieldset>
           <div className={styles.handlinger}>
             <Button variant="secondary" size="small" onClick={handleAvbryt}>
               Avbryt utfylling
             </Button>
             <Button
-              type="button"
+              type="submit"
               variant="primary"
               size="small"
               disabled={registrertArbeidssoker === null || !valgtDato || begrunnelse.trim() === ""}
-              onClick={() => openModal(MODAL_ACTION_TYPE.FULLFOR)}
             >
               Send inn meldekort
             </Button>
@@ -259,6 +270,6 @@ export default function FyllUtPeriode() {
           onBekreft={handleBekreft}
         />
       </div>
-    </div>
+    </section>
   );
 }

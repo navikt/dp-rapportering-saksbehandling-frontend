@@ -23,6 +23,7 @@ interface Props {
 export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
+  const [announceUpdate, setAnnounceUpdate] = useState("");
 
   useEffect(() => {
     const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
@@ -36,6 +37,13 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
     if (shouldHighlight) {
       setIsHighlighted(true);
 
+      // Sett melding for skjermlesere
+      const erKorrigering = periode.originalMeldekortId;
+      const melding = erKorrigering
+        ? `Meldekort for uke ${ukenummer(periode)} ble korrigert og oppdatert`
+        : `Meldekort for uke ${ukenummer(periode)} ble sendt inn`;
+      setAnnounceUpdate(melding);
+
       // Fjern URL parameter i en setTimeout for å unngå rendering-konflikt
       setTimeout(() => {
         const newSearchParams = new URLSearchParams(searchParams);
@@ -47,6 +55,11 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
       setTimeout(() => {
         setIsHighlighted(false);
       }, 3600);
+
+      // Fjern skjermleser-melding etter litt tid
+      setTimeout(() => {
+        setAnnounceUpdate("");
+      }, 5000);
     }
   }, [searchParams, setSearchParams, periode.id, periode.originalMeldekortId]);
 
@@ -71,38 +84,45 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
   })}`;
 
   return (
-    <Table.Row selected={valgt} className={radKlasse}>
-      <Table.DataCell textSize="small" className={ukeKlasse}>
-        {getStatus(periode) !== PERIODE_RAD_STATUS.Opprettet && (
-          <Checkbox
-            className={styles.periodeListe__checkbox}
-            checked={valgt}
-            onChange={handleCheckboxChange}
-            disabled={isDisabled}
-            hideLabel
-          >
-            Uke {ukenummer(periode)}
-          </Checkbox>
-        )}
-      </Table.DataCell>
-      <Table.HeaderCell scope="row" textSize="small" className={radKlasse}>
-        {ukenummer(periode)}
-      </Table.HeaderCell>
-      <Table.DataCell textSize="small" className={radKlasse}>
-        {periodeDatoTekst}
-      </Table.DataCell>
-      <Table.DataCell textSize="small" className={radKlasse}>
-        <Status periode={periode} />
-      </Table.DataCell>
-      <Table.DataCell textSize="small" className={radKlasse}>
-        <TypeAktivitet periode={periode} />
-      </Table.DataCell>
-      <Table.DataCell textSize="small" className={radKlasse}>
-        <Innsendt periode={periode} />
-      </Table.DataCell>
-      <Table.DataCell textSize="small" className={radKlasse}>
-        {periode.sisteFristForTrekk ? formatterDato({ dato: periode.sisteFristForTrekk }) : ""}
-      </Table.DataCell>
-    </Table.Row>
+    <>
+      {announceUpdate && (
+        <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
+          {announceUpdate}
+        </div>
+      )}
+      <Table.Row selected={valgt} className={radKlasse}>
+        <Table.DataCell textSize="small" className={ukeKlasse}>
+          {getStatus(periode) !== PERIODE_RAD_STATUS.Opprettet && (
+            <Checkbox
+              className={styles.periodeListe__checkbox}
+              checked={valgt}
+              onChange={handleCheckboxChange}
+              disabled={isDisabled}
+              hideLabel
+            >
+              Uke {ukenummer(periode)}
+            </Checkbox>
+          )}
+        </Table.DataCell>
+        <Table.HeaderCell scope="row" textSize="small" className={radKlasse}>
+          {ukenummer(periode)}
+        </Table.HeaderCell>
+        <Table.DataCell textSize="small" className={radKlasse}>
+          {periodeDatoTekst}
+        </Table.DataCell>
+        <Table.DataCell textSize="small" className={radKlasse}>
+          <Status periode={periode} />
+        </Table.DataCell>
+        <Table.DataCell textSize="small" className={radKlasse}>
+          <TypeAktivitet periode={periode} />
+        </Table.DataCell>
+        <Table.DataCell textSize="small" className={radKlasse}>
+          <Innsendt periode={periode} />
+        </Table.DataCell>
+        <Table.DataCell textSize="small" className={radKlasse}>
+          {periode.sisteFristForTrekk ? formatterDato({ dato: periode.sisteFristForTrekk }) : ""}
+        </Table.DataCell>
+      </Table.Row>
+    </>
   );
 }
