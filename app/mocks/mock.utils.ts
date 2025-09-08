@@ -1,7 +1,12 @@
 import { addDays, format, startOfWeek, subDays, subYears } from "date-fns";
 import { uuidv7 } from "uuidv7";
 
-import { AKTIVITET_TYPE, KORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import {
+  AKTIVITET_TYPE,
+  KORT_TYPE,
+  OPPRETTET_AV,
+  RAPPORTERINGSPERIODE_STATUS,
+} from "~/utils/constants";
 import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import type {
   IAktivitet,
@@ -85,7 +90,7 @@ export function lagRapporteringsperiode(
     kanSendesFra: "",
     sisteFristForTrekk: "",
     originalMeldekortId: null,
-    opprettetAv: "Arena",
+    opprettetAv: OPPRETTET_AV.Arena,
     kilde: props.kilde ?? null,
     innsendtTidspunkt: null,
     meldedato: null,

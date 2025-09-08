@@ -11,7 +11,7 @@ import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
-import type { IInnsendtMeldekort, IRapporteringsperiode } from "~/utils/types";
+import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "../+types/root";
 
@@ -19,7 +19,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
   const personId = params.personId;
 
-  const periode = await hentPeriode<IInnsendtMeldekort>(request, personId, params.periodeId);
+  const periode = await hentPeriode<IRapporteringsperiode>(request, personId, params.periodeId);
   const saksbehandler = await hentSaksbehandler(request);
 
   // TODO: Håndter feil i hentPeriode

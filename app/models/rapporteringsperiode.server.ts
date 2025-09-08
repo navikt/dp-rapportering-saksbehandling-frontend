@@ -3,7 +3,7 @@ import { uuidv7 } from "uuidv7";
 import { DP_MELDEKORTREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
-import type { IRapporteringsperiode, Meldekort } from "~/utils/types";
+import type { IKorrigerMeldekort, IRapporteringsperiode, ISendInnMeldekort } from "~/utils/types";
 
 import { logger } from "./logger.server";
 
@@ -49,7 +49,7 @@ export async function hentRapporteringsperioder(
   }
 }
 
-export async function hentPeriode<T extends Meldekort>(
+export async function hentPeriode<T extends IRapporteringsperiode>(
   request: Request,
   personId: string,
   periodeId: string,
@@ -93,7 +93,7 @@ export async function hentPeriode<T extends Meldekort>(
 }
 
 type OppdaterPeriodeProps = {
-  periode: IRapporteringsperiode;
+  periode: ISendInnMeldekort;
   personId: string;
   request: Request;
 };
@@ -137,13 +137,13 @@ export async function oppdaterPeriode({ periode, personId, request }: OppdaterPe
 }
 
 type KorrigerPeriodeProps = {
-  periode: IRapporteringsperiode;
+  periode: IKorrigerMeldekort;
   personId: string;
   request: Request;
 };
 
 export async function korrigerPeriode({ periode, personId, request }: KorrigerPeriodeProps) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}/korriger`;
+  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.originalMeldekortId}/korriger`;
 
   try {
     const response = await fetch(url, {
@@ -154,7 +154,7 @@ export async function korrigerPeriode({ periode, personId, request }: KorrigerPe
 
     if (!response.ok) {
       throw new Response(
-        `Feil ved korrigering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}`,
+        `Feil ved korrigering av rapporteringsperiode med ID ${periode.originalMeldekortId} for person med ID ${personId}`,
         {
           status: response.status,
           statusText: response.statusText,
@@ -165,7 +165,7 @@ export async function korrigerPeriode({ periode, personId, request }: KorrigerPe
     return Promise.resolve();
   } catch (error) {
     const errorId = uuidv7();
-    const message = `Feil ved korrigering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}: ${JSON.stringify(error)}`;
+    const message = `Feil ved korrigering av rapporteringsperiode med ID ${periode.originalMeldekortId} for person med ID ${personId}: ${JSON.stringify(error)}`;
 
     if (error instanceof Response) {
       logger.error(message, { errorId });

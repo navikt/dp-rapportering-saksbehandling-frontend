@@ -1,10 +1,16 @@
 import { addDays, addWeeks, differenceInWeeks, format, startOfWeek, subWeeks } from "date-fns";
 import { uuidv7 } from "uuidv7";
 
-import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS, ROLLE } from "~/utils/constants";
 import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import { ScenarioType } from "~/utils/scenario.types";
-import type { IAktivitet, IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
+import type {
+  IAktivitet,
+  IPerson,
+  IRapporteringsperiode,
+  ISaksbehandler,
+  TRolle,
+} from "~/utils/types";
 
 import {
   lagAlternerendeArbeidsUker,
@@ -50,7 +56,7 @@ type PeriodeConfig = {
   meldedatoRelativTilPeriodeSlutt?: number | null;
   innsendtTidspunktRelativTilPeriodeSlutt?: number | null;
   aktiviteter?: Array<null | Pick<IAktivitet, "type" | "timer">[]>;
-  rolle?: "Bruker" | "Saksbehandler";
+  rolle?: TRolle;
 };
 
 // Beregn uker fra årsskiftet en gang ved oppstart
@@ -175,7 +181,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         begrunnelse: "Feil antall arbeidstimer. Hadde jobbet full tid",
         originalMeldekortId: "periode-korrigert-bruker-2-original",
         kilde: {
-          rolle: "Bruker" as const,
+          rolle: ROLLE.Bruker,
           ident: "987654321",
         },
         kanSendes: false,
@@ -217,7 +223,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         begrunnelse: "Feil antall arbeidstimer",
         originalMeldekortId: "periode-korrigert-saksbehandler-2-original",
         kilde: {
-          rolle: "Saksbehandler" as const,
+          rolle: ROLLE.Saksbehandler,
           ident: "Z123456",
         },
         kanSendes: false,
@@ -532,7 +538,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       ],
       meldedatoRelativTilPeriodeSlutt: 1,
       innsendtTidspunktRelativTilPeriodeSlutt: 4,
-      rolle: "Saksbehandler",
+      rolle: ROLLE.Saksbehandler,
       ukerFraIDag: 46, // samme som under, korrigering
     },
     // 8. Ferdig beregnet
@@ -610,7 +616,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       ukerFraIDag: 40,
       meldedatoRelativTilPeriodeSlutt: 0,
       innsendtTidspunktRelativTilPeriodeSlutt: 10,
-      rolle: "Saksbehandler",
+      rolle: ROLLE.Saksbehandler,
     },
     // 12. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
@@ -692,7 +698,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         registrertArbeidssoker: true,
         begrunnelse: "Glemt å føre aktiviteter.",
         originalMeldekortId: "periode-korrigert-av-bruker-2-original",
-        kilde: { rolle: "Saksbehandler" as const, ident: "Z993298" },
+        kilde: { rolle: ROLLE.Saksbehandler, ident: "Z993298" },
         kanSendes: false,
         kanEndres: true,
         sisteFristForTrekk: null,
@@ -1031,7 +1037,7 @@ function byggRapporteringsperioderFraKonfigurasjon(
       aktiviteter,
       meldedatoRelativTilPeriodeSlutt,
       innsendtTidspunktRelativTilPeriodeSlutt,
-      rolle = "Bruker",
+      rolle = ROLLE.Bruker,
     }) => {
       const dagensDato = new Date();
       const startDato =
@@ -1062,7 +1068,7 @@ function byggRapporteringsperioderFraKonfigurasjon(
           periode: { fraOgMed, tilOgMed },
           kilde: {
             rolle,
-            ident: rolle === "Bruker" ? person.ident : saksbehandler.onPremisesSamAccountName,
+            ident: rolle === ROLLE.Bruker ? person.ident : saksbehandler.onPremisesSamAccountName,
           },
           dager,
           ...lagMeldedatoer(
