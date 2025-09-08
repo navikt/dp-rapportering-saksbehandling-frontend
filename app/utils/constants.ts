@@ -3,6 +3,16 @@ export const RAPPORTERING_TYPE = {
   harIngenAktivitet: "harIngenAktivitet",
 } as const;
 
+export const OPPRETTET_AV = {
+  Arena: "Arena",
+  Dagpenger: "Dagpenger",
+};
+
+export const ROLLE = {
+  Bruker: "Bruker",
+  Saksbehandler: "Saksbehandler",
+} as const;
+
 export const RAPPORTERINGSPERIODE_STATUS = {
   TilUtfylling: "TilUtfylling",
   Innsendt: "Innsendt",

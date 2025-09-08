@@ -1,5 +1,6 @@
 import { Alert, Button, Tag } from "@navikt/ds-react";
 
+import { ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -57,11 +58,11 @@ export function PeriodeDetaljer({ periode, personId }: IProps) {
                 </dd>
               </>
             )}
-            {(erKorrigert || periode?.kilde?.rolle === "Saksbehandler") && (
+            {(erKorrigert || periode?.kilde?.rolle === ROLLE.Saksbehandler) && (
               <>
                 <dt>{erKorrigert ? "Korrigert" : "Innsendt"} av:</dt>
                 <dd>
-                  {periode?.kilde?.rolle === "Saksbehandler"
+                  {periode?.kilde?.rolle === ROLLE.Saksbehandler
                     ? periode?.kilde?.ident
                     : periode?.kilde?.rolle}
                 </dd>

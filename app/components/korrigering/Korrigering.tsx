@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useFetcher, useNavigate } from "react-router";
 
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
-import { MODAL_ACTION_TYPE, QUERY_PARAMS } from "~/utils/constants";
+import { MODAL_ACTION_TYPE, QUERY_PARAMS, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
@@ -80,7 +80,7 @@ export function Korrigering({
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       begrunnelse: korrigertBegrunnelse,
       kilde: {
-        rolle: "Saksbehandler",
+        rolle: ROLLE.Saksbehandler,
         ident: saksbehandler.onPremisesSamAccountName,
       },
     }));

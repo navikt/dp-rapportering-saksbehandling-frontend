@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 import { Innsendt } from "~/components/rapporteringsperiode-liste/Innsendt";
 import { formatereDato } from "~/mocks/mock-rapporteringsperioder.utils";
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { RAPPORTERINGSPERIODE_STATUS, ROLLE } from "~/utils/constants";
 import { formatterDato } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -77,7 +77,7 @@ describe("Innsendt", () => {
       meldedato,
       sisteFristForTrekk: sisteFrist,
       kilde: {
-        rolle: "Saksbehandler",
+        rolle: ROLLE.Saksbehandler,
         ident: "test-saksbehandler",
       },
     });

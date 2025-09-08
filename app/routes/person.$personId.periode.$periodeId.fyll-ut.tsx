@@ -24,8 +24,14 @@ import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
-import { MODAL_ACTION_TYPE, QUERY_PARAMS, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import {
+  MODAL_ACTION_TYPE,
+  QUERY_PARAMS,
+  RAPPORTERINGSPERIODE_STATUS,
+  ROLLE,
+} from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import type { ISendInnMeldekort } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
 
@@ -58,19 +64,22 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     const periode = await hentPeriode(request, personId, params.periodeId);
 
-    const oppdatertPeriode = {
-      ...periode,
-      innsendtTidspunkt: new Date().toISOString(),
+    const oppdatertPeriode: ISendInnMeldekort = {
+      ident: periode.ident,
+      id: periode.id,
+      periode: periode.periode,
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       dager: dager.map(konverterTimerTilISO8601Varighet),
       kilde: {
-        rolle: "Saksbehandler" as const,
+        rolle: ROLLE.Saksbehandler,
         ident: saksbehandler.onPremisesSamAccountName,
       },
-      referanseId: periode.id,
       meldedato,
+      kanSendesFra: periode.kanSendesFra,
+      sisteFristForTrekk: periode.sisteFristForTrekk,
+      opprettetAv: periode.opprettetAv,
     };
 
     // Oppdater perioden via mock/backend

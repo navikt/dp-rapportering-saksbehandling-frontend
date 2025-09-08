@@ -41,14 +41,14 @@ export function hentAktiviteter(dag: IRapporteringsperiodeDag): {
   utdanning: boolean;
 } {
   const timer = dag.aktiviteter.find(
-    (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid
+    (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid,
   )?.timer;
 
   const arbeid = timer ? konverterFraISO8601Varighet(timer) : undefined;
   const syk = !!dag.aktiviteter.find((aktivitet) => aktivitet.type === AKTIVITET_TYPE.Syk);
   const fravaer = !!dag.aktiviteter.find((aktivitet) => aktivitet.type === AKTIVITET_TYPE.Fravaer);
   const utdanning = !!dag.aktiviteter.find(
-    (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Utdanning
+    (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Utdanning,
   );
 
   return {
@@ -62,15 +62,15 @@ export function hentAktiviteter(dag: IRapporteringsperiodeDag): {
 export function endreDag(
   value: string[],
   dag: IKorrigertDag,
-  setKorrigerteDager: SetKorrigerteDager
+  setKorrigerteDager: SetKorrigerteDager,
 ) {
   const beholderAktiviteterSomErIValue = dag.aktiviteter.filter((aktivitet) =>
-    value.includes(aktivitet.type)
+    value.includes(aktivitet.type),
   );
 
   const leggerTilAktiviteterFraValueSomMangler: IKorrigertAktivitet[] = value.map((type) => {
     const aktivitetFinnes = beholderAktiviteterSomErIValue.find(
-      (aktivitet) => aktivitet.type === type
+      (aktivitet) => aktivitet.type === type,
     );
 
     if (aktivitetFinnes) return aktivitetFinnes;
@@ -83,7 +83,7 @@ export function endreDag(
   });
 
   const arbeidAktivitet = dag.aktiviteter.find(
-    (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid
+    (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid,
   );
   if (arbeidAktivitet) {
     leggerTilAktiviteterFraValueSomMangler.push(arbeidAktivitet);
@@ -104,7 +104,7 @@ export function endreDag(
 export function endreArbeid(
   event: React.ChangeEvent<HTMLInputElement>,
   dag: IKorrigertDag,
-  setKorrigerteDager: SetKorrigerteDager
+  setKorrigerteDager: SetKorrigerteDager,
 ) {
   const timer = event.target.value.replace(",", ".").trim();
 
@@ -124,7 +124,7 @@ export function endreArbeid(
       const oppdatertDager = prevDager.toSpliced(index, 1, {
         ...dag,
         aktiviteter: dag.aktiviteter.filter(
-          (aktivitet) => aktivitet.type !== AKTIVITET_TYPE.Arbeid
+          (aktivitet) => aktivitet.type !== AKTIVITET_TYPE.Arbeid,
         ),
       });
 
@@ -132,7 +132,7 @@ export function endreArbeid(
     }
 
     const dagHarArbeid = dag.aktiviteter.find(
-      (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid
+      (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid,
     );
 
     const oppdatertDager = prevDager.toSpliced(index, 1, {
