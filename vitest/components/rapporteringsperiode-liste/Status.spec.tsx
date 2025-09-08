@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 
 import { Status } from "~/components/rapporteringsperiode-liste/Status";
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode, TRapporteringsperiodeStatus } from "~/utils/types";
 
 const createMockPeriode = (
@@ -22,7 +22,7 @@ const createMockPeriode = (
   kanEndres: true,
   kanSendesFra: "2025-01-15",
   sisteFristForTrekk: "2025-01-20",
-  opprettetAv: "test-user",
+  opprettetAv: OPPRETTET_AV.Arena,
   kilde: null,
   innsendtTidspunkt: null,
   meldedato: null,

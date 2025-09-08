@@ -74,7 +74,7 @@ export interface IRapporteringsperiode {
   kanEndres: boolean;
   kanSendesFra: string;
   sisteFristForTrekk: string | null;
-  opprettetAv: string;
+  opprettetAv: TOpprettetAv;
   begrunnelse?: string;
   kilde: IKilde | null;
   originalMeldekortId: string | null;

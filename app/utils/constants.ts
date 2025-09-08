@@ -6,7 +6,7 @@ export const RAPPORTERING_TYPE = {
 export const OPPRETTET_AV = {
   Arena: "Arena",
   Dagpenger: "Dagpenger",
-};
+} as const;
 
 export const ROLLE = {
   Bruker: "Bruker",

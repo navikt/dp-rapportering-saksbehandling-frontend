@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 import { Innsendt } from "~/components/rapporteringsperiode-liste/Innsendt";
 import { formatereDato } from "~/mocks/mock-rapporteringsperioder.utils";
-import { RAPPORTERINGSPERIODE_STATUS, ROLLE } from "~/utils/constants";
+import { OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS, ROLLE } from "~/utils/constants";
 import { formatterDato } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -32,7 +32,7 @@ describe("Innsendt", () => {
       kanSendes: false,
       kanEndres: false,
       kanSendesFra: "2025-02-10",
-      opprettetAv: "test-user",
+      opprettetAv: OPPRETTET_AV.Arena,
       originalMeldekortId: null,
       kilde: null,
       ...overrides,
