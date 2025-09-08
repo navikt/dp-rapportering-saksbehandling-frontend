@@ -8,6 +8,7 @@ import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-v
 import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/person.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
+import { sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.perioder";
@@ -35,9 +36,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
       ?.split(",")
       .map((id) => perioder.find((periode) => periode.id === id) as IRapporteringsperiode)
       .filter((periode) => periode)
-      .sort(
-        (a, b) => new Date(b.periode.fraOgMed).getTime() - new Date(a.periode.fraOgMed).getTime(),
-      ) ?? [];
+      .sort(sorterMeldekort) ?? [];
 
   return (
     <>

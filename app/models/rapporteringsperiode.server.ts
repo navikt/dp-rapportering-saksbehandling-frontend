@@ -3,6 +3,7 @@ import { uuidv7 } from "uuidv7";
 import { DP_MELDEKORTREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
+import { sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
 import type { IKorrigerMeldekort, IRapporteringsperiode, ISendInnMeldekort } from "~/utils/types";
 
 import { logger } from "./logger.server";
@@ -31,7 +32,7 @@ export async function hentRapporteringsperioder(
 
     const rapporteringsperioder: IRapporteringsperiode[] = await response.json();
 
-    return rapporteringsperioder;
+    return rapporteringsperioder.sort(sorterMeldekort);
   } catch (error) {
     const errorId = uuidv7();
 

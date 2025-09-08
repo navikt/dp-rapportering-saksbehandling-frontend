@@ -19,3 +19,31 @@ export function erMeldekortSendtForSent(periode: IRapporteringsperiode): boolean
 
   return parseISO(meldedato) > parseISO(sisteFristForTrekk);
 }
+
+export function sorterMeldekort(a: IRapporteringsperiode, b: IRapporteringsperiode): number {
+  // Sorter først på fraOgMed (nyeste først)
+  const fraOgMedA = parseISO(a.periode.fraOgMed);
+  const fraOgMedB = parseISO(b.periode.fraOgMed);
+
+  if (fraOgMedA > fraOgMedB) return -1;
+  if (fraOgMedA < fraOgMedB) return 1;
+
+  // Hvis likt, sorter på innsendtTidspunkt (nyeste først)
+  const innsendtTidspunktA = a.innsendtTidspunkt ? parseISO(a.innsendtTidspunkt) : null;
+  const innsendtTidspunktB = b.innsendtTidspunkt ? parseISO(b.innsendtTidspunkt) : null;
+
+  if (innsendtTidspunktA && innsendtTidspunktB) {
+    if (innsendtTidspunktA > innsendtTidspunktB) return -1;
+    if (innsendtTidspunktA < innsendtTidspunktB) return 1;
+  } else if (innsendtTidspunktA && !innsendtTidspunktB) {
+    return -1; // A er innsendt, B er ikke
+  } else if (!innsendtTidspunktA && innsendtTidspunktB) {
+    return 1; // B er innsendt, A er ikke
+  }
+
+  // Hvis fortsatt likt, sorter på originalMeldekortId (eldste først)
+  if (a.originalMeldekortId && !b.originalMeldekortId) return -1;
+  if (!a.originalMeldekortId && b.originalMeldekortId) return 1;
+
+  return 0; // Er helt like
+}
