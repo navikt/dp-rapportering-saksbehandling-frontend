@@ -71,6 +71,9 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
+  "overrides": {
+   "simple-swizzle": "0.2.2"
+  },
   "engines": {
     "node": ">=22"
   },
