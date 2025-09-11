@@ -59,7 +59,7 @@ export default function Rapportering() {
                         </LinkPanel.Description>
                       </LinkPanel>
                     </li>
-                    <li key={person.id} style={{ marginBottom: "1rem" }}>
+                    <li key={`${person.id}-alternative`} style={{ marginBottom: "1rem" }}>
                       <LinkPanel href={alternativeLink} border>
                         <LinkPanel.Title>Alternativ {navn}</LinkPanel.Title>
                         <LinkPanel.Description>
