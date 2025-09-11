@@ -41,7 +41,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
   return (
     <>
       <div className={styles.rapporteringsperiodeListe}>
-        <RapporteringsperiodeListeByYear perioder={perioder} />
+        <RapporteringsperiodeListeByYear perioder={perioder} alternativVisning={false} />
       </div>
       <section aria-label="Valgte perioder" className={styles.grid}>
         {valgteRapporteringsperiode.map((periode) => (
