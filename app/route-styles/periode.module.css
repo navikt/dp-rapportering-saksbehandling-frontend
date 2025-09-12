@@ -97,7 +97,8 @@
   gap: 48px;
   @media (min-width: 1024px) {
     flex-direction: row;
-    width: 50%;
+    width: 80%;
+    max-width: 1200px;
   }
 }
 

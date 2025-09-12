@@ -6,6 +6,7 @@ import {
   Radio,
   RadioGroup,
   Textarea,
+  useDatepicker,
 } from "@navikt/ds-react";
 import { format, subDays } from "date-fns";
 import { useRef, useState } from "react";
@@ -102,6 +103,9 @@ export async function action({ request, params }: Route.ActionArgs) {
 export default function FyllUtPeriode() {
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
+  const meldedatoRef = useRef<HTMLInputElement>(null);
+  const arbeidssokerRef = useRef<HTMLInputElement>(null);
+  const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
 
   const { periode, personId } = useLoaderData<typeof loader>();
 
@@ -109,12 +113,29 @@ export default function FyllUtPeriode() {
     periode.dager.map(konverterTimerFraISO8601Varighet),
   );
 
-  const setKorrigerteDager: SetKorrigerteDager = setDager;
+  const handleSetKorrigerteDager: SetKorrigerteDager = (nyeDager) => {
+    setDager(nyeDager);
+    // Fjern aktiviteter-feil hvis brukeren legger til aktiviteter
+    if (typeof nyeDager !== "function") {
+      const harAktiviteter = nyeDager.some((dag) =>
+        dag.aktiviteter.some((aktivitet) => aktivitet !== null),
+      );
+      if (harAktiviteter && visValideringsfeil.aktiviteter) {
+        setVisValideringsfeil((prev) => ({ ...prev, aktiviteter: false }));
+      }
+    }
+  };
   const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(null);
   const [begrunnelse, setBegrunnelse] = useState<string>("");
   const [valgtDato, setValgtDato] = useState<Date | undefined>();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
+  const [visValideringsfeil, setVisValideringsfeil] = useState({
+    meldedato: false,
+    arbeidssoker: false,
+    begrunnelse: false,
+    aktiviteter: false,
+  });
 
   // Sjekk om det finnes ulagrede endringer
   const hasChanges =
@@ -125,9 +146,18 @@ export default function FyllUtPeriode() {
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
-  const handleDateSelect = (date?: Date) => {
-    setValgtDato(date);
-  };
+  const { inputProps, datepickerProps } = useDatepicker({
+    onDateChange: (date) => {
+      setValgtDato(date);
+      if (date && visValideringsfeil.meldedato) {
+        setVisValideringsfeil((prev) => ({ ...prev, meldedato: false }));
+      }
+    },
+    defaultSelected: valgtDato,
+    fromDate: subDays(new Date(periode.periode.tilOgMed), 1),
+    toDate: new Date(),
+    inputFormat: "dd.MM.yyyy",
+  });
 
   const openModal = (type: string) => {
     setModalType(type);
@@ -172,29 +202,58 @@ export default function FyllUtPeriode() {
           ref={formRef}
           onSubmit={(e) => {
             e.preventDefault();
+
+            // Valider alle obligatoriske felter
+            const harAktiviteter = dager.some((dag) =>
+              dag.aktiviteter.some((aktivitet) => aktivitet !== null),
+            );
+
+            const feil = {
+              meldedato: !valgtDato,
+              arbeidssoker: registrertArbeidssoker === null,
+              begrunnelse: begrunnelse.trim() === "",
+              aktiviteter: !harAktiviteter,
+            };
+
+            setVisValideringsfeil(feil);
+
+            // Hvis det er feil, fokuser på første feilende felt og ikke send inn
+            if (feil.meldedato) {
+              meldedatoRef.current?.focus();
+              return;
+            }
+            if (feil.arbeidssoker) {
+              arbeidssokerRef.current?.focus();
+              return;
+            }
+            if (feil.begrunnelse) {
+              begrunnelseRef.current?.focus();
+              return;
+            }
+            if (feil.aktiviteter) {
+              // Finn første input felt i tabellen
+              const forsteInputFelt = document.querySelector(
+                'input[type="text"]',
+              ) as HTMLInputElement;
+              forsteInputFelt?.focus();
+              return;
+            }
+
+            // Hvis ingen feil, åpne modal
             openModal(MODAL_ACTION_TYPE.FULLFOR);
           }}
         >
-          <fieldset className={styles.details}>
+          <fieldset className={styles.details} style={{ border: "none", padding: 0, margin: 0 }}>
             <legend className="sr-only">Grunnleggende informasjon</legend>
             <div>
-              <DatePicker
-                mode="single"
-                selected={valgtDato}
-                onSelect={handleDateSelect}
-                toDate={new Date()}
-                fromDate={subDays(periode.periode.tilOgMed, 1)}
-                defaultMonth={new Date(periode.periode.tilOgMed)}
-              >
+              <DatePicker {...datepickerProps}>
                 <DatePicker.Input
+                  {...inputProps}
+                  ref={meldedatoRef}
                   label="Sett meldedato"
                   placeholder="dd.mm.åååå"
                   size="small"
-                  value={
-                    valgtDato
-                      ? formatterDato({ dato: valgtDato.toISOString(), format: DatoFormat.Kort })
-                      : ""
-                  }
+                  error={visValideringsfeil.meldedato ? "Meldedato må fylles ut" : undefined}
                 />
               </DatePicker>
             </div>
@@ -202,42 +261,62 @@ export default function FyllUtPeriode() {
               <RadioGroup
                 size="small"
                 legend="Registrert som arbeidssøker de neste 14 dagene?"
+                error={
+                  visValideringsfeil.arbeidssoker
+                    ? "Du må velge om bruker skal være registrert som arbeidssøker"
+                    : undefined
+                }
                 value={registrertArbeidssoker?.toString() || ""}
-                onChange={(val) => setRegistrertArbeidssoker(val === "true")}
+                onChange={(val) => {
+                  setRegistrertArbeidssoker(val === "true");
+                  if (visValideringsfeil.arbeidssoker) {
+                    setVisValideringsfeil((prev) => ({ ...prev, arbeidssoker: false }));
+                  }
+                }}
               >
-                <Radio value="true">Ja</Radio>
+                <Radio ref={arbeidssokerRef} value="true">
+                  Ja
+                </Radio>
                 <Radio value="false">Nei</Radio>
               </RadioGroup>
             </div>
             <div className={styles.begrunnelse}>
               <Textarea
+                ref={begrunnelseRef}
                 size="small"
                 label="Begrunnelse"
+                name="begrunnelse"
+                error={visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined}
                 value={begrunnelse}
-                onChange={(e) => setBegrunnelse(e.target.value)}
+                onChange={(e) => {
+                  setBegrunnelse(e.target.value);
+                  if (e.target.value.trim() !== "" && visValideringsfeil.begrunnelse) {
+                    setVisValideringsfeil((prev) => ({ ...prev, begrunnelse: false }));
+                  }
+                }}
                 rows={3}
               />
             </div>
           </fieldset>
 
-          <fieldset>
+          <fieldset style={{ border: "none", padding: 0, margin: 0 }}>
             <legend className="sr-only">Aktiviteter per dag</legend>
             <FyllUtTabell
               dager={dager}
-              setKorrigerteDager={setKorrigerteDager}
+              setKorrigerteDager={handleSetKorrigerteDager}
               periode={periode.periode}
             />
           </fieldset>
+          {visValideringsfeil.aktiviteter && (
+            <div className="navds-error-message navds-error-message--medium" role="alert">
+              Du må fylle ut minst én aktivitet
+            </div>
+          )}
           <div className={styles.handlinger}>
             <Button variant="secondary" size="small" onClick={handleAvbryt}>
               Avbryt utfylling
             </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="small"
-              disabled={registrertArbeidssoker === null || !valgtDato || begrunnelse.trim() === ""}
-            >
+            <Button type="submit" variant="primary" size="small">
               Send inn meldekort
             </Button>
           </div>

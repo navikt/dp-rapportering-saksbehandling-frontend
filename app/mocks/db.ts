@@ -1,5 +1,6 @@
 import { uuidv7 } from "uuidv7";
 
+import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
 
 import { type Database } from "./session";
@@ -40,6 +41,7 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
     id,
     originalMeldekortId: rapporteringsperiode.id,
     innsendtTidspunkt: new Date().toISOString(),
+    status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
     kanSendes: false,
     kanEndres: true,
     sisteFristForTrekk: null,
