@@ -103,6 +103,9 @@ export async function action({ request, params }: Route.ActionArgs) {
 export default function FyllUtPeriode() {
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
+  const meldedatoRef = useRef<HTMLInputElement>(null);
+  const arbeidssokerRef = useRef<HTMLInputElement>(null);
+  const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
 
   const { periode, personId } = useLoaderData<typeof loader>();
 
@@ -216,31 +219,23 @@ export default function FyllUtPeriode() {
 
             // Hvis det er feil, fokuser på første feilende felt og ikke send inn
             if (feil.meldedato) {
-              const meldedatoInput = document.querySelector(
-                '[data-testid="date-input"]',
-              ) as HTMLInputElement;
-              meldedatoInput?.focus();
+              meldedatoRef.current?.focus();
               return;
             }
             if (feil.arbeidssoker) {
-              const arbeidssokerRadio = document.querySelector(
-                'input[name="arbeidssoker"]',
-              ) as HTMLInputElement;
-              arbeidssokerRadio?.focus();
+              arbeidssokerRef.current?.focus();
               return;
             }
             if (feil.begrunnelse) {
-              const begrunnelseTextarea = document.querySelector(
-                'textarea[name="begrunnelse"]',
-              ) as HTMLTextAreaElement;
-              begrunnelseTextarea?.focus();
+              begrunnelseRef.current?.focus();
               return;
             }
             if (feil.aktiviteter) {
-              const forsteAktivitetInput = document.querySelector(
-                'input[type="number"]',
+              // Finn første input felt i tabellen
+              const forsteInputFelt = document.querySelector(
+                'input[type="text"]',
               ) as HTMLInputElement;
-              forsteAktivitetInput?.focus();
+              forsteInputFelt?.focus();
               return;
             }
 
@@ -254,6 +249,7 @@ export default function FyllUtPeriode() {
               <DatePicker {...datepickerProps}>
                 <DatePicker.Input
                   {...inputProps}
+                  ref={meldedatoRef}
                   label="Sett meldedato"
                   placeholder="dd.mm.åååå"
                   size="small"
@@ -278,12 +274,15 @@ export default function FyllUtPeriode() {
                   }
                 }}
               >
-                <Radio value="true">Ja</Radio>
+                <Radio ref={arbeidssokerRef} value="true">
+                  Ja
+                </Radio>
                 <Radio value="false">Nei</Radio>
               </RadioGroup>
             </div>
             <div className={styles.begrunnelse}>
               <Textarea
+                ref={begrunnelseRef}
                 size="small"
                 label="Begrunnelse"
                 name="begrunnelse"

@@ -2,7 +2,7 @@ import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
 import { BodyShort, Heading, Tag } from "@navikt/ds-react";
 import classNames from "classnames";
 import { format, subDays } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
@@ -64,6 +64,8 @@ export default function Periode() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
+
+  const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
 
   const harMeldedatoEndringer =
     korrigertMeldedato && format(korrigertMeldedato, "yyyy-MM-dd") !== periode.meldedato;
@@ -182,10 +184,7 @@ export default function Periode() {
             setVisBegrunnelseFeil(true);
             setVisIngenEndringerFeil(false);
             // Focus på begrunnelse-feltet hvis det er tomt
-            const begrunnelseInput = document.querySelector(
-              '[name="begrunnelse"]',
-            ) as HTMLTextAreaElement;
-            begrunnelseInput?.focus();
+            begrunnelseRef.current?.focus();
             return;
           }
           if (!harEndringer) {
@@ -226,6 +225,7 @@ export default function Periode() {
           </DatePicker>
 
           <Textarea
+            ref={begrunnelseRef}
             label="Begrunnelse for korrigering"
             name="begrunnelse"
             size="small"
