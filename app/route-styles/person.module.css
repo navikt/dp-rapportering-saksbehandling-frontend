@@ -83,3 +83,8 @@
 .fadeIn {
   animation: periodeFadeIn 0.4s ease-out;
 }
+
+/* Expandable row content background styling */
+:global(.navds-table__expanded-row) {
+  background-color: var(--a-surface-subtle);
+}

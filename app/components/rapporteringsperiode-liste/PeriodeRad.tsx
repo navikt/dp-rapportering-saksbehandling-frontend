@@ -3,10 +3,13 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
+import pageStyles from "~/route-styles/person.module.css";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
+import { PeriodeDetaljer } from "../rapporteringsperiode-detaljer/PeriodeDetaljer";
+import { RapporteringsperiodeVisning } from "../rapporteringsperiode-visning/PeriodeVisning";
 import { Innsendt } from "./Innsendt";
 import styles from "./PeriodeListe.module.css";
 import { getStatus, PERIODE_RAD_STATUS, Status } from "./Status";
@@ -18,9 +21,17 @@ interface Props {
   toggle: (id: string) => void;
   valgteAntall: number;
   maksValgte: number;
+  alternativVisning: boolean;
 }
 
-export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }: Props) {
+export function PeriodeRad({
+  periode,
+  valgt,
+  toggle,
+  valgteAntall,
+  maksValgte,
+  alternativVisning,
+}: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [announceUpdate, setAnnounceUpdate] = useState("");
@@ -83,6 +94,65 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
     dato: periode.periode.tilOgMed,
   })}`;
 
+  if (alternativVisning) {
+    const erOpprettet = getStatus(periode) === PERIODE_RAD_STATUS.Opprettet;
+
+    return (
+      <>
+        {announceUpdate && (
+          <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
+            {announceUpdate}
+          </div>
+        )}
+        <Table.ExpandableRow
+          content={
+            !erOpprettet && (
+              <article
+                key={periode.id}
+                aria-label={`Periode ${periode.periode.fraOgMed}`}
+                className={classNames(pageStyles.periodeContainer, pageStyles.fadeIn)}
+              >
+                <div className={pageStyles.forhandsvisning}>
+                  <RapporteringsperiodeVisning perioder={[periode]} />
+                </div>
+                <div className={pageStyles.detaljer}>
+                  <PeriodeDetaljer key={periode.id} periode={periode} personId={""} />
+                </div>
+              </article>
+            )
+          }
+          selected={valgt}
+          className={radKlasse}
+          expandOnRowClick={!erOpprettet}
+        >
+          <Table.HeaderCell
+            scope="row"
+            textSize="small"
+            className={radKlasse}
+            style={{ width: "10%" }}
+          >
+            {ukenummer(periode)}
+          </Table.HeaderCell>
+          <Table.DataCell textSize="small" className={radKlasse} style={{ width: "20%" }}>
+            {periodeDatoTekst}
+          </Table.DataCell>
+          <Table.DataCell textSize="small" className={radKlasse} style={{ width: "15%" }}>
+            <Status periode={periode} />
+          </Table.DataCell>
+          <Table.DataCell textSize="small" className={radKlasse} style={{ width: "20%" }}>
+            <TypeAktivitet periode={periode} />
+          </Table.DataCell>
+          <Table.DataCell textSize="small" className={radKlasse} style={{ width: "15%" }}>
+            <Innsendt periode={periode} />
+          </Table.DataCell>
+          <Table.DataCell textSize="small" className={radKlasse} style={{ width: "15%" }}>
+            {periode.sisteFristForTrekk ? formatterDato({ dato: periode.sisteFristForTrekk }) : ""}
+          </Table.DataCell>
+        </Table.ExpandableRow>
+      </>
+    );
+  }
+
   return (
     <>
       {announceUpdate && (
@@ -91,19 +161,21 @@ export function PeriodeRad({ periode, valgt, toggle, valgteAntall, maksValgte }:
         </div>
       )}
       <Table.Row selected={valgt} className={radKlasse}>
-        <Table.DataCell textSize="small" className={ukeKlasse}>
-          {getStatus(periode) !== PERIODE_RAD_STATUS.Opprettet && (
-            <Checkbox
-              className={styles.periodeListe__checkbox}
-              checked={valgt}
-              onChange={handleCheckboxChange}
-              disabled={isDisabled}
-              hideLabel
-            >
-              Uke {ukenummer(periode)}
-            </Checkbox>
-          )}
-        </Table.DataCell>
+        {!alternativVisning && (
+          <Table.DataCell textSize="small" className={ukeKlasse}>
+            {getStatus(periode) !== PERIODE_RAD_STATUS.Opprettet && (
+              <Checkbox
+                className={styles.periodeListe__checkbox}
+                checked={valgt}
+                onChange={handleCheckboxChange}
+                disabled={isDisabled}
+                hideLabel
+              >
+                Uke {ukenummer(periode)}
+              </Checkbox>
+            )}
+          </Table.DataCell>
+        )}
         <Table.HeaderCell scope="row" textSize="small" className={radKlasse}>
           {ukenummer(periode)}
         </Table.HeaderCell>

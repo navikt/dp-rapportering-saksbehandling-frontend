@@ -10,6 +10,7 @@ import { groupPeriodsByYear } from "./utils";
 
 interface Props {
   perioder: IRapporteringsperiode[];
+  alternativVisning: boolean;
 }
 
 interface PropsWithSharedState extends Props {
@@ -30,19 +31,31 @@ const KOLONNE_TITLER = [
   { tekst: "Frist", erFørste: false, width: "10%" },
 ] as const;
 
+const ALTERNATIV_KOLONNE_TITLER = [
+  { tekst: "", erFørste: true, width: "5%" },
+  { tekst: "Uke", erFørste: false, width: "10%" },
+  { tekst: "Dato", erFørste: false, width: "20%" },
+  { tekst: "Status", erFørste: false, width: "15%" },
+  { tekst: "Aktiviteter", erFørste: false, width: "20%" },
+  { tekst: "Meldedato", erFørste: false, width: "15%" },
+  { tekst: "Frist", erFørste: false, width: "15%" },
+] as const;
+
 // Intern komponent uten egen state for bruk i accordion
 function RapporteringsperiodeTabell({
   perioder,
   valgteIds,
   onTogglePeriode,
   maksValgte,
+  alternativVisning,
 }: PropsWithSharedState) {
+  const titler = alternativVisning ? ALTERNATIV_KOLONNE_TITLER : KOLONNE_TITLER;
   return (
-    <div className={styles.periodeListe}>
-      <Table>
+    <div className={styles.periodeListe} style={alternativVisning ? { width: "100%" } : undefined}>
+      <Table style={alternativVisning ? { width: "100%", tableLayout: "fixed" } : undefined}>
         <Table.Header>
           <Table.Row>
-            {KOLONNE_TITLER.map((kolonne, index) => {
+            {titler.map((kolonne, index) => {
               const className = kolonne.erFørste
                 ? `${styles.periodeListe__header} ${styles["periodeListe__header--first"]}`
                 : styles.periodeListe__header;
@@ -64,7 +77,19 @@ function RapporteringsperiodeTabell({
         <Table.Body>
           {perioder.map((periode) => {
             const erValgt = valgteIds.includes(periode.id);
-
+            if (alternativVisning) {
+              return (
+                <PeriodeRad
+                  key={periode.id}
+                  periode={periode}
+                  valgt={erValgt}
+                  toggle={onTogglePeriode}
+                  valgteAntall={valgteIds.length}
+                  maksValgte={maksValgte}
+                  alternativVisning={alternativVisning}
+                />
+              );
+            }
             return (
               <PeriodeRad
                 key={periode.id}
@@ -73,6 +98,7 @@ function RapporteringsperiodeTabell({
                 toggle={onTogglePeriode}
                 valgteAntall={valgteIds.length}
                 maksValgte={maksValgte}
+                alternativVisning={alternativVisning}
               />
             );
           })}
@@ -85,7 +111,7 @@ function RapporteringsperiodeTabell({
 /**
  * Main component that groups reporting periods by year in an accordion
  */
-export function RapporteringsperiodeListeByYear({ perioder }: Props) {
+export function RapporteringsperiodeListeByYear({ perioder, alternativVisning = false }: Props) {
   const gyldigeIds = new Set(perioder.map((p) => p.id));
   const groupedPeriods = groupPeriodsByYear(perioder);
   const years = Object.keys(groupedPeriods)
@@ -159,6 +185,7 @@ export function RapporteringsperiodeListeByYear({ perioder }: Props) {
                 valgteIds={valgteIds}
                 onTogglePeriode={togglePeriode}
                 maksValgte={MAKS_VALGTE_PERIODER}
+                alternativVisning={alternativVisning}
               />
             </Accordion.Content>
           </Accordion.Item>

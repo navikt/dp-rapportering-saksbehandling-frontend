@@ -37,7 +37,7 @@ export default function Rapportering() {
             Klikk på personen under for å se hele rapporteringsperioden deres.
           </BodyShort>
 
-          <nav aria-label="Tilgjengelige testpersoner">
+          <nav aria-label="Tilgjengelige testpersoner og alternativer">
             <ul
               style={{ listStyle: "none", padding: 0 }}
               aria-label={`${data.personer.length} person${data.personer.length !== 1 ? "er" : ""} tilgjengelig for saksbehandling`}
@@ -47,16 +47,27 @@ export default function Rapportering() {
                   person.etternavn
                 }`;
                 const link = `/person/${person.id}/perioder`;
+                const alternativeLink = `/person/${person.id}/alternative-perioder`;
 
                 return (
-                  <li key={person.id} style={{ marginBottom: "1rem" }}>
-                    <LinkPanel href={link} border>
-                      <LinkPanel.Title>{navn}</LinkPanel.Title>
-                      <LinkPanel.Description>
-                        Åpne saksbehandling for denne personen
-                      </LinkPanel.Description>
-                    </LinkPanel>
-                  </li>
+                  <>
+                    <li key={person.id} style={{ marginBottom: "1rem" }}>
+                      <LinkPanel href={link} border>
+                        <LinkPanel.Title>{navn}</LinkPanel.Title>
+                        <LinkPanel.Description>
+                          Åpne saksbehandling for denne personen
+                        </LinkPanel.Description>
+                      </LinkPanel>
+                    </li>
+                    <li key={`${person.id}-alternative`} style={{ marginBottom: "1rem" }}>
+                      <LinkPanel href={alternativeLink} border>
+                        <LinkPanel.Title>Alternativ {navn}</LinkPanel.Title>
+                        <LinkPanel.Description>
+                          Åpne alternativ saksbehandling for denne personen
+                        </LinkPanel.Description>
+                      </LinkPanel>
+                    </li>
+                  </>
                 );
               })}
             </ul>
