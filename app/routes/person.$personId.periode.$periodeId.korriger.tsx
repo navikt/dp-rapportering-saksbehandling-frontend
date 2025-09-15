@@ -1,7 +1,7 @@
 import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
 import { BodyShort, Heading, Tag } from "@navikt/ds-react";
 import classNames from "classnames";
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
@@ -206,8 +206,8 @@ export default function Periode() {
             selected={korrigertMeldedato}
             onSelect={handleDateSelect}
             defaultMonth={korrigertMeldedato}
-            toDate={new Date()}
-            fromDate={subDays(new Date(periode.periode.tilOgMed), 1)}
+            // toDate={new Date()}
+            // fromDate={subDays(new Date(periode.periode.tilOgMed), 1)}
           >
             <DatePicker.Input
               label="Meldedato"
