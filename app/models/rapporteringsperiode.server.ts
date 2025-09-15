@@ -32,7 +32,12 @@ export async function hentRapporteringsperioder(
 
     const rapporteringsperioder: IRapporteringsperiode[] = await response.json();
 
-    return rapporteringsperioder.sort(sorterMeldekort);
+    return rapporteringsperioder.sort(sorterMeldekort).map((periode) => ({
+      ...periode,
+      kanSendes: rapporteringsperioder.find((p) => p.originalMeldekortId === periode.id)
+        ? periode.kanSendes
+        : true,
+    }));
   } catch (error) {
     const errorId = uuidv7();
 
@@ -75,7 +80,7 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
 
     const rapporteringsperiode: T = await response.json();
 
-    return rapporteringsperiode;
+    return { ...rapporteringsperiode, kanSendes: true };
   } catch (error) {
     const errorId = uuidv7();
     const message = `Feil ved henting av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}: ${error}`;
