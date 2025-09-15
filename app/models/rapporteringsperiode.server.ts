@@ -32,11 +32,13 @@ export async function hentRapporteringsperioder(
 
     const rapporteringsperioder: IRapporteringsperiode[] = await response.json();
 
+    const correctedIds = new Set(
+      rapporteringsperioder.filter((p) => p.originalMeldekortId).map((p) => p.originalMeldekortId),
+    );
+
     return rapporteringsperioder.sort(sorterMeldekort).map((periode) => ({
       ...periode,
-      kanSendes: rapporteringsperioder.find((p) => p.originalMeldekortId === periode.id)
-        ? periode.kanSendes
-        : true,
+      kanSendes: correctedIds.has(periode.id) ? periode.kanSendes : true,
     }));
   } catch (error) {
     const errorId = uuidv7();
