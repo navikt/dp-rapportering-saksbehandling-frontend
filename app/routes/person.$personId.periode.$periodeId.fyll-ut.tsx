@@ -155,7 +155,6 @@ export default function FyllUtPeriode() {
     },
     defaultSelected: valgtDato,
     fromDate: subDays(new Date(periode.periode.tilOgMed), 1),
-    toDate: new Date(),
     inputFormat: "dd.MM.yyyy",
   });
 
