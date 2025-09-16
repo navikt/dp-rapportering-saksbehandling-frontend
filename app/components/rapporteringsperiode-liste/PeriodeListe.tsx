@@ -8,12 +8,13 @@ import styles from "./PeriodeListe.module.css";
 import { PeriodeRad } from "./PeriodeRad";
 import { groupPeriodsByYear } from "./utils";
 
-interface Props {
+interface IProps {
   perioder: IRapporteringsperiode[];
   alternativVisning: boolean;
+  personId?: string;
 }
 
-interface PropsWithSharedState extends Props {
+interface IPropsWithSharedState extends IProps {
   valgteIds: string[];
   onTogglePeriode: (id: string) => void;
   maksValgte: number;
@@ -48,7 +49,8 @@ function RapporteringsperiodeTabell({
   onTogglePeriode,
   maksValgte,
   alternativVisning,
-}: PropsWithSharedState) {
+  personId,
+}: IPropsWithSharedState) {
   const titler = alternativVisning ? ALTERNATIV_KOLONNE_TITLER : KOLONNE_TITLER;
   return (
     <div className={styles.periodeListe} style={alternativVisning ? { width: "100%" } : undefined}>
@@ -87,6 +89,7 @@ function RapporteringsperiodeTabell({
                   valgteAntall={valgteIds.length}
                   maksValgte={maksValgte}
                   alternativVisning={alternativVisning}
+                  personId={personId}
                 />
               );
             }
@@ -99,6 +102,7 @@ function RapporteringsperiodeTabell({
                 valgteAntall={valgteIds.length}
                 maksValgte={maksValgte}
                 alternativVisning={alternativVisning}
+                personId={personId}
               />
             );
           })}
@@ -111,7 +115,11 @@ function RapporteringsperiodeTabell({
 /**
  * Main component that groups reporting periods by year in an accordion
  */
-export function RapporteringsperiodeListeByYear({ perioder, alternativVisning = false }: Props) {
+export function RapporteringsperiodeListeByYear({
+  perioder,
+  alternativVisning = false,
+  personId,
+}: IProps) {
   const gyldigeIds = new Set(perioder.map((p) => p.id));
   const groupedPeriods = groupPeriodsByYear(perioder);
   const years = Object.keys(groupedPeriods)
@@ -186,6 +194,7 @@ export function RapporteringsperiodeListeByYear({ perioder, alternativVisning = 
                 onTogglePeriode={togglePeriode}
                 maksValgte={MAKS_VALGTE_PERIODER}
                 alternativVisning={alternativVisning}
+                personId={personId}
               />
             </Accordion.Content>
           </Accordion.Item>

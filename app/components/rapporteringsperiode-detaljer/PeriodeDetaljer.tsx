@@ -9,7 +9,7 @@ import styles from "./PeriodeDetaljer.module.css";
 
 interface IProps {
   periode: IRapporteringsperiode;
-  personId: string;
+  personId?: string;
 }
 
 export function PeriodeDetaljer({ periode, personId }: IProps) {

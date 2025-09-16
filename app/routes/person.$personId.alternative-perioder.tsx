@@ -20,13 +20,17 @@ export async function loader({
   return { perioder };
 }
 
-export default function Rapportering() {
+export default function Rapportering({ params }: Route.ComponentProps) {
   const data = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
   const perioder = data?.perioder ?? [];
 
   return (
     <div className={styles.rapporteringsperiodeListe} style={{ width: "100%", maxWidth: "none" }}>
-      <RapporteringsperiodeListeByYear perioder={perioder} alternativVisning={true} />
+      <RapporteringsperiodeListeByYear
+        perioder={perioder}
+        alternativVisning={true}
+        personId={params.personId}
+      />
     </div>
   );
 }

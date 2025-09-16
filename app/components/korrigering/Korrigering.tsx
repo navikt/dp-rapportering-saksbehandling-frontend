@@ -29,7 +29,6 @@ interface IProps {
 export function Korrigering({
   korrigertPeriode,
   originalPeriode,
-
   personId,
   saksbehandler,
   setKorrigertPeriode,
