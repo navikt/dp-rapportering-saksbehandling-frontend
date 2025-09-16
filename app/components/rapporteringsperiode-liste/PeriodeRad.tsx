@@ -22,6 +22,7 @@ interface Props {
   valgteAntall: number;
   maksValgte: number;
   alternativVisning: boolean;
+  personId?: string;
 }
 
 export function PeriodeRad({
@@ -31,6 +32,7 @@ export function PeriodeRad({
   valgteAntall,
   maksValgte,
   alternativVisning,
+  personId,
 }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -116,7 +118,7 @@ export function PeriodeRad({
                   <RapporteringsperiodeVisning perioder={[periode]} />
                 </div>
                 <div className={pageStyles.detaljer}>
-                  <PeriodeDetaljer key={periode.id} periode={periode} personId={""} />
+                  <PeriodeDetaljer key={periode.id} periode={periode} personId={personId} />
                 </div>
               </article>
             )
