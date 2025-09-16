@@ -1,12 +1,13 @@
 import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
 import { BodyShort, Heading, Tag } from "@navikt/ds-react";
 import classNames from "classnames";
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import {
+  fjernTimerFraAktiviteterSomIkkeErArbeid,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
 } from "~/components/korrigering/korrigering.utils";
@@ -79,7 +80,9 @@ export default function Periode() {
     setKorrigertPeriode((prev) => ({
       ...prev,
       meldedato: korrigertMeldedato ? format(korrigertMeldedato, "yyyy-MM-dd") : prev.meldedato,
-      dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
+      dager: korrigerteDager
+        .map(konverterTimerTilISO8601Varighet)
+        .map(fjernTimerFraAktiviteterSomIkkeErArbeid),
       begrunnelse: korrigertBegrunnelse,
       kilde: {
         rolle: "Saksbehandler",
@@ -206,8 +209,8 @@ export default function Periode() {
             selected={korrigertMeldedato}
             onSelect={handleDateSelect}
             defaultMonth={korrigertMeldedato}
-            toDate={new Date()}
-            fromDate={subDays(new Date(periode.periode.tilOgMed), 1)}
+            // toDate={new Date()}
+            // fromDate={subDays(new Date(periode.periode.tilOgMed), 1)}
           >
             <DatePicker.Input
               label="Meldedato"

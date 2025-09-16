@@ -14,6 +14,20 @@ export interface IKorrigertDag extends Omit<IRapporteringsperiodeDag, "aktivitet
 
 export type SetKorrigerteDager = React.Dispatch<React.SetStateAction<IKorrigertDag[]>>;
 
+export function fjernTimerFraAktiviteterSomIkkeErArbeid(
+  dag: IRapporteringsperiodeDag,
+): IRapporteringsperiodeDag {
+  return {
+    ...dag,
+    aktiviteter: dag.aktiviteter.map((aktivitet) => {
+      if (aktivitet.type !== AKTIVITET_TYPE.Arbeid) {
+        return { ...aktivitet, timer: konverterTilISO8601Varighet("0") };
+      }
+      return aktivitet;
+    }),
+  };
+}
+
 export function konverterTimerFraISO8601Varighet(dag: IRapporteringsperiodeDag): IKorrigertDag {
   return {
     ...dag,

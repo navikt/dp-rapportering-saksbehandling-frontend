@@ -1,6 +1,6 @@
 import { Button, DatePicker, Textarea } from "@navikt/ds-react";
 import classNames from "classnames";
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useFetcher, useNavigate } from "react-router";
 
@@ -102,8 +102,8 @@ export function Korrigering({
           selected={korrigertMeldedato}
           onSelect={handleDateSelect}
           defaultMonth={korrigertMeldedato}
-          toDate={new Date()}
-          fromDate={subDays(originalPeriode.periode.tilOgMed, 1)}
+          // toDate={new Date()}
+          // fromDate={subDays(originalPeriode.periode.tilOgMed, 1)}
         >
           <DatePicker.Input
             label="Sett meldedato"
