@@ -1,6 +1,6 @@
 import { Alert, Button, Tag } from "@navikt/ds-react";
 
-import { OPPRETTET_AV, ROLLE } from "~/utils/constants";
+import { ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
@@ -15,8 +15,8 @@ interface IProps {
 export function PeriodeDetaljer({ periode, personId }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalMeldekortId;
-  const kanSendes = periode.kanSendes && periode.opprettetAv === OPPRETTET_AV.Dagpenger;
-  const kanEndres = periode.kanEndres && periode.opprettetAv === OPPRETTET_AV.Dagpenger;
+  const kanSendes = periode.kanSendes;
+  const kanEndres = periode.kanEndres;
   const erSendtForSent = erMeldekortSendtForSent(periode);
 
   return (
