@@ -7,6 +7,7 @@ import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import {
+  fjernTimerFraAktiviteterSomIkkeErArbeid,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
 } from "~/components/korrigering/korrigering.utils";
@@ -79,7 +80,9 @@ export default function Periode() {
     setKorrigertPeriode((prev) => ({
       ...prev,
       meldedato: korrigertMeldedato ? format(korrigertMeldedato, "yyyy-MM-dd") : prev.meldedato,
-      dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
+      dager: korrigerteDager
+        .map(konverterTimerTilISO8601Varighet)
+        .map(fjernTimerFraAktiviteterSomIkkeErArbeid),
       begrunnelse: korrigertBegrunnelse,
       kilde: {
         rolle: "Saksbehandler",

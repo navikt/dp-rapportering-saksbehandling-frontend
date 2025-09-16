@@ -14,6 +14,7 @@ import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import {
+  fjernTimerFraAktiviteterSomIkkeErArbeid,
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
@@ -72,7 +73,9 @@ export async function action({ request, params }: Route.ActionArgs) {
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-      dager: dager.map(konverterTimerTilISO8601Varighet),
+      dager: dager
+        .map(konverterTimerTilISO8601Varighet)
+        .map(fjernTimerFraAktiviteterSomIkkeErArbeid),
       kilde: {
         rolle: ROLLE.Saksbehandler,
         ident: saksbehandler.onPremisesSamAccountName,
