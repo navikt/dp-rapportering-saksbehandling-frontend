@@ -45,6 +45,8 @@ spec:
       value: "{{is_localhost}}"
     - name: VITE_FARO_URL
       value: "{{faro_url}}"
+    - name: RUNTIME_ENVIRONMENT
+      value: "{{runtime_environment}}"
   accessPolicy:
     outbound:
       external:

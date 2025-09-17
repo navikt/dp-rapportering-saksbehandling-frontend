@@ -155,6 +155,7 @@ export interface IEnv {
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";
   FARO_URL: string;
+  RUNTIME_ENVIRONMENT: "development" | "demo" | "production";
 }
 
 export interface ISaksbehandler {

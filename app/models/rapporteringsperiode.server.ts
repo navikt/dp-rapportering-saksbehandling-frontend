@@ -37,10 +37,14 @@ export async function hentRapporteringsperioder(
     );
 
     // TODO: Fjern denne etter testing
-    return rapporteringsperioder.sort(sorterMeldekort).map((periode) => ({
-      ...periode,
-      kanSendes: correctedIds.has(periode.id) ? periode.kanSendes : true,
-    }));
+    if (getEnv("RUNTIME_ENVIRONMENT") === "development") {
+      return rapporteringsperioder.sort(sorterMeldekort).map((periode) => ({
+        ...periode,
+        kanSendes: correctedIds.has(periode.id) ? periode.kanSendes : true,
+      }));
+    }
+
+    return rapporteringsperioder.sort(sorterMeldekort);
   } catch (error) {
     const errorId = uuidv7();
 
@@ -84,7 +88,10 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
     const rapporteringsperiode: T = await response.json();
 
     // TODO: Fjern denne etter testing
-    return { ...rapporteringsperiode, kanSendes: true };
+    if (getEnv("RUNTIME_ENVIRONMENT") === "development") {
+      return { ...rapporteringsperiode, kanSendes: true };
+    }
+    return rapporteringsperiode;
   } catch (error) {
     const errorId = uuidv7();
     const message = `Feil ved henting av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}: ${error}`;

@@ -15,6 +15,7 @@ export function getEnv<T>(key: keyof IEnv): T {
     USE_MSW: env.NODE_ENV === "test" ? "true" : "false",
     DP_MELDEKORTREGISTER_URL: "https://dp-meldekortregister.intern.dev.nav.no",
     FARO_URL: "http://localhost:12347/collect",
+    RUNTIME_ENVIRONMENT: "production",
   };
 
   // @ts-expect-error IEnv inneholder ikke VITE_ prefix

@@ -8,6 +8,7 @@ use_msw: true
 is_localhost: false
 
 faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
+runtime_environment: "demo"
 
 azure:
   tenant: trygdeetaten.no

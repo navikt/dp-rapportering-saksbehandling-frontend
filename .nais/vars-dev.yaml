@@ -12,6 +12,7 @@ is_localhost: false
 
 faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
 
+runtime_environment: "development"
 
 azure:
   tenant: trygdeetaten.no
