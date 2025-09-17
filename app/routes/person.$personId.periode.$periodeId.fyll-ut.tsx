@@ -28,7 +28,6 @@ import {
 } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import {
-  fjernTimerFraAktiviteterSomIkkeErArbeid,
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
@@ -74,9 +73,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-      dager: dager
-        .map(konverterTimerTilISO8601Varighet)
-        .map(fjernTimerFraAktiviteterSomIkkeErArbeid),
+      dager: dager.map(konverterTimerTilISO8601Varighet),
       kilde: {
         rolle: ROLLE.Saksbehandler,
         ident: saksbehandler.onPremisesSamAccountName,

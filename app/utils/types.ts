@@ -49,7 +49,7 @@ export interface IAktivitet {
   id?: string;
   type: TAktivitetType;
   dato: string;
-  timer?: string;
+  timer?: string | null;
 }
 
 export interface IRapporteringsperiodeDag {

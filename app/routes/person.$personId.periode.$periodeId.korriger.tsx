@@ -17,7 +17,6 @@ import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import {
-  fjernTimerFraAktiviteterSomIkkeErArbeid,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
 } from "~/utils/korrigering.utils";
@@ -80,9 +79,7 @@ export default function Periode() {
     setKorrigertPeriode((prev) => ({
       ...prev,
       meldedato: korrigertMeldedato ? format(korrigertMeldedato, "yyyy-MM-dd") : prev.meldedato,
-      dager: korrigerteDager
-        .map(konverterTimerTilISO8601Varighet)
-        .map(fjernTimerFraAktiviteterSomIkkeErArbeid),
+      dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
       begrunnelse: korrigertBegrunnelse,
       kilde: {
         rolle: "Saksbehandler",

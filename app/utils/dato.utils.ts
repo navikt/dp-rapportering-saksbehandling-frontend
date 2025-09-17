@@ -105,7 +105,7 @@ export function konverterTilISO8601Varighet(varighet: string): string {
   });
 }
 
-export function konverterFraISO8601Varighet(periode?: string): number | undefined {
+export function konverterFraISO8601Varighet(periode?: string | null): number | undefined {
   if (!periode || periode.trim() === "") return undefined;
 
   try {
