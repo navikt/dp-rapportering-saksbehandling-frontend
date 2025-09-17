@@ -6,11 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
-import {
-  fjernTimerFraAktiviteterSomIkkeErArbeid,
-  konverterTimerFraISO8601Varighet,
-  konverterTimerTilISO8601Varighet,
-} from "~/components/korrigering/korrigering.utils";
 import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
@@ -21,6 +16,11 @@ import styles from "~/route-styles/periode.module.css";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import {
+  fjernTimerFraAktiviteterSomIkkeErArbeid,
+  konverterTimerFraISO8601Varighet,
+  konverterTimerTilISO8601Varighet,
+} from "~/utils/korrigering.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "../+types/root";

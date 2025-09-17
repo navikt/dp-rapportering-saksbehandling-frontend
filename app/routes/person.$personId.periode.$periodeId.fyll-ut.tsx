@@ -14,13 +14,6 @@ import { useRef, useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
-import {
-  fjernTimerFraAktiviteterSomIkkeErArbeid,
-  type IKorrigertDag,
-  konverterTimerFraISO8601Varighet,
-  konverterTimerTilISO8601Varighet,
-  type SetKorrigerteDager,
-} from "~/components/korrigering/korrigering.utils";
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
 import { BekreftModal } from "~/modals/BekreftModal";
@@ -34,6 +27,13 @@ import {
   ROLLE,
 } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import {
+  fjernTimerFraAktiviteterSomIkkeErArbeid,
+  type IKorrigertDag,
+  konverterTimerFraISO8601Varighet,
+  konverterTimerTilISO8601Varighet,
+  type SetKorrigerteDager,
+} from "~/utils/korrigering.utils";
 import type { ISendInnMeldekort } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";

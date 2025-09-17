@@ -11,7 +11,7 @@ import {
   erIkkeAktiv,
   type IKorrigertDag,
   type SetKorrigerteDager,
-} from "../korrigering/korrigering.utils";
+} from "../../utils/korrigering.utils";
 import styles from "./tabeller.module.css";
 
 interface IProps {
