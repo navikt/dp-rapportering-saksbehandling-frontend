@@ -8,6 +8,7 @@ import {
   Textarea,
   useDatepicker,
 } from "@navikt/ds-react";
+import classNames from "classnames";
 import { format } from "date-fns";
 import { useRef, useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router";
@@ -247,7 +248,15 @@ export default function FyllUtPeriode() {
             openModal(MODAL_ACTION_TYPE.FULLFOR);
           }}
         >
-          <fieldset className={styles.details} style={{ border: "none", padding: 0, margin: 0 }}>
+          <fieldset className={styles.fieldset}>
+            <legend className="sr-only">Aktiviteter per dag</legend>
+            <FyllUtTabell
+              dager={dager}
+              setKorrigerteDager={handleSetKorrigerteDager}
+              periode={periode.periode}
+            />
+          </fieldset>
+          <fieldset className={classNames(styles.details, styles.fieldset)}>
             <legend className="sr-only">Grunnleggende informasjon</legend>
             <div>
               <DatePicker {...datepickerProps}>
@@ -301,15 +310,6 @@ export default function FyllUtPeriode() {
                 rows={3}
               />
             </div>
-          </fieldset>
-
-          <fieldset style={{ border: "none", padding: 0, margin: 0 }}>
-            <legend className="sr-only">Aktiviteter per dag</legend>
-            <FyllUtTabell
-              dager={dager}
-              setKorrigerteDager={handleSetKorrigerteDager}
-              periode={periode.periode}
-            />
           </fieldset>
           {visValideringsfeil.aktiviteter && (
             <div className="navds-error-message navds-error-message--medium" role="alert">

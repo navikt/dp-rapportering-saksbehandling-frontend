@@ -36,6 +36,7 @@ export async function hentRapporteringsperioder(
       rapporteringsperioder.filter((p) => p.originalMeldekortId).map((p) => p.originalMeldekortId),
     );
 
+    // TODO: Fjern denne etter testing
     return rapporteringsperioder.sort(sorterMeldekort).map((periode) => ({
       ...periode,
       kanSendes: correctedIds.has(periode.id) ? periode.kanSendes : true,
@@ -82,6 +83,7 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
 
     const rapporteringsperiode: T = await response.json();
 
+    // TODO: Fjern denne etter testing
     return { ...rapporteringsperiode, kanSendes: true };
   } catch (error) {
     const errorId = uuidv7();

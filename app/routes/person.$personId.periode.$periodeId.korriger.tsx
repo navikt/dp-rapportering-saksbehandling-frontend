@@ -203,6 +203,13 @@ export default function Periode() {
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
+        <div className={styles.tabellContainer}>
+          <FyllUtTabell
+            dager={korrigerteDager}
+            setKorrigerteDager={setKorrigerteDager}
+            periode={periode.periode}
+          />
+        </div>
         <div className={styles.inputRad}>
           <DatePicker
             mode="single"
@@ -247,13 +254,6 @@ export default function Periode() {
                   : undefined
             }
             className={styles.begrunnelse}
-          />
-        </div>
-        <div className={styles.tabellContainer}>
-          <FyllUtTabell
-            dager={korrigerteDager}
-            setKorrigerteDager={setKorrigerteDager}
-            periode={periode.periode}
           />
         </div>
         <div className={styles.handlinger}>
