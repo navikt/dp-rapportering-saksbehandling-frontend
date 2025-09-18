@@ -1,6 +1,12 @@
 import type { SetupWorker } from "msw/browser";
 
-import type { AKTIVITET_TYPE, OPPRETTET_AV, RAPPORTERING_TYPE, ROLLE } from "./constants";
+import type {
+  AKTIVITET_TYPE,
+  ANSVARLIG_SYSTEM,
+  OPPRETTET_AV,
+  RAPPORTERING_TYPE,
+  ROLLE,
+} from "./constants";
 import { RAPPORTERINGSPERIODE_STATUS } from "./constants";
 
 declare global {
@@ -39,6 +45,8 @@ export type TRapporteringstype = (typeof RAPPORTERING_TYPE)[keyof typeof RAPPORT
 export type TOpprettetAv = (typeof OPPRETTET_AV)[keyof typeof OPPRETTET_AV];
 
 export type TRolle = (typeof ROLLE)[keyof typeof ROLLE];
+
+export type TAnsvarligSystem = (typeof ANSVARLIG_SYSTEM)[keyof typeof ANSVARLIG_SYSTEM];
 
 export interface IPeriode {
   fraOgMed: string;
@@ -140,7 +148,8 @@ export interface IPerson {
   fornavn: string;
   etternavn: string;
   mellomnavn?: string;
-  statsborgerskap: string;
+  statsborgerskap?: string;
+  ansvarligSystem: TAnsvarligSystem;
 }
 
 export const boolskeVerdier = ["true", "false"] as const;

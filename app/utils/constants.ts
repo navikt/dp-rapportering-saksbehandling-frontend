@@ -47,3 +47,25 @@ export const QUERY_PARAMS = {
   RAPPORTERINGSID: "rapporteringsid",
   OPPDATERT: "oppdatert",
 } as const;
+
+export const aktivitetsTyper = [
+  { type: "Arbeid", label: "Jobb", erDager: false, klasse: "arbeid" },
+  { type: "Syk", label: "Syk", erDager: true, klasse: "syk" },
+  {
+    type: "Fravaer",
+    label: "Ferie, fravær og utenlandsopphold",
+    erDager: true,
+    klasse: "fravaer",
+  },
+  {
+    type: "Utdanning",
+    label: "Tiltak, kurs eller utdanning",
+    erDager: true,
+    klasse: "utdanning",
+  },
+];
+
+export const ANSVARLIG_SYSTEM = {
+  ARENA: "ARENA",
+  DP: "DP",
+} as const;

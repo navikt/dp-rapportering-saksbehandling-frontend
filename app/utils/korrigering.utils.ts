@@ -83,13 +83,6 @@ export function endreDag(
     } as IKorrigertAktivitet;
   });
 
-  const arbeidAktivitet = dag.aktiviteter.find(
-    (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid,
-  );
-  if (arbeidAktivitet) {
-    leggerTilAktiviteterFraValueSomMangler.push(arbeidAktivitet);
-  }
-
   setKorrigerteDager((prevDager) => {
     const index = prevDager.findIndex((prevDag) => prevDag.dato === dag.dato);
 

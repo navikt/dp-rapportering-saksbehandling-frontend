@@ -1,3 +1,4 @@
+import { ANSVARLIG_SYSTEM } from "~/utils/constants";
 import { ScenarioType } from "~/utils/scenario.types";
 import type { IPerson } from "~/utils/types";
 
@@ -10,6 +11,7 @@ const personData = [
     mellomnavn: "",
     etternavn: "Demo",
     statsborgerskap: "Norsk",
+    ansvarligSystem: ANSVARLIG_SYSTEM.DP,
   },
 ];
 
