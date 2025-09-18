@@ -98,7 +98,10 @@ export function endreDag(
 function getTimerValidationMessage(timer: string): string | null {
   if (!timer || timer.trim() === "") return null;
 
-  const timerNum = Number(timer);
+  // Konverter komma til punktum for norske brukere
+  const normalizedTimer = timer.replace(",", ".");
+  const timerNum = Number(normalizedTimer);
+
   if (isNaN(timerNum)) return "Ugyldig tall";
   if (timerNum < 0.5) return "Minimum 0,5 timer";
   if (timerNum > 24) return "Maksimum 24 timer";
@@ -117,7 +120,7 @@ export function endreArbeid(
   dag: IKorrigertDag,
   setKorrigerteDager: SetKorrigerteDager,
 ) {
-  const timer = event.target.value.trim();
+  const timer = event.target.value.replace(",", ".").trim();
   const input = event.target;
 
   setKorrigerteDager((prevDager) => {
