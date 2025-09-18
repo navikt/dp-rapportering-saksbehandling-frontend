@@ -6,7 +6,7 @@ import { useSearchParams } from "react-router";
 import pageStyles from "~/route-styles/person.module.css";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { PeriodeDetaljer } from "../rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { RapporteringsperiodeVisning } from "../rapporteringsperiode-visning/PeriodeVisning";
@@ -23,6 +23,7 @@ interface Props {
   maksValgte: number;
   alternativVisning: boolean;
   personId?: string;
+  ansvarligSystem: TAnsvarligSystem;
 }
 
 export function PeriodeRad({
@@ -33,6 +34,7 @@ export function PeriodeRad({
   maksValgte,
   alternativVisning,
   personId,
+  ansvarligSystem,
 }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -118,7 +120,12 @@ export function PeriodeRad({
                   <RapporteringsperiodeVisning perioder={[periode]} />
                 </div>
                 <div className={pageStyles.detaljer}>
-                  <PeriodeDetaljer key={periode.id} periode={periode} personId={personId} />
+                  <PeriodeDetaljer
+                    key={periode.id}
+                    periode={periode}
+                    personId={personId}
+                    ansvarligSystem={ansvarligSystem}
+                  />
                 </div>
               </article>
             )

@@ -1,32 +1,21 @@
 import classNames from "classnames";
 import { useRouteLoaderData, useSearchParams } from "react-router";
-import invariant from "tiny-invariant";
 
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { RapporteringsperiodeListeByYear } from "~/components/rapporteringsperiode-liste/PeriodeListe";
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
-import { hentRapporteringsperioder } from "~/models/rapporteringsperiode.server";
 import styles from "~/route-styles/person.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
+import { ANSVARLIG_SYSTEM } from "~/utils/constants";
 import { sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.perioder";
 
-export async function loader({
-  request,
-  params,
-}: Route.LoaderArgs): Promise<{ perioder: IRapporteringsperiode[] }> {
-  invariant(params.personId, "rapportering-feilmelding-periode-id-mangler-i-url");
-
-  const perioder = await hentRapporteringsperioder(request, params.personId);
-
-  return { perioder };
-}
-
 export default function Rapportering({ params }: Route.ComponentProps) {
   const data = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
   const perioder = data?.perioder ?? [];
+  const person = data?.person ?? { ansvarligSystem: ANSVARLIG_SYSTEM.DP };
 
   const [searchParams] = useSearchParams();
 
@@ -45,6 +34,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
           perioder={perioder}
           alternativVisning={false}
           personId={params.personId}
+          ansvarligSystem={person?.ansvarligSystem}
         />
       </div>
       <section aria-label="Valgte perioder" className={styles.grid}>
@@ -58,7 +48,12 @@ export default function Rapportering({ params }: Route.ComponentProps) {
               <RapporteringsperiodeVisning perioder={[periode]} />
             </div>
             <div className={styles.detaljer}>
-              <PeriodeDetaljer key={periode.id} periode={periode} personId={params.personId} />
+              <PeriodeDetaljer
+                key={periode.id}
+                periode={periode}
+                personId={params.personId}
+                ansvarligSystem={person?.ansvarligSystem}
+              />
             </div>
           </article>
         ))}

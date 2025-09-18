@@ -37,7 +37,7 @@ export function RapporteringsperiodeVisning({ perioder }: IProps) {
               </h4>
               <ul className={styles.aktivitetListe} aria-labelledby={`sammenlagt-${periode.id}`}>
                 {aktivitetsTyper.map(({ type, label, erDager, klasse }) => {
-                  const total = beregnTotalt(periode, type, erDager);
+                  const total = beregnTotalt(periode, type);
                   const enhet = erDager ? "dager" : "timer";
 
                   return (

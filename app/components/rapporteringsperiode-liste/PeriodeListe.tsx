@@ -2,7 +2,7 @@ import { Accordion, Table } from "@navikt/ds-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import styles from "./PeriodeListe.module.css";
 import { PeriodeRad } from "./PeriodeRad";
@@ -12,6 +12,7 @@ interface IProps {
   perioder: IRapporteringsperiode[];
   alternativVisning: boolean;
   personId?: string;
+  ansvarligSystem: TAnsvarligSystem;
 }
 
 interface IPropsWithSharedState extends IProps {
@@ -50,6 +51,7 @@ function RapporteringsperiodeTabell({
   maksValgte,
   alternativVisning,
   personId,
+  ansvarligSystem,
 }: IPropsWithSharedState) {
   const titler = alternativVisning ? ALTERNATIV_KOLONNE_TITLER : KOLONNE_TITLER;
   return (
@@ -90,6 +92,7 @@ function RapporteringsperiodeTabell({
                   maksValgte={maksValgte}
                   alternativVisning={alternativVisning}
                   personId={personId}
+                  ansvarligSystem={ansvarligSystem}
                 />
               );
             }
@@ -103,6 +106,7 @@ function RapporteringsperiodeTabell({
                 maksValgte={maksValgte}
                 alternativVisning={alternativVisning}
                 personId={personId}
+                ansvarligSystem={ansvarligSystem}
               />
             );
           })}
@@ -119,6 +123,7 @@ export function RapporteringsperiodeListeByYear({
   perioder,
   alternativVisning = false,
   personId,
+  ansvarligSystem,
 }: IProps) {
   const gyldigeIds = new Set(perioder.map((p) => p.id));
   const groupedPeriods = groupPeriodsByYear(perioder);
@@ -195,6 +200,7 @@ export function RapporteringsperiodeListeByYear({
                 maksValgte={MAKS_VALGTE_PERIODER}
                 alternativVisning={alternativVisning}
                 personId={personId}
+                ansvarligSystem={ansvarligSystem}
               />
             </Accordion.Content>
           </Accordion.Item>

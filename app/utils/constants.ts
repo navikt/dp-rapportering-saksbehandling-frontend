@@ -64,3 +64,8 @@ export const aktivitetsTyper = [
     klasse: "utdanning",
   },
 ];
+
+export const ANSVARLIG_SYSTEM = {
+  ARENA: "ARENA",
+  DP: "DP",
+} as const;
