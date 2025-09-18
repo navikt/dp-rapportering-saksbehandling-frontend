@@ -107,6 +107,11 @@ function getTimerValidationMessage(timer: string): string | null {
   return null;
 }
 
+function erTimerGyldig(timer: string | null | undefined): boolean {
+  if (!timer || timer.trim() === "") return false;
+  return getTimerValidationMessage(timer) === null;
+}
+
 export function endreArbeid(
   event: React.ChangeEvent<HTMLInputElement>,
   dag: IKorrigertDag,
@@ -185,32 +190,32 @@ export function erIkkeAktiv(aktiviteter: TAktivitetType[], aktivitet: TAktivitet
   return false;
 }
 
+function erArbeidsaktivitetGyldig(
+  aktivitet: IKorrigertAktivitet | null,
+  tomtFeltOK: boolean = false,
+): boolean {
+  if (!aktivitet) return !tomtFeltOK;
+
+  // Ikke-arbeidsaktiviteter er alltid gyldige
+  if (aktivitet.type !== AKTIVITET_TYPE.Arbeid) return true;
+
+  // Sjekk om timer er tom
+  if (!aktivitet.timer || aktivitet.timer.trim() === "") {
+    return tomtFeltOK; // Tomt felt er OK i noen sammenhenger (f.eks. korriger)
+  }
+
+  // Bruk den delte valideringsfunksjonen
+  return erTimerGyldig(aktivitet.timer);
+}
+
 export function harMinstEnGyldigAktivitet(dager: IKorrigertDag[]): boolean {
   return dager.some((dag) =>
-    dag.aktiviteter.some((aktivitet) => {
-      if (!aktivitet) return false;
-      // For arbeidsaktiviteter må timer være gyldig
-      if (aktivitet.type === AKTIVITET_TYPE.Arbeid) {
-        if (!aktivitet.timer || aktivitet.timer.trim() === "") return false;
-        const timer = Number(aktivitet.timer);
-        if (isNaN(timer) || timer < 0.5 || timer > 24 || (timer * 2) % 1 !== 0) return false;
-      }
-      return true;
-    }),
+    dag.aktiviteter.some((aktivitet) => erArbeidsaktivitetGyldig(aktivitet, false)),
   );
 }
 
 export function erAlleArbeidsaktiviteterGyldige(dager: IKorrigertDag[]): boolean {
   return dager.every((dag) =>
-    dag.aktiviteter.every((aktivitet) => {
-      if (!aktivitet) return true;
-      // For arbeidsaktiviteter må timer være gyldig
-      if (aktivitet.type === AKTIVITET_TYPE.Arbeid) {
-        if (!aktivitet.timer || aktivitet.timer.trim() === "") return true; // Tomt felt er OK
-        const timer = Number(aktivitet.timer);
-        if (isNaN(timer) || timer < 0.5 || timer > 24 || (timer * 2) % 1 !== 0) return false;
-      }
-      return true;
-    }),
+    dag.aktiviteter.every((aktivitet) => erArbeidsaktivitetGyldig(aktivitet, true)),
   );
 }
