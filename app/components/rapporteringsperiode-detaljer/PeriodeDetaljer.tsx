@@ -1,22 +1,23 @@
 import { Alert, Button, Tag } from "@navikt/ds-react";
 
-import { ROLLE } from "~/utils/constants";
+import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import styles from "./PeriodeDetaljer.module.css";
 
 interface IProps {
   periode: IRapporteringsperiode;
   personId?: string;
+  ansvarligSystem: TAnsvarligSystem;
 }
 
-export function PeriodeDetaljer({ periode, personId }: IProps) {
+export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalMeldekortId;
-  const kanSendes = periode.kanSendes;
-  const kanEndres = periode.kanEndres;
+  const kanSendes = periode.kanSendes && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
+  const kanEndres = periode.kanEndres && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
   const erSendtForSent = erMeldekortSendtForSent(periode);
 
   return (

@@ -5,7 +5,7 @@ import { konverterFraISO8601Varighet, konverterTilISO8601Varighet } from "~/util
 import type { IAktivitet, IRapporteringsperiodeDag, TAktivitetType } from "~/utils/types";
 
 export interface IKorrigertAktivitet extends Omit<IAktivitet, "timer"> {
-  timer?: string; // string er desimaltall
+  timer?: string | null; // string er desimaltall
 }
 
 export interface IKorrigertDag extends Omit<IRapporteringsperiodeDag, "aktiviteter"> {
@@ -21,7 +21,7 @@ export function fjernTimerFraAktiviteterSomIkkeErArbeid(
     ...dag,
     aktiviteter: dag.aktiviteter.map((aktivitet) => {
       if (aktivitet.type !== AKTIVITET_TYPE.Arbeid) {
-        return { ...aktivitet, timer: konverterTilISO8601Varighet("0") };
+        return { ...aktivitet, timer: null };
       }
       return aktivitet;
     }),
@@ -33,7 +33,7 @@ export function konverterTimerFraISO8601Varighet(dag: IRapporteringsperiodeDag):
     ...dag,
     aktiviteter: dag.aktiviteter.map((aktivitet) => ({
       ...aktivitet,
-      timer: aktivitet.timer ? konverterFraISO8601Varighet(aktivitet.timer)?.toString() : "",
+      timer: aktivitet.timer ? konverterFraISO8601Varighet(aktivitet.timer)?.toString() : null,
     })),
   };
 }
@@ -43,7 +43,7 @@ export function konverterTimerTilISO8601Varighet(dag: IKorrigertDag): IRapporter
     ...dag,
     aktiviteter: dag.aktiviteter.map((aktivitet) => ({
       ...aktivitet,
-      timer: aktivitet.timer ? konverterTilISO8601Varighet(aktivitet.timer.toString()) : "",
+      timer: aktivitet.timer ? konverterTilISO8601Varighet(aktivitet.timer.toString()) : null,
     })),
   };
 }
@@ -96,13 +96,6 @@ export function endreDag(
     } as IKorrigertAktivitet;
   });
 
-  const arbeidAktivitet = dag.aktiviteter.find(
-    (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid,
-  );
-  if (arbeidAktivitet) {
-    leggerTilAktiviteterFraValueSomMangler.push(arbeidAktivitet);
-  }
-
   setKorrigerteDager((prevDager) => {
     const index = prevDager.findIndex((prevDag) => prevDag.dato === dag.dato);
 
@@ -145,17 +138,13 @@ export function endreArbeid(
       return oppdatertDager;
     }
 
-    const dagHarArbeid = dag.aktiviteter.find(
-      (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid,
-    );
-
     const oppdatertDager = prevDager.toSpliced(index, 1, {
       ...dag,
       aktiviteter: [
         ...dag.aktiviteter.filter((aktivitet) => aktivitet.type !== AKTIVITET_TYPE.Arbeid),
         {
           // Vi gjenbruker aktivitetens ID hvis den allerede eksisterer
-          id: dagHarArbeid?.id ?? uuidv7(),
+          id: uuidv7(),
           type: AKTIVITET_TYPE.Arbeid,
           dato: dag.dato,
           timer,

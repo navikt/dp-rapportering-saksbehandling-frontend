@@ -47,3 +47,8 @@ export const QUERY_PARAMS = {
   RAPPORTERINGSID: "rapporteringsid",
   OPPDATERT: "oppdatert",
 } as const;
+
+export const ANSVARLIG_SYSTEM = {
+  ARENA: "ARENA",
+  DP: "DP",
+} as const;
