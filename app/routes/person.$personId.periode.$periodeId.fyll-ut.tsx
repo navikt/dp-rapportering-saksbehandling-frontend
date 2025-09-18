@@ -9,7 +9,7 @@ import {
   useDatepicker,
 } from "@navikt/ds-react";
 import classNames from "classnames";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { useRef, useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
@@ -158,9 +158,7 @@ export default function FyllUtPeriode() {
       }
     },
     defaultSelected: valgtDato,
-    // Disabler midlertidig
-    // fromDate: subDays(new Date(periode.periode.tilOgMed), 1),
-    // toDate: new Date(),
+    fromDate: subDays(new Date(periode.periode.tilOgMed), 1),
     inputFormat: "dd.MM.yyyy",
   });
 

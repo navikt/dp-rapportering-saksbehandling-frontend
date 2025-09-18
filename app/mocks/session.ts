@@ -81,6 +81,7 @@ class SessionRecord {
         fornavn: faker.string.alpha,
         mellomnavn: faker.string.alpha,
         statsborgerskap: faker.string.alpha,
+        ansvarligSystem: faker.string.alpha,
       },
       saksbehandlere: {
         onPremisesSamAccountName: primaryKey(faker.string.alphanumeric),
