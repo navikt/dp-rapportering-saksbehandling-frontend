@@ -17,6 +17,7 @@ import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import {
+  erAlleArbeidsaktiviteterGyldige,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
 } from "~/utils/korrigering.utils";
@@ -66,6 +67,7 @@ export default function Periode() {
   const [modalType, setModalType] = useState<string | null>(null);
 
   const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
+  const aktiviteterRef = useRef<HTMLDivElement>(null);
 
   const harMeldedatoEndringer =
     korrigertMeldedato && format(korrigertMeldedato, "yyyy-MM-dd") !== periode.meldedato;
@@ -180,6 +182,14 @@ export default function Periode() {
         method="post"
         onSubmit={(e) => {
           e.preventDefault();
+
+          // Valider arbeidsaktiviteter
+          if (!erAlleArbeidsaktiviteterGyldige(korrigerteDager)) {
+            // Fokuser på aktivitets-seksjonen
+            aktiviteterRef.current?.focus();
+            return;
+          }
+
           if (korrigertBegrunnelse.trim() === "") {
             setVisBegrunnelseFeil(true);
             setVisIngenEndringerFeil(false);
@@ -200,7 +210,7 @@ export default function Periode() {
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
-        <div className={styles.tabellContainer}>
+        <div className={styles.tabellContainer} ref={aktiviteterRef} tabIndex={-1}>
           <FyllUtTabell
             dager={korrigerteDager}
             setKorrigerteDager={setKorrigerteDager}

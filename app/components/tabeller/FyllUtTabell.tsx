@@ -89,6 +89,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                   return (
                     <td key={dag.dato}>
                       <TextField
+                        type="number"
                         size="small"
                         id={inputId}
                         label={`Timer jobb ${formatterDag(dag.dato)}`}
@@ -96,6 +97,9 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                         value={aktiv?.timer ?? ""}
                         onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
                         readOnly={erDisabled}
+                        min="0.5"
+                        max="24"
+                        step="0.5"
                       />
                     </td>
                   );
@@ -135,6 +139,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                   return (
                     <td key={dag.dato}>
                       <TextField
+                        type="number"
                         size="small"
                         id={inputId}
                         label={`Timer jobb ${formatterDag(dag.dato)}`}
@@ -142,6 +147,9 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                         value={aktiv?.timer ?? ""}
                         onChange={(event) => endreArbeid(event, dag, setKorrigerteDager)}
                         readOnly={erDisabled}
+                        min="0.5"
+                        max="24"
+                        step="0.5"
                       />
                     </td>
                   );

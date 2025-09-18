@@ -5,7 +5,7 @@ import { konverterFraISO8601Varighet, konverterTilISO8601Varighet } from "~/util
 import type { IAktivitet, IRapporteringsperiodeDag, TAktivitetType } from "~/utils/types";
 
 export interface IKorrigertAktivitet extends Omit<IAktivitet, "timer"> {
-  timer?: string; // string er desimaltall
+  timer?: string | null; // string er desimaltall, null for ikke-arbeidsaktiviteter
 }
 
 export interface IKorrigertDag extends Omit<IRapporteringsperiodeDag, "aktiviteter"> {
@@ -19,7 +19,7 @@ export function konverterTimerFraISO8601Varighet(dag: IRapporteringsperiodeDag):
     ...dag,
     aktiviteter: dag.aktiviteter.map((aktivitet) => ({
       ...aktivitet,
-      timer: aktivitet.timer ? konverterFraISO8601Varighet(aktivitet.timer)?.toString() : "",
+      timer: aktivitet.timer ? konverterFraISO8601Varighet(aktivitet.timer)?.toString() : null,
     })),
   };
 }
@@ -29,7 +29,7 @@ export function konverterTimerTilISO8601Varighet(dag: IKorrigertDag): IRapporter
     ...dag,
     aktiviteter: dag.aktiviteter.map((aktivitet) => ({
       ...aktivitet,
-      timer: aktivitet.timer ? konverterTilISO8601Varighet(aktivitet.timer.toString()) : "",
+      timer: aktivitet.timer ? konverterTilISO8601Varighet(aktivitet.timer.toString()) : null,
     })),
   };
 }
@@ -102,26 +102,34 @@ export function endreDag(
   });
 }
 
+function getTimerValidationMessage(timer: string): string | null {
+  if (!timer || timer.trim() === "") return null;
+
+  const timerNum = Number(timer);
+  if (isNaN(timerNum)) return "Ugyldig tall";
+  if (timerNum < 0.5) return "Minimum 0,5 timer";
+  if (timerNum > 24) return "Maksimum 24 timer";
+  if ((timerNum * 2) % 1 !== 0) return "Kun hele og halve timer (0,5, 1, 1,5 osv.)";
+
+  return null;
+}
+
 export function endreArbeid(
   event: React.ChangeEvent<HTMLInputElement>,
   dag: IKorrigertDag,
   setKorrigerteDager: SetKorrigerteDager,
 ) {
-  const timer = event.target.value.replace(",", ".").trim();
-
-  // TODO: Det er mulig å skrive inn 0 i input-feltet, og det er ikke ønskelig
-
-  if (isNaN(Number(timer))) return;
-  if (Number(timer) > 24) return;
-  if (Number(timer) < 0) return;
-
-  if (Number(timer) % 0.5 !== 0) return;
+  const timer = event.target.value.trim();
+  const input = event.target;
 
   setKorrigerteDager((prevDager) => {
     const index = prevDager.findIndex((prevDag) => prevDag.dato === dag.dato);
 
     // Hvis timer er tom fjerner aktiviteten arbeid fra dag
     if (!timer) {
+      // Fjern error styling
+      input.setCustomValidity("");
+
       const oppdatertDager = prevDager.toSpliced(index, 1, {
         ...dag,
         aktiviteter: dag.aktiviteter.filter(
@@ -131,6 +139,17 @@ export function endreArbeid(
 
       return oppdatertDager;
     }
+
+    // Valider timer-verdien og vis feilmelding hvis ugyldig
+    const errorMessage = getTimerValidationMessage(timer);
+    if (errorMessage) {
+      input.setCustomValidity(errorMessage);
+      input.reportValidity();
+      return prevDager;
+    }
+
+    // Fjern error styling hvis gyldig
+    input.setCustomValidity("");
 
     const dagHarArbeid = dag.aktiviteter.find(
       (aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid,
@@ -171,4 +190,34 @@ export function erIkkeAktiv(aktiviteter: TAktivitetType[], aktivitet: TAktivitet
   }
 
   return false;
+}
+
+export function harMinstEnGyldigAktivitet(dager: IKorrigertDag[]): boolean {
+  return dager.some((dag) =>
+    dag.aktiviteter.some((aktivitet) => {
+      if (!aktivitet) return false;
+      // For arbeidsaktiviteter må timer være gyldig
+      if (aktivitet.type === AKTIVITET_TYPE.Arbeid) {
+        if (!aktivitet.timer || aktivitet.timer.trim() === "") return false;
+        const timer = Number(aktivitet.timer);
+        if (isNaN(timer) || timer < 0.5 || timer > 24 || (timer * 2) % 1 !== 0) return false;
+      }
+      return true;
+    }),
+  );
+}
+
+export function erAlleArbeidsaktiviteterGyldige(dager: IKorrigertDag[]): boolean {
+  return dager.every((dag) =>
+    dag.aktiviteter.every((aktivitet) => {
+      if (!aktivitet) return true;
+      // For arbeidsaktiviteter må timer være gyldig
+      if (aktivitet.type === AKTIVITET_TYPE.Arbeid) {
+        if (!aktivitet.timer || aktivitet.timer.trim() === "") return true; // Tomt felt er OK
+        const timer = Number(aktivitet.timer);
+        if (isNaN(timer) || timer < 0.5 || timer > 24 || (timer * 2) % 1 !== 0) return false;
+      }
+      return true;
+    }),
+  );
 }
