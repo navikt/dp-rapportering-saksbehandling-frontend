@@ -105,7 +105,8 @@ function getTimerValidationMessage(timer: string): string | null {
   if (isNaN(timerNum)) return "Ugyldig tall";
   if (timerNum < 0.5) return "Minimum 0,5 timer";
   if (timerNum > 24) return "Maksimum 24 timer";
-  if ((timerNum * 2) % 1 !== 0) return "Kun hele og halve timer (0,5, 1, 1,5 osv.)";
+  if (Math.round(timerNum * 2) !== timerNum * 2)
+    return "Kun hele og halve timer (0,5, 1, 1,5 osv.)";
 
   return null;
 }

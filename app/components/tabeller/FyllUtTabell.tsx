@@ -184,11 +184,14 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
               {/* Oppsummeringscelle */}
               <td>
                 {type === AKTIVITET_TYPE.Arbeid
-                  ? `${dager.reduce((sum, dag) => {
-                      const aktivitet = dag.aktiviteter.find((a) => a.type === type);
-                      const timer = aktivitet?.timer ? parseFloat(aktivitet.timer) || 0 : 0;
-                      return sum + timer;
-                    }, 0)} timer`
+                  ? `${dager
+                      .reduce((sum, dag) => {
+                        const aktivitet = dag.aktiviteter.find((a) => a.type === type);
+                        const timer = aktivitet?.timer ? parseFloat(aktivitet.timer) || 0 : 0;
+                        return sum + timer;
+                      }, 0)
+                      .toString()
+                      .replace(".", ",")} timer`
                   : `${
                       dager.filter((dag) => dag.aktiviteter.some((a) => a.type === type)).length
                     } dager`}
