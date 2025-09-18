@@ -36,7 +36,7 @@ export function Sammenlagt({ periode }: IProps) {
       </Heading>
       <ul className={styles.aktivitetListe} aria-labelledby={periodeId}>
         {aktivitettyper.map(({ type, label, erDager, klasse }) => {
-          const total = beregnTotalt(periode, type, erDager);
+          const total = beregnTotalt(periode, type);
           const enhet = erDager ? "dager" : "timer";
 
           return (
