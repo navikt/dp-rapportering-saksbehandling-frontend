@@ -1,5 +1,6 @@
 import { BodyShort } from "@navikt/ds-react";
 
+import { aktivitetsTyper } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -10,23 +11,6 @@ import { beregnTotalt } from "./sammenlagt.utils";
 interface IProps {
   perioder: IRapporteringsperiode[];
 }
-
-const aktivitettyper = [
-  { type: "Arbeid", label: "Jobb", erDager: false, klasse: "arbeid" },
-  { type: "Syk", label: "Syk", erDager: true, klasse: "syk" },
-  {
-    type: "Fravaer",
-    label: "Ferie, fravær og utenlandsopphold",
-    erDager: true,
-    klasse: "fravaer",
-  },
-  {
-    type: "Utdanning",
-    label: "Tiltak, kurs eller utdanning",
-    erDager: true,
-    klasse: "utdanning",
-  },
-];
 
 export function RapporteringsperiodeVisning({ perioder }: IProps) {
   return (
@@ -52,7 +36,7 @@ export function RapporteringsperiodeVisning({ perioder }: IProps) {
                 Sammenlagt for perioden
               </h4>
               <ul className={styles.aktivitetListe} aria-labelledby={`sammenlagt-${periode.id}`}>
-                {aktivitettyper.map(({ type, label, erDager, klasse }) => {
+                {aktivitetsTyper.map(({ type, label, erDager, klasse }) => {
                   const total = beregnTotalt(periode, type, erDager);
                   const enhet = erDager ? "dager" : "timer";
 
