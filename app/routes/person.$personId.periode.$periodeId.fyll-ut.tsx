@@ -28,7 +28,7 @@ import {
 } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import {
-  fjernTimerFraAktiviteterSomIkkeErArbeid,
+  harMinstEnGyldigAktivitet,
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
@@ -74,9 +74,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       registrertArbeidssoker,
       begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-      dager: dager
-        .map(konverterTimerTilISO8601Varighet)
-        .map(fjernTimerFraAktiviteterSomIkkeErArbeid),
+      dager: dager.map(konverterTimerTilISO8601Varighet),
       kilde: {
         rolle: ROLLE.Saksbehandler,
         ident: saksbehandler.onPremisesSamAccountName,
@@ -110,6 +108,7 @@ export default function FyllUtPeriode() {
   const meldedatoRef = useRef<HTMLInputElement>(null);
   const arbeidssokerRef = useRef<HTMLInputElement>(null);
   const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
+  const aktiviteterRef = useRef<HTMLFieldSetElement>(null);
 
   const { periode, personId } = useLoaderData<typeof loader>();
 
@@ -119,12 +118,10 @@ export default function FyllUtPeriode() {
 
   const handleSetKorrigerteDager: SetKorrigerteDager = (nyeDager) => {
     setDager(nyeDager);
-    // Fjern aktiviteter-feil hvis brukeren legger til aktiviteter
+    // Fjern aktiviteter-feil hvis brukeren legger til gyldige aktiviteter
     if (typeof nyeDager !== "function") {
-      const harAktiviteter = nyeDager.some((dag) =>
-        dag.aktiviteter.some((aktivitet) => aktivitet !== null),
-      );
-      if (harAktiviteter && visValideringsfeil.aktiviteter) {
+      const harGyldigeAktiviteter = harMinstEnGyldigAktivitet(nyeDager);
+      if (harGyldigeAktiviteter && visValideringsfeil.aktiviteter) {
         setVisValideringsfeil((prev) => ({ ...prev, aktiviteter: false }));
       }
     }
@@ -207,15 +204,13 @@ export default function FyllUtPeriode() {
             e.preventDefault();
 
             // Valider alle obligatoriske felter
-            const harAktiviteter = dager.some((dag) =>
-              dag.aktiviteter.some((aktivitet) => aktivitet !== null),
-            );
+            const harGyldigeAktiviteter = harMinstEnGyldigAktivitet(dager);
 
             const feil = {
               meldedato: !valgtDato,
               arbeidssoker: registrertArbeidssoker === null,
               begrunnelse: begrunnelse.trim() === "",
-              aktiviteter: !harAktiviteter,
+              aktiviteter: !harGyldigeAktiviteter,
             };
 
             setVisValideringsfeil(feil);
@@ -234,11 +229,8 @@ export default function FyllUtPeriode() {
               return;
             }
             if (feil.aktiviteter) {
-              // Finn første input felt i tabellen
-              const forsteInputFelt = document.querySelector(
-                'input[type="text"]',
-              ) as HTMLInputElement;
-              forsteInputFelt?.focus();
+              // Fokuser på aktivitets-seksjonen
+              aktiviteterRef.current?.focus();
               return;
             }
 
@@ -246,7 +238,7 @@ export default function FyllUtPeriode() {
             openModal(MODAL_ACTION_TYPE.FULLFOR);
           }}
         >
-          <fieldset className={styles.fieldset}>
+          <fieldset className={styles.fieldset} ref={aktiviteterRef} tabIndex={-1}>
             <legend className="sr-only">Aktiviteter per dag</legend>
             <FyllUtTabell
               dager={dager}
@@ -311,7 +303,8 @@ export default function FyllUtPeriode() {
           </fieldset>
           {visValideringsfeil.aktiviteter && (
             <div className="navds-error-message navds-error-message--medium" role="alert">
-              Du må fylle ut minst én aktivitet
+              Du må fylle ut minst én gyldig aktivitet. Arbeidsaktiviteter må ha minimum 0,5 timer,
+              eller la feltet stå tomt hvis ingen arbeid.
             </div>
           )}
           <div className={styles.handlinger}>
