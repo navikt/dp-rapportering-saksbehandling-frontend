@@ -191,7 +191,7 @@ export default function Periode() {
         </div>
         <div
           className={styles.tabellContainer}
-          ref={skjema.refs.aktiviteterRef as unknown as React.RefObject<HTMLDivElement>}
+          ref={skjema.refs.aktiviteterRef as React.RefObject<HTMLDivElement>}
           tabIndex={-1}
         >
           <FyllUtTabell

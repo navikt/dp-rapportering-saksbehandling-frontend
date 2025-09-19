@@ -145,7 +145,11 @@ export default function FyllUtPeriode() {
         </div>
 
         <Form method="post" ref={skjema.refs.formRef} onSubmit={skjema.handlers.handleSubmit}>
-          <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
+          <fieldset
+            className={styles.fieldset}
+            ref={skjema.refs.aktiviteterRef as React.RefObject<HTMLFieldSetElement>}
+            tabIndex={-1}
+          >
             <legend className="sr-only">Aktiviteter per dag</legend>
             <FyllUtTabell
               dager={dager}
