@@ -1,7 +1,7 @@
 import { uuidv7 } from "uuidv7";
 
 import { DP_MELDEKORTREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
-import { getEnv, runtimeEnvironment } from "~/utils/env.utils";
+import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import { sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
 import type { IKorrigerMeldekort, IRapporteringsperiode, ISendInnMeldekort } from "~/utils/types";
@@ -37,7 +37,7 @@ export async function hentRapporteringsperioder(
     );
 
     // TODO: Fjern denne etter testing
-    if (runtimeEnvironment === "development") {
+    if (getEnv("RUNTIME_ENVIRONMENT") === "development") {
       return rapporteringsperioder.sort(sorterMeldekort).map((periode) => ({
         ...periode,
         kanSendes: correctedIds.has(periode.id) ? periode.kanSendes : true,
@@ -88,7 +88,7 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
     const rapporteringsperiode: T = await response.json();
 
     // TODO: Fjern denne etter testing
-    if (runtimeEnvironment === "development") {
+    if (getEnv("RUNTIME_ENVIRONMENT") === "development") {
       return { ...rapporteringsperiode, kanSendes: true };
     }
     return rapporteringsperiode;

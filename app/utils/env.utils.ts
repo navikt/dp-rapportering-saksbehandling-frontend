@@ -27,9 +27,4 @@ export const isLocalhost = getEnv("IS_LOCALHOST") === "true";
 
 export const usesMsw = getEnv("USE_MSW") === "true";
 
-export const runtimeEnvironment = getEnv<string>("RUNTIME_ENVIRONMENT");
-
 export const isLocalOrDemo = isLocalhost || usesMsw;
-
-export const isNonProduction =
-  isLocalhost || usesMsw || runtimeEnvironment === "development" || runtimeEnvironment === "demo";
