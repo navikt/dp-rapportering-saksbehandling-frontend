@@ -189,17 +189,14 @@ export default function Periode() {
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
-        <div
-          className={styles.tabellContainer}
-          ref={skjema.refs.aktiviteterRef as React.RefObject<HTMLDivElement>}
-          tabIndex={-1}
-        >
+        <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
+          <legend className="sr-only">Aktiviteter per dag</legend>
           <FyllUtTabell
             dager={korrigerteDager}
             setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
             periode={periode.periode}
           />
-        </div>
+        </fieldset>
         <div className={styles.inputRad}>
           <DatePicker {...skjema.datepicker.datepickerProps}>
             <DatePicker.Input

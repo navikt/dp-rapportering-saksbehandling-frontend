@@ -42,7 +42,7 @@ export function useMeldekortSkjema({
   const meldedatoRef = useRef<HTMLInputElement>(null);
   const arbeidssokerRef = useRef<HTMLInputElement>(null);
   const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
-  const aktiviteterRef = useRef<HTMLElement>(null);
+  const aktiviteterRef = useRef<HTMLFieldSetElement>(null);
 
   // State
   const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(null);
@@ -99,7 +99,11 @@ export function useMeldekortSkjema({
       disableWarning();
       onSubmit({
         meldedato: valgtDato,
-        registrertArbeidssoker: showArbeidssokerField ? registrertArbeidssoker : undefined,
+        // Kun send registrertArbeidssoker ved fyll-ut (når showArbeidssokerField er true)
+        registrertArbeidssoker:
+          showArbeidssokerField && registrertArbeidssoker !== null
+            ? registrertArbeidssoker
+            : undefined, // undefined = ikke send dette feltet
         begrunnelse,
         dager,
       });
@@ -165,7 +169,11 @@ export function useMeldekortSkjema({
   // Hidden form values
   const hiddenFormValues = {
     meldedato: valgtDato ? format(valgtDato, "yyyy-MM-dd") : "",
-    registrertArbeidssoker: registrertArbeidssoker?.toString() || "",
+    // Kun send registrertArbeidssoker hvis showArbeidssokerField er true (dvs. ved fyll-ut)
+    registrertArbeidssoker:
+      showArbeidssokerField && registrertArbeidssoker !== null
+        ? registrertArbeidssoker.toString()
+        : "", // Tom string når ikke relevant (korrigering) eller ikke svart
     begrunnelse,
     dager: JSON.stringify(dager),
   };

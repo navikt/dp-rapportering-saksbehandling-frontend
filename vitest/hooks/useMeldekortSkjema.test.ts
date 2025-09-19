@@ -113,20 +113,16 @@ describe("useMeldekortSkjema", () => {
       expect(result.current.state.visValideringsfeil.begrunnelse).toBe(true);
     });
 
-    it("should validate arbeidssoker field when enabled", () => {
+    it("should validate arbeidssoker field when showArbeidssokerField is true", () => {
       const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
-          showArbeidssokerField: true,
+          showArbeidssokerField: true, // Fyll-ut krever arbeidssoker
         }),
       );
 
-      // Set meldedato and begrunnelse to avoid validation errors on these
       act(() => {
         result.current.handlers.handleBegrunnelseChange("Test begrunnelse");
-      });
-
-      act(() => {
         const mockEvent = { preventDefault: vi.fn() } as unknown as React.FormEvent;
         result.current.handlers.handleSubmit(mockEvent);
       });
@@ -134,11 +130,11 @@ describe("useMeldekortSkjema", () => {
       expect(result.current.state.visValideringsfeil.arbeidssoker).toBe(true);
     });
 
-    it("should not validate arbeidssoker field when disabled", () => {
+    it("should NOT validate arbeidssoker field when showArbeidssokerField is false", () => {
       const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
-          showArbeidssokerField: false,
+          showArbeidssokerField: false, // Korrigering krever ikke arbeidssoker
         }),
       );
 
@@ -262,6 +258,71 @@ describe("useMeldekortSkjema", () => {
       });
       expect(result.current.state.modalOpen).toBe(false);
     });
+
+    describe("registrertArbeidssoker logikk", () => {
+      it("should send registrertArbeidssoker when showArbeidssokerField is true", () => {
+        const { result } = renderHook(() =>
+          useMeldekortSkjema({
+            ...getDefaultProps(),
+            showArbeidssokerField: true, // Fyll-ut scenario
+          }),
+        );
+
+        // Set påkrevde felter FØRST
+        act(() => {
+          result.current.handlers.handleArbeidssokerChange(true);
+          result.current.handlers.handleBegrunnelseChange("Test begrunnelse");
+        });
+
+        // Åpne modal direkte uten å kalle handleSubmit først
+        act(() => {
+          result.current.handlers.openModal(MODAL_ACTION_TYPE.FULLFOR);
+        });
+
+        // Bekreft submission
+        act(() => {
+          result.current.handlers.handleBekreft();
+        });
+
+        expect(mockOnSubmit).toHaveBeenCalledWith({
+          meldedato: undefined,
+          registrertArbeidssoker: true, // Sendes ved fyll-ut
+          begrunnelse: "Test begrunnelse",
+          dager: mockDager,
+        });
+      });
+
+      it("should NOT send registrertArbeidssoker when showArbeidssokerField is false", () => {
+        const { result } = renderHook(() =>
+          useMeldekortSkjema({
+            ...getDefaultProps(),
+            showArbeidssokerField: false, // Korrigering scenario
+          }),
+        );
+
+        // Set kun påkrevde felter for korrigering
+        act(() => {
+          result.current.handlers.handleBegrunnelseChange("Test begrunnelse");
+        });
+
+        // Åpne modal direkte uten å kalle handleSubmit først
+        act(() => {
+          result.current.handlers.openModal(MODAL_ACTION_TYPE.FULLFOR);
+        });
+
+        // Bekreft submission
+        act(() => {
+          result.current.handlers.handleBekreft();
+        });
+
+        expect(mockOnSubmit).toHaveBeenCalledWith({
+          meldedato: undefined,
+          registrertArbeidssoker: undefined, // IKKE sendt ved korrigering
+          begrunnelse: "Test begrunnelse",
+          dager: mockDager,
+        });
+      });
+    });
   });
 
   describe("hasChanges detection", () => {
@@ -338,6 +399,44 @@ describe("useMeldekortSkjema", () => {
       const { result } = renderHook(() => useMeldekortSkjema(getDefaultProps()));
 
       expect(result.current.hiddenFormValues.meldedato).toBe("");
+    });
+
+    it("should return empty string for registrertArbeidssoker when showArbeidssokerField is false", () => {
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          showArbeidssokerField: false, // Korrigering
+        }),
+      );
+
+      expect(result.current.hiddenFormValues.registrertArbeidssoker).toBe("");
+    });
+
+    it("should return boolean string for registrertArbeidssoker when showArbeidssokerField is true", () => {
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          showArbeidssokerField: true, // Fyll-ut
+        }),
+      );
+
+      act(() => {
+        result.current.handlers.handleArbeidssokerChange(true);
+      });
+
+      expect(result.current.hiddenFormValues.registrertArbeidssoker).toBe("true");
+    });
+
+    it("should return empty string when registrertArbeidssoker is null", () => {
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          showArbeidssokerField: true, // Selv ved fyll-ut, før bruker svarer
+        }),
+      );
+
+      // registrertArbeidssoker starter som null
+      expect(result.current.hiddenFormValues.registrertArbeidssoker).toBe("");
     });
   });
 
