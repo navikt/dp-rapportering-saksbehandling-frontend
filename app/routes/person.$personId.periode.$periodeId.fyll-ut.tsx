@@ -6,16 +6,14 @@ import {
   Radio,
   RadioGroup,
   Textarea,
-  useDatepicker,
 } from "@navikt/ds-react";
 import classNames from "classnames";
-import { format, subDays } from "date-fns";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
-import { useNavigationWarning } from "~/hooks/useNavigationWarning";
+import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
@@ -28,11 +26,9 @@ import {
 } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import {
-  harMinstEnGyldigAktivitet,
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
-  type SetKorrigerteDager,
 } from "~/utils/korrigering.utils";
 import type { ISendInnMeldekort } from "~/utils/types";
 
@@ -104,86 +100,37 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function FyllUtPeriode() {
   const navigate = useNavigate();
-  const formRef = useRef<HTMLFormElement>(null);
-  const meldedatoRef = useRef<HTMLInputElement>(null);
-  const arbeidssokerRef = useRef<HTMLInputElement>(null);
-  const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
-  const aktiviteterRef = useRef<HTMLFieldSetElement>(null);
-
   const { periode, personId } = useLoaderData<typeof loader>();
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
   );
 
-  const handleSetKorrigerteDager: SetKorrigerteDager = (nyeDager) => {
-    setDager(nyeDager);
-    // Fjern aktiviteter-feil hvis brukeren legger til gyldige aktiviteter
-    if (typeof nyeDager !== "function") {
-      const harGyldigeAktiviteter = harMinstEnGyldigAktivitet(nyeDager);
-      if (harGyldigeAktiviteter && visValideringsfeil.aktiviteter) {
-        setVisValideringsfeil((prev) => ({ ...prev, aktiviteter: false }));
-      }
+  const handleSubmit = () => {
+    // Submit via form ref siden vi trenger native form submission
+    if (skjema.refs.formRef.current) {
+      skjema.refs.formRef.current.submit();
     }
   };
-  const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(null);
-  const [begrunnelse, setBegrunnelse] = useState<string>("");
-  const [valgtDato, setValgtDato] = useState<Date | undefined>();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<string | null>(null);
-  const [visValideringsfeil, setVisValideringsfeil] = useState({
-    meldedato: false,
-    arbeidssoker: false,
-    begrunnelse: false,
-    aktiviteter: false,
-  });
 
-  // Sjekk om det finnes ulagrede endringer
-  const hasChanges =
-    registrertArbeidssoker !== null || begrunnelse.trim() !== "" || valgtDato !== undefined;
-  const { disableWarning } = useNavigationWarning({ hasChanges });
+  const handleCancel = () => {
+    navigate(
+      `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}&${QUERY_PARAMS.OPPDATERT}=${periode.id}`,
+    );
+  };
+
+  const skjema = useMeldekortSkjema({
+    periode,
+    dager,
+    setKorrigerteDager: setDager,
+    onSubmit: handleSubmit,
+    onCancel: handleCancel,
+    showArbeidssokerField: true,
+  });
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
-
-  const { inputProps, datepickerProps } = useDatepicker({
-    onDateChange: (date) => {
-      setValgtDato(date);
-      if (date && visValideringsfeil.meldedato) {
-        setVisValideringsfeil((prev) => ({ ...prev, meldedato: false }));
-      }
-    },
-    defaultSelected: valgtDato,
-    fromDate: subDays(new Date(periode.periode.tilOgMed), 1),
-    inputFormat: "dd.MM.yyyy",
-  });
-
-  const openModal = (type: string) => {
-    setModalType(type);
-    setModalOpen(true);
-  };
-
-  const handleBekreft = () => {
-    if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
-      disableWarning();
-      navigate(
-        `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}&${QUERY_PARAMS.OPPDATERT}=${periode.id}`,
-      );
-    } else if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
-      // Skru av navigation warning før man sender inn meldekort
-      disableWarning();
-      if (formRef.current) {
-        formRef.current.submit();
-      }
-    }
-  };
-
-  const handleAvbryt = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    openModal(MODAL_ACTION_TYPE.AVBRYT);
-  };
 
   return (
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllroot}>
@@ -197,66 +144,28 @@ export default function FyllUtPeriode() {
           </BodyShort>
         </div>
 
-        <Form
-          method="post"
-          ref={formRef}
-          onSubmit={(e) => {
-            e.preventDefault();
-
-            // Valider alle obligatoriske felter
-            const harGyldigeAktiviteter = harMinstEnGyldigAktivitet(dager);
-
-            const feil = {
-              meldedato: !valgtDato,
-              arbeidssoker: registrertArbeidssoker === null,
-              begrunnelse: begrunnelse.trim() === "",
-              aktiviteter: !harGyldigeAktiviteter,
-            };
-
-            setVisValideringsfeil(feil);
-
-            // Hvis det er feil, fokuser på første feilende felt og ikke send inn
-            if (feil.meldedato) {
-              meldedatoRef.current?.focus();
-              return;
-            }
-            if (feil.arbeidssoker) {
-              arbeidssokerRef.current?.focus();
-              return;
-            }
-            if (feil.begrunnelse) {
-              begrunnelseRef.current?.focus();
-              return;
-            }
-            if (feil.aktiviteter) {
-              // Fokuser på aktivitets-seksjonen
-              aktiviteterRef.current?.focus();
-              return;
-            }
-
-            // Hvis ingen feil, åpne modal
-            openModal(MODAL_ACTION_TYPE.FULLFOR);
-          }}
-        >
-          <fieldset className={styles.fieldset} ref={aktiviteterRef} tabIndex={-1}>
+        <Form method="post" ref={skjema.refs.formRef} onSubmit={skjema.handlers.handleSubmit}>
+          <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
             <legend className="sr-only">Aktiviteter per dag</legend>
             <FyllUtTabell
               dager={dager}
-              setKorrigerteDager={handleSetKorrigerteDager}
+              setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
               periode={periode.periode}
             />
           </fieldset>
           <fieldset className={classNames(styles.details, styles.fieldset)}>
             <legend className="sr-only">Grunnleggende informasjon</legend>
             <div>
-              <DatePicker {...datepickerProps}>
+              <DatePicker {...skjema.datepicker.datepickerProps}>
                 <DatePicker.Input
-                  {...inputProps}
-                  ref={meldedatoRef}
+                  {...skjema.datepicker.inputProps}
+                  ref={skjema.refs.meldedatoRef}
                   label="Sett meldedato"
                   placeholder="dd.mm.åååå"
                   size="small"
-                  error={visValideringsfeil.meldedato ? "Meldedato må fylles ut" : undefined}
+                  error={
+                    skjema.state.visValideringsfeil.meldedato ? "Meldedato må fylles ut" : undefined
+                  }
                 />
               </DatePicker>
             </div>
@@ -265,19 +174,14 @@ export default function FyllUtPeriode() {
                 size="small"
                 legend="Registrert som arbeidssøker de neste 14 dagene?"
                 error={
-                  visValideringsfeil.arbeidssoker
+                  skjema.state.visValideringsfeil.arbeidssoker
                     ? "Du må velge om bruker skal være registrert som arbeidssøker"
                     : undefined
                 }
-                value={registrertArbeidssoker?.toString() || ""}
-                onChange={(val) => {
-                  setRegistrertArbeidssoker(val === "true");
-                  if (visValideringsfeil.arbeidssoker) {
-                    setVisValideringsfeil((prev) => ({ ...prev, arbeidssoker: false }));
-                  }
-                }}
+                value={skjema.state.registrertArbeidssoker?.toString() || ""}
+                onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
               >
-                <Radio ref={arbeidssokerRef} value="true">
+                <Radio ref={skjema.refs.arbeidssokerRef} value="true">
                   Ja
                 </Radio>
                 <Radio value="false">Nei</Radio>
@@ -285,30 +189,29 @@ export default function FyllUtPeriode() {
             </div>
             <div className={styles.begrunnelse}>
               <Textarea
-                ref={begrunnelseRef}
+                ref={skjema.refs.begrunnelseRef}
                 size="small"
                 label="Begrunnelse"
                 name="begrunnelse"
-                error={visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined}
-                value={begrunnelse}
-                onChange={(e) => {
-                  setBegrunnelse(e.target.value);
-                  if (e.target.value.trim() !== "" && visValideringsfeil.begrunnelse) {
-                    setVisValideringsfeil((prev) => ({ ...prev, begrunnelse: false }));
-                  }
-                }}
+                error={
+                  skjema.state.visValideringsfeil.begrunnelse
+                    ? "Begrunnelse må fylles ut"
+                    : undefined
+                }
+                value={skjema.state.begrunnelse}
+                onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
                 rows={3}
               />
             </div>
           </fieldset>
-          {visValideringsfeil.aktiviteter && (
+          {skjema.state.visValideringsfeil.aktiviteter && (
             <div className="navds-error-message navds-error-message--medium" role="alert">
               Du må fylle ut minst én gyldig aktivitet. Arbeidsaktiviteter må ha minimum 0,5 timer,
               eller la feltet stå tomt hvis ingen arbeid.
             </div>
           )}
           <div className={styles.handlinger}>
-            <Button variant="secondary" size="small" onClick={handleAvbryt}>
+            <Button variant="secondary" size="small" onClick={skjema.handlers.handleAvbryt}>
               Avbryt utfylling
             </Button>
             <Button type="submit" variant="primary" size="small">
@@ -316,41 +219,41 @@ export default function FyllUtPeriode() {
             </Button>
           </div>
           {/* Skjulte input felter for form data */}
-          <input
-            type="hidden"
-            name="meldedato"
-            value={valgtDato ? format(valgtDato, "yyyy-MM-dd") : ""}
-          />
+          <input type="hidden" name="meldedato" value={skjema.hiddenFormValues.meldedato} />
           <input
             type="hidden"
             name="registrertArbeidssoker"
-            value={registrertArbeidssoker?.toString() || ""}
+            value={skjema.hiddenFormValues.registrertArbeidssoker}
           />
-          <input type="hidden" name="begrunnelse" value={begrunnelse} />
-          <input type="hidden" name="dager" value={JSON.stringify(dager)} />
+          <input type="hidden" name="begrunnelse" value={skjema.hiddenFormValues.begrunnelse} />
+          <input type="hidden" name="dager" value={skjema.hiddenFormValues.dager} />
         </Form>
 
         <BekreftModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          type={modalType}
+          open={skjema.state.modalOpen}
+          onClose={() => skjema.handlers.setModalOpen(false)}
+          type={skjema.state.modalType}
           tittel={
-            modalType === MODAL_ACTION_TYPE.AVBRYT
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
               ? "Vil du avbryte utfyllingen?"
               : "Vil du fullføre utfyllingen?"
           }
           tekst={
-            modalType === MODAL_ACTION_TYPE.AVBRYT ? (
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? (
               <>
                 Hvis du avbryter, vil <strong>ikke</strong> det du har fylt ut så langt lagres
               </>
             ) : (
-              "Ved å trykke “Ja” vil utfyllingen sendes inn."
+              `Ved å trykke "Ja" vil utfyllingen sendes inn.`
             )
           }
-          bekreftTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, send inn"}
-          avbrytTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"}
-          onBekreft={handleBekreft}
+          bekreftTekst={
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, send inn"
+          }
+          avbrytTekst={
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"
+          }
+          onBekreft={skjema.handlers.handleBekreft}
         />
       </div>
     </section>

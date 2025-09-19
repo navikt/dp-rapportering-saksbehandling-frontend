@@ -2,13 +2,13 @@ import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
 import { BodyShort, Heading, Tag } from "@navikt/ds-react";
 import classNames from "classnames";
 import { format } from "date-fns";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
-import { useNavigationWarning } from "~/hooks/useNavigationWarning";
+import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
@@ -17,7 +17,7 @@ import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import {
-  erAlleArbeidsaktiviteterGyldige,
+  type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
 } from "~/utils/korrigering.utils";
@@ -53,68 +53,71 @@ export default function Periode() {
   }, [fetcher.state, fetcher.data, navigate, personId, periode]);
 
   const [korrigertPeriode, setKorrigertPeriode] = useState<IRapporteringsperiode>(periode);
-  const [korrigerteDager, setKorrigerteDager] = useState(
+  const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
   );
-  const [korrigertMeldedato, setKorrigertMeldedato] = useState<Date | undefined>(
-    periode.meldedato ? new Date(periode.meldedato) : undefined,
-  );
-  const [korrigertBegrunnelse, setKorrigertBegrunnelse] = useState<string>("");
-  const [visBegrunnelseFeil, setVisBegrunnelseFeil] = useState(false);
   const [visIngenEndringerFeil, setVisIngenEndringerFeil] = useState(false);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<string | null>(null);
+  const initialMeldedato = periode.meldedato ? new Date(periode.meldedato) : undefined;
 
-  const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
-  const aktiviteterRef = useRef<HTMLDivElement>(null);
+  const handleSubmit = (data: {
+    meldedato: Date | undefined;
+    registrertArbeidssoker?: boolean | null;
+    begrunnelse: string;
+    dager: IKorrigertDag[];
+  }) => {
+    // Sjekk om det er gjort endringer
+    const harMeldedatoEndringer =
+      data.meldedato && format(data.meldedato, "yyyy-MM-dd") !== periode.meldedato;
+    const harDagEndringer =
+      JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(periode.dager);
+    const harEndringer = harMeldedatoEndringer || harDagEndringer;
 
-  const harMeldedatoEndringer =
-    korrigertMeldedato && format(korrigertMeldedato, "yyyy-MM-dd") !== periode.meldedato;
-  const harDagEndringer = JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(periode.dager);
-  const harEndringer = harMeldedatoEndringer || harDagEndringer;
-  const hasChanges = harEndringer || korrigertBegrunnelse.trim() !== "";
+    if (!harEndringer) {
+      setVisIngenEndringerFeil(true);
+      return;
+    }
 
-  const { disableWarning } = useNavigationWarning({ hasChanges });
+    setVisIngenEndringerFeil(false);
+
+    // Send inn via fetcher
+    fetcher.submit(
+      { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId },
+      { method: "post", action: "/api/rapportering" },
+    );
+  };
+
+  const handleCancel = () => {
+    navigate(
+      `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
+    );
+  };
+
+  const skjema = useMeldekortSkjema({
+    periode,
+    dager: korrigerteDager,
+    setKorrigerteDager: setKorrigerteDager,
+    onSubmit: handleSubmit,
+    onCancel: handleCancel,
+    showArbeidssokerField: false, // Korriger viser ikke arbeidssøker felt
+    initialMeldedato,
+    initialBegrunnelse: "",
+  });
 
   useEffect(() => {
     setKorrigertPeriode((prev) => ({
       ...prev,
-      meldedato: korrigertMeldedato ? format(korrigertMeldedato, "yyyy-MM-dd") : prev.meldedato,
+      meldedato: skjema.state.valgtDato
+        ? format(skjema.state.valgtDato, "yyyy-MM-dd")
+        : prev.meldedato,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
-      begrunnelse: korrigertBegrunnelse,
+      begrunnelse: skjema.state.begrunnelse,
       kilde: {
         rolle: "Saksbehandler",
         ident: saksbehandler.onPremisesSamAccountName,
       },
     }));
-  }, [korrigerteDager, korrigertBegrunnelse, korrigertMeldedato, saksbehandler]);
-
-  const handleDateSelect = (date?: Date) => {
-    setKorrigertMeldedato(date);
-  };
-
-  const openModal = (type: string) => {
-    setModalType(type);
-    setModalOpen(true);
-  };
-
-  const handleBekreft = () => {
-    if (modalType === MODAL_ACTION_TYPE.FULLFOR) {
-      disableWarning();
-      // Send inn via fetcher siden vi nå har bekreftet
-      fetcher.submit(
-        { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId },
-        { method: "post", action: "/api/rapportering" },
-      );
-    } else if (modalType === MODAL_ACTION_TYPE.AVBRYT) {
-      disableWarning();
-      navigate(
-        `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
-      );
-    }
-    setModalOpen(false);
-  };
+  }, [korrigerteDager, skjema.state.begrunnelse, skjema.state.valgtDato, saksbehandler]);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
@@ -180,83 +183,41 @@ export default function Periode() {
         aria-label="Korrigeringsverktøy"
         action="/api/rapportering"
         method="post"
-        onSubmit={(e) => {
-          e.preventDefault();
-
-          // Valider arbeidsaktiviteter
-          if (!erAlleArbeidsaktiviteterGyldige(korrigerteDager)) {
-            // Fokuser på aktivitets-seksjonen
-            aktiviteterRef.current?.focus();
-            return;
-          }
-
-          if (korrigertBegrunnelse.trim() === "") {
-            setVisBegrunnelseFeil(true);
-            setVisIngenEndringerFeil(false);
-            // Focus på begrunnelse-feltet hvis det er tomt
-            begrunnelseRef.current?.focus();
-            return;
-          }
-          if (!harEndringer) {
-            setVisIngenEndringerFeil(true);
-            setVisBegrunnelseFeil(false);
-            return;
-          }
-          setVisBegrunnelseFeil(false);
-          setVisIngenEndringerFeil(false);
-          openModal(MODAL_ACTION_TYPE.FULLFOR);
-        }}
+        ref={skjema.refs.formRef}
+        onSubmit={skjema.handlers.handleSubmit}
       >
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
-        <div className={styles.tabellContainer} ref={aktiviteterRef} tabIndex={-1}>
+        <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
+          <legend className="sr-only">Aktiviteter per dag</legend>
           <FyllUtTabell
             dager={korrigerteDager}
-            setKorrigerteDager={setKorrigerteDager}
+            setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
             periode={periode.periode}
           />
-        </div>
+        </fieldset>
         <div className={styles.inputRad}>
-          <DatePicker
-            mode="single"
-            selected={korrigertMeldedato}
-            onSelect={handleDateSelect}
-            defaultMonth={korrigertMeldedato}
-            // toDate={new Date()}
-            // fromDate={subDays(new Date(periode.periode.tilOgMed), 1)}
-          >
+          <DatePicker {...skjema.datepicker.datepickerProps}>
             <DatePicker.Input
+              {...skjema.datepicker.inputProps}
               label="Meldedato"
+              placeholder="dd.mm.åååå"
               size="small"
-              onChange={() => {}} // Fikser onChange warning - DatePicker håndterer dette via onSelect
-              value={
-                korrigertMeldedato
-                  ? formatterDato({
-                      dato: korrigertMeldedato.toISOString(),
-                      format: DatoFormat.Kort,
-                    })
-                  : ""
-              }
             />
           </DatePicker>
 
           <Textarea
-            ref={begrunnelseRef}
+            ref={skjema.refs.begrunnelseRef}
             label="Begrunnelse for korrigering"
             name="begrunnelse"
             size="small"
-            value={korrigertBegrunnelse}
-            onChange={(e) => {
-              setKorrigertBegrunnelse(e.target.value);
-              if (visBegrunnelseFeil && e.target.value.trim() !== "") {
-                setVisBegrunnelseFeil(false);
-              }
-            }}
+            value={skjema.state.begrunnelse}
+            onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
             error={
-              visBegrunnelseFeil
+              skjema.state.visValideringsfeil.begrunnelse
                 ? "Begrunnelse må fylles ut"
-                : korrigertBegrunnelse.trim() === "" && hasChanges
+                : skjema.state.begrunnelse.trim() === "" && skjema.state.hasChanges
                   ? "Begrunnelse må fylles ut når du gjør endringer"
                   : undefined
             }
@@ -272,7 +233,7 @@ export default function Periode() {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => openModal(MODAL_ACTION_TYPE.AVBRYT)}
+            onClick={skjema.handlers.handleAvbryt}
             size="small"
           >
             Avbryt korrigering
@@ -286,16 +247,16 @@ export default function Periode() {
         <input type="hidden" name="personId" value={personId} />
 
         <BekreftModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          type={modalType}
+          open={skjema.state.modalOpen}
+          onClose={() => skjema.handlers.setModalOpen(false)}
+          type={skjema.state.modalType}
           tittel={
-            modalType === MODAL_ACTION_TYPE.AVBRYT
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
               ? "Vil du avbryte korrigeringen?"
               : "Vil du fullføre korrigeringen?"
           }
           tekst={
-            modalType === MODAL_ACTION_TYPE.AVBRYT ? (
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? (
               <>
                 Hvis du avbryter, vil <strong>ikke</strong> endringene du har gjort så langt
                 korrigeres
@@ -304,9 +265,13 @@ export default function Periode() {
               `Ved å trykke "Ja" vil korrigeringen sendes inn.`
             )
           }
-          bekreftTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, fullfør"}
-          avbrytTekst={modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"}
-          onBekreft={handleBekreft}
+          bekreftTekst={
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, fullfør"
+          }
+          avbrytTekst={
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"
+          }
+          onBekreft={skjema.handlers.handleBekreft}
         />
       </fetcher.Form>
     </div>
