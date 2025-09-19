@@ -11,16 +11,18 @@ import {
 } from "~/utils/korrigering.utils";
 import type { IPeriode } from "~/utils/types";
 
+export interface IMeldekortSkjemaSubmitData {
+  meldedato: Date | undefined;
+  registrertArbeidssoker?: boolean | null;
+  begrunnelse: string;
+  dager: IKorrigertDag[];
+}
+
 interface UseMeldekortSkjemaOptions {
   periode: { periode: IPeriode };
   dager: IKorrigertDag[];
   setKorrigerteDager: SetKorrigerteDager;
-  onSubmit: (data: {
-    meldedato: Date | undefined;
-    registrertArbeidssoker?: boolean | null;
-    begrunnelse: string;
-    dager: IKorrigertDag[];
-  }) => void;
+  onSubmit: (data: IMeldekortSkjemaSubmitData) => void;
   onCancel: () => void;
   showArbeidssokerField?: boolean;
   initialMeldedato?: Date;
