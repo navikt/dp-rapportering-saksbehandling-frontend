@@ -200,7 +200,7 @@ export function RapporteringsperiodeListeByYear({ perioder, personId, ansvarligS
           {announceUpdate}
         </div>
       )}
-      <Accordion size="small">
+      <Accordion size="small" indent={false}>
         {years.map((year) => (
           <Accordion.Item
             key={year}

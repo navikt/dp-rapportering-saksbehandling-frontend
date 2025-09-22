@@ -1,7 +1,12 @@
-import { BodyShort, Button } from "@navikt/ds-react";
+import { FigureOutwardFillIcon, SilhouetteFillIcon } from "@navikt/aksel-icons";
+import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
+import classNames from "classnames";
+import { differenceInYears } from "date-fns";
 import { useState } from "react";
 
+import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import { maskerVerdi } from "~/utils/skjul-sensitiv-opplysning";
 import type { IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import { HistorikkModal, type IHendelse } from "../../modals/historikk/HistorikkModal";
@@ -37,6 +42,7 @@ export default function PersonInformasjon({ person, perioder = [] }: IProps) {
   const fulltNavn = [person.fornavn, person.mellomnavn, person.etternavn].join(" ");
   const [modalOpen, setModalOpen] = useState(false);
   const [events, setEvents] = useState<IHendelse[]>([]);
+  const { skjulSensitiveOpplysninger } = useSaksbehandler();
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -45,18 +51,54 @@ export default function PersonInformasjon({ person, perioder = [] }: IProps) {
     setEvents(transformPerioderToHistoryEvents(perioder));
   };
 
+
   return (
     <div className={styles.personInformasjonContainer}>
       <div className={styles.personInformasjon}>
-        <BodyShort size="small">{fulltNavn}</BodyShort>
-        <BodyShort size="small">
-          Personnummer: <strong>{person.ident}</strong>
+        <div className={styles.navnContainer}>
+          {person.kjonn && (
+            <span
+              className={classNames(styles.iconContainer, {
+                [styles.iconContainerMann]: person.kjonn === "MANN",
+                [styles.iconContainerKvinne]: person.kjonn === "KVINNE",
+              })}
+            >
+              {person.kjonn === "MANN" && (
+                <SilhouetteFillIcon title="" fontSize="1.5rem" color="white" />
+              )}
+              {person.kjonn === "KVINNE" && (
+                <FigureOutwardFillIcon title="" fontSize="1.5rem" color="white" />
+              )}
+            </span>
+          )}
+          <BodyShort size="small">
+            {skjulSensitiveOpplysninger ? maskerVerdi(fulltNavn) : <strong>{fulltNavn}</strong>}
+          </BodyShort>
+        </div>
+
+        <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+          Fødselsnummer:{" "}
+          {skjulSensitiveOpplysninger ? maskerVerdi(person.ident) : <strong>{person.ident}</strong>}{" "}
+          <CopyButton copyText={person.ident} size="xsmall" />
         </BodyShort>
-        <BodyShort size="small">
+
+        {person.fodselsdato && (
+          <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+            Alder: <b>{differenceInYears(new Date(), person.fodselsdato)}</b>
+          </BodyShort>
+        )}
+
+        {person.kjonn && (
+          <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+            Kjønn: <b>{person.kjonn}</b>
+          </BodyShort>
+        )}
+
+        <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
           Statsborgerskap: <strong>{person.statsborgerskap}</strong>
         </BodyShort>
       </div>
-      <div className={styles.headerKnapper}>
+      <div className={styles.historikkKnapp}>
         <Button variant="secondary-neutral" size="small" onClick={handleOpenModal}>
           Historikk
         </Button>

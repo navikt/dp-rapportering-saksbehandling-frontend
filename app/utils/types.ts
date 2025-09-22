@@ -3,6 +3,7 @@ import type { SetupWorker } from "msw/browser";
 import type {
   AKTIVITET_TYPE,
   ANSVARLIG_SYSTEM,
+  KJONN,
   OPPRETTET_AV,
   RAPPORTERING_TYPE,
   ROLLE,
@@ -47,6 +48,8 @@ export type TOpprettetAv = (typeof OPPRETTET_AV)[keyof typeof OPPRETTET_AV];
 export type TRolle = (typeof ROLLE)[keyof typeof ROLLE];
 
 export type TAnsvarligSystem = (typeof ANSVARLIG_SYSTEM)[keyof typeof ANSVARLIG_SYSTEM];
+
+export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
 
 export interface IPeriode {
   fraOgMed: string;
@@ -150,6 +153,8 @@ export interface IPerson {
   mellomnavn?: string;
   statsborgerskap?: string;
   ansvarligSystem: TAnsvarligSystem;
+  fodselsdato?: string;
+  kjonn?: TKjonn;
 }
 
 export const boolskeVerdier = ["true", "false"] as const;
