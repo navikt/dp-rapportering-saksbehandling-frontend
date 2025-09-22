@@ -42,21 +42,7 @@ export default function PersonInformasjon({ person, perioder = [] }: IProps) {
     setModalOpen(true);
     // TODO: Legg disse til i eget endepunkt fra backend.
     // Per nå så justerer denne perioder til history events når modalen åpnes
-    const historyEvents = transformPerioderToHistoryEvents(perioder);
-
-    // TODO: Dette skal komme fra endepunktet senere
-    const registrertSomArbeidssøkerEvent: IHendelse = {
-      date: formatterDato({ dato: "2024-01-15T08:30:00.000Z", format: DatoFormat.DagMndAar }),
-      time: new Date("2024-01-15T08:30:00.000Z").toLocaleTimeString("nb-NO", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      event: "Registrert som arbeidssøker",
-      type: "Elektronisk",
-      kategori: "System",
-    };
-
-    setEvents([...historyEvents, registrertSomArbeidssøkerEvent]);
+    setEvents(transformPerioderToHistoryEvents(perioder));
   };
 
   return (

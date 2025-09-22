@@ -100,7 +100,6 @@ export function PeriodeRad({
 
   if (alternativVisning) {
     const erOpprettet = getStatus(periode) === PERIODE_RAD_STATUS.Opprettet;
-    console.log(erOpprettet);
 
     return (
       <>
