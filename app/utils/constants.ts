@@ -1,3 +1,5 @@
+import type { IPerson } from "./types";
+
 export const RAPPORTERING_TYPE = {
   harAktivitet: "harAktivitet",
   harIngenAktivitet: "harIngenAktivitet",
@@ -75,3 +77,16 @@ export const KJONN = {
   KVINNE: "KVINNE",
   UKJENT: "UKJENT",
 } as const;
+
+export const DEFAULT_PERSON: IPerson = {
+  ansvarligSystem: ANSVARLIG_SYSTEM.DP,
+  fornavn: "",
+  etternavn: "",
+  kjonn: KJONN.UKJENT,
+  ident: "",
+};
+
+export const REFERRER = {
+  ALTERNATIVE_PERIODER: "alternative-perioder",
+  PERIODER: "perioder",
+};

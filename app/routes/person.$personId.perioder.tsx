@@ -6,7 +6,7 @@ import { RapporteringsperiodeListeByYear } from "~/components/rapporteringsperio
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
 import styles from "~/route-styles/person.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
-import { ANSVARLIG_SYSTEM } from "~/utils/constants";
+import { DEFAULT_PERSON } from "~/utils/constants";
 import { sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -15,7 +15,7 @@ import type { Route } from "./+types/person.$personId.perioder";
 export default function Rapportering({ params }: Route.ComponentProps) {
   const data = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
   const perioder = data?.perioder ?? [];
-  const person = data?.person ?? { ansvarligSystem: ANSVARLIG_SYSTEM.DP };
+  const person = data?.person ?? DEFAULT_PERSON;
 
   const [searchParams] = useSearchParams();
 
@@ -51,7 +51,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
                 key={periode.id}
                 periode={periode}
                 personId={params.personId}
-                ansvarligSystem={person?.ansvarligSystem}
+                ansvarligSystem={person.ansvarligSystem}
               />
             </div>
           </article>

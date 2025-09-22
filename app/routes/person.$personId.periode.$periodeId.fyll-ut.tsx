@@ -22,6 +22,7 @@ import {
   MODAL_ACTION_TYPE,
   QUERY_PARAMS,
   RAPPORTERINGSPERIODE_STATUS,
+  REFERRER as DEFAULT_REFERRER,
   ROLLE,
 } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
@@ -49,7 +50,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const formData = await request.formData();
   const url = new URL(request.url);
-  const referrer = url.searchParams.get("referrer") || "perioder";
+  const referrer = url.searchParams.get("referrer") || DEFAULT_REFERRER.PERIODER;
 
   const personId = params.personId;
   const meldedato = formData.get("meldedato") as string;
@@ -105,7 +106,7 @@ export default function FyllUtPeriode() {
   const navigate = useNavigate();
   const { periode, personId } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const referrer = searchParams.get("referrer") || "perioder";
+  const referrer = searchParams.get("referrer") || DEFAULT_REFERRER.PERIODER;
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),

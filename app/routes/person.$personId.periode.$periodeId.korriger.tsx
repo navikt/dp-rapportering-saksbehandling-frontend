@@ -14,7 +14,7 @@ import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
-import { QUERY_PARAMS } from "~/utils/constants";
+import { QUERY_PARAMS, REFERRER as DEFAULT_REFERRER } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import {
   type IKorrigertDag,
@@ -40,7 +40,7 @@ export default function Periode() {
   const fetcher = useFetcher();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const referrer = searchParams.get("referrer") || "perioder";
+  const referrer = searchParams.get("referrer") || DEFAULT_REFERRER.PERIODER;
 
   // API handles redirect after successful submission
 

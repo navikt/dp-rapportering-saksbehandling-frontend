@@ -1,7 +1,7 @@
 import { Alert, Button, Tag } from "@navikt/ds-react";
 import { useLocation } from "react-router";
 
-import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
+import { ANSVARLIG_SYSTEM, REFERRER, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -26,7 +26,7 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
   // Determine referrer path to return to correct page
   const getReferrerPath = () => {
     const isAlternativeView = location.pathname.includes("/alternative-perioder");
-    return isAlternativeView ? "alternative-perioder" : "perioder";
+    return isAlternativeView ? REFERRER.ALTERNATIVE_PERIODER : REFERRER.PERIODER;
   };
 
   return (
