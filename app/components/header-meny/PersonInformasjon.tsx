@@ -51,7 +51,6 @@ export default function PersonInformasjon({ person, perioder = [] }: IProps) {
     setEvents(transformPerioderToHistoryEvents(perioder));
   };
 
-  console.log(person);
 
   return (
     <div className={styles.personInformasjonContainer}>
