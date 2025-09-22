@@ -179,7 +179,13 @@ export async function korrigerPeriode({ periode, personId, request }: KorrigerPe
       );
     }
 
-    return Promise.resolve();
+    // Return the new corrected period ID if available
+    try {
+      const responseData = await response.json();
+      return responseData?.id || null;
+    } catch {
+      return null;
+    }
   } catch (error) {
     const errorId = uuidv7();
     const message = `Feil ved korrigering av rapporteringsperiode med ID ${periode.originalMeldekortId} for person med ID ${personId}: ${JSON.stringify(error)}`;

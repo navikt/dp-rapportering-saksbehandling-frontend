@@ -1,7 +1,9 @@
 import { Accordion, Table } from "@navikt/ds-react";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 
+import { QUERY_PARAMS } from "~/utils/constants";
+import { ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import styles from "./PeriodeListe.module.css";
@@ -10,7 +12,6 @@ import { groupPeriodsByYear } from "./utils";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
-  alternativVisning: boolean;
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
 }
@@ -19,6 +20,7 @@ interface IPropsWithSharedState extends IProps {
   valgteIds: string[];
   onTogglePeriode: (id: string) => void;
   maksValgte: number;
+  alternativVisning: boolean;
 }
 
 const MAKS_VALGTE_PERIODER = 3;
@@ -81,21 +83,6 @@ function RapporteringsperiodeTabell({
         <Table.Body>
           {perioder.map((periode) => {
             const erValgt = valgteIds.includes(periode.id);
-            if (alternativVisning) {
-              return (
-                <PeriodeRad
-                  key={periode.id}
-                  periode={periode}
-                  valgt={erValgt}
-                  toggle={onTogglePeriode}
-                  valgteAntall={valgteIds.length}
-                  maksValgte={maksValgte}
-                  alternativVisning={alternativVisning}
-                  personId={personId}
-                  ansvarligSystem={ansvarligSystem}
-                />
-              );
-            }
             return (
               <PeriodeRad
                 key={periode.id}
@@ -104,7 +91,6 @@ function RapporteringsperiodeTabell({
                 toggle={onTogglePeriode}
                 valgteAntall={valgteIds.length}
                 maksValgte={maksValgte}
-                alternativVisning={alternativVisning}
                 personId={personId}
                 ansvarligSystem={ansvarligSystem}
               />
@@ -119,19 +105,45 @@ function RapporteringsperiodeTabell({
 /**
  * Main component that groups reporting periods by year in an accordion
  */
-export function RapporteringsperiodeListeByYear({
-  perioder,
-  alternativVisning = false,
-  personId,
-  ansvarligSystem,
-}: IProps) {
+export function RapporteringsperiodeListeByYear({ perioder, personId, ansvarligSystem }: IProps) {
+  const location = useLocation();
+  const alternativVisning = location.pathname.includes("/alternative-perioder");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [announceUpdate, setAnnounceUpdate] = useState("");
+
+  // Håndter announcement for skjermlesere når er periode er oppdatert
+  useEffect(() => {
+    const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
+    if (oppdatertId) {
+      const periode = perioder.find((p) => p.id === oppdatertId);
+
+      if (periode) {
+        const erKorrigering = periode.originalMeldekortId;
+        const melding = erKorrigering
+          ? `Meldekort for uke ${ukenummer(periode)} ble korrigert og oppdatert`
+          : `Meldekort for uke ${ukenummer(periode)} ble sendt inn`;
+        setAnnounceUpdate(melding);
+
+        // fjern parametere etter melding er satt
+        setTimeout(() => {
+          const newSearchParams = new URLSearchParams(searchParams);
+          newSearchParams.delete(QUERY_PARAMS.OPPDATERT);
+          setSearchParams(newSearchParams, { replace: true });
+        }, 0);
+        // fjern melding etter 5 sekunder
+        setTimeout(() => {
+          setAnnounceUpdate("");
+        }, 5000);
+      }
+    }
+  }, [searchParams, setSearchParams, perioder]);
+
   const gyldigeIds = new Set(perioder.map((p) => p.id));
   const groupedPeriods = groupPeriodsByYear(perioder);
   const years = Object.keys(groupedPeriods)
     .map(Number)
     .sort((a, b) => b - a); // Nyeste år først
 
-  const [searchParams, setSearchParams] = useSearchParams();
   const [valgteAar, setValgteAar] = useState<number[]>(
     searchParams
       .get("aar")
@@ -182,6 +194,12 @@ export function RapporteringsperiodeListeByYear({
 
   return (
     <section>
+      {/* Screen reader announcement for updated periods */}
+      {announceUpdate && (
+        <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
+          {announceUpdate}
+        </div>
+      )}
       <Accordion size="small">
         {years.map((year) => (
           <Accordion.Item
