@@ -1,0 +1,21 @@
+name: dp-rapportering-saksbehandling-frontend
+ingresses: 
+  - https://rapportering-dagpenger.intern.nav.no
+  - https://rapportering-dagpenger.ansatt.nav.no
+  
+replicas:
+  min: 2
+  max: 2
+use_msw: false
+is_localhost: false
+
+faro_url: "https://telemetry.ekstern.nav.no/collect"
+
+runtime_environment: "production"
+
+azure:
+  tenant: trygdeetaten.no
+  enabled: true
+  grupper:
+    saksbehandler: "3e28466f-c53d-46da-8b44-a4abc2ad4593" # 0000-GA-Dagpenger-Saksbehandler
+    beslutter: "11b8475a-fb12-41aa-b1f6-8497c1b5385b" # 0000-GA-Dagpenger-Beslutter
