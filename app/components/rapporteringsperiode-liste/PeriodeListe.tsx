@@ -182,7 +182,7 @@ export function RapporteringsperiodeListeByYear({
 
   return (
     <section>
-      <Accordion size="small">
+      <Accordion size="small" indent={false}>
         {years.map((year) => (
           <Accordion.Item
             key={year}

@@ -69,3 +69,9 @@ export const ANSVARLIG_SYSTEM = {
   ARENA: "ARENA",
   DP: "DP",
 } as const;
+
+export const KJONN = {
+  MANN: "MANN",
+  KVINNE: "KVINNE",
+  UKJENT: "UKJENT",
+} as const;

@@ -1,19 +1,47 @@
 .person-informasjon-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
+  padding: var(--a-spacing-4);
+  background-color: var(--a-white);
+  box-shadow: var(--a-shadow-xsmall);
 }
 
 .person-informasjon {
   display: flex;
   gap: 2rem;
-  min-height: 3rem;
   align-items: center;
 }
 
-.headerKnapper {
+.historikk-knapp {
+  margin-left: auto;
+}
+
+.info-element {
   display: flex;
-  gap: 1rem;
-  height: 100%;
+  align-items: center;
+  gap: var(--a-spacing-1);
+  white-space: nowrap;
+}
+
+.navn-container {
+  display: flex;
+  align-items: center;
+  gap: var(--a-spacing-2);
+}
+
+.icon-container {
+  border-radius: var(--a-border-radius-full);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 26px;
+  height: 26px;
+}
+
+.icon-container-mann {
+  background-color: var(--a-blue-400);
+}
+
+.icon-container-kvinne {
+  background-color: var(--a-red-400);
 }

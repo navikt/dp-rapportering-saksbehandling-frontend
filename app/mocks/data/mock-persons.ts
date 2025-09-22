@@ -1,4 +1,4 @@
-import { ANSVARLIG_SYSTEM } from "~/utils/constants";
+import { ANSVARLIG_SYSTEM, KJONN } from "~/utils/constants";
 import { ScenarioType } from "~/utils/scenario.types";
 import type { IPerson } from "~/utils/types";
 
@@ -12,6 +12,8 @@ const personData = [
     etternavn: "Demo",
     statsborgerskap: "Norsk",
     ansvarligSystem: ANSVARLIG_SYSTEM.DP,
+    kjonn: KJONN.KVINNE,
+    fodselsdato: "1982-02-02",
   },
 ];
 

@@ -1,6 +1,8 @@
-import { Dropdown, InternalHeader, Spacer } from "@navikt/ds-react";
+import { LeaveIcon } from "@navikt/aksel-icons";
+import { Dropdown, InternalHeader, Spacer, Switch } from "@navikt/ds-react";
 import { useState } from "react";
 
+import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import type { ISaksbehandler } from "~/utils/types";
 
 import styles from "./header.module.css";
@@ -11,13 +13,14 @@ interface HeaderProps {
 
 const Header = ({ saksbehandler }: HeaderProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { skjulSensitiveOpplysninger, setSkjulSensitiveOpplysninger } = useSaksbehandler();
 
   return (
     <>
       <a href="#main-content" className={styles.skipLink}>
         Hopp til hovedinnhold
       </a>
-      <InternalHeader role="banner" aria-label="Systemheader">
+      <InternalHeader role="banner" aria-label="Systemheader" className={styles.header}>
         <InternalHeader.Title href={"/"} aria-label="Gå til forsiden">
           Dagpenger
         </InternalHeader.Title>
@@ -33,9 +36,18 @@ const Header = ({ saksbehandler }: HeaderProps) => {
           />
           <Dropdown.Menu role="menu" aria-label="Brukerhandlinger">
             <Dropdown.Menu.List>
+              <Dropdown.Menu.List.Item>
+                <Switch
+                  checked={skjulSensitiveOpplysninger}
+                  size={"small"}
+                  onChange={(e) => setSkjulSensitiveOpplysninger(e.target.checked)}
+                >
+                  Skjul sensitive opplysninger (Best effort)
+                </Switch>
+              </Dropdown.Menu.List.Item>
               <Dropdown.Menu.List.Item role="menuitem">
-                <a href="/rapportering/oauth2/logout" aria-label="Logg ut av systemet">
-                  Logg ut
+                <a href="/oauth2/logout" aria-label="Logg ut av systemet" className={styles.loggUt}>
+                  Logg ut <LeaveIcon aria-hidden fontSize="1.5rem" />
                 </a>
               </Dropdown.Menu.List.Item>
             </Dropdown.Menu.List>

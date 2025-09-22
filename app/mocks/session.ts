@@ -82,6 +82,8 @@ class SessionRecord {
         mellomnavn: faker.string.alpha,
         statsborgerskap: faker.string.alpha,
         ansvarligSystem: () => faker.helpers.arrayElement(["ARENA", "DP"]),
+        fodselsdato: nullable(() => faker.date.past().toISOString()),
+        kjonn: nullable(() => faker.helpers.arrayElement(["MANN", "KVINNE", "UKJENT"])),
       },
       saksbehandlere: {
         onPremisesSamAccountName: primaryKey(faker.string.alphanumeric),
