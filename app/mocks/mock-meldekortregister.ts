@@ -108,14 +108,14 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           return HttpResponse.json(null, { status: 404 });
         }
 
-        db.korrigerPeriode(oppdateringer);
+        const nyPeriode = db.korrigerPeriode(oppdateringer);
         db.periodeKanIkkeLengerSendes(rapporteringsperiodeId);
 
         logger.info(
           `[mock meldekortregister]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
         );
 
-        return HttpResponse.json(null, { status: 200 });
+        return HttpResponse.json({ id: nyPeriode.id }, { status: 200 });
       },
     ),
   ];

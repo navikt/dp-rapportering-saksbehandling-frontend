@@ -16,7 +16,6 @@ export default function Rapportering({ params }: Route.ComponentProps) {
     <div className={styles.rapporteringsperiodeListe} style={{ width: "100%", maxWidth: "none" }}>
       <RapporteringsperiodeListeByYear
         perioder={perioder}
-        alternativVisning={true}
         personId={params.personId}
         ansvarligSystem={person?.ansvarligSystem}
       />
