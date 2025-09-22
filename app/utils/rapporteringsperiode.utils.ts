@@ -1,4 +1,4 @@
-import { parseISO } from "date-fns";
+import { differenceInCalendarDays, parseISO } from "date-fns";
 
 import type { IRapporteringsperiode } from "./types";
 
@@ -18,6 +18,17 @@ export function erMeldekortSendtForSent(periode: IRapporteringsperiode): boolean
   }
 
   return parseISO(meldedato) > parseISO(sisteFristForTrekk);
+}
+
+export function dagerForSent(periode: IRapporteringsperiode): number | null {
+  if (!periode.meldedato || !periode.sisteFristForTrekk) {
+    return null;
+  }
+
+  const meldedato = parseISO(periode.meldedato);
+  const sisteFristForTrekk = parseISO(periode.sisteFristForTrekk);
+
+  return differenceInCalendarDays(meldedato, sisteFristForTrekk);
 }
 
 export function sorterMeldekort(a: IRapporteringsperiode, b: IRapporteringsperiode): number {

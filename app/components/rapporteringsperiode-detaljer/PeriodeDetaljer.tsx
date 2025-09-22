@@ -2,7 +2,7 @@ import { Alert, Button, Tag } from "@navikt/ds-react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
-import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
+import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import styles from "./PeriodeDetaljer.module.css";
@@ -19,6 +19,7 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
   const kanSendes = periode.kanSendes && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
   const kanEndres = periode.kanEndres && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
   const erSendtForSent = erMeldekortSendtForSent(periode);
+  const forSent = dagerForSent(periode);
 
   return (
     <div className={styles.periodeDetaljer}>
@@ -90,7 +91,10 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
         </dl>
 
         {erSendtForSent && (
-          <Alert variant="warning">Dette meldekortet er sendt inn etter fristen</Alert>
+          <Alert variant="warning">
+            Dette meldekortet er sendt inn {forSent}{" "}
+            {forSent !== null && forSent > 1 ? "dager" : "dag"} etter fristen
+          </Alert>
         )}
 
         {kanEndres && (
