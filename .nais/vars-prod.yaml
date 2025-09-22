@@ -14,8 +14,7 @@ faro_url: "https://telemetry.ekstern.nav.no/collect"
 runtime_environment: "production"
 
 azure:
-  tenant: trygdeetaten.no
-  enabled: true
+  tenant: nav.no
   grupper:
-    saksbehandler: "3e28466f-c53d-46da-8b44-a4abc2ad4593" # 0000-GA-Dagpenger-Saksbehandler
-    beslutter: "11b8475a-fb12-41aa-b1f6-8497c1b5385b" # 0000-GA-Dagpenger-Beslutter
+    saksbehandler: "2e9c63d8-322e-4c1f-b500-a0abb812761c" # 0000-GA-Dagpenger-Saksbehandler
+    beslutter: "70d54cad-53a3-4788-bbe3-565096f01da7" # 0000-GA-Dagpenger-Beslutter
