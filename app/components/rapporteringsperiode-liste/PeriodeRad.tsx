@@ -100,6 +100,7 @@ export function PeriodeRad({
 
   if (alternativVisning) {
     const erOpprettet = getStatus(periode) === PERIODE_RAD_STATUS.Opprettet;
+    console.log(erOpprettet);
 
     return (
       <>
@@ -133,6 +134,7 @@ export function PeriodeRad({
           selected={valgt}
           className={radKlasse}
           expandOnRowClick={!erOpprettet}
+          expansionDisabled={erOpprettet}
         >
           <Table.HeaderCell
             scope="row"
