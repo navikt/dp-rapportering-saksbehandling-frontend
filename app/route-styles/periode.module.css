@@ -126,3 +126,13 @@
   gap: var(--a-spacing-8);
   padding-left: 1rem;
 }
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-spacing-8);
+}
+
+.reverse {
+  flex-direction: column-reverse;
+}

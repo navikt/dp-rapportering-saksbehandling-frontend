@@ -181,40 +181,46 @@ export default function Periode() {
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
-        <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
-          <legend className="sr-only">Aktiviteter per dag</legend>
-          <FyllUtTabell
-            dager={korrigerteDager}
-            setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
-            periode={periode.periode}
-          />
-        </fieldset>
-        <div className={styles.inputRad}>
-          <DatePicker {...skjema.datepicker.datepickerProps}>
-            <DatePicker.Input
-              {...skjema.datepicker.inputProps}
-              label="Meldedato"
-              placeholder="dd.mm.åååå"
-              size="small"
+        <div
+          className={classNames(styles.inputs, {
+            [styles.reverse]: referrer === DEFAULT_REFERRER.PERIODER,
+          })}
+        >
+          <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
+            <legend className="sr-only">Aktiviteter per dag</legend>
+            <FyllUtTabell
+              dager={korrigerteDager}
+              setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
+              periode={periode.periode}
             />
-          </DatePicker>
+          </fieldset>
+          <div className={styles.inputRad}>
+            <DatePicker {...skjema.datepicker.datepickerProps}>
+              <DatePicker.Input
+                {...skjema.datepicker.inputProps}
+                label="Meldedato"
+                placeholder="dd.mm.åååå"
+                size="small"
+              />
+            </DatePicker>
 
-          <Textarea
-            ref={skjema.refs.begrunnelseRef}
-            label="Begrunnelse for korrigering"
-            name="begrunnelse"
-            size="small"
-            value={skjema.state.begrunnelse}
-            onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
-            error={
-              skjema.state.visValideringsfeil.begrunnelse
-                ? "Begrunnelse må fylles ut"
-                : skjema.state.begrunnelse.trim() === "" && skjema.state.hasChanges
-                  ? "Begrunnelse må fylles ut når du gjør endringer"
-                  : undefined
-            }
-            className={styles.begrunnelse}
-          />
+            <Textarea
+              ref={skjema.refs.begrunnelseRef}
+              label="Begrunnelse for korrigering"
+              name="begrunnelse"
+              size="small"
+              value={skjema.state.begrunnelse}
+              onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
+              error={
+                skjema.state.visValideringsfeil.begrunnelse
+                  ? "Begrunnelse må fylles ut"
+                  : skjema.state.begrunnelse.trim() === "" && skjema.state.hasChanges
+                    ? "Begrunnelse må fylles ut når du gjør endringer"
+                    : undefined
+              }
+              className={styles.begrunnelse}
+            />
+          </div>
         </div>
         <div className={styles.handlinger}>
           {visIngenEndringerFeil && (
