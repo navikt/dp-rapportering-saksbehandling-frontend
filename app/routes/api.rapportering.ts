@@ -10,6 +10,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const rapporteringsperiode = formData.get("rapporteringsperiode") as string;
   const personId = formData.get("personId") as string;
+  const referrer = (formData.get("referrer") as string) || "perioder";
   const periode = JSON.parse(rapporteringsperiode);
 
   const korrigertPeriode: IKorrigerMeldekort = {
@@ -26,13 +27,16 @@ export async function action({ request }: ActionFunctionArgs) {
     meldedato: periode.meldedato,
   };
 
-  await korrigerPeriode({
+  const nyMeldekortId = await korrigerPeriode({
     periode: korrigertPeriode,
     personId,
     request,
   });
 
+  // Use the new corrected period ID for highlighting, fallback to original ID
+  const oppdatertId = nyMeldekortId || periode.id;
+
   return redirect(
-    `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}&${QUERY_PARAMS.OPPDATERT}=${periode.id}`,
+    `/person/${personId}/${referrer}?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${oppdatertId}&${QUERY_PARAMS.OPPDATERT}=${oppdatertId}`,
   );
 }

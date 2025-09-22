@@ -1,4 +1,5 @@
 import { Alert, Button, Tag } from "@navikt/ds-react";
+import { useLocation } from "react-router";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
@@ -14,6 +15,7 @@ interface IProps {
 }
 
 export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) {
+  const location = useLocation();
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalMeldekortId;
   const kanSendes = periode.kanSendes && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
@@ -21,13 +23,19 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const forSent = dagerForSent(periode);
 
+  // Determine referrer path to return to correct page
+  const getReferrerPath = () => {
+    const isAlternativeView = location.pathname.includes("/alternative-perioder");
+    return isAlternativeView ? "alternative-perioder" : "perioder";
+  };
+
   return (
     <div className={styles.periodeDetaljer}>
       {kanSendes && (
         <div>
           <Button
             as="a"
-            href={`/person/${personId}/periode/${periode.id}/fyll-ut`}
+            href={`/person/${personId}/periode/${periode.id}/fyll-ut?referrer=${getReferrerPath()}`}
             className={styles.korrigerKnapp}
             size="small"
             variant="primary"
@@ -101,7 +109,7 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
           <div>
             <Button
               as="a"
-              href={`/person/${personId}/periode/${periode.id}/korriger`}
+              href={`/person/${personId}/periode/${periode.id}/korriger?referrer=${getReferrerPath()}`}
               className={styles.korrigerKnapp}
               size="small"
             >

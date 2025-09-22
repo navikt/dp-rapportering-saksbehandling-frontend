@@ -36,7 +36,7 @@ function hentRapporteringsperiodeMedId(db: Database, id: string) {
 function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
   const id = uuidv7();
 
-  db.rapporteringsperioder.create({
+  const nyPeriode = db.rapporteringsperioder.create({
     ...rapporteringsperiode,
     id,
     originalMeldekortId: rapporteringsperiode.id,
@@ -46,6 +46,8 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
     kanEndres: true,
     sisteFristForTrekk: null,
   });
+
+  return nyPeriode;
 }
 
 function oppdaterPeriode(db: Database, periodeId: string, oppdateringer: IRapporteringsperiode) {

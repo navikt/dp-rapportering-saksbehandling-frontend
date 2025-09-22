@@ -3,7 +3,7 @@ import { BodyShort, Heading, Tag } from "@navikt/ds-react";
 import classNames from "classnames";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { useFetcher, useLoaderData, useNavigate } from "react-router";
+import { useFetcher, useLoaderData, useNavigate, useSearchParams } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
@@ -39,18 +39,10 @@ export default function Periode() {
   const { periode, saksbehandler, personId } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referrer = searchParams.get("referrer") || "perioder";
 
-  // Naviger tilbake ved suksess
-  useEffect(() => {
-    if (fetcher.state === "idle" && fetcher.data && !fetcher.data.error) {
-      // Kort delay for å la brukeren få med seg suksess-meldingen
-      setTimeout(() => {
-        navigate(
-          `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}&${QUERY_PARAMS.OPPDATERT}=${periode.id}`,
-        );
-      }, 1000);
-    }
-  }, [fetcher.state, fetcher.data, navigate, personId, periode]);
+  // API handles redirect after successful submission
 
   const [korrigertPeriode, setKorrigertPeriode] = useState<IRapporteringsperiode>(periode);
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
@@ -82,14 +74,14 @@ export default function Periode() {
 
     // Send inn via fetcher
     fetcher.submit(
-      { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId },
+      { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId, referrer },
       { method: "post", action: "/api/rapportering" },
     );
   };
 
   const handleCancel = () => {
     navigate(
-      `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
+      `/person/${personId}/${referrer}?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
     );
   };
 

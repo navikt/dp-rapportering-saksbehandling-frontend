@@ -9,7 +9,7 @@ import {
 } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useState } from "react";
-import { Form, redirect, useLoaderData, useNavigate } from "react-router";
+import { Form, redirect, useLoaderData, useNavigate, useSearchParams } from "react-router";
 import invariant from "tiny-invariant";
 
 import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
@@ -48,6 +48,9 @@ export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.periodeId, "Periode ID mangler");
 
   const formData = await request.formData();
+  const url = new URL(request.url);
+  const referrer = url.searchParams.get("referrer") || "perioder";
+
   const personId = params.personId;
   const meldedato = formData.get("meldedato") as string;
   const registrertArbeidssoker = formData.get("registrertArbeidssoker") === "true";
@@ -88,9 +91,9 @@ export async function action({ request, params }: Route.ActionArgs) {
       request,
     });
 
-    // Redirect tilbake til perioder siden
+    // Redirect tilbake til riktig side
     return redirect(
-      `/person/${params.personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${params.periodeId}`,
+      `/person/${params.personId}/${referrer}?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${params.periodeId}`,
     );
   } catch (error) {
     console.error("Feil ved oppdatering av periode:", error);
@@ -101,6 +104,8 @@ export async function action({ request, params }: Route.ActionArgs) {
 export default function FyllUtPeriode() {
   const navigate = useNavigate();
   const { periode, personId } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
+  const referrer = searchParams.get("referrer") || "perioder";
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -115,7 +120,7 @@ export default function FyllUtPeriode() {
 
   const handleCancel = () => {
     navigate(
-      `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}&${QUERY_PARAMS.OPPDATERT}=${periode.id}`,
+      `/person/${personId}/${referrer}?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
     );
   };
 
