@@ -1,6 +1,5 @@
 name: dp-rapportering-saksbehandling-frontend
 ingresses: 
-  - https://rapportering-dagpenger.ansatt.nav.no
   - https://rapportering-dagpenger.intern.nav.no
   
 replicas:
@@ -9,7 +8,7 @@ replicas:
 use_msw: false
 is_localhost: false
 
-faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
+faro_url: "https://telemetry.ekstern.nav.no/collect"
 
 runtime_environment: "production"
 
