@@ -124,7 +124,7 @@ export function RapporteringsperiodeListeByYear({ perioder, personId, ansvarligS
           : `Meldekort for uke ${ukenummer(periode)} ble sendt inn`;
         setAnnounceUpdate(melding);
 
-        // fjern parametere etter meling er satt
+        // fjern parametere etter melding er satt
         setTimeout(() => {
           const newSearchParams = new URLSearchParams(searchParams);
           newSearchParams.delete(QUERY_PARAMS.OPPDATERT);
