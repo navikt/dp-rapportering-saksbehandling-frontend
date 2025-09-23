@@ -10,6 +10,7 @@
   flex-direction: column;
   width: 100%;
   gap: var(--a-spacing-4);
+  background-color: white;
 }
 
 @media (min-width: 768px) {
@@ -26,7 +27,7 @@
 
 .uendret-periode {
   flex: 1;
-  background-color: var(--a-white);
+  width: 50%;
 }
 
 .endret-periode {
