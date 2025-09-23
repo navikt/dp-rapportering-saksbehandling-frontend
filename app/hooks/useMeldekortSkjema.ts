@@ -27,6 +27,7 @@ interface UseMeldekortSkjemaOptions {
   showArbeidssokerField?: boolean;
   initialMeldedato?: Date;
   initialBegrunnelse?: string;
+  onValidateChanges?: (data: IMeldekortSkjemaSubmitData) => boolean;
 }
 
 export function useMeldekortSkjema({
@@ -38,6 +39,7 @@ export function useMeldekortSkjema({
   showArbeidssokerField = false,
   initialMeldedato,
   initialBegrunnelse = "",
+  onValidateChanges,
 }: UseMeldekortSkjemaOptions) {
   // Refs
   const formRef = useRef<HTMLFormElement>(null);
@@ -58,6 +60,7 @@ export function useMeldekortSkjema({
     begrunnelse: false,
     aktiviteter: false,
   });
+  const [visIngenEndringerFeil, setVisIngenEndringerFeil] = useState(false);
 
   // Navigation warning
   const hasChanges =
@@ -123,6 +126,23 @@ export function useMeldekortSkjema({
     e.preventDefault();
 
     const harGyldigeAktiviteter = harMinstEnGyldigAktivitet(dager);
+    const submitData = {
+      meldedato: valgtDato,
+      registrertArbeidssoker:
+        showArbeidssokerField && registrertArbeidssoker !== null
+          ? registrertArbeidssoker
+          : undefined,
+      begrunnelse,
+      dager,
+    };
+
+    // Sjekk om det er gjort endringer (kun for korrigering)
+    if (onValidateChanges && !onValidateChanges(submitData)) {
+      setVisIngenEndringerFeil(true);
+      return;
+    }
+
+    setVisIngenEndringerFeil(false);
 
     const feil = {
       meldedato: !valgtDato,
@@ -198,6 +218,7 @@ export function useMeldekortSkjema({
       modalOpen,
       modalType,
       visValideringsfeil,
+      visIngenEndringerFeil,
       hasChanges,
     },
 

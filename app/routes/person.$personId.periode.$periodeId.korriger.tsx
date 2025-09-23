@@ -48,11 +48,17 @@ export default function Periode() {
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
   );
-  const [visIngenEndringerFeil, setVisIngenEndringerFeil] = useState(false);
 
   const initialMeldedato = periode.meldedato ? new Date(periode.meldedato) : undefined;
 
-  const handleSubmit = (data: {
+  const handleSubmit = () => {
+    fetcher.submit(
+      { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId, referrer },
+      { method: "post", action: "/api/rapportering" },
+    );
+  };
+
+  const validateChanges = (data: {
     meldedato: Date | undefined;
     registrertArbeidssoker?: boolean | null;
     begrunnelse: string;
@@ -62,21 +68,9 @@ export default function Periode() {
     const harMeldedatoEndringer =
       data.meldedato && format(data.meldedato, "yyyy-MM-dd") !== periode.meldedato;
     const harDagEndringer =
-      JSON.stringify(korrigertPeriode.dager) !== JSON.stringify(periode.dager);
-    const harEndringer = harMeldedatoEndringer || harDagEndringer;
-
-    if (!harEndringer) {
-      setVisIngenEndringerFeil(true);
-      return;
-    }
-
-    setVisIngenEndringerFeil(false);
-
-    // Send inn via fetcher
-    fetcher.submit(
-      { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId, referrer },
-      { method: "post", action: "/api/rapportering" },
-    );
+      JSON.stringify(data.dager.map(konverterTimerTilISO8601Varighet)) !==
+      JSON.stringify(periode.dager);
+    return harMeldedatoEndringer || harDagEndringer;
   };
 
   const handleCancel = () => {
@@ -94,6 +88,7 @@ export default function Periode() {
     showArbeidssokerField: false, // Korriger viser ikke arbeidssøker felt
     initialMeldedato,
     initialBegrunnelse: "",
+    onValidateChanges: validateChanges,
   });
 
   useEffect(() => {
@@ -193,6 +188,12 @@ export default function Periode() {
               setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
               periode={periode.periode}
             />
+            {skjema.state.visValideringsfeil.aktiviteter && (
+              <div className="navds-error-message navds-error-message--medium" role="alert">
+                Du må fylle ut minst én gyldig aktivitet. Arbeidsaktiviteter må ha minimum 0,5
+                timer, eller la feltet stå tomt hvis ingen arbeid.
+              </div>
+            )}
           </fieldset>
           <div className={styles.inputRad}>
             <DatePicker {...skjema.datepicker.datepickerProps}>
@@ -212,18 +213,14 @@ export default function Periode() {
               value={skjema.state.begrunnelse}
               onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
               error={
-                skjema.state.visValideringsfeil.begrunnelse
-                  ? "Begrunnelse må fylles ut"
-                  : skjema.state.begrunnelse.trim() === "" && skjema.state.hasChanges
-                    ? "Begrunnelse må fylles ut når du gjør endringer"
-                    : undefined
+                skjema.state.visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined
               }
               className={styles.begrunnelse}
             />
           </div>
         </div>
         <div className={styles.handlinger}>
-          {visIngenEndringerFeil && (
+          {skjema.state.visIngenEndringerFeil && (
             <div className="navds-error-message navds-error-message--medium" role="alert">
               Du må gjøre endringer for å kunne korrigere
             </div>
