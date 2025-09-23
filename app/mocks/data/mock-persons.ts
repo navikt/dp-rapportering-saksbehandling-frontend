@@ -5,7 +5,7 @@ import type { IPerson } from "~/utils/types";
 const personData = [
   {
     scenario: ScenarioType.FULL_DEMO,
-    ident: "0201020012345",
+    ident: "02028212345",
     id: "2277730",
     fornavn: "Full",
     mellomnavn: "",
