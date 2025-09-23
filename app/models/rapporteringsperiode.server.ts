@@ -87,10 +87,6 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
 
     const rapporteringsperiode: T = await response.json();
 
-    // TODO: Fjern denne etter testing
-    if (getEnv("RUNTIME_ENVIRONMENT") === "development") {
-      return { ...rapporteringsperiode, kanSendes: true };
-    }
     return rapporteringsperiode;
   } catch (error) {
     const errorId = uuidv7();
