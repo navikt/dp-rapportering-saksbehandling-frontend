@@ -1,3 +1,42 @@
+.container {
+    display: flex;
+    background: #FFF;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 32px 30px;
+    align-self: stretch;
+    border-radius: 10px;
+    margin-right: var(--__ac-table-expanded-row-pi) var(--a-spacing-2);
+}
+
+.forhandsvisning {
+      display: flex;
+    flex-direction: row;
+    gap: 56px;
+    width: 100%;
+    max-width: 2020px;
+    background: #FFF;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: auto;
+}
+.forhandsvisning > :first-child {
+  flex: 2;
+}
+
+/* === Responsive layout for mobile === */
+@media (max-width: 768px) {
+  .forhandsvisning {
+    flex-direction: column;
+    gap: 24px;
+    justify-content: flex-start;
+  }
+
+  .forhandsvisning > :first-child {
+    flex: none;
+  }
+}
+
 /* === Wrapper for hele tabellen === */
 .periodeListe {
   overflow-y: auto;
@@ -34,11 +73,54 @@
 }
 
 .periodeListe__row--selected {
-  background-color: var(--a-lightblue-100);
+  background-color: #F1F7FF !important;
 }
 
 .periodeListe__row--highlighted {
   animation: highlightBlinkAndFade 3.5s ease-out;
+}
+
+/* Override NavDS sin expanded-row styling - riktige klasser */
+:global(.navds-table__expandable-row--open) {
+  background-color: #F1F7FF !important;
+  transition: background-color 0.2s ease-out;
+}
+
+/* Style alle child-elementer i åpne rader */
+:global(.navds-table__expandable-row--open td),
+:global(.navds-table__expandable-row--open th), :global(.navds-table__expanded-row) {
+  background-color: #F1F7FF !important;
+  transition: background-color 0.2s ease-out;
+}
+
+/* Expanded rows med høyere spesifisitet */
+:global(.navds-table .navds-table__expandable-row--open),
+:global(.navds-table__body .navds-table__expandable-row--open) {
+  background-color: #F1F7FF !important;
+}
+
+:global(.navds-table .navds-table__expandable-row--open td),
+:global(.navds-table .navds-table__expandable-row--open th),
+:global(.navds-table__body .navds-table__expandable-row--open td),
+:global(.navds-table__body .navds-table__expandable-row--open th) {
+  background-color: #F1F7FF !important;
+}
+/* Override NavDS hover effects - kun for expanded rows */
+:global(.navds-table__expandable-row--open:hover),
+:global(.navds-table__row--shade-on-hover.navds-table__expandable-row--open):hover, :global(.navds-table__row--shade-on-hover).periodeListe__row:hover {
+  background-color: #F1F7FF !important;
+}
+
+/* Override NavDS selected effects - kun for expanded rows */
+:global(.navds-table__expandable-row--open[aria-selected="true"]),
+:global(.navds-table__expandable-row--open.navds-table__row--selected) {
+  background-color: #F1F7FF !important;
+}
+
+
+:global(.navds-table__expandable-row:not(.navds-table__row--expanded)) td {
+  background-color: transparent;
+  transition: background-color 0.2s ease-out;
 }
 
 /* === Klikkbar rad === */
