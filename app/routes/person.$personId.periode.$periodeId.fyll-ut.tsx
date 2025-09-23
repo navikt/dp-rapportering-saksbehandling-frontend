@@ -151,65 +151,74 @@ export default function FyllUtPeriode() {
         </div>
 
         <Form method="post" ref={skjema.refs.formRef} onSubmit={skjema.handlers.handleSubmit}>
-          <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
-            <legend className="sr-only">Aktiviteter per dag</legend>
-            <FyllUtTabell
-              dager={dager}
-              setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
-              periode={periode.periode}
-            />
-          </fieldset>
-          <fieldset className={classNames(styles.details, styles.fieldset)}>
-            <legend className="sr-only">Grunnleggende informasjon</legend>
-            <div>
-              <DatePicker {...skjema.datepicker.datepickerProps}>
-                <DatePicker.Input
-                  {...skjema.datepicker.inputProps}
-                  ref={skjema.refs.meldedatoRef}
-                  label="Sett meldedato"
-                  placeholder="dd.mm.åååå"
-                  size="small"
-                  error={
-                    skjema.state.visValideringsfeil.meldedato ? "Meldedato må fylles ut" : undefined
-                  }
-                />
-              </DatePicker>
-            </div>
-            <div>
-              <RadioGroup
-                size="small"
-                legend="Registrert som arbeidssøker de neste 14 dagene?"
-                error={
-                  skjema.state.visValideringsfeil.arbeidssoker
-                    ? "Du må velge om bruker skal være registrert som arbeidssøker"
-                    : undefined
-                }
-                value={skjema.state.registrertArbeidssoker?.toString() || ""}
-                onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
-              >
-                <Radio ref={skjema.refs.arbeidssokerRef} value="true">
-                  Ja
-                </Radio>
-                <Radio value="false">Nei</Radio>
-              </RadioGroup>
-            </div>
-            <div className={styles.begrunnelse}>
-              <Textarea
-                ref={skjema.refs.begrunnelseRef}
-                size="small"
-                label="Begrunnelse"
-                name="begrunnelse"
-                error={
-                  skjema.state.visValideringsfeil.begrunnelse
-                    ? "Begrunnelse må fylles ut"
-                    : undefined
-                }
-                value={skjema.state.begrunnelse}
-                onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
-                rows={3}
+          <div
+            className={classNames(styles.inputs, {
+              [styles.reverse]: referrer === DEFAULT_REFERRER.PERIODER,
+            })}
+          >
+            <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
+              <legend className="sr-only">Aktiviteter per dag</legend>
+              <FyllUtTabell
+                dager={dager}
+                setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
+                periode={periode.periode}
               />
-            </div>
-          </fieldset>
+            </fieldset>
+            <fieldset className={classNames(styles.details, styles.fieldset)}>
+              <legend className="sr-only">Grunnleggende informasjon</legend>
+              <div>
+                <DatePicker {...skjema.datepicker.datepickerProps}>
+                  <DatePicker.Input
+                    {...skjema.datepicker.inputProps}
+                    ref={skjema.refs.meldedatoRef}
+                    label="Sett meldedato"
+                    placeholder="dd.mm.åååå"
+                    size="small"
+                    error={
+                      skjema.state.visValideringsfeil.meldedato
+                        ? "Meldedato må fylles ut"
+                        : undefined
+                    }
+                  />
+                </DatePicker>
+              </div>
+              <div>
+                <RadioGroup
+                  size="small"
+                  legend="Registrert som arbeidssøker de neste 14 dagene?"
+                  error={
+                    skjema.state.visValideringsfeil.arbeidssoker
+                      ? "Du må velge om bruker skal være registrert som arbeidssøker"
+                      : undefined
+                  }
+                  value={skjema.state.registrertArbeidssoker?.toString() || ""}
+                  onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
+                >
+                  <Radio ref={skjema.refs.arbeidssokerRef} value="true">
+                    Ja
+                  </Radio>
+                  <Radio value="false">Nei</Radio>
+                </RadioGroup>
+              </div>
+              <div className={styles.begrunnelse}>
+                <Textarea
+                  ref={skjema.refs.begrunnelseRef}
+                  size="small"
+                  label="Begrunnelse"
+                  name="begrunnelse"
+                  error={
+                    skjema.state.visValideringsfeil.begrunnelse
+                      ? "Begrunnelse må fylles ut"
+                      : undefined
+                  }
+                  value={skjema.state.begrunnelse}
+                  onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
+                  rows={3}
+                />
+              </div>
+            </fieldset>
+          </div>
+
           {skjema.state.visValideringsfeil.aktiviteter && (
             <div className="navds-error-message navds-error-message--medium" role="alert">
               Du må fylle ut minst én gyldig aktivitet. Arbeidsaktiviteter må ha minimum 0,5 timer,
