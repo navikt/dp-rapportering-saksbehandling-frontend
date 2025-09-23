@@ -38,7 +38,6 @@ export function PeriodeRad({
   const alternativVisning = location.pathname.includes("/alternative-perioder");
   const [searchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
@@ -65,7 +64,6 @@ export function PeriodeRad({
     [styles["periodeListe__row"]]: true, // Alle rader får basis klasse
     [styles["periodeListe__row--highlighted"]]: isHighlighted,
     [styles["periodeListe__row--disabled"]]: isDisabled,
-    [styles["periodeListe__row--expanded"]]: alternativVisning && isExpanded, // Lyseblå når expanded
   });
 
   const ukeKlasse = classNames(styles.periodeListe__week, {
@@ -106,10 +104,6 @@ export function PeriodeRad({
         className={radKlasse}
         expandOnRowClick={!erOpprettet}
         expansionDisabled={erOpprettet}
-        onToggle={(event) => {
-          const expanded = (event.target as HTMLElement).getAttribute("aria-expanded") === "true";
-          setIsExpanded(expanded);
-        }}
       >
         <Table.HeaderCell
           scope="row"
