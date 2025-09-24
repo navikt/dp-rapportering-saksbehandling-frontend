@@ -7,6 +7,7 @@ import type {
   OPPRETTET_AV,
   RAPPORTERING_TYPE,
   ROLLE,
+  TEST_CASE,
 } from "./constants";
 import { RAPPORTERINGSPERIODE_STATUS } from "./constants";
 
@@ -50,6 +51,8 @@ export type TRolle = (typeof ROLLE)[keyof typeof ROLLE];
 export type TAnsvarligSystem = (typeof ANSVARLIG_SYSTEM)[keyof typeof ANSVARLIG_SYSTEM];
 
 export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
+
+export type TTestCase = (typeof TEST_CASE)[keyof typeof TEST_CASE];
 
 export interface IPeriode {
   fraOgMed: string;

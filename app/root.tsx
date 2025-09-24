@@ -17,6 +17,7 @@ import { uuidv7 } from "uuidv7";
 import type { Route } from "./+types/root";
 import Header from "./components/navigasjon/header/Header";
 import { SaksbehandlerProvider } from "./context/saksbehandler-context";
+import { TestCaseContextProvider } from "./context/test-case-context";
 import { getSessionId } from "./mocks/session";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv, isLocalOrDemo } from "./utils/env.utils";
@@ -98,17 +99,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <SaksbehandlerProvider>
-          <Header saksbehandler={saksbehandler} />
-          {children}
-          <ScrollRestoration />
-          <Scripts />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window.env = ${JSON.stringify(env)}`,
-            }}
-          />
-        </SaksbehandlerProvider>
+        <TestCaseContextProvider>
+          <SaksbehandlerProvider>
+            <Header saksbehandler={saksbehandler} />
+            {children}
+            <ScrollRestoration />
+            <Scripts />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.env = ${JSON.stringify(env)}`,
+              }}
+            />
+          </SaksbehandlerProvider>
+        </TestCaseContextProvider>
       </body>
     </html>
   );

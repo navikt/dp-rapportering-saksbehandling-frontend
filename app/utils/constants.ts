@@ -85,3 +85,8 @@ export const DEFAULT_PERSON: IPerson = {
   kjonn: KJONN.UKJENT,
   ident: "",
 };
+
+export const TEST_CASE = {
+  STANDARD: "standard",
+  ALTERNATIVE_PERIODER: "alternative-perioder",
+};
