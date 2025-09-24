@@ -4,9 +4,10 @@ import { useRouteLoaderData, useSearchParams } from "react-router";
 import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { RapporteringsperiodeListeByYear } from "~/components/rapporteringsperiode-liste/PeriodeListe";
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
+import { useTestCase } from "~/hooks/useTestCase";
 import styles from "~/route-styles/person.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
-import { DEFAULT_PERSON } from "~/utils/constants";
+import { DEFAULT_PERSON, TEST_CASE } from "~/utils/constants";
 import { sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -18,6 +19,10 @@ export default function Rapportering({ params }: Route.ComponentProps) {
   const person = data?.person ?? DEFAULT_PERSON;
 
   const [searchParams] = useSearchParams();
+
+  const { setTestCase } = useTestCase();
+
+  setTestCase(TEST_CASE.ALTERNATIVE_PERIODER);
 
   const valgteRapporteringsperiode =
     searchParams

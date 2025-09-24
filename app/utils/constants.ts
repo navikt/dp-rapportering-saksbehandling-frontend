@@ -90,3 +90,8 @@ export const REFERRER = {
   ALTERNATIVE_PERIODER: "alternative-perioder",
   PERIODER: "perioder",
 };
+
+export const TEST_CASE = {
+  STANDARD: "standard",
+  ALTERNATIVE_PERIODER: "alternative-perioder",
+};
