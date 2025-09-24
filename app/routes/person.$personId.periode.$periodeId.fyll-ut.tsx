@@ -142,7 +142,7 @@ export default function FyllUtPeriode() {
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllroot}>
       <div className={styles.skjema}>
         <div className={styles.title}>
-          <Heading level="1" size="medium" id="fyll-ut-heading">
+          <Heading level="1" size="small" id="fyll-ut-heading">
             Fyll ut meldekort
           </Heading>
           <BodyShort size="small">

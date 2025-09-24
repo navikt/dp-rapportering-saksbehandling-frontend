@@ -22,7 +22,7 @@ export function HistorikkModal({ open, onClose, fulltNavn, hendelser }: Historik
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="historikk-heading" closeOnBackdropClick>
       <Modal.Header>
-        <Heading level="2" size="medium" id="historikk-heading">
+        <Heading level="2" size="small" id="historikk-heading">
           {`Historikk — ${fulltNavn}`}
         </Heading>
       </Modal.Header>

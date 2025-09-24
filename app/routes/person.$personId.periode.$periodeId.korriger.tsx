@@ -133,7 +133,7 @@ export default function Periode() {
         </Alert>
       )}
       <div className={classNames(styles.periodeOverskrift, styles.title)}>
-        <Heading level="1" size="medium">
+        <Heading level="1" size="small">
           Korriger meldekort
         </Heading>
         <BodyShort size="small">

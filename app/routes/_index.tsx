@@ -24,7 +24,7 @@ export default function Rapportering() {
         padding: "2rem 1rem",
       }}
     >
-      <Heading level="1" size="medium" id="page-title">
+      <Heading level="1" size="small" id="page-title">
         Saksbehandlerflate for meldekort
       </Heading>
 
