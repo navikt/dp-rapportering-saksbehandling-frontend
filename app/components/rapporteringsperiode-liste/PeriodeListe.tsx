@@ -1,6 +1,6 @@
 import { Accordion, Table } from "@navikt/ds-react";
 import { useEffect, useState } from "react";
-import { useLocation, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 
 import { QUERY_PARAMS } from "~/utils/constants";
 import { ukenummer } from "~/utils/dato.utils";
@@ -18,62 +18,33 @@ interface IProps {
 
 interface IPropsWithSharedState extends IProps {
   valgteIds: string[];
-  onTogglePeriode: (id: string) => void;
-  maksValgte: number;
-  alternativVisning: boolean;
 }
 
-const MAKS_VALGTE_PERIODER = 3;
-
-const KOLONNE_TITLER = [
-  { tekst: "Vis", erFørste: true, width: "5%" },
-  { tekst: "Uke", erFørste: false, width: "5%" },
-  { tekst: "Dato", erFørste: false, width: "10%" },
-  { tekst: "Status", erFørste: false, width: "10%" },
-  { tekst: "Aktiviteter", erFørste: false, width: "10%" },
-  { tekst: "Meldedato", erFørste: false, width: "10%" },
-  { tekst: "Frist", erFørste: false, width: "10%" },
-] as const;
-
 const ALTERNATIV_KOLONNE_TITLER = [
-  { tekst: "", erFørste: true, width: "5%" },
-  { tekst: "Uke", erFørste: false, width: "10%" },
-  { tekst: "Dato", erFørste: false, width: "20%" },
-  { tekst: "Status", erFørste: false, width: "15%" },
-  { tekst: "Aktiviteter", erFørste: false, width: "20%" },
-  { tekst: "Meldedato", erFørste: false, width: "15%" },
-  { tekst: "Frist", erFørste: false, width: "15%" },
+  { tekst: "", erFørste: true },
+  { tekst: "Uke", erFørste: false },
+  { tekst: "Dato", erFørste: false },
+  { tekst: "Status", erFørste: false },
+  { tekst: "Aktiviteter", erFørste: false },
+  { tekst: "Meldedato", erFørste: false },
+  { tekst: "Frist", erFørste: false },
 ] as const;
 
 // Intern komponent uten egen state for bruk i accordion
 function RapporteringsperiodeTabell({
   perioder,
-  valgteIds,
-  onTogglePeriode,
-  maksValgte,
-  alternativVisning,
   personId,
   ansvarligSystem,
 }: IPropsWithSharedState) {
-  const titler = alternativVisning ? ALTERNATIV_KOLONNE_TITLER : KOLONNE_TITLER;
+  const titler = ALTERNATIV_KOLONNE_TITLER;
   return (
-    <div className={styles.periodeListe} style={alternativVisning ? { width: "100%" } : undefined}>
-      <Table style={alternativVisning ? { width: "100%", tableLayout: "fixed" } : undefined}>
+    <div className={styles.periodeListe}>
+      <Table size="small">
         <Table.Header>
           <Table.Row>
             {titler.map((kolonne, index) => {
-              const className = kolonne.erFørste
-                ? `${styles.periodeListe__header} ${styles["periodeListe__header--first"]}`
-                : styles.periodeListe__header;
-
               return (
-                <Table.HeaderCell
-                  key={index}
-                  scope="col"
-                  className={className}
-                  textSize="small"
-                  style={{ width: kolonne.width }}
-                >
+                <Table.HeaderCell key={index} scope="col" textSize="small">
                   {kolonne.tekst}
                 </Table.HeaderCell>
               );
@@ -82,15 +53,10 @@ function RapporteringsperiodeTabell({
         </Table.Header>
         <Table.Body>
           {perioder.map((periode) => {
-            const erValgt = valgteIds.includes(periode.id);
             return (
               <PeriodeRad
                 key={periode.id}
                 periode={periode}
-                valgt={erValgt}
-                toggle={onTogglePeriode}
-                valgteAntall={valgteIds.length}
-                maksValgte={maksValgte}
                 personId={personId}
                 ansvarligSystem={ansvarligSystem}
               />
@@ -106,8 +72,6 @@ function RapporteringsperiodeTabell({
  * Main component that groups reporting periods by year in an accordion
  */
 export function RapporteringsperiodeListeByYear({ perioder, personId, ansvarligSystem }: IProps) {
-  const location = useLocation();
-  const alternativVisning = location.pathname.includes("/alternative-perioder");
   const [searchParams, setSearchParams] = useSearchParams();
   const [announceUpdate, setAnnounceUpdate] = useState("");
 
@@ -151,7 +115,7 @@ export function RapporteringsperiodeListeByYear({ perioder, personId, ansvarligS
       .map(Number)
       .filter((aar) => years.includes(aar)) ?? [years[0]],
   );
-  const [valgteIds, setValgteIds] = useState<string[]>(
+  const [valgteIds] = useState<string[]>(
     searchParams
       .get("rapporteringsid")
       ?.split(",")
@@ -178,14 +142,6 @@ export function RapporteringsperiodeListeByYear({ perioder, personId, ansvarligS
     setSearchParams(newParams, { replace: true, preventScrollReset: true });
   }, [valgteAar]);
 
-  const togglePeriode = (id: string) => {
-    setValgteIds((prev) => {
-      const alleredeValgt = prev.includes(id);
-      if (!alleredeValgt && prev.length >= MAKS_VALGTE_PERIODER) return prev;
-      return alleredeValgt ? prev.filter((v) => v !== id) : [...prev, id];
-    });
-  };
-
   function toggleAr(year: number) {
     setValgteAar((prev) =>
       prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year],
@@ -200,23 +156,18 @@ export function RapporteringsperiodeListeByYear({ perioder, personId, ansvarligS
           {announceUpdate}
         </div>
       )}
-      <Accordion size="small" indent={false}>
+      <Accordion size="small">
         {years.map((year) => (
           <Accordion.Item
             key={year}
             defaultOpen={year === years[0]}
             open={valgteAar.includes(year)}
           >
-            <Accordion.Header className={styles.accordionHeader} onClick={() => toggleAr(year)}>
-              Meldekort for {year}
-            </Accordion.Header>
+            <Accordion.Header onClick={() => toggleAr(year)}>Meldekort for {year}</Accordion.Header>
             <Accordion.Content style={{ padding: 0 }}>
               <RapporteringsperiodeTabell
                 perioder={groupedPeriods[year]}
                 valgteIds={valgteIds}
-                onTogglePeriode={togglePeriode}
-                maksValgte={MAKS_VALGTE_PERIODER}
-                alternativVisning={alternativVisning}
                 personId={personId}
                 ansvarligSystem={ansvarligSystem}
               />
@@ -224,15 +175,6 @@ export function RapporteringsperiodeListeByYear({ perioder, personId, ansvarligS
           </Accordion.Item>
         ))}
       </Accordion>
-      {/* Skjermleservennlig statusmelding */}
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {valgteIds.length > 0 && (
-          <span>
-            {valgteIds.length >= MAKS_VALGTE_PERIODER &&
-              "Maksimalt antall perioder valgt. Du kan ikke velge flere."}
-          </span>
-        )}
-      </div>
     </section>
   );
 }

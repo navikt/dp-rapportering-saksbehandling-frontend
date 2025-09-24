@@ -3,7 +3,7 @@ import { BodyShort, Heading, Tag } from "@navikt/ds-react";
 import classNames from "classnames";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { useFetcher, useLoaderData, useNavigate, useSearchParams } from "react-router";
+import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
@@ -14,7 +14,7 @@ import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/route-styles/periode.module.css";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
-import { QUERY_PARAMS, REFERRER as DEFAULT_REFERRER } from "~/utils/constants";
+import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import {
   type IKorrigertDag,
@@ -39,8 +39,6 @@ export default function Periode() {
   const { periode, saksbehandler, personId } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const referrer = searchParams.get("referrer") || DEFAULT_REFERRER.PERIODER;
 
   // API handles redirect after successful submission
 
@@ -53,7 +51,7 @@ export default function Periode() {
 
   const handleSubmit = () => {
     fetcher.submit(
-      { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId, referrer },
+      { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId },
       { method: "post", action: "/api/rapportering" },
     );
   };
@@ -75,7 +73,7 @@ export default function Periode() {
 
   const handleCancel = () => {
     navigate(
-      `/person/${personId}/${referrer}?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
+      `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
     );
   };
 
@@ -176,11 +174,7 @@ export default function Periode() {
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
-        <div
-          className={classNames(styles.inputs, {
-            [styles.reverse]: referrer === DEFAULT_REFERRER.PERIODER,
-          })}
-        >
+        <div className={styles.inputs}>
           <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
             <legend className="sr-only">Aktiviteter per dag</legend>
             <FyllUtTabell

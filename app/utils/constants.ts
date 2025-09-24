@@ -85,8 +85,3 @@ export const DEFAULT_PERSON: IPerson = {
   kjonn: KJONN.UKJENT,
   ident: "",
 };
-
-export const REFERRER = {
-  ALTERNATIVE_PERIODER: "alternative-perioder",
-  PERIODER: "perioder",
-};
