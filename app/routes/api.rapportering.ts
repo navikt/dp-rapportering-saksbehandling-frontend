@@ -2,7 +2,7 @@ import { type ActionFunctionArgs, redirect } from "react-router";
 import { uuidv7 } from "uuidv7";
 
 import { korrigerPeriode } from "~/models/rapporteringsperiode.server";
-import { QUERY_PARAMS, REFERRER as DEFAULT_REFERRER } from "~/utils/constants";
+import { QUERY_PARAMS } from "~/utils/constants";
 import type { IKorrigerMeldekort, IRapporteringsperiodeDag } from "~/utils/types";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -10,7 +10,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const rapporteringsperiode = formData.get("rapporteringsperiode") as string;
   const personId = formData.get("personId") as string;
-  const referrer = (formData.get("referrer") as string) || DEFAULT_REFERRER.PERIODER;
   const periode = JSON.parse(rapporteringsperiode);
 
   const korrigertPeriode: IKorrigerMeldekort = {
@@ -37,6 +36,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const oppdatertId = nyMeldekortId || periode.id;
 
   return redirect(
-    `/person/${personId}/${referrer}?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${oppdatertId}&${QUERY_PARAMS.OPPDATERT}=${oppdatertId}`,
+    `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${oppdatertId}&${QUERY_PARAMS.OPPDATERT}=${oppdatertId}`,
   );
 }

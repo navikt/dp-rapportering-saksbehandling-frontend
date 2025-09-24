@@ -28,7 +28,7 @@
     "@react-router/serve": "^7.9.1",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
-    "isbot": "^5.1.30",
+    "isbot": "^5.1.31",
     "msw": "^2.11.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@playwright/test": "^1.55.0",
+    "@playwright/test": "^1.55.1",
     "@react-router/dev": "^7.9.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
@@ -49,7 +49,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/eslint-plugin-jsx-a11y": "^6.10.0",
-    "@types/node": "^22.18.6",
+    "@types/node": "^24.5.2",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@types/react-router-dom": "^5.3.3",
@@ -63,17 +63,14 @@
     "globals": "^16.4.0",
     "husky": "^9.1.7",
     "jiti": "^2.6.0",
-    "jsdom": "^26.1.0",
+    "jsdom": "^27.0.0",
     "lint-staged": "^16.2.0",
-    "playwright": "^1.55.0",
+    "playwright": "^1.55.1",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.44.0",
+    "typescript-eslint": "^8.44.1",
     "vite": "^7.1.7",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
-  },
-  "overrides": {
-    "simple-swizzle": "0.2.2"
   },
   "engines": {
     "node": ">=22"

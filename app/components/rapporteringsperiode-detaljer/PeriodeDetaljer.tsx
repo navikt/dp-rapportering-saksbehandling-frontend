@@ -1,7 +1,6 @@
 import { Alert, Button, Tag } from "@navikt/ds-react";
-import { useLocation } from "react-router";
 
-import { ANSVARLIG_SYSTEM, REFERRER, ROLLE } from "~/utils/constants";
+import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -15,7 +14,6 @@ interface IProps {
 }
 
 export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) {
-  const location = useLocation();
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalMeldekortId;
   const kanSendes = periode.kanSendes && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
@@ -23,19 +21,13 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const forSent = dagerForSent(periode);
 
-  // Determine referrer path to return to correct page
-  const getReferrerPath = () => {
-    const isAlternativeView = location.pathname.includes("/alternative-perioder");
-    return isAlternativeView ? REFERRER.ALTERNATIVE_PERIODER : REFERRER.PERIODER;
-  };
-
   return (
     <div className={styles.periodeDetaljer}>
       {kanSendes && (
         <div>
           <Button
             as="a"
-            href={`/person/${personId}/periode/${periode.id}/fyll-ut?referrer=${getReferrerPath()}`}
+            href={`/person/${personId}/periode/${periode.id}/fyll-ut`}
             className={styles.korrigerKnapp}
             size="small"
             variant="primary"
@@ -99,9 +91,9 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
         </dl>
 
         {erSendtForSent && (
-          <Alert variant="warning">
+          <Alert variant="warning" size="small">
             Dette meldekortet er sendt inn {forSent}{" "}
-            {forSent !== null && forSent > 1 ? "dager" : "dag"} etter fristen
+            {forSent !== null && forSent > 1 ? " dager" : " dag"} etter fristen
           </Alert>
         )}
 
@@ -109,9 +101,9 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
           <div>
             <Button
               as="a"
-              href={`/person/${personId}/periode/${periode.id}/korriger?referrer=${getReferrerPath()}`}
+              href={`/person/${personId}/periode/${periode.id}/korriger`}
               className={styles.korrigerKnapp}
-              size="small"
+              size="xsmall"
             >
               Korriger meldekort
             </Button>

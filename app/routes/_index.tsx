@@ -24,7 +24,7 @@ export default function Rapportering() {
         padding: "2rem 1rem",
       }}
     >
-      <Heading level="1" size="medium" id="page-title">
+      <Heading level="1" size="small" id="page-title">
         Saksbehandlerflate for meldekort
       </Heading>
 
@@ -47,27 +47,16 @@ export default function Rapportering() {
                   person.etternavn
                 }`;
                 const link = `/person/${person.id}/perioder`;
-                const alternativeLink = `/person/${person.id}/alternative-perioder`;
 
                 return (
-                  <>
-                    <li key={person.id} style={{ marginBottom: "1rem" }}>
-                      <LinkPanel href={link} border>
-                        <LinkPanel.Title>{navn}</LinkPanel.Title>
-                        <LinkPanel.Description>
-                          Åpne saksbehandling for denne personen
-                        </LinkPanel.Description>
-                      </LinkPanel>
-                    </li>
-                    <li key={`${person.id}-alternative`} style={{ marginBottom: "1rem" }}>
-                      <LinkPanel href={alternativeLink} border>
-                        <LinkPanel.Title>Alternativ {navn}</LinkPanel.Title>
-                        <LinkPanel.Description>
-                          Åpne alternativ saksbehandling for denne personen
-                        </LinkPanel.Description>
-                      </LinkPanel>
-                    </li>
-                  </>
+                  <li key={person.id} style={{ marginBottom: "1rem" }}>
+                    <LinkPanel href={link} border>
+                      <LinkPanel.Title>{navn}</LinkPanel.Title>
+                      <LinkPanel.Description>
+                        Åpne saksbehandling for denne personen
+                      </LinkPanel.Description>
+                    </LinkPanel>
+                  </li>
                 );
               })}
             </ul>
