@@ -185,27 +185,29 @@ export default function Periode() {
               </div>
             )}
           </fieldset>
-          <Textarea
-            resize
-            ref={skjema.refs.begrunnelseRef}
-            label="Begrunnelse for korrigering"
-            name="begrunnelse"
-            size="small"
-            value={skjema.state.begrunnelse}
-            onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
-            error={
-              skjema.state.visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined
-            }
-            className={styles.begrunnelse}
-          />
-          <DatePicker {...skjema.datepicker.datepickerProps}>
-            <DatePicker.Input
-              {...skjema.datepicker.inputProps}
-              label="Meldedato"
-              placeholder="dd.mm.åååå"
+          <div className={styles.annenInfo}>
+            <DatePicker {...skjema.datepicker.datepickerProps}>
+              <DatePicker.Input
+                {...skjema.datepicker.inputProps}
+                label="Meldedato"
+                placeholder="dd.mm.åååå"
+                size="small"
+              />
+            </DatePicker>
+            <Textarea
+              resize
+              ref={skjema.refs.begrunnelseRef}
+              label="Begrunnelse for korrigering"
+              name="begrunnelse"
               size="small"
+              value={skjema.state.begrunnelse}
+              onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
+              error={
+                skjema.state.visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined
+              }
+              className={styles.begrunnelse}
             />
-          </DatePicker>
+          </div>
           <div className={styles.knapper}>
             {skjema.state.visIngenEndringerFeil && (
               <div className="navds-error-message navds-error-message--medium" role="alert">
