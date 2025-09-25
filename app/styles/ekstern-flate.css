@@ -1,0 +1,39 @@
+/* Global styling for external interfaces - compact font sizes */
+
+.ekstern-flate .navds-heading {
+  font-size: 1rem !important;
+}
+
+.ekstern-flate .navds-heading--small {
+  font-size: 0.875rem !important;
+}
+
+.ekstern-flate .navds-heading--xsmall {
+  font-size: 0.75rem !important;
+}
+
+.ekstern-flate .navds-body-short {
+  font-size: 0.75rem !important;
+}
+
+.ekstern-flate .navds-label {
+  font-size: 0.75rem !important;
+}
+
+.ekstern-flate .navds-textarea__label,
+.ekstern-flate .navds-textfield__label {
+  font-size: 0.75rem !important;
+}
+
+.ekstern-flate .navds-alert__content {
+  font-size: 0.75rem !important;
+}
+
+.ekstern-flate .navds-tag {
+  font-size: 0.625rem !important;
+}
+
+/* ekstra for kompakt tekst */
+.kompakt-tekst {
+  font-size: 0.75rem !important;
+}

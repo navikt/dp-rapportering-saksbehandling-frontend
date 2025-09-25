@@ -108,6 +108,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                   <td key={dag.dato}>
                     <div className={styles.checkboxWrapper}>
                       <Checkbox
+                        size="small"
                         id={inputId}
                         value={type}
                         hideLabel
@@ -182,7 +183,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                 =
               </td>
               {/* Oppsummeringscelle */}
-              <td>
+              <td className={styles.oppsummering}>
                 {type === AKTIVITET_TYPE.Arbeid
                   ? `${dager
                       .reduce((sum, dag) => {

@@ -1,6 +1,7 @@
+import "~/styles/ekstern-flate.css";
+
 import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
-import { BodyShort, Heading, Tag } from "@navikt/ds-react";
-import classNames from "classnames";
+import { BodyShort, Heading } from "@navikt/ds-react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
@@ -12,7 +13,7 @@ import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
-import styles from "~/route-styles/periode.module.css";
+import styles from "~/route-styles/korriger.module.css";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
@@ -110,7 +111,7 @@ export default function Periode() {
   const erKorrigering = !!periode.originalMeldekortId;
 
   return (
-    <div className={styles.rapporteringsperiode}>
+    <div className={`${styles.korrigeringContainer} ekstern-flate`}>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {fetcher.state === "submitting" && "Sender inn korrigering..."}
         {fetcher.state === "loading" && "Behandler korrigering..."}
@@ -130,41 +131,36 @@ export default function Periode() {
           )}
         </Alert>
       )}
-      <div className={classNames(styles.periodeOverskrift, styles.title)}>
-        <Heading level="1" size="small">
+      <div className={styles.hvitContainer}>
+        <Heading level="1" size="medium">
           Korriger meldekort
         </Heading>
-        <BodyShort size="small">
+        <BodyShort size="small" className={styles.kompaktTekst}>
           Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
         </BodyShort>
       </div>
 
-      <div
-        className={styles.grid}
-        role="region"
-        aria-label="Sammenligning av opprinnelig og korrigert meldekort"
-      >
-        <section className={styles.uendretPeriode}>
-          <Heading id="original-heading" level="2" size="small" className="sr-only">
-            Opprinnelig meldekort
+      <div className={styles.hvitContainer}>
+        <div className={styles.meldekort}>
+          <Heading level="2" size="xsmall">
+            Meldekortet du korrigerer:
           </Heading>
-          <Tag variant="info" size="small">
-            Sist beregnet
-          </Tag>
           <KalenderTabell periode={periode} />
           {periode.begrunnelse && (
             <div className={styles.begrunnelseVisning}>
-              <Heading level="3" size="small">
+              <Heading level="3" size="xsmall">
                 Begrunnelse for {erKorrigering ? "korrigering" : "innsending"}
               </Heading>
-              <BodyShort>{periode.begrunnelse}</BodyShort>
+              <BodyShort size="small" className={styles.kompaktTekst}>
+                {periode.begrunnelse}
+              </BodyShort>
             </div>
           )}
-        </section>
+        </div>
       </div>
 
       <fetcher.Form
-        className={styles.korrigering}
+        className={styles.hvitContainer}
         aria-label="Korrigeringsverktøy"
         action="/api/rapportering"
         method="post"
@@ -174,8 +170,8 @@ export default function Periode() {
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
-        <div className={styles.inputs}>
-          <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
+        <div className={styles.skjema}>
+          <fieldset ref={skjema.refs.aktiviteterRef} tabIndex={-1} className={styles.fieldset}>
             <legend className="sr-only">Aktiviteter per dag</legend>
             <FyllUtTabell
               dager={korrigerteDager}
@@ -189,52 +185,48 @@ export default function Periode() {
               </div>
             )}
           </fieldset>
-          <div className={styles.inputRad}>
-            <DatePicker {...skjema.datepicker.datepickerProps}>
-              <DatePicker.Input
-                {...skjema.datepicker.inputProps}
-                label="Meldedato"
-                placeholder="dd.mm.åååå"
-                size="small"
-              />
-            </DatePicker>
-
-            <Textarea
-              ref={skjema.refs.begrunnelseRef}
-              label="Begrunnelse for korrigering"
-              name="begrunnelse"
+          <Textarea
+            resize
+            ref={skjema.refs.begrunnelseRef}
+            label="Begrunnelse for korrigering"
+            name="begrunnelse"
+            size="small"
+            value={skjema.state.begrunnelse}
+            onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
+            error={
+              skjema.state.visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined
+            }
+            className={styles.begrunnelse}
+          />
+          <DatePicker {...skjema.datepicker.datepickerProps}>
+            <DatePicker.Input
+              {...skjema.datepicker.inputProps}
+              label="Meldedato"
+              placeholder="dd.mm.åååå"
               size="small"
-              value={skjema.state.begrunnelse}
-              onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
-              error={
-                skjema.state.visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined
-              }
-              className={styles.begrunnelse}
             />
+          </DatePicker>
+          <div className={styles.knapper}>
+            {skjema.state.visIngenEndringerFeil && (
+              <div className="navds-error-message navds-error-message--medium" role="alert">
+                Du må gjøre endringer for å kunne korrigere
+              </div>
+            )}
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={skjema.handlers.handleAvbryt}
+              size="xsmall"
+            >
+              Avbryt korrigering
+            </Button>
+            <Button type="submit" variant="primary" size="xsmall">
+              Fullfør korrigering
+            </Button>
           </div>
         </div>
-        <div className={styles.handlinger}>
-          {skjema.state.visIngenEndringerFeil && (
-            <div className="navds-error-message navds-error-message--medium" role="alert">
-              Du må gjøre endringer for å kunne korrigere
-            </div>
-          )}
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={skjema.handlers.handleAvbryt}
-            size="small"
-          >
-            Avbryt korrigering
-          </Button>
-          <Button type="submit" variant="primary" size="small">
-            Fullfør korrigering
-          </Button>
-        </div>
-
         <input type="hidden" name="rapporteringsperiode" value={JSON.stringify(korrigertPeriode)} />
         <input type="hidden" name="personId" value={personId} />
-
         <BekreftModal
           open={skjema.state.modalOpen}
           onClose={() => skjema.handlers.setModalOpen(false)}
