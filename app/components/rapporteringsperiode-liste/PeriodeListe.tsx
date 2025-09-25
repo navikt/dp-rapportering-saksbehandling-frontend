@@ -3,7 +3,7 @@ import { Table } from "@navikt/ds-react";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { PeriodeRad } from "./components/rad/PeriodeRad";
-import styles from "./periodeListe.module.css";
+import styles from "./PeriodeListe.module.css";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
