@@ -1,58 +1,96 @@
-:root {
-  --dato-strl: 33px;
+
+.root-container {
+  padding: 0;
+  vertical-align: top;
 }
 
-.aktivitetContainer {
+:root {
+  --dato-strl: 14px;
+}
+
+.dag-container {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-bottom: var(--a-spacing-8);
+  margin-bottom: var(--a-spacing-10);
 }
 
-.aktivitet {
+.utenTimer {
+  margin-bottom: 0;
+}
+
+.dag {
   display: flex;
   border-radius: 50%;
-  width: var(--a-spacing-8);
-  height: var(--a-spacing-8);
   align-items: center;
   justify-content: center;
-  margin: 0 var(--a-spacing-1);
+  margin: 0 auto;
   position: relative;
   z-index: 2;
 }
 
 .timer {
   position: absolute;
-  top: calc(var(--dato-strl) * 1.5);
+  top: calc(var(--dato-strl) * 2);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   border-radius: 0 0 5px 5px;
-  padding-top: calc(var(--dato-strl) * 0.6);
+  width: calc(var(--dato-strl) * 2);
+  padding-top: 4px;
   justify-content: center;
   align-items: center;
   background-color: var(--a-surface-selected);
-  width: calc(var(--dato-strl) - 1px);
-  height: calc(calc(var(--dato-strl) * 1.15));
-  font-size: var(--a-font-size-medium);
+  font-size: var(--a-font-size-small);
   color: var(--a-text-subtle);
   z-index: 1;
 }
 
-/**/
-
-.dag {
-  padding: 0;
+.aktivitetsIndikator.arbeid {
+  background-color: color-mix(in srgb, var(--a-blue-200) 20%, transparent);
 }
+
+.aktivitetsIndikator.sykdom {
+  background-color: color-mix(in srgb, var(--a-orange-200) 20%, transparent);
+}
+
+.aktivitetsIndikator.fravaer {
+  background-color: color-mix(in srgb, var(--a-green-200) 20%, transparent);
+}
+
+.aktivitetsIndikator.utdanning {
+  background-color: color-mix(in srgb, var(--a-purple-200) 20%, transparent);
+}
+
+.aktivitetsIndikator.sykOgFravaer {
+  background-color: color-mix(in srgb, var(--a-orange-200) 20%, transparent);
+}
+
+.aktivitetsIndikator.arbeidOgUtdanning {
+  background-color: color-mix(in srgb, var(--a-blue-200) 20%, transparent);
+}
+
+.aktivitetsIndikator.sykOgUtdanning {
+  background-color: color-mix(in srgb, var(--a-orange-200) 20%, transparent);
+}
+
+.aktivitetsIndikator.fravaerOgUtdanning {
+  background-color: color-mix(in srgb, var(--a-green-200) 20%, transparent);
+}
+
+.aktivitetsIndikator.sykFravaerOgUtdanning {
+  background-color: color-mix(in srgb, var(--a-orange-200) 20%, transparent);
+}
+
+/**/
 
 .dato {
   padding-right: 4px;
   padding-left: 6px;
   background-color: var(--a-bg-subtle);
-  width: calc(var(--dato-strl) * 2);
-  height: calc(var(--dato-strl) * 2);
+  width: calc(var(--dato-strl) * 2.5);
+  height: calc(var(--dato-strl) * 2.5);
   font-size: var(--a-font-size-medium);
   line-height: var(--a-font-size-medium);
 }
@@ -72,8 +110,8 @@
   top: -12.5%;
   background-color: var(--a-purple-200);
   border-radius: 50%;
-  height: 50%;
-  width: 50%;
+  height: 45%;
+  width: 45%;
 }
 
 .sykFravaerOgUtdanning::before {
@@ -83,9 +121,8 @@
   top: -12.5%;
   background-color: var(--a-purple-200);
   border-radius: 50%;
-  height: 50%;
-  width: 50%;
-  border-radius: 50%;
+  height: 45%;
+  width: 45%;
 }
 
 .utdanning {
@@ -109,19 +146,19 @@
   top: -12.5%;
   background-color: var(--a-green-200);
   border-radius: 50%;
-  height: 50%;
-  width: 50%;
+  height: 45%;
+  width: 45%;
 }
 
 @container (max-width: 530px) {
-  .aktivitetContainer {
+  .dag-container {
     margin-bottom: var(--a-spacing-6);
   }
 
   .dato {
     width: clamp(30px, 5vw, var(--dato-strl));
     height: clamp(30px, 5vw, var(--dato-strl));
-    font-size: clamp(12px, 2vw, var(--a-font-size-medium));
-    line-height: clamp(12px, 2vw, var(--a-font-size-medium));
+    font-size: clamp(12px, 2vw, var(--a-font-size-small));
+    line-height: clamp(12px, 2vw, var(--a-font-size-small));
   }
 }

@@ -13,6 +13,23 @@ interface IProps {
   ansvarligSystem: TAnsvarligSystem;
 }
 
+const DetailRow = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <tr className={styles.detailItem}>
+    <th scope="row" className={styles.label}>
+      {label}
+    </th>
+    <td className={styles.value}>{children}</td>
+  </tr>
+);
+
+const ActionButton = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <div>
+    <Button as="a" href={href} className={styles.korrigerKnapp} size="xsmall">
+      {children}
+    </Button>
+  </div>
+);
+
 export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalMeldekortId;
@@ -20,96 +37,65 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
   const kanEndres = periode.kanEndres && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const forSent = dagerForSent(periode);
+  const erSaksbehandler = periode?.kilde?.rolle === ROLLE.Saksbehandler;
+
+  const formatDato = (dato: string) =>
+    formatterDato({
+      dato,
+      format: DatoFormat.DagMndAarLang,
+    });
 
   return (
-    <div className={styles.periodeDetaljer}>
+    <div className={styles.root}>
       {kanSendes && (
-        <div>
-          <Button
-            as="a"
-            href={`/person/${personId}/periode/${periode.id}/fyll-ut`}
-            className={styles.korrigerKnapp}
-            size="small"
-            variant="primary"
-          >
-            Fyll ut meldekort
-          </Button>
-        </div>
+        <ActionButton href={`/person/${personId}/periode/${periode.id}/fyll-ut`}>
+          Fyll ut meldekort
+        </ActionButton>
       )}
 
-      <>
-        <dl className={styles.detailList}>
+      <table className={styles.detaljer} role="table" aria-label="Meldekort informasjon">
+        <caption className="sr-only">Detaljert informasjon om meldekortet</caption>
+        <tbody>
           {periode.meldedato && (
-            <>
-              <dt>Meldedato:</dt>
-              <dd>
-                {formatterDato({
-                  dato: periode.meldedato,
-                  format: DatoFormat.DagMndAarLang,
-                })}
-              </dd>
-            </>
+            <DetailRow label="Meldedato:">{formatDato(periode.meldedato)}</DetailRow>
           )}
+
           {periode.innsendtTidspunkt && (
-            <>
-              <dt>Dato for {erKorrigert ? "korrigering" : "innsending"}:</dt>
-              <dd>
-                {formatterDato({
-                  dato: periode.innsendtTidspunkt,
-                  format: DatoFormat.DagMndAarLang,
-                })}
-              </dd>
-            </>
+            <DetailRow label={`Dato for ${erKorrigert ? "korrigering" : "innsending"}:`}>
+              {formatDato(periode.innsendtTidspunkt)}
+            </DetailRow>
           )}
-          {(erKorrigert || periode?.kilde?.rolle === ROLLE.Saksbehandler) && (
-            <>
-              <dt>{erKorrigert ? "Korrigert" : "Innsendt"} av:</dt>
-              <dd>
-                {periode?.kilde?.rolle === ROLLE.Saksbehandler
-                  ? periode?.kilde?.ident
-                  : periode?.kilde?.rolle}
-              </dd>
 
-              {periode.begrunnelse && (
-                <>
-                  <dt>Begrunnelse:</dt>
-                  <dd>{periode.begrunnelse}</dd>
-                </>
-              )}
-            </>
+          {(erKorrigert || erSaksbehandler) && (
+            <DetailRow label={`${erKorrigert ? "Korrigert" : "Innsendt"} av:`}>
+              {erSaksbehandler ? periode.kilde?.ident : periode.kilde?.rolle}
+            </DetailRow>
           )}
+
+          {periode.begrunnelse && <DetailRow label="Begrunnelse:">{periode.begrunnelse}</DetailRow>}
+
           {periode.registrertArbeidssoker && (
-            <>
-              <dt>Svar på spørsmål om arbeidssøkerregistrering:</dt>
-              <dd>
-                <Tag variant={erArbeidssoker ? "success" : "error"} size="small">
-                  {erArbeidssoker ? "Ja" : "Nei"}
-                </Tag>
-              </dd>
-            </>
+            <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
+              <Tag variant={erArbeidssoker ? "success" : "error"} size="xsmall">
+                {erArbeidssoker ? "Ja" : "Nei"}
+              </Tag>
+            </DetailRow>
           )}
-        </dl>
+        </tbody>
+      </table>
 
-        {erSendtForSent && (
-          <Alert variant="warning" size="small">
-            Dette meldekortet er sendt inn {forSent}{" "}
-            {forSent !== null && forSent > 1 ? " dager" : " dag"} etter fristen
-          </Alert>
-        )}
+      {erSendtForSent && (
+        <Alert variant="warning" size="small">
+          Dette meldekortet er sendt inn {forSent}{" "}
+          {forSent !== null && forSent > 1 ? " dager" : " dag"} etter fristen
+        </Alert>
+      )}
 
-        {kanEndres && (
-          <div>
-            <Button
-              as="a"
-              href={`/person/${personId}/periode/${periode.id}/korriger`}
-              className={styles.korrigerKnapp}
-              size="xsmall"
-            >
-              Korriger meldekort
-            </Button>
-          </div>
-        )}
-      </>
+      {kanEndres && (
+        <ActionButton href={`/person/${personId}/periode/${periode.id}/korriger`}>
+          Korriger meldekort
+        </ActionButton>
+      )}
     </div>
   );
 }

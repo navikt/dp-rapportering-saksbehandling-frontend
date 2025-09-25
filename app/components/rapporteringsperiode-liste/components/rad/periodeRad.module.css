@@ -1,0 +1,157 @@
+.content-container {
+  padding: 1rem;
+  animation: fadeIn 0.5s ease-in;
+  border-radius: 0.625rem;
+  background: #FFF;
+}
+
+.forhandsvisning-meldekort {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    max-width: 1000px;
+}
+
+
+  .forhandsvisning-meldekort > :first-child {
+    flex: 2;
+  }
+  .forhandsvisning-meldekort > :last-child {
+    flex: 1;
+  }
+
+/* === Responsive layout for mobile === */
+@media (max-width: 768px) {
+  .forhandsvisning-meldekort {
+    flex-direction: column;
+    gap: 24px;
+    justify-content: flex-start;
+  }
+
+  .forhandsvisning-meldekort > :first-child {
+    flex: none;
+  }
+}
+
+
+/* === Rad i tabellen === */
+.periodeListe__row {
+  transition: background-color 0.2s ease-out;
+}
+
+.periodeListe__row--selected {
+  background-color: #F1F7FF !important;
+}
+
+.periodeListe__row--highlighted {
+  animation: highlightBlinkAndFade 3.5s ease-out;
+}
+
+/* === NavDS Overrides === */
+
+/* Overstyrer padding inline på innholdet */
+:global(.navds-table__expanded-row-content--gutter-left) {
+  padding-inline: var(--__ac-table-expanded-row-pi);
+}
+
+/* Expanded rows - light blue background */
+:global(.navds-table__expandable-row--open),
+:global(.navds-table__expandable-row--open td),
+:global(.navds-table__expandable-row--open th),
+:global(.navds-table__expanded-row),
+:global(.navds-table .navds-table__expandable-row--open),
+:global(.navds-table__body .navds-table__expandable-row--open),
+:global(.navds-table .navds-table__expandable-row--open td),
+:global(.navds-table .navds-table__expandable-row--open th),
+:global(.navds-table__body .navds-table__expandable-row--open td),
+:global(.navds-table__body .navds-table__expandable-row--open th) {
+  background-color: #F1F7FF !important;
+  transition: background-color 0.2s ease-out;
+}
+
+/* Override hover/selected states for expanded rows */
+:global(.navds-table__expandable-row--open:hover),
+:global(.navds-table__row--shade-on-hover.navds-table__expandable-row--open):hover,
+:global(.navds-table__row--shade-on-hover).periodeListe__row:hover,
+:global(.navds-table__expandable-row--open[aria-selected="true"]),
+:global(.navds-table__expandable-row--open.navds-table__row--selected) {
+  background-color: #F1F7FF !important;
+}
+
+
+/* Collapsed rows - transparent background */
+:global(.navds-table__expandable-row:not(.navds-table__row--expanded)) td {
+  background-color: transparent;
+  transition: background-color 0.2s ease-out;
+}
+
+
+/* === Disabled rad styling === */
+.periodeListe__row--disabled {
+  cursor: default !important;
+}
+
+.periodeListe__row--disabled:hover {
+  background-color: transparent !important;
+  cursor: default !important;
+}
+
+/* Disabled rows - no hover effects */
+:global(.navds-table__row--shade-on-hover).periodeListe__row--disabled:hover {
+  background-color: transparent !important;
+}
+
+
+/* === Aktiviteter === */
+.aktiviteter {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  gap: 2px
+}
+
+.aktivitet {
+  display: flex;
+  border-radius: 100%;
+  width: var(--a-spacing-6);
+  height: var(--a-spacing-6);
+  align-items: center;
+  justify-content: center;
+}
+
+/* Aktivitet farger importeres fra global module */
+
+/* === Animasjoner === */
+
+@keyframes highlightBlinkAndFade {
+  0% {
+    background-color: var(--a-blue-100);
+  }
+  10% {
+    background-color: transparent;
+  }
+  20% {
+    background-color: var(--a-blue-100);
+  }
+  30% {
+    background-color: transparent;
+  }
+  40% {
+    background-color: var(--a-blue-100);
+  }
+  50% {
+    background-color: var(--a-blue-100);
+  }
+  75% {
+    background-color: var(--a-surface-action-subtle);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+
+

@@ -20,20 +20,14 @@
   }
 }
 
-.periode-overskrift {
+.periodeOverskrift {
   background-color: var(--a-white);
   padding: var(--a-spacing-6);
 }
 
-.uendret-periode {
+.uendretPeriode {
   flex: 1;
   width: 50%;
-}
-
-.endret-periode {
-  flex: 1;
-  background-color: var(--a-white);
-  height: -webkit-fill-available;
 }
 
 .korrigering {
@@ -43,8 +37,7 @@
   row-gap: var(--a-spacing-8);
 }
 
-.uendret-periode,
-.endret-periode,
+.uendretPeriode,
 .korrigering {
   padding: var(--a-spacing-6);
 }
@@ -104,7 +97,7 @@
   @media (min-width: 1024px) {
     flex-direction: row;
     width: 80%;
-    max-width: 1200px;
+    max-width: 1000px;
   }
 }
 
@@ -134,6 +127,3 @@
   gap: var(--a-spacing-8);
 }
 
-.reverse {
-  flex-direction: column-reverse;
-}

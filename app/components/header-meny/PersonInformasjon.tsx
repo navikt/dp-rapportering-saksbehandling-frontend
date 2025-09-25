@@ -51,7 +51,6 @@ export default function PersonInformasjon({ person, perioder = [] }: IProps) {
     setEvents(transformPerioderToHistoryEvents(perioder));
   };
 
-
   return (
     <div className={styles.personInformasjonContainer}>
       <div className={styles.personInformasjon}>
@@ -99,7 +98,7 @@ export default function PersonInformasjon({ person, perioder = [] }: IProps) {
         </BodyShort>
       </div>
       <div className={styles.historikkKnapp}>
-        <Button variant="secondary-neutral" size="small" onClick={handleOpenModal}>
+        <Button variant="secondary-neutral" size="xsmall" onClick={handleOpenModal}>
           Historikk
         </Button>
       </div>

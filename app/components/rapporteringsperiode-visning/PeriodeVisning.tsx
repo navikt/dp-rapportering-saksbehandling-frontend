@@ -1,40 +1,65 @@
 import { BodyShort } from "@navikt/ds-react";
 
-import { aktivitetsTyper } from "~/utils/constants";
-import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import aktivitetStyles from "~/styles/aktiviteter.module.css";
+import { AKTIVITET_TYPE, aktivitetsTyper, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import {
+  DatoFormat,
+  formatterDato,
+  konverterFraISO8601Varighet,
+  ukenummer,
+} from "~/utils/dato.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-import { Forhandsvisning } from "./Forhandsvisning";
+import { KalenderTabell } from "../tabeller/kalender/KalenderTabell";
 import styles from "./PeriodeVisning.module.css";
-import { beregnTotalt } from "./sammenlagt.utils";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
 }
 
-export function RapporteringsperiodeVisning({ perioder }: IProps) {
-  return (
-    <div className={styles.perioder}>
-      {perioder.map((periode) => {
-        const { fraOgMed, tilOgMed } = periode.periode;
-        const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
-        const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
-        const uker = ukenummer(periode);
+function beregnTotalt(periode: IRapporteringsperiode, type: string) {
+  return periode.dager.reduce((sum, dag) => {
+    const aktivitet = dag.aktiviteter.find((aktivitet) => aktivitet.type === type);
+    if (!aktivitet) return sum;
 
-        return (
-          <section key={periode.id} aria-labelledby={`periode-${periode.id}`}>
-            <h3 id={`periode-${periode.id}`} className={styles.header}>
-              Uke {uker}
-            </h3>
-            <p className={styles.periode}>
-              <time dateTime={fraOgMed}>{formattertFraOgMed}</time> -{" "}
-              <time dateTime={tilOgMed}>{formattertTilOgMed}</time>
-            </p>
-            <Forhandsvisning periode={periode} />
+    if (type === AKTIVITET_TYPE.Arbeid) {
+      return sum + (konverterFraISO8601Varighet(aktivitet.timer || "PT0H") || 0);
+    }
+
+    return sum + 1;
+  }, 0);
+}
+
+export function RapporteringsperiodeVisning({ perioder }: IProps) {
+  return perioder.map((periode) => {
+    const { fraOgMed, tilOgMed } = periode.periode;
+    const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
+    const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
+    const uker = ukenummer(periode);
+
+    // Sjekk om meldekort er tomt/klar til utfylling
+    const erTilUtfylling =
+      periode.status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling && periode.kanSendes;
+
+    return (
+      <section key={periode.id} aria-labelledby={`periode-${periode.id}`} className={styles.root}>
+        <div>
+          <h3 id={`periode-${periode.id}`}>Uke {uker}</h3>
+          <BodyShort size="small">
+            <time dateTime={fraOgMed}>{formattertFraOgMed}</time> -{" "}
+            <time dateTime={tilOgMed}>{formattertTilOgMed}</time>
+          </BodyShort>
+        </div>
+
+        {erTilUtfylling ? (
+          <div className={styles.tomMeldekort}>
+            <BodyShort>Dette meldekortet er ikke fylt ut enda.</BodyShort>
+          </div>
+        ) : (
+          <>
+            <KalenderTabell periode={periode} />
             <div className={styles.sammenlagt}>
-              <h4 className={styles.sammenlagtTittel} id={`sammenlagt-${periode.id}`}>
-                Sammenlagt for perioden
-              </h4>
+              <h4 id={`sammenlagt-${periode.id}`}>Sammenlagt for perioden</h4>
               <ul className={styles.aktivitetListe} aria-labelledby={`sammenlagt-${periode.id}`}>
                 {aktivitetsTyper.map(({ type, label, erDager, klasse }) => {
                   const total = beregnTotalt(periode, type);
@@ -43,23 +68,21 @@ export function RapporteringsperiodeVisning({ perioder }: IProps) {
                   return (
                     <li
                       key={type}
-                      className={`${styles.aktivitet} ${klasse}`}
+                      className={`${styles.aktivitet} ${aktivitetStyles[klasse]}`}
                       aria-label={`${label}: ${total} ${enhet}`}
                     >
-                      <BodyShort size="small" as="span" aria-hidden="true">
-                        {label}
-                      </BodyShort>
-                      <BodyShort size="small" as="span" aria-hidden="true">
+                      <span aria-hidden="true">{label}</span>
+                      <span aria-hidden="true">
                         {total} {enhet}
-                      </BodyShort>
+                      </span>
                     </li>
                   );
                 })}
               </ul>
             </div>
-          </section>
-        );
-      })}
-    </div>
-  );
+          </>
+        )}
+      </section>
+    );
+  });
 }

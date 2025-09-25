@@ -1,10 +1,19 @@
 
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-spacing-2) 0;
+}
+.sammenlagt {
+  font-size: 0.85rem!important;
+}
+
 .aktivitetListe {
-  padding: var(--a-spacing-2) 0;
+  padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--a-spacing-2);
+  gap: var(--a-spacing-1);
   list-style: none;
 }
 
@@ -13,5 +22,13 @@
   justify-content: space-between;
   align-items: center;
   border-radius: 20px;
-  padding: var(--a-spacing-1) var(--a-spacing-8);
+  padding: 0 var(--a-spacing-3);
+}
+
+.tomMeldekort {
+  padding: var(--a-spacing-6);
+  background-color: var(--a-bg-subtle);
+  border-radius: var(--a-border-radius-medium);
+  text-align: center;
+  color: var(--a-text-subtle);
 }
