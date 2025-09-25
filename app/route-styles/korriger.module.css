@@ -3,41 +3,39 @@
   flex-direction: column;
   row-gap: var(--a-spacing-2);
   padding: var(--a-spacing-4);
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-bottom: var(--a-spacing-8);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: var(--a-spacing-8);
 }
 
 .hvit-container {
-    display: flex  ;
-      flex-direction: column;
-    background-color: white;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
   padding: var(--a-spacing-4);
-    row-gap: var(--a-spacing-2);
+  row-gap: var(--a-spacing-2);
 }
 
 .meldekort {
-    display: flex  ;
-    flex-direction: column;
-    row-gap: var(--a-spacing-4);
-    margin: auto;
-    width: 100%;
-    max-width: 50%;
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--a-spacing-4);
+  margin: auto;
+  width: 100%;
+  max-width: 50%;
 }
 .begrunnelse-visning {
-    border: 1px solid var(--a-border-default);
-    display: flex;
-    flex-direction: column;
-    padding: var(--a-spacing-2);
-    border-radius: var(--a-border-radius-medium);
-    row-gap: var(--a-spacing-);
+  border: 1px solid var(--a-border-default);
+  display: flex;
+  flex-direction: column;
+  padding: var(--a-spacing-2);
+  border-radius: var(--a-border-radius-medium);
 }
 
-
 .skjema {
-    display: flex  ;
-    flex-direction: column;
-    row-gap: var(--a-spacing-4);
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--a-spacing-4);
 }
 
 .fieldset {
@@ -46,17 +44,15 @@
   margin: 0;
 }
 
-.knapper{
-        display: flex  ;
-        gap: var(--a-spacing-4);
+.knapper {
+  display: flex;
+  gap: var(--a-spacing-4);
 }
 
-
 .begrunnelse {
-  max-width: 60%
+  max-width: 60%;
 }
 
 .kompaktTekst {
   font-size: var(--a-font-size-xsmall) !important;
 }
-
