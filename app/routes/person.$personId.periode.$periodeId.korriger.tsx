@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
-import { Forhandsvisning } from "~/components/rapporteringsperiode-visning/Forhandsvisning";
-import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
+import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
+import { KalenderTabell } from "~/components/tabeller/kalender/KalenderTabell";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
@@ -151,7 +151,7 @@ export default function Periode() {
           <Tag variant="info" size="small">
             Sist beregnet
           </Tag>
-          <Forhandsvisning periode={periode} />
+          <KalenderTabell periode={periode} />
           {periode.begrunnelse && (
             <div className={styles.begrunnelseVisning}>
               <Heading level="3" size="small">

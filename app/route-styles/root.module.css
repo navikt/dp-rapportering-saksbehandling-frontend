@@ -1,9 +1,9 @@
-.headerLogo {
+.header-logo {
   display: flex;
   text-decoration: none;
 }
 
-.pageHeader span {
+.page-header span {
   white-space: nowrap;
   display: flex;
   align-items: center;

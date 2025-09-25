@@ -11,8 +11,8 @@ import {
   erIkkeAktiv,
   type IKorrigertDag,
   type SetKorrigerteDager,
-} from "../../utils/korrigering.utils";
-import styles from "./tabeller.module.css";
+} from "../../../utils/korrigering.utils";
+import styles from "./fyllUtTabell.module.css";
 
 interface IProps {
   dager: IKorrigertDag[];

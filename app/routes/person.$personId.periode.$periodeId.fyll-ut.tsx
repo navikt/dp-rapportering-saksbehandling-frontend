@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
-import { FyllUtTabell } from "~/components/tabeller/FyllUtTabell";
+import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";

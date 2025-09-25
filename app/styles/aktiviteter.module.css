@@ -1,0 +1,17 @@
+/* === Aktiviteter Farger === */
+
+.arbeid {
+  background-color: var(--a-blue-200);
+}
+
+.syk {
+  background-color: var(--a-orange-200);
+}
+
+.fravaer {
+  background-color: var(--a-green-200);
+}
+
+.utdanning {
+  background-color: var(--a-purple-200);
+}
