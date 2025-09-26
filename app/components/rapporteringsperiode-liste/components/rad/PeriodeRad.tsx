@@ -28,7 +28,7 @@ export function PeriodeRad({ periode, personId, ansvarligSystem }: Props) {
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
   const erOpprettet = !erInnsendt && !periode.kanSendes;
   const erKorrigert = !!periode.originalMeldekortId;
-  const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })})`;
+  const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })}`;
 
   // Display values
   const statusText = erInnsendt
