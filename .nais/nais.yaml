@@ -52,7 +52,6 @@ spec:
       external:
         - host: rt6o382n.apicdn.sanity.io
         - host: www.nav.no
-        - host: amplitude.nav.no
         - host: graph.microsoft.com
         - host: login.microsoftonline.com
       rules:
