@@ -4,8 +4,8 @@ import { useRouteLoaderData, useSearchParams } from "react-router";
 
 import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-liste/PeriodeListe";
 import { groupPeriodsByYear } from "~/components/rapporteringsperiode-liste/utils";
-import styles from "~/route-styles/perioder.module.css";
 import type { loader as personLoader } from "~/routes/person.$personId";
+import styles from "~/styles/route-styles/perioder.module.css";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DEFAULT_PERSON } from "~/utils/constants";
 import { ukenummer } from "~/utils/dato.utils";

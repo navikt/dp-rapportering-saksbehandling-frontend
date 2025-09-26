@@ -1,5 +1,3 @@
-import "~/styles/ekstern-flate.css";
-
 import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
 import { BodyShort, Heading } from "@navikt/ds-react";
 import { format } from "date-fns";
@@ -13,7 +11,7 @@ import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
-import styles from "~/route-styles/korriger.module.css";
+import styles from "~/styles/route-styles/korriger.module.css";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";

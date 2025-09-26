@@ -44,7 +44,7 @@
   margin: 0;
 }
 
-.annenInfo{
+.annenInfo {
   display: flex;
   flex-direction: row;
   gap: var(--a-spacing-4);
@@ -54,10 +54,11 @@
 .knapper {
   display: flex;
   gap: var(--a-spacing-4);
+  justify-content: flex-end;
 }
 
 .begrunnelse {
-flex: 2;
+  flex: 2;
 }
 
 .kompaktTekst {

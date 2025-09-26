@@ -17,7 +17,7 @@ import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
-import styles from "~/route-styles/periode.module.css";
+import styles from "~/styles/route-styles/fyllUt.module.css";
 import {
   MODAL_ACTION_TYPE,
   QUERY_PARAMS,
@@ -134,7 +134,7 @@ export default function FyllUtPeriode() {
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
   return (
-    <section aria-labelledby="fyll-ut-heading" className={styles.fyllroot}>
+    <section aria-labelledby="fyll-ut-heading" className={styles.fyllUtContainer}>
       <div className={styles.skjema}>
         <div className={styles.title}>
           <Heading level="1" size="small" id="fyll-ut-heading">
@@ -145,8 +145,13 @@ export default function FyllUtPeriode() {
           </BodyShort>
         </div>
 
-        <Form method="post" ref={skjema.refs.formRef} onSubmit={skjema.handlers.handleSubmit}>
-          <div className={styles.inputs}>
+        <Form
+          method="post"
+          ref={skjema.refs.formRef}
+          onSubmit={skjema.handlers.handleSubmit}
+          className={styles.container}
+        >
+          <div className={styles.container}>
             <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
               <legend className="sr-only">Aktiviteter per dag</legend>
               <FyllUtTabell
@@ -155,58 +160,52 @@ export default function FyllUtPeriode() {
                 periode={periode.periode}
               />
             </fieldset>
-            <fieldset className={classNames(styles.details, styles.fieldset)}>
+            <fieldset className={classNames(styles.detaljer, styles.fieldset)}>
               <legend className="sr-only">Grunnleggende informasjon</legend>
-              <div>
-                <DatePicker {...skjema.datepicker.datepickerProps}>
-                  <DatePicker.Input
-                    {...skjema.datepicker.inputProps}
-                    ref={skjema.refs.meldedatoRef}
-                    label="Sett meldedato"
-                    placeholder="dd.mm.åååå"
-                    size="small"
-                    error={
-                      skjema.state.visValideringsfeil.meldedato
-                        ? "Meldedato må fylles ut"
-                        : undefined
-                    }
-                  />
-                </DatePicker>
-              </div>
-              <div>
-                <RadioGroup
+              <DatePicker {...skjema.datepicker.datepickerProps}>
+                <DatePicker.Input
+                  {...skjema.datepicker.inputProps}
+                  ref={skjema.refs.meldedatoRef}
+                  label="Sett meldedato"
+                  placeholder="dd.mm.åååå"
                   size="small"
-                  legend="Registrert som arbeidssøker de neste 14 dagene?"
                   error={
-                    skjema.state.visValideringsfeil.arbeidssoker
-                      ? "Du må velge om bruker skal være registrert som arbeidssøker"
-                      : undefined
+                    skjema.state.visValideringsfeil.meldedato ? "Meldedato må fylles ut" : undefined
                   }
-                  value={skjema.state.registrertArbeidssoker?.toString() || ""}
-                  onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
-                >
-                  <Radio ref={skjema.refs.arbeidssokerRef} value="true">
-                    Ja
-                  </Radio>
-                  <Radio value="false">Nei</Radio>
-                </RadioGroup>
-              </div>
-              <div className={styles.begrunnelse}>
-                <Textarea
-                  ref={skjema.refs.begrunnelseRef}
-                  size="small"
-                  label="Begrunnelse"
-                  name="begrunnelse"
-                  error={
-                    skjema.state.visValideringsfeil.begrunnelse
-                      ? "Begrunnelse må fylles ut"
-                      : undefined
-                  }
-                  value={skjema.state.begrunnelse}
-                  onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
-                  rows={3}
                 />
-              </div>
+              </DatePicker>
+              <RadioGroup
+                size="small"
+                legend="Registrert som arbeidssøker de neste 14 dagene?"
+                error={
+                  skjema.state.visValideringsfeil.arbeidssoker
+                    ? "Du må velge om bruker skal være registrert som arbeidssøker"
+                    : undefined
+                }
+                value={skjema.state.registrertArbeidssoker?.toString() || ""}
+                onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
+              >
+                <Radio ref={skjema.refs.arbeidssokerRef} value="true">
+                  Ja
+                </Radio>
+                <Radio value="false">Nei</Radio>
+              </RadioGroup>
+              <Textarea
+                resize
+                ref={skjema.refs.begrunnelseRef}
+                size="small"
+                label="Begrunnelse"
+                name="begrunnelse"
+                error={
+                  skjema.state.visValideringsfeil.begrunnelse
+                    ? "Begrunnelse må fylles ut"
+                    : undefined
+                }
+                value={skjema.state.begrunnelse}
+                onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
+                rows={3}
+                className={styles.begrunnelse}
+              />
             </fieldset>
           </div>
 
@@ -217,10 +216,10 @@ export default function FyllUtPeriode() {
             </div>
           )}
           <div className={styles.handlinger}>
-            <Button variant="secondary" size="small" onClick={skjema.handlers.handleAvbryt}>
+            <Button variant="secondary" size="xsmall" onClick={skjema.handlers.handleAvbryt}>
               Avbryt utfylling
             </Button>
-            <Button type="submit" variant="primary" size="small">
+            <Button type="submit" variant="primary" size="xsmall">
               Send inn meldekort
             </Button>
           </div>

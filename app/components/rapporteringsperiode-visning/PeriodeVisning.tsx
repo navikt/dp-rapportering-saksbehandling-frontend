@@ -43,20 +43,19 @@ export function RapporteringsperiodeVisning({ perioder }: IProps) {
 
     return (
       <section key={periode.id} aria-labelledby={`periode-${periode.id}`} className={styles.root}>
-        <div>
-          <h3 id={`periode-${periode.id}`}>Uke {uker}</h3>
-          <BodyShort size="small">
-            <time dateTime={fraOgMed}>{formattertFraOgMed}</time> -{" "}
-            <time dateTime={tilOgMed}>{formattertTilOgMed}</time>
-          </BodyShort>
-        </div>
-
         {erTilUtfylling ? (
           <div className={styles.tomMeldekort}>
             <BodyShort>Dette meldekortet er ikke fylt ut enda.</BodyShort>
           </div>
         ) : (
           <>
+            <div>
+              <h3 id={`periode-${periode.id}`}>Uke {uker}</h3>
+              <BodyShort size="small">
+                <time dateTime={fraOgMed}>{formattertFraOgMed}</time> -{" "}
+                <time dateTime={tilOgMed}>{formattertTilOgMed}</time>
+              </BodyShort>
+            </div>
             <KalenderTabell periode={periode} />
             <div className={styles.sammenlagt}>
               <h4 id={`sammenlagt-${periode.id}`}>Sammenlagt for perioden</h4>
