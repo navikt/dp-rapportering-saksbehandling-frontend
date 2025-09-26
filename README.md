@@ -36,7 +36,7 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
 1. **Klon repositoryet**
 
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/navikt/dp-rapportering-saksbehandling-frontend.git
    cd dp-rapportering-saksbehandling-frontend
    ```
 
