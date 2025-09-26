@@ -1,6 +1,8 @@
 # Saksbehandlerflate for dagpengemeldekort
 
-En moderne React-basert saksbehandlerløsning for rapportering og behandling av dagpengemeldekort i NAV.
+(skrevet med hjelp av Copilot/KI)
+
+En React-basert saksbehandlerløsning for rapportering og behandling av dagpengemeldekort i NAV.
 
 ## Om prosjektet
 
