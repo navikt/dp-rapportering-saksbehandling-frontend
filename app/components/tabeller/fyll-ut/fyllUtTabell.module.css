@@ -1,31 +1,31 @@
 table {
-    text-align: left;
-    font-size: 16px;
-border-spacing: 0px 8px;
+  text-align: left;
+  font-size: 0.75rem !important;
+  border-collapse: collapse;
 }
 
 .label {
-    text-align: left;
-    font-weight: 600;
+  text-align: left;
+  font-weight: 600;
 }
 
 td {
-    text-wrap: nowrap;
+  text-wrap: nowrap;
 }
 
 thead, tr, th {
-    font-weight: 400;
+  font-weight: 400;
 }
 
 
 .aktivitet {
-    margin: 0 auto;
-    text-align: left;
-    padding: 7px 20px;
-    border-radius: 40px;
-    @media (min-width: 1440px) {
-      white-space: nowrap;
-    }
+  margin: 0 auto;
+  text-align: left;
+  padding:  var(--a-spacing-1) var(--a-spacing-2);
+  border-radius: 40px;
+  @media (min-width: 1440px) {
+    white-space: nowrap;
+  }
 }
 
 .aktivitetArbeid {
@@ -62,45 +62,17 @@ thead, tr, th {
 }
 
 .gap {
-  width: 40px;
-  padding: 0;
+  width: 15px;
   border: none;
   background: transparent;
   pointer-events: none; /* Forhindrer at gap-cellen er interaktiv */
 }
 
-/* Konsistent styling for checkbox og input felt */
-table .navds-text-field__input {
-  width: 64px;
-  height: 48px;
-  min-width: 64px;
-  min-height: 48px;
-  text-align: center;
-  padding: 8px;
-  font-size: 14px;
-}
-
-table .navds-checkbox {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-table .navds-checkbox__input {
-  width: 20px;
-  height: 20px;
-  margin: 0 auto;
-}
 
 table td {
   text-align: center;
   vertical-align: middle;
-  padding: 4px;
+  padding: 2px;
 }
 
 table th {
@@ -117,4 +89,13 @@ table th {
 
 .ukedag {
   text-transform: capitalize;
+}
+
+.oppsummering {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
