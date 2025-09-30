@@ -32,18 +32,6 @@ export async function hentRapporteringsperioder(
 
     const rapporteringsperioder: IRapporteringsperiode[] = await response.json();
 
-    const correctedIds = new Set(
-      rapporteringsperioder.filter((p) => p.originalMeldekortId).map((p) => p.originalMeldekortId),
-    );
-
-    // TODO: Fjern denne etter testing
-    if (getEnv("RUNTIME_ENVIRONMENT") === "development") {
-      return rapporteringsperioder.sort(sorterMeldekort).map((periode) => ({
-        ...periode,
-        kanSendes: correctedIds.has(periode.id) ? periode.kanSendes : true,
-      }));
-    }
-
     return rapporteringsperioder.sort(sorterMeldekort);
   } catch (error) {
     const errorId = uuidv7();
