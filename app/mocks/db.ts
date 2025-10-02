@@ -120,6 +120,16 @@ function hentSaksbehandler(db: Database, saksbehandlerId: string) {
   }) as ISaksbehandler;
 }
 
+function hentArbeidssokerperioder(db: Database) {
+  return db.arbeidssokerperioder.findMany({
+    orderBy: [
+      {
+        startDato: "desc",
+      },
+    ],
+  }) as unknown as IRapporteringsperiode[];
+}
+
 export function withDb(db: Database) {
   return {
     hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
@@ -131,5 +141,6 @@ export function withDb(db: Database) {
     oppdaterPeriode: (periodeId: string, oppdateringer: IRapporteringsperiode) =>
       oppdaterPeriode(db, periodeId, oppdateringer),
     periodeKanIkkeLengerSendes: (periodeId: string) => periodeKanIkkeLengerSendes(db, periodeId),
+    hentArbeidssokerperioder: () => hentArbeidssokerperioder(db),
   };
 }

@@ -3,6 +3,7 @@ import { uuidv7 } from "uuidv7";
 
 import {
   AKTIVITET_TYPE,
+  ARBEIDSSOKERPERIODE_STATUS,
   KORT_TYPE,
   OPPRETTET_AV,
   RAPPORTERINGSPERIODE_STATUS,
@@ -10,6 +11,7 @@ import {
 import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import type {
   IAktivitet,
+  IArbeidssokerperiode,
   IPeriode,
   IPerson,
   IRapporteringsperiode,
@@ -116,6 +118,22 @@ export function lagRapporteringsperiode(
   }
 
   return meldekort;
+}
+
+export function lagArbeidssokerperiode(
+  props: Partial<IArbeidssokerperiode> = {},
+  person?: IPerson,
+): IArbeidssokerperiode {
+  const sluttDato = props.sluttDato ?? null;
+
+  return {
+    periodeId: uuidv7(),
+    ident: person?.ident || createFnr().ident,
+    startDato: props.startDato || format(subYears(new Date(), 1), "yyyy-MM-dd"),
+    sluttDato,
+    status: sluttDato ? ARBEIDSSOKERPERIODE_STATUS.AVSLUTTET : ARBEIDSSOKERPERIODE_STATUS.STARTET,
+    ...props,
+  };
 }
 
 export function lagSaksbehandler(props: Partial<ISaksbehandler> = {}) {
