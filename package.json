@@ -37,7 +37,7 @@
     "tinyduration": "^3.4.1",
     "usehooks-ts": "^3.1.1",
     "uuidv7": "^1.0.2",
-    "winston": "^3.18.1"
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
