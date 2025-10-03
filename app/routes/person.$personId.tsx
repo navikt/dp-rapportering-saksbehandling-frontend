@@ -27,12 +27,15 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export default function Rapportering() {
   const { person, perioder, arbeidssokerperioder } = useLoaderData<typeof loader>();
-  console.log(arbeidssokerperioder);
 
   return (
     <>
       <aside aria-label="Informasjon om valgt person" className={styles.personInformasjon}>
-        <PersonInformasjon person={person} perioder={perioder} />
+        <PersonInformasjon
+          person={person}
+          perioder={perioder}
+          arbeidssokerperioder={arbeidssokerperioder}
+        />
       </aside>
       <main id="main-content">
         <Outlet />

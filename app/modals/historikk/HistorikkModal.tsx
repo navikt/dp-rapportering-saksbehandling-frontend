@@ -3,12 +3,13 @@ import { Heading, Modal } from "@navikt/ds-react";
 import styles from "./historikkModal.module.css";
 
 export interface IHendelse {
-  date: string;
+  dato: Date;
+  visningsDato: string;
   time: string;
   event: string;
   hendelseType?: "Innsendt" | "Korrigert";
   type?: "Elektronisk" | "Manuell";
-  kategori: "Meldekort" | "System";
+  kategori: "Meldekort" | "System" | "Arbeidssøkerregisteret";
 }
 
 interface HistorikkModalProps {
@@ -29,10 +30,10 @@ export function HistorikkModal({ open, onClose, fulltNavn, hendelser }: Historik
       <Modal.Body>
         <ol className={styles.list}>
           {hendelser.map((hendelse, id) => (
-            <li key={`${hendelse.date}-${id}`} className={styles.row}>
+            <li key={`${hendelse.visningsDato}-${id}`} className={styles.row}>
               <dl className={styles.tidspunkt}>
                 <dt className="sr-only">Dato</dt>
-                <dd>{hendelse.date}</dd>
+                <dd>{hendelse.visningsDato}</dd>
                 <dt className="sr-only">Tid</dt>
                 <dd>kl {hendelse.time}</dd>
               </dl>
@@ -51,7 +52,7 @@ export function HistorikkModal({ open, onClose, fulltNavn, hendelser }: Historik
                   </>
                 )}
                 <dt className="sr-only">Type</dt>
-                <dd className={styles.subtle}>{hendelse.type || "x"}</dd>
+                <dd className={styles.subtle}>{hendelse.type}</dd>
               </dl>
             </li>
           ))}
