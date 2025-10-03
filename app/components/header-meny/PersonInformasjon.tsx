@@ -81,7 +81,6 @@ export default function PersonInformasjon({
       ...transformArbeidssokerperioderToHistoryEvents(arbeidssokerperioder),
       ...transformPerioderToHistoryEvents(perioder),
     ].sort((a, b) => (a.dato < b.dato ? 1 : -1));
-    console.log(hendelser);
     setEvents(hendelser);
   };
 

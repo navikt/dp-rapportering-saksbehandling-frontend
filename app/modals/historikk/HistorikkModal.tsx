@@ -52,7 +52,7 @@ export function HistorikkModal({ open, onClose, fulltNavn, hendelser }: Historik
                   </>
                 )}
                 <dt className="sr-only">Type</dt>
-                <dd className={styles.subtle}>{hendelse.type}</dd>
+                {hendelse.type && <dd className={styles.subtle}>{hendelse.type}</dd>}
               </dl>
             </li>
           ))}

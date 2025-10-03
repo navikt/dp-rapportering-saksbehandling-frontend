@@ -17,12 +17,12 @@ export function mockPersonregister(database?: ReturnType<typeof withDb>) {
         const person = db.hentArbeidssokerperioder();
 
         if (!person) {
-          logger.error(`[mock meldekortregister]: Fant ikke person ${personId}`);
+          logger.error(`[mock personregister]: Fant ikke person ${personId}`);
 
           return HttpResponse.json(null, { status: 404 });
         }
 
-        logger.info(`[mock meldekortregister]: Hentet person ${personId}`);
+        logger.info(`[mock personregister]: Hentet person ${personId}`);
 
         return HttpResponse.json(person);
       },

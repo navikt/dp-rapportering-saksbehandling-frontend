@@ -1,7 +1,12 @@
 import { uuidv7 } from "uuidv7";
 
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
-import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
+import type {
+  IArbeidssokerperiode,
+  IPerson,
+  IRapporteringsperiode,
+  ISaksbehandler,
+} from "~/utils/types";
 
 import { type Database } from "./session";
 
@@ -127,7 +132,7 @@ function hentArbeidssokerperioder(db: Database) {
         startDato: "desc",
       },
     ],
-  }) as unknown as IRapporteringsperiode[];
+  }) as IArbeidssokerperiode[];
 }
 
 export function withDb(db: Database) {
