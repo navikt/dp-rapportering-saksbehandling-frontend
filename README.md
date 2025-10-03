@@ -84,6 +84,7 @@ For å teste mot faktisk backend i dev-miljø:
 
 2. **Hent nødvendige tokens** (krever naisdevice):
    - [Meldekortregister token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp.teamdagpenger.dp-meldekortregister)
+   - [Personregister token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp.teamdagpenger.dp-rapportering-personregister)
    - [Microsoft token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=https://graph.microsoft.com/.default)
 
    **Merk**: Tokens er gyldige i 1 time.

@@ -1,12 +1,59 @@
 import { uuidv7 } from "uuidv7";
 
-import { DP_MELDEKORTREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
+import {
+  DP_MELDEKORTREGISTER_AUDIENCE,
+  DP_PERSONREGISTER_AUDIENCE,
+} from "~/utils/auth.utils.server";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import { sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
-import type { IKorrigerMeldekort, IRapporteringsperiode, ISendInnMeldekort } from "~/utils/types";
+import type {
+  IArbeidssokerperiode,
+  IKorrigerMeldekort,
+  IRapporteringsperiode,
+  ISendInnMeldekort,
+} from "~/utils/types";
 
 import { logger } from "./logger.server";
+
+export async function hentArbeidssokerperioder(
+  request: Request,
+  personId: string,
+): Promise<IArbeidssokerperiode[]> {
+  const url = `${getEnv("DP_PERSONREGISTER_URL")}/arbeidssokerperioder/${personId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: await getHeaders({ request, audience: DP_PERSONREGISTER_AUDIENCE }),
+    });
+
+    if (!response.ok) {
+      throw new Response(`Feil ved henting av arbeidssokerperioder for person med ID ${personId}`, {
+        status: response.status,
+        statusText: response.statusText,
+      });
+    }
+
+    const arbeidssokerperioder: IArbeidssokerperiode[] = await response.json();
+
+    return arbeidssokerperioder;
+  } catch (error) {
+    const errorId = uuidv7();
+
+    if (error instanceof Response) {
+      logger.error(error.statusText, { errorId });
+      throw Response.json(
+        { errorId, message: error.statusText },
+        { status: error.status, statusText: error.statusText },
+      );
+    }
+
+    const melding = `Feil ved henting av arbeidssokerperioder for person med ID ${personId}: ${error}`;
+    logger.error(melding, { errorId });
+    throw Response.json({ errorId, message: melding }, { status: 500 });
+  }
+}
 
 export async function hentRapporteringsperioder(
   request: Request,

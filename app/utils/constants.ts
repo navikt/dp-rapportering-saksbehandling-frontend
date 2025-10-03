@@ -85,3 +85,8 @@ export const DEFAULT_PERSON: IPerson = {
   kjonn: KJONN.UKJENT,
   ident: "",
 };
+
+export const ARBEIDSSOKERPERIODE_STATUS = {
+  STARTET: "Startet",
+  AVSLUTTET: "Avsluttet",
+} as const;

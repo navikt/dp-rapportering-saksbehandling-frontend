@@ -14,6 +14,7 @@ export function getEnv<T>(key: keyof IEnv): T {
     IS_LOCALHOST: "false",
     USE_MSW: env.NODE_ENV === "test" ? "true" : "false",
     DP_MELDEKORTREGISTER_URL: "https://dp-meldekortregister.intern.dev.nav.no",
+    DP_PERSONREGISTER_URL: "https://dp-rapportering-personregister.intern.dev.nav.no",
     FARO_URL: "http://localhost:12347/collect",
     RUNTIME_ENVIRONMENT: "production",
   };

@@ -3,6 +3,7 @@ import { factory, nullable, primaryKey } from "@mswjs/data";
 
 import type { IPerson, ISaksbehandler } from "~/utils/types";
 
+import { hentArbeidssokerperioder } from "./data/mock-arbeidssokerperioder";
 import { mockPersons } from "./data/mock-persons";
 import { hentRapporteringsperioderForScenario } from "./data/mock-rapporteringsperioder";
 import { mockSaksbehandler } from "./data/mock-saksbehandler";
@@ -40,6 +41,11 @@ class SessionRecord {
 
         periods.forEach((rapporteringsperiode) => {
           db.rapporteringsperioder.create(rapporteringsperiode);
+        });
+
+        const arbeidssokerperioder = hentArbeidssokerperioder(periods, createdPerson);
+        arbeidssokerperioder.forEach((arbeidssokerperiode) => {
+          db.arbeidssokerperioder.create(arbeidssokerperiode);
         });
       });
     }
@@ -90,6 +96,13 @@ class SessionRecord {
         displayName: faker.string.alpha,
         givenName: faker.string.alpha,
         mail: () => faker.internet.email(),
+      },
+      arbeidssokerperioder: {
+        periodeId: primaryKey(faker.string.uuid),
+        ident: faker.string.alpha,
+        startDato: () => faker.date.past().toISOString(),
+        sluttDato: nullable(() => faker.date.recent().toISOString()),
+        status: () => faker.helpers.arrayElement(["Startet", "Avsluttet"]),
       },
     });
   }

@@ -1,7 +1,12 @@
 import { uuidv7 } from "uuidv7";
 
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
-import type { IPerson, IRapporteringsperiode, ISaksbehandler } from "~/utils/types";
+import type {
+  IArbeidssokerperiode,
+  IPerson,
+  IRapporteringsperiode,
+  ISaksbehandler,
+} from "~/utils/types";
 
 import { type Database } from "./session";
 
@@ -120,6 +125,16 @@ function hentSaksbehandler(db: Database, saksbehandlerId: string) {
   }) as ISaksbehandler;
 }
 
+function hentArbeidssokerperioder(db: Database) {
+  return db.arbeidssokerperioder.findMany({
+    orderBy: [
+      {
+        startDato: "desc",
+      },
+    ],
+  }) as IArbeidssokerperiode[];
+}
+
 export function withDb(db: Database) {
   return {
     hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
@@ -131,5 +146,6 @@ export function withDb(db: Database) {
     oppdaterPeriode: (periodeId: string, oppdateringer: IRapporteringsperiode) =>
       oppdaterPeriode(db, periodeId, oppdateringer),
     periodeKanIkkeLengerSendes: (periodeId: string) => periodeKanIkkeLengerSendes(db, periodeId),
+    hentArbeidssokerperioder: () => hentArbeidssokerperioder(db),
   };
 }
