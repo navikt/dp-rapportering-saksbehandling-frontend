@@ -8,7 +8,7 @@ import type {
   RAPPORTERING_TYPE,
   ROLLE,
 } from "./constants";
-import { RAPPORTERINGSPERIODE_STATUS } from "./constants";
+import { ARBEIDSSOKERPERIODE_STATUS, RAPPORTERINGSPERIODE_STATUS } from "./constants";
 
 declare global {
   interface Window {
@@ -50,6 +50,17 @@ export type TRolle = (typeof ROLLE)[keyof typeof ROLLE];
 export type TAnsvarligSystem = (typeof ANSVARLIG_SYSTEM)[keyof typeof ANSVARLIG_SYSTEM];
 
 export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
+
+export type TArbeidssokerperiodeStatus =
+  (typeof ARBEIDSSOKERPERIODE_STATUS)[keyof typeof ARBEIDSSOKERPERIODE_STATUS];
+
+export interface IArbeidssokerperiode {
+  periodeId: string; // UUID
+  ident: string;
+  startDato: string; // LocalDateTime ISO-format
+  sluttDato: string | null; // LocalDateTime ISO-format. Nullable
+  status: TArbeidssokerperiodeStatus;
+}
 
 export interface IPeriode {
   fraOgMed: string;
@@ -164,6 +175,8 @@ export type TrueOrFalse = (typeof boolskeVerdier)[number];
 export interface IEnv {
   DP_MELDEKORTREGISTER_URL: string;
   DP_MELDEKORTREGISTER_TOKEN?: string;
+  DP_PERSONREGISTER_URL: string;
+  DP_PERSONREGISTER_TOKEN?: string;
   MICROSOFT_TOKEN?: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
