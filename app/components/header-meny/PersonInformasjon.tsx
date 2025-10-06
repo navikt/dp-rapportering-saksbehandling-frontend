@@ -75,8 +75,6 @@ export default function PersonInformasjon({
 
   const handleOpenModal = () => {
     setModalOpen(true);
-    // TODO: Legg disse til i eget endepunkt fra backend.
-    // Per nå så justerer denne perioder til history events når modalen åpnes
     const hendelser = [
       ...transformArbeidssokerperioderToHistoryEvents(arbeidssokerperioder),
       ...transformPerioderToHistoryEvents(perioder),
