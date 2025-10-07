@@ -9,10 +9,10 @@ spec:
   image: {{image}}
   port: 5173
   liveness:
-    path: /dp-rapportering-saksbehandling-frontend/api/internal/isalive
+    path: /api/internal/isalive
     initialDelay: 10
   readiness:
-    path: /dp-rapportering-saksbehandling-frontend/api/internal/isready
+    path: /api/internal/isready
     initialDelay: 10
   replicas:
     min: 1
@@ -28,6 +28,8 @@ spec:
   secureLogs:
     enabled: true
   env:
+    - name: BASE_PATH
+      value: ""
     - name: SELF_URL
       value: https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.intern.dev.nav.no
     - name: DP_MELDEKORTREGISTER_URL
