@@ -180,7 +180,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '🚀 **Preview deployment**\n\n✅ https://dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}.intern.dev.nav.no'
+              body: '🚀 **Preview deployment**\n\n✅ https://dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}.ansatt.dev.nav.no\n✅ https://dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}.intern.dev.nav.no'
             })
 
 

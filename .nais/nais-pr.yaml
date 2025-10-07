@@ -24,6 +24,7 @@ spec:
       cpu: 50m
       memory: 256Mi
   ingresses:
+    - https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.ansatt.dev.nav.no
     - https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.intern.dev.nav.no
   secureLogs:
     enabled: true
@@ -31,7 +32,7 @@ spec:
     - name: BASE_PATH
       value: ""
     - name: SELF_URL
-      value: https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.intern.dev.nav.no
+      value: https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.ansatt.dev.nav.no
     - name: DP_MELDEKORTREGISTER_URL
       value: http://dp-meldekortregister
     - name: DP_PERSONREGISTER_URL
