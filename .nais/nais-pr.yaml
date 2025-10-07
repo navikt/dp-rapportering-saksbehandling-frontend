@@ -1,0 +1,75 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}
+  namespace: teamdagpenger
+  labels:
+    team: teamdagpenger
+spec:
+  image: {{image}}
+  port: 5173
+  liveness:
+    path: /dp-rapportering-saksbehandling-frontend/api/internal/isalive
+    initialDelay: 10
+  readiness:
+    path: /dp-rapportering-saksbehandling-frontend/api/internal/isready
+    initialDelay: 10
+  replicas:
+    min: 1
+    max: 1
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 256Mi
+  ingresses:
+    - https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.intern.dev.nav.no
+  secureLogs:
+    enabled: true
+  env:
+    - name: SELF_URL
+      value: https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.intern.dev.nav.no
+    - name: DP_MELDEKORTREGISTER_URL
+      value: http://dp-meldekortregister
+    - name: DP_PERSONREGISTER_URL
+      value: http://dp-rapportering-personregister
+    - name: VITE_USE_MSW
+      value: "false"
+    - name: VITE_IS_LOCALHOST
+      value: "false"
+    - name: VITE_FARO_URL
+      value: https://telemetry.ekstern.dev.nav.no/collect
+    - name: RUNTIME_ENVIRONMENT
+      value: pr-preview
+  accessPolicy:
+    outbound:
+      external:
+        - host: rt6o382n.apicdn.sanity.io
+        - host: www.nav.no
+        - host: graph.microsoft.com
+        - host: login.microsoftonline.com
+      rules:
+        - application: dp-meldekortregister
+        - application: dp-rapportering-personregister
+  azure:
+    application:
+      tenant: trygdeetaten.no
+      enabled: true
+      claims:
+        groups:
+          - id: "3e28466f-c53d-46da-8b44-a4abc2ad4593"
+          - id: "11b8475a-fb12-41aa-b1f6-8497c1b5385b"
+        extra:
+          - NAVident
+    sidecar:
+      enabled: true
+      autoLogin: true
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: nodejs
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
