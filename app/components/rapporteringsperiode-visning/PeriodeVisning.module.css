@@ -1,8 +1,22 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--a-spacing-2) 0;
+  gap: var(--a-spacing-4);
 }
+
+.innhold {
+  display: flex;
+  flex-direction: row;
+  gap: var(--a-spacing-6);
+}
+
+.kalenderOgSammenlagt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-spacing-6);
+  flex: 1;
+}
+
 .sammenlagt {
   font-size: 0.85rem !important;
 }
@@ -21,11 +35,12 @@
   justify-content: space-between;
   align-items: center;
   border-radius: 20px;
-  padding: 0 var(--a-spacing-2);
+  padding: var(--a-spacing-1) var(--a-spacing-2);
   line-height: normal;
 }
 
-.tomMeldekort {
+.tomtMeldekort {
+  flex: 1;
   padding: var(--a-spacing-6);
   background-color: var(--a-bg-subtle);
   border-radius: var(--a-border-radius-medium);

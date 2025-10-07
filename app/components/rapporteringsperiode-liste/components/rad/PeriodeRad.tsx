@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { PeriodeDetaljer } from "~/components/rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import { QUERY_PARAMS, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
@@ -72,15 +71,11 @@ export function PeriodeRad({ periode, personId, ansvarligSystem }: Props) {
             aria-label={`Periode ${periode.periode.fraOgMed}`}
             className={styles.contentContainer}
           >
-            <div className={styles.forhandsvisningMeldekort}>
-              <RapporteringsperiodeVisning perioder={[periode]} />
-              <PeriodeDetaljer
-                key={periode.id}
-                periode={periode}
-                personId={personId}
-                ansvarligSystem={ansvarligSystem}
-              />
-            </div>
+            <RapporteringsperiodeVisning
+              perioder={[periode]}
+              personId={personId}
+              ansvarligSystem={ansvarligSystem}
+            />
           </article>
         )
       }
@@ -95,12 +90,12 @@ export function PeriodeRad({ periode, personId, ansvarligSystem }: Props) {
         {periodeDatoTekst}
       </Table.DataCell>
       <Table.DataCell {...cellProps} style={{ width: "15%" }}>
-        <div style={{ display: "flex", gap: "2px", flexWrap: "wrap" }}>
-          <Tag variant={statusVariant} size="xsmall">
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+          <Tag variant={statusVariant} size="small">
             {statusText}
           </Tag>
           {erKorrigert && (
-            <Tag variant="warning" size="xsmall">
+            <Tag variant="warning" size="small">
               Korrigert
             </Tag>
           )}
@@ -122,7 +117,7 @@ export function PeriodeRad({ periode, personId, ansvarligSystem }: Props) {
       <Table.DataCell {...cellProps} style={{ width: "15%" }}>
         {skalViseInnsendt &&
           (erSendtForSent ? (
-            <Tag variant="error" size="xsmall">
+            <Tag variant="error" size="small">
               {formatterDato({ dato: periode.meldedato! })}
               <span className="sr-only">, sendt inn for sent </span>
             </Tag>

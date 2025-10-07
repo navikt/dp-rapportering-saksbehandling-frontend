@@ -216,11 +216,11 @@ export default function Periode() {
               type="button"
               variant="secondary"
               onClick={skjema.handlers.handleAvbryt}
-              size="xsmall"
+              size="small"
             >
               Avbryt korrigering
             </Button>
-            <Button type="submit" variant="primary" size="xsmall">
+            <Button type="submit" variant="primary" size="small">
               Fullfør korrigering
             </Button>
           </div>

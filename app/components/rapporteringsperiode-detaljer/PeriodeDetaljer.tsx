@@ -1,4 +1,4 @@
-import { Alert, Button, Tag } from "@navikt/ds-react";
+import { Alert, Button } from "@navikt/ds-react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
@@ -22,21 +22,12 @@ const DetailRow = ({ label, children }: { label: string; children: React.ReactNo
   </tr>
 );
 
-const ActionButton = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <div>
-    <Button as="a" href={href} className={styles.korrigerKnapp} size="xsmall">
-      {children}
-    </Button>
-  </div>
-);
-
 export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalMeldekortId;
-  const kanSendes = periode.kanSendes && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
   const kanEndres = periode.kanEndres && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
   const erSendtForSent = erMeldekortSendtForSent(periode);
-  const forSent = dagerForSent(periode);
+  const antallDagerForSent = dagerForSent(periode);
   const erSaksbehandler = periode?.kilde?.rolle === ROLLE.Saksbehandler;
 
   const formatDato = (dato: string) =>
@@ -47,12 +38,6 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
 
   return (
     <div className={styles.root}>
-      {kanSendes && (
-        <ActionButton href={`/person/${personId}/periode/${periode.id}/fyll-ut`}>
-          Fyll ut meldekort
-        </ActionButton>
-      )}
-
       <table className={styles.detaljer} role="table" aria-label="Meldekort informasjon">
         <caption className="sr-only">Detaljert informasjon om meldekortet</caption>
         <tbody>
@@ -76,9 +61,7 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
 
           {periode.registrertArbeidssoker && (
             <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
-              <Tag variant={erArbeidssoker ? "success" : "error"} size="xsmall">
-                {erArbeidssoker ? "Ja" : "Nei"}
-              </Tag>
+              {erArbeidssoker ? "Ja" : "Nei"}
             </DetailRow>
           )}
         </tbody>
@@ -86,15 +69,22 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
 
       {erSendtForSent && (
         <Alert variant="warning" size="small">
-          Dette meldekortet er sendt inn {forSent}{" "}
-          {forSent !== null && forSent > 1 ? " dager" : " dag"} etter fristen
+          Dette meldekortet er sendt inn {antallDagerForSent}{" "}
+          {antallDagerForSent !== null && antallDagerForSent > 1 ? " dager" : " dag"} etter fristen
         </Alert>
       )}
 
       {kanEndres && (
-        <ActionButton href={`/person/${personId}/periode/${periode.id}/korriger`}>
-          Korriger meldekort
-        </ActionButton>
+        <div>
+          <Button
+            as="a"
+            href={`/person/${personId}/periode/${periode.id}/korriger`}
+            className={styles.korrigerKnapp}
+            size="small"
+          >
+            Korriger meldekort
+          </Button>
+        </div>
       )}
     </div>
   );

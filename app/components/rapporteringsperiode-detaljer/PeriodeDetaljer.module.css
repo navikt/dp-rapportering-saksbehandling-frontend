@@ -1,14 +1,14 @@
-
 .root {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--a-spacing-6);
+  gap: var(--a-spacing-4);
 }
 
 .detaljer {
   border-collapse: collapse;
   font-size: var(--a-font-size-small);
+  line-height: var(--a-font-size-small);
 }
 
 .detailItem {
@@ -19,11 +19,12 @@
   font-weight: var(--a-font-weight-regular);
   text-align: left;
   vertical-align: top;
-  padding-right: var(--a-spacing-2);
+  padding: var(--a-spacing-2);
   width: 55%;
 }
 
 .value {
   text-align: left;
   vertical-align: center;
+  padding: var(--a-spacing-2);
 }

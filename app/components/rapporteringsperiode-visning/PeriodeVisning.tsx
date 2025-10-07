@@ -1,20 +1,28 @@
-import { BodyShort } from "@navikt/ds-react";
+import { BodyShort, Button } from "@navikt/ds-react";
 
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
-import { AKTIVITET_TYPE, aktivitetsTyper, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import {
+  AKTIVITET_TYPE,
+  aktivitetsTyper,
+  ANSVARLIG_SYSTEM,
+  RAPPORTERINGSPERIODE_STATUS,
+} from "~/utils/constants";
 import {
   DatoFormat,
   formatterDato,
   konverterFraISO8601Varighet,
   ukenummer,
 } from "~/utils/dato.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
+import { PeriodeDetaljer } from "../rapporteringsperiode-detaljer/PeriodeDetaljer";
 import { KalenderTabell } from "../tabeller/kalender/KalenderTabell";
 import styles from "./PeriodeVisning.module.css";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
+  personId?: string;
+  ansvarligSystem: TAnsvarligSystem;
 }
 
 function beregnTotalt(periode: IRapporteringsperiode, type: string) {
@@ -30,7 +38,7 @@ function beregnTotalt(periode: IRapporteringsperiode, type: string) {
   }, 0);
 }
 
-export function RapporteringsperiodeVisning({ perioder }: IProps) {
+export function RapporteringsperiodeVisning({ perioder, personId, ansvarligSystem }: IProps) {
   return perioder.map((periode) => {
     const { fraOgMed, tilOgMed } = periode.periode;
     const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
@@ -41,21 +49,42 @@ export function RapporteringsperiodeVisning({ perioder }: IProps) {
     const erTilUtfylling =
       periode.status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling && periode.kanSendes;
 
+    if (erTilUtfylling) {
+      const kanSendes = periode.kanSendes && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
+      return (
+        <section key={periode.id} aria-labelledby={`periode-${periode.id}`} className={styles.root}>
+          <div className={styles.innhold}>
+            <div className={styles.tomtMeldekort}>
+              <BodyShort>Dette meldekortet er ikke fylt ut enda.</BodyShort>
+            </div>
+            {kanSendes && (
+              <div>
+                <Button
+                  as="a"
+                  href={`/person/${personId}/periode/${periode.id}/fyll-ut`}
+                  className={styles.korrigerKnapp}
+                  size="small"
+                >
+                  Fyll ut meldekort
+                </Button>
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
+
     return (
       <section key={periode.id} aria-labelledby={`periode-${periode.id}`} className={styles.root}>
-        {erTilUtfylling ? (
-          <div className={styles.tomMeldekort}>
-            <BodyShort>Dette meldekortet er ikke fylt ut enda.</BodyShort>
-          </div>
-        ) : (
-          <>
-            <div>
-              <h3 id={`periode-${periode.id}`}>Uke {uker}</h3>
-              <BodyShort size="small">
-                <time dateTime={fraOgMed}>{formattertFraOgMed}</time> -{" "}
-                <time dateTime={tilOgMed}>{formattertTilOgMed}</time>
-              </BodyShort>
-            </div>
+        <div>
+          <h3 id={`periode-${periode.id}`}>Uke {uker}</h3>
+          <BodyShort size="small">
+            <time dateTime={fraOgMed}>{formattertFraOgMed}</time> -{" "}
+            <time dateTime={tilOgMed}>{formattertTilOgMed}</time>
+          </BodyShort>
+        </div>
+        <div className={styles.innhold}>
+          <div className={styles.kalenderOgSammenlagt}>
             <KalenderTabell periode={periode} />
             <div className={styles.sammenlagt}>
               <h4 id={`sammenlagt-${periode.id}`}>Sammenlagt for perioden</h4>
@@ -79,8 +108,16 @@ export function RapporteringsperiodeVisning({ perioder }: IProps) {
                 })}
               </ul>
             </div>
-          </>
-        )}
+          </div>
+          <div>
+            <PeriodeDetaljer
+              key={periode.id}
+              periode={periode}
+              personId={personId}
+              ansvarligSystem={ansvarligSystem}
+            />
+          </div>
+        </div>
       </section>
     );
   });
