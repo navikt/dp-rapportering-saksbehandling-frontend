@@ -37,7 +37,7 @@ spec:
     - name: DP_PERSONREGISTER_URL
       value: http://dp-rapportering-personregister
     - name: VITE_USE_MSW
-      value: "false"
+      value: "true"
     - name: VITE_IS_LOCALHOST
       value: "false"
     - name: VITE_FARO_URL
