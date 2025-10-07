@@ -166,7 +166,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Create PR-specific NAIS config
         run: |
-          sed 's/{{prNumber}}/${{ github.event.pull_request.number }}/g; s/{{image}}/${{ needs.build.outputs.image }}/g' .nais/nais-pr.yaml > .nais/nais-pr-${{ github.event.pull_request.number }}.yaml
+          sed 's|{{prNumber}}|${{ github.event.pull_request.number }}|g; s|{{image}}|${{ needs.build.outputs.image }}|g' .nais/nais-pr.yaml > .nais/nais-pr-${{ github.event.pull_request.number }}.yaml
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
