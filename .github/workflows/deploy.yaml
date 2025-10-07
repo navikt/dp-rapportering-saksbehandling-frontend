@@ -1,8 +1,6 @@
 name: Build and deploy
 
-on:
-  push:
-  pull_request:
+on: [push]
 
 jobs:
   build:
@@ -152,41 +150,5 @@ jobs:
           RESOURCE: .nais/nais.yaml
           VARS: .nais/vars-prod.yaml
           PRINT_PAYLOAD: true
-
-  deploy-pr-preview:
-    needs: [build, test]
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-      packages: write
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v5
-      - name: Set PR number
-        run: |
-          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
-      - name: Create PR-specific vars file
-        run: |
-          sed 's/{{prNumber}}/${{ github.event.pull_request.number }}/g' .nais/vars-pr.yaml > .nais/vars-pr-${{ github.event.pull_request.number }}.yaml
-      - uses: nais/deploy/actions/deploy@v2
-        env:
-          VAR: image=${{ needs.build.outputs.image }},githubSha=${{ github.sha }}
-          CLUSTER: dev-gcp
-          RESOURCE: .nais/nais.yaml
-          VARS: .nais/vars-pr-${{ github.event.pull_request.number }}.yaml
-          PRINT_PAYLOAD: true
-      - name: Comment PR with preview URL
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚀 Preview deployment: https://dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}.intern.dev.nav.no'
-            })
-
 
 
