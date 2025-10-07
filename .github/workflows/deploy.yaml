@@ -164,12 +164,18 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v5
+      - name: Set PR number
+        run: |
+          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+      - name: Create PR-specific vars file
+        run: |
+          sed 's/{{prNumber}}/${{ github.event.pull_request.number }}/g' .nais/vars-pr.yaml > .nais/vars-pr-${{ github.event.pull_request.number }}.yaml
       - uses: nais/deploy/actions/deploy@v2
         env:
-          VAR: image=${{ needs.build.outputs.image }},githubSha=${{ github.sha }},prNumber=${{ github.event.pull_request.number }}
+          VAR: image=${{ needs.build.outputs.image }},githubSha=${{ github.sha }}
           CLUSTER: dev-gcp
           RESOURCE: .nais/nais.yaml
-          VARS: .nais/vars-pr.yaml
+          VARS: .nais/vars-pr-${{ github.event.pull_request.number }}.yaml
           PRINT_PAYLOAD: true
       - name: Comment PR with preview URL
         uses: actions/github-script@v7
