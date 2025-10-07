@@ -24,15 +24,14 @@ spec:
       cpu: 50m
       memory: 256Mi
   ingresses:
-    - https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.ansatt.dev.nav.no
-    - https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.intern.dev.nav.no
+    - https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.ekstern.dev.nav.no
   secureLogs:
     enabled: true
   env:
     - name: BASE_PATH
       value: ""
     - name: SELF_URL
-      value: https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.ansatt.dev.nav.no
+      value: https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.ekstern.dev.nav.no
     - name: DP_MELDEKORTREGISTER_URL
       value: http://dp-meldekortregister
     - name: DP_PERSONREGISTER_URL
@@ -58,16 +57,16 @@ spec:
   azure:
     application:
       tenant: trygdeetaten.no
-      enabled: true
+      enabled: false
       claims:
         groups:
-          - id: "3e28466f-c53d-46da-8b44-a4abc2ad4593"
-          - id: "11b8475a-fb12-41aa-b1f6-8497c1b5385b"
+          - id: ""
+          - id: ""
         extra:
           - NAVident
     sidecar:
-      enabled: true
-      autoLogin: true
+      enabled: false
+      autoLogin: false
   observability:
     autoInstrumentation:
       enabled: true
