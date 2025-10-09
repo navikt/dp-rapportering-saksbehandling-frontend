@@ -120,6 +120,7 @@ jobs:
 
   deploy-dev:
     needs: [build, test]
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
