@@ -1,0 +1,31 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-space-16);
+  width: 40%;
+}
+
+/* Overstyr NAVs Table-styling */
+.detaljer :global(.navds-table__body .navds-table__row) {
+  border-bottom: 1px solid var(--a-border-subtle) !important;
+}
+
+.detaljer :global(.navds-table__header-cell) {
+  width: 55% !important;
+  border-bottom: 1px solid var(--a-border-subtle) !important;
+}
+
+.detaljer :global(.navds-table__data-cell) {
+  border-bottom: 1px solid var(--a-border-subtle) !important;
+}
+
+.label,
+.value {
+  line-height: var(--a-font-line-height-medium);
+}
+
+/* For rader med lang tekst (som begrunnelse) */
+.alignTop :global(.navds-table__header-cell),
+.alignTop :global(.navds-table__data-cell) {
+  vertical-align: top !important;
+}

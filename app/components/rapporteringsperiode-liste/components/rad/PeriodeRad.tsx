@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { RapporteringsperiodeVisning } from "~/components/rapporteringsperiode-visning/PeriodeVisning";
+import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import { QUERY_PARAMS, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
@@ -69,9 +69,9 @@ export function PeriodeRad({ periode, personId, ansvarligSystem }: Props) {
           <article
             key={periode.id}
             aria-label={`Periode ${periode.periode.fraOgMed}`}
-            className={styles.contentContainer}
+            className={styles.visningContainer}
           >
-            <RapporteringsperiodeVisning
+            <MeldekortVisning
               perioder={[periode]}
               personId={personId}
               ansvarligSystem={ansvarligSystem}
@@ -83,9 +83,9 @@ export function PeriodeRad({ periode, personId, ansvarligSystem }: Props) {
       expandOnRowClick={!erOpprettet}
       expansionDisabled={erOpprettet}
     >
-      <Table.HeaderCell scope="row" {...cellProps} style={{ width: "10%" }}>
+      <Table.DataCell scope="row" {...cellProps} style={{ width: "10%" }}>
         {ukenummer(periode)}
-      </Table.HeaderCell>
+      </Table.DataCell>
       <Table.DataCell {...cellProps} style={{ width: "20%" }}>
         {periodeDatoTekst}
       </Table.DataCell>

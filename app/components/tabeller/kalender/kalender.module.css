@@ -1,11 +1,11 @@
 .kalender-tabell {
-  width: 100%;
   border-collapse: collapse;
+  width: 100%;
 }
 
 .kalender-tabell th {
   font-weight: var(--a-font-weight-light);
-  font-size: var(--a-font-size-small);
+  font-size: var(--a-font-size-medium);
   text-align: center;
   white-space: nowrap;
 }

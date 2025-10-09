@@ -1,11 +1,11 @@
-import { Alert, Button } from "@navikt/ds-react";
+import { Alert, BodyLong, Button, Table } from "@navikt/ds-react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
-import styles from "./PeriodeDetaljer.module.css";
+import styles from "./utvidetInfo.module.css";
 
 interface IProps {
   periode: IRapporteringsperiode;
@@ -13,16 +13,30 @@ interface IProps {
   ansvarligSystem: TAnsvarligSystem;
 }
 
-const DetailRow = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <tr className={styles.detailItem}>
-    <th scope="row" className={styles.label}>
-      {label}
-    </th>
-    <td className={styles.value}>{children}</td>
-  </tr>
+const DetailRow = ({
+  label,
+  children,
+  alignTop = false,
+}: {
+  label: string;
+  children: React.ReactNode;
+  alignTop?: boolean;
+}) => (
+  <Table.Row className={alignTop ? styles.alignTop : undefined}>
+    <Table.HeaderCell scope="row">
+      <BodyLong size="small" className={styles.label}>
+        {label}
+      </BodyLong>
+    </Table.HeaderCell>
+    <Table.DataCell>
+      <BodyLong size="small" className={styles.value}>
+        {children}
+      </BodyLong>
+    </Table.DataCell>
+  </Table.Row>
 );
 
-export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) {
+export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalMeldekortId;
   const kanEndres = periode.kanEndres && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
@@ -38,9 +52,9 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
 
   return (
     <div className={styles.root}>
-      <table className={styles.detaljer} role="table" aria-label="Meldekort informasjon">
+      <Table size="small" className={styles.detaljer}>
         <caption className="sr-only">Detaljert informasjon om meldekortet</caption>
-        <tbody>
+        <Table.Body>
           {periode.meldedato && (
             <DetailRow label="Meldedato:">{formatDato(periode.meldedato)}</DetailRow>
           )}
@@ -57,15 +71,19 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
             </DetailRow>
           )}
 
-          {periode.begrunnelse && <DetailRow label="Begrunnelse:">{periode.begrunnelse}</DetailRow>}
+          {periode.begrunnelse && (
+            <DetailRow label="Begrunnelse:" alignTop>
+              {periode.begrunnelse}
+            </DetailRow>
+          )}
 
           {periode.registrertArbeidssoker && (
             <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
               {erArbeidssoker ? "Ja" : "Nei"}
             </DetailRow>
           )}
-        </tbody>
-      </table>
+        </Table.Body>
+      </Table>
 
       {erSendtForSent && (
         <Alert variant="warning" size="small">
