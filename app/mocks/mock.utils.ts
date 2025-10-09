@@ -65,6 +65,7 @@ export function beregnNåværendePeriodeDato(): IPeriode {
 
 export function lagDager(): IRapporteringsperiodeDag[] {
   return new Array(14).fill(null).map((_, i) => ({
+    type: "dag",
     dagIndex: i,
     dato: "",
     aktiviteter: [],

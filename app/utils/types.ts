@@ -75,6 +75,7 @@ export interface IAktivitet {
 }
 
 export interface IRapporteringsperiodeDag {
+  type: string;
   dagIndex: number;
   dato: string;
   aktiviteter: IAktivitet[];
