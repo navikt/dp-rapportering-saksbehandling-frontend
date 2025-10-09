@@ -29,3 +29,9 @@
 .alignTop :global(.navds-table__data-cell) {
   vertical-align: top !important;
 }
+
+/* Fjern hover-effekt */
+.detaljer :global(.navds-table__row:hover),
+.detaljer :global(.navds-table__row--shade-on-hover:hover) {
+  background-color: transparent !important;
+}

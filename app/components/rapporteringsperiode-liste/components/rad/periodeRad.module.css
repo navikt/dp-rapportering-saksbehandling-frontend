@@ -105,8 +105,8 @@
 .aktivitet {
   display: flex;
   border-radius: 100%;
-  width: var(--a-spacing-8);
-  height: var(--a-spacing-8);
+  width: 26px;
+  height: 26px;
   align-items: center;
   justify-content: center;
 }
