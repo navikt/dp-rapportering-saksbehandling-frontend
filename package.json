@@ -29,7 +29,7 @@
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
     "isbot": "^5.1.31",
-    "msw": "^2.11.4",
+    "msw": "^2.11.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^7.9.4",
