@@ -1,6 +1,8 @@
 name: Build and deploy
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
@@ -118,6 +120,7 @@ jobs:
 
   deploy-dev:
     needs: [build, test]
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -151,5 +154,34 @@ jobs:
           VARS: .nais/vars-prod.yaml
           PRINT_PAYLOAD: true
 
-  
-  
+  deploy-pr-preview:
+    needs: [build, test]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      packages: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Create PR-specific NAIS config
+        run: |
+          sed 's|{{prNumber}}|${{ github.event.pull_request.number }}|g; s|{{image}}|${{ needs.build.outputs.image }}|g' .nais/nais-pr.yaml > .nais/nais-pr-${{ github.event.pull_request.number }}.yaml
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/nais-pr-${{ github.event.pull_request.number }}.yaml
+          PRINT_PAYLOAD: true
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 **Preview deployment**\n\n✅ https://dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}.ekstern.dev.nav.no'
+            })
+
+

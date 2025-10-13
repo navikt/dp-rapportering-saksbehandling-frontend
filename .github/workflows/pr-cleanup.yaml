@@ -1,0 +1,26 @@
+name: Cleanup PR Preview
+
+on:
+  pull_request:
+    types:
+      - closed  # Kjører når PR lukkes (merge eller close)
+
+jobs:
+  cleanup:
+    name: Delete PR Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Delete NAIS application
+        uses: nais/deploy/actions/delete@v2
+        with:
+          team: teamdagpenger
+          cluster: dev-gcp
+          app: dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}
+        env:
+          IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          PROJECT_ID: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}

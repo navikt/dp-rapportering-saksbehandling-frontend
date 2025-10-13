@@ -1,27 +1,23 @@
-.content-container {
-  padding: 1rem;
+.visning-container {
   animation: fadeIn 0.5s ease-in;
-  border-radius: 0.625rem;
-  background: #FFF;
 }
 
 .forhandsvisning-meldekort {
-    margin: 0 auto;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-    max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  max-width: 1000px;
 }
 
-
-  .forhandsvisning-meldekort > :first-child {
-    flex: 2;
-  }
-  .forhandsvisning-meldekort > :last-child {
-    flex: 1;
-  }
+.forhandsvisning-meldekort > :first-child {
+  flex: 2;
+}
+.forhandsvisning-meldekort > :last-child {
+  flex: 1;
+}
 
 /* === Responsive layout for mobile === */
 @media (max-width: 768px) {
@@ -36,14 +32,9 @@
   }
 }
 
-
 /* === Rad i tabellen === */
 .periodeListe__row {
   transition: background-color 0.2s ease-out;
-}
-
-.periodeListe__row--selected {
-  background-color: #F1F7FF !important;
 }
 
 .periodeListe__row--highlighted {
@@ -67,8 +58,9 @@
 :global(.navds-table .navds-table__expandable-row--open td),
 :global(.navds-table .navds-table__expandable-row--open th),
 :global(.navds-table__body .navds-table__expandable-row--open td),
-:global(.navds-table__body .navds-table__expandable-row--open th) {
-  background-color: #F1F7FF !important;
+:global(.navds-table__body .navds-table__expandable-row--open th),
+.periodeListe__row--selected {
+  background-color: var(--a-surface-action-subtle) !important;
   transition: background-color 0.2s ease-out;
 }
 
@@ -78,16 +70,14 @@
 :global(.navds-table__row--shade-on-hover).periodeListe__row:hover,
 :global(.navds-table__expandable-row--open[aria-selected="true"]),
 :global(.navds-table__expandable-row--open.navds-table__row--selected) {
-  background-color: #F1F7FF !important;
+  background-color: var(--a-surface-action-subtle) !important;
 }
-
 
 /* Collapsed rows - transparent background */
 :global(.navds-table__expandable-row:not(.navds-table__row--expanded)) td {
   background-color: transparent;
   transition: background-color 0.2s ease-out;
 }
-
 
 /* === Disabled rad styling === */
 .periodeListe__row--disabled {
@@ -104,20 +94,19 @@
   background-color: transparent !important;
 }
 
-
 /* === Aktiviteter === */
 .aktiviteter {
   display: flex;
   margin: 0;
   padding: 0;
-  gap: 2px
+  gap: 4px;
 }
 
 .aktivitet {
   display: flex;
   border-radius: 100%;
-  width: var(--a-spacing-6);
-  height: var(--a-spacing-6);
+  width: 26px;
+  height: 26px;
   align-items: center;
   justify-content: center;
 }
@@ -152,6 +141,3 @@
     background-color: transparent;
   }
 }
-
-
-

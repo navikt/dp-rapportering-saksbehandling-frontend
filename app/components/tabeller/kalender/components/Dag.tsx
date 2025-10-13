@@ -92,7 +92,7 @@ export function Dag({ dag }: DagProps) {
         </span>
         {arbeidTimer && (
           <span className={styles.timer} aria-hidden="true">
-            {arbeidTimer}t
+            J ({arbeidTimer}t)
           </span>
         )}
         {!arbeidTimer && aktivitetsForkortelser && (

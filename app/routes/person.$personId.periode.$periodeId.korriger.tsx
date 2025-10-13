@@ -6,7 +6,7 @@ import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
-import { KalenderTabell } from "~/components/tabeller/kalender/KalenderTabell";
+import { Kalender } from "~/components/tabeller/kalender/Kalender";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
@@ -143,7 +143,7 @@ export default function Periode() {
           <Heading level="2" size="xsmall">
             Meldekortet du korrigerer:
           </Heading>
-          <KalenderTabell periode={periode} />
+          <Kalender periode={periode} />
           {periode.begrunnelse && (
             <div className={styles.begrunnelseVisning}>
               <Heading level="3" size="xsmall">
@@ -216,11 +216,11 @@ export default function Periode() {
               type="button"
               variant="secondary"
               onClick={skjema.handlers.handleAvbryt}
-              size="xsmall"
+              size="small"
             >
               Avbryt korrigering
             </Button>
-            <Button type="submit" variant="primary" size="xsmall">
+            <Button type="submit" variant="primary" size="small">
               Fullfør korrigering
             </Button>
           </div>

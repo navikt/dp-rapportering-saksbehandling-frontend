@@ -1,11 +1,11 @@
-import { Alert, Button, Tag } from "@navikt/ds-react";
+import { Alert, BodyLong, Button, Table } from "@navikt/ds-react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
-import styles from "./PeriodeDetaljer.module.css";
+import styles from "./utvidetInfo.module.css";
 
 interface IProps {
   periode: IRapporteringsperiode;
@@ -13,30 +13,35 @@ interface IProps {
   ansvarligSystem: TAnsvarligSystem;
 }
 
-const DetailRow = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <tr className={styles.detailItem}>
-    <th scope="row" className={styles.label}>
-      {label}
-    </th>
-    <td className={styles.value}>{children}</td>
-  </tr>
+const DetailRow = ({
+  label,
+  children,
+  alignTop = false,
+}: {
+  label: string;
+  children: React.ReactNode;
+  alignTop?: boolean;
+}) => (
+  <Table.Row className={alignTop ? styles.alignTop : undefined}>
+    <Table.HeaderCell scope="row">
+      <BodyLong size="small" className={styles.label}>
+        {label}
+      </BodyLong>
+    </Table.HeaderCell>
+    <Table.DataCell>
+      <BodyLong size="small" className={styles.value}>
+        {children}
+      </BodyLong>
+    </Table.DataCell>
+  </Table.Row>
 );
 
-const ActionButton = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <div>
-    <Button as="a" href={href} className={styles.korrigerKnapp} size="xsmall">
-      {children}
-    </Button>
-  </div>
-);
-
-export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) {
+export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = !!periode.originalMeldekortId;
-  const kanSendes = periode.kanSendes && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
   const kanEndres = periode.kanEndres && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
   const erSendtForSent = erMeldekortSendtForSent(periode);
-  const forSent = dagerForSent(periode);
+  const antallDagerForSent = dagerForSent(periode);
   const erSaksbehandler = periode?.kilde?.rolle === ROLLE.Saksbehandler;
 
   const formatDato = (dato: string) =>
@@ -47,15 +52,9 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
 
   return (
     <div className={styles.root}>
-      {kanSendes && (
-        <ActionButton href={`/person/${personId}/periode/${periode.id}/fyll-ut`}>
-          Fyll ut meldekort
-        </ActionButton>
-      )}
-
-      <table className={styles.detaljer} role="table" aria-label="Meldekort informasjon">
+      <Table size="small" className={styles.detaljer}>
         <caption className="sr-only">Detaljert informasjon om meldekortet</caption>
-        <tbody>
+        <Table.Body>
           {periode.meldedato && (
             <DetailRow label="Meldedato:">{formatDato(periode.meldedato)}</DetailRow>
           )}
@@ -72,29 +71,38 @@ export function PeriodeDetaljer({ periode, personId, ansvarligSystem }: IProps) 
             </DetailRow>
           )}
 
-          {periode.begrunnelse && <DetailRow label="Begrunnelse:">{periode.begrunnelse}</DetailRow>}
+          {periode.begrunnelse && (
+            <DetailRow label="Begrunnelse:" alignTop>
+              {periode.begrunnelse}
+            </DetailRow>
+          )}
 
           {periode.registrertArbeidssoker && (
             <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
-              <Tag variant={erArbeidssoker ? "success" : "error"} size="xsmall">
-                {erArbeidssoker ? "Ja" : "Nei"}
-              </Tag>
+              {erArbeidssoker ? "Ja" : "Nei"}
             </DetailRow>
           )}
-        </tbody>
-      </table>
+        </Table.Body>
+      </Table>
 
       {erSendtForSent && (
         <Alert variant="warning" size="small">
-          Dette meldekortet er sendt inn {forSent}{" "}
-          {forSent !== null && forSent > 1 ? " dager" : " dag"} etter fristen
+          Dette meldekortet er sendt inn {antallDagerForSent}{" "}
+          {antallDagerForSent !== null && antallDagerForSent > 1 ? " dager" : " dag"} etter fristen
         </Alert>
       )}
 
       {kanEndres && (
-        <ActionButton href={`/person/${personId}/periode/${periode.id}/korriger`}>
-          Korriger meldekort
-        </ActionButton>
+        <div>
+          <Button
+            as="a"
+            href={`/person/${personId}/periode/${periode.id}/korriger`}
+            className={styles.korrigerKnapp}
+            size="small"
+          >
+            Korriger meldekort
+          </Button>
+        </div>
       )}
     </div>
   );

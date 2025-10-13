@@ -216,10 +216,10 @@ export default function FyllUtPeriode() {
             </div>
           )}
           <div className={styles.handlinger}>
-            <Button variant="secondary" size="xsmall" onClick={skjema.handlers.handleAvbryt}>
+            <Button variant="secondary" size="small" onClick={skjema.handlers.handleAvbryt}>
               Avbryt utfylling
             </Button>
-            <Button type="submit" variant="primary" size="xsmall">
+            <Button type="submit" variant="primary" size="small">
               Send inn meldekort
             </Button>
           </div>

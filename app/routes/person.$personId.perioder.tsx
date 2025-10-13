@@ -2,7 +2,7 @@ import { Accordion } from "@navikt/ds-react";
 import { useEffect, useState } from "react";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 
-import { RapporteringsperiodeListe } from "~/components/rapporteringsperiode-liste/PeriodeListe";
+import { MeldekortListe } from "~/components/rapporteringsperiode-liste/MeldekortListe";
 import { groupPeriodsByYear } from "~/components/rapporteringsperiode-liste/utils";
 import type { loader as personLoader } from "~/routes/person.$personId";
 import styles from "~/styles/route-styles/perioder.module.css";
@@ -98,7 +98,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
                 Meldekort for {year}
               </Accordion.Header>
               <Accordion.Content className={styles.accordionContent}>
-                <RapporteringsperiodeListe
+                <MeldekortListe
                   perioder={groupedPeriods[year]}
                   personId={params.personId}
                   ansvarligSystem={person.ansvarligSystem}
