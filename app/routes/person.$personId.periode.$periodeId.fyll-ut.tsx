@@ -1,5 +1,5 @@
 import {
-  BodyShort,
+  BodyLong,
   Button,
   DatePicker,
   Heading,
@@ -137,12 +137,12 @@ export default function FyllUtPeriode() {
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllUtContainer}>
       <div className={styles.skjema}>
         <div className={styles.title}>
-          <Heading level="1" size="small" id="fyll-ut-heading">
+          <Heading level="1" size="medium" id="fyll-ut-heading">
             Fyll ut meldekort
           </Heading>
-          <BodyShort size="small">
+          <BodyLong size="small">
             Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-          </BodyShort>
+          </BodyLong>
         </div>
 
         <Form

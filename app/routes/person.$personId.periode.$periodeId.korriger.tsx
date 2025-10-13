@@ -1,5 +1,5 @@
 import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
-import { BodyShort, Heading } from "@navikt/ds-react";
+import { BodyLong, BodyShort, Heading } from "@navikt/ds-react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
@@ -109,7 +109,7 @@ export default function Periode() {
   const erKorrigering = !!periode.originalMeldekortId;
 
   return (
-    <div className={`${styles.korrigeringContainer} ekstern-flate`}>
+    <div className={`${styles.korrigeringContainer}`}>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {fetcher.state === "submitting" && "Sender inn korrigering..."}
         {fetcher.state === "loading" && "Behandler korrigering..."}
@@ -130,22 +130,23 @@ export default function Periode() {
         </Alert>
       )}
       <div className={styles.hvitContainer}>
-        <Heading level="1" size="medium">
-          Korriger meldekort
-        </Heading>
-        <BodyShort size="small" className={styles.kompaktTekst}>
-          Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-        </BodyShort>
-      </div>
-
-      <div className={styles.hvitContainer}>
-        <div className={styles.meldekort}>
-          <Heading level="2" size="xsmall">
-            Meldekortet du korrigerer:
+        <div>
+          <Heading level="1" size="medium">
+            Korriger meldekort
           </Heading>
-          <KalenderTabell periode={periode} />
+          <BodyLong size="small">
+            Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
+          </BodyLong>
+        </div>
+        <div className={styles.meldekort}>
+          <div className={styles.meldekortSeksjon}>
+            <Heading level="2" size="small">
+              Meldekortet du korrigerer:
+            </Heading>
+            <KalenderTabell periode={periode} />
+          </div>
           {periode.begrunnelse && (
-            <div className={styles.begrunnelseVisning}>
+            <div className={styles.meldekortSeksjon}>
               <Heading level="3" size="xsmall">
                 Begrunnelse for {erKorrigering ? "korrigering" : "innsending"}
               </Heading>

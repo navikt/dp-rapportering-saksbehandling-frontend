@@ -7,10 +7,9 @@
   flex-direction: column;
   max-width: 1200px;
   margin: 0 auto;
-  padding-bottom: var(--a-spacing-8);
   background-color: white;
-  padding: var(--a-spacing-4);
-  gap: var(--a-spacing-2);
+  padding: var(--a-space-16);
+  gap: var(--a-space-24);
 }
 
 .fieldset {
@@ -22,13 +21,13 @@
 .container {
   display: flex;
   flex-direction: column;
-  row-gap: var(--a-spacing-4);
+  gap: var(--a-space-24);
 }
 
 .detaljer {
   display: flex;
   flex-direction: row;
-  gap: var(--a-spacing-6);
+  gap: var(--a-space-24);
 }
 
 .begrunnelse {
@@ -38,6 +37,6 @@
 
 .handlinger {
   display: flex;
-  gap: var(--a-spacing-4);
+  gap: var(--a-space-16);
   justify-content: flex-end;
 }
