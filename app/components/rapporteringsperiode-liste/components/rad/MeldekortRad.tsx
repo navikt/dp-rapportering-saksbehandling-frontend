@@ -11,7 +11,7 @@ import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { aktivitetMapping, sorterAktiviteter, unikeAktiviteter } from "../../utils";
-import styles from "./periodeRad.module.css";
+import styles from "./meldekortRad.module.css";
 
 interface Props {
   periode: IRapporteringsperiode;
@@ -19,7 +19,7 @@ interface Props {
   ansvarligSystem: TAnsvarligSystem;
 }
 
-export function PeriodeRad({ periode, personId, ansvarligSystem }: Props) {
+export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
   const [searchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
 

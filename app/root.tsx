@@ -15,7 +15,7 @@ import {
 import { uuidv7 } from "uuidv7";
 
 import type { Route } from "./+types/root";
-import Header from "./components/navigasjon/header/Header";
+import Header from "./components/header/Header";
 import { SaksbehandlerProvider } from "./context/saksbehandler-context";
 import { getSessionId } from "./mocks/session";
 import { hentSaksbehandler } from "./models/saksbehandler.server";

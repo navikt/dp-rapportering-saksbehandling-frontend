@@ -2,8 +2,8 @@ import { Table } from "@navikt/ds-react";
 
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
-import { PeriodeRad } from "./components/rad/PeriodeRad";
-import styles from "./PeriodeListe.module.css";
+import { MeldekortRad } from "./components/rad/MeldekortRad";
+import styles from "./meldekortListe.module.css";
 
 interface IProps {
   perioder: IRapporteringsperiode[];
@@ -13,10 +13,10 @@ interface IProps {
 
 const KOLONNE_TITLER = ["", "Uke", "Dato", "Status", "Aktiviteter", "Meldedato", "Frist"];
 
-export function RapporteringsperiodeListe({ perioder, personId, ansvarligSystem }: IProps) {
+export function MeldekortListe({ perioder, personId, ansvarligSystem }: IProps) {
   return (
     <div className={styles.periodeListe}>
-      <Table size="small">
+      <Table>
         <Table.Header>
           <Table.Row>
             {KOLONNE_TITLER.map((kolonne, index) => {
@@ -31,7 +31,7 @@ export function RapporteringsperiodeListe({ perioder, personId, ansvarligSystem 
         <Table.Body>
           {perioder.map((periode) => {
             return (
-              <PeriodeRad
+              <MeldekortRad
                 key={periode.id}
                 periode={periode}
                 personId={personId}
