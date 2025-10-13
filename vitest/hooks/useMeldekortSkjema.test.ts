@@ -46,6 +46,7 @@ describe("useMeldekortSkjema", () => {
 
   const mockDager: IKorrigertDag[] = [
     {
+      type: "dag",
       dagIndex: 0,
       dato: "2024-01-01",
       aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "8" }],

@@ -78,8 +78,9 @@ export function formatterDato({
 export function getWeekDays(): { kort: string; lang: string }[] {
   const weekDays = new Array(7).fill(null).map((_, index) => {
     const date = new Date(Date.UTC(2017, 0, 2 + index)); // 2017-01-02 is just a random Monday
+    const kort = date.toLocaleDateString("nb-NO", { weekday: "short" }).replace(".", "");
     return {
-      kort: date.toLocaleDateString("nb-NO", { weekday: "short" }).replace(".", ""),
+      kort: kort.charAt(0).toUpperCase() + kort.slice(1).toLowerCase(),
       lang: date.toLocaleDateString("nb-NO", { weekday: "long" }),
     };
   });

@@ -1,0 +1,30 @@
+.kalenderOgSammenlagt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-space-20);
+  flex: 1;
+}
+
+.sammenlagt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-space-8);
+}
+
+.aktivitetListe {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-spacing-1);
+  list-style: none;
+}
+
+.aktivitet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 80px;
+  padding: var(--a-space-2) var(--a-space-12);
+  line-height: normal;
+}

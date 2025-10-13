@@ -1,6 +1,6 @@
 .kalender-tabell {
-  width: 100%;
   border-collapse: collapse;
+  width: 100%;
 }
 
 .kalender-tabell th {
