@@ -11,8 +11,8 @@
 
 .label {
   text-align: left;
-  font-size: var(--a-font-size-medium) !important;
-  line-height: var(--a-line-height-medium) !important;
+  font-size: var(--a-font-size-small) !important;
+  line-height: var(--a-line-height-small) !important;
 }
 
 .fyllUtTabell td {
@@ -29,7 +29,8 @@
   text-align: left;
   padding: var(--a-space-2) var(--a-space-12);
   border-radius: 999px;
-  font-size: var(--a-font-size-medium);
+  font-size: var(--a-font-size-small) !important;
+  line-height: var(--a-line-height-small) !important;
 }
 
 .aktivitetArbeid {
