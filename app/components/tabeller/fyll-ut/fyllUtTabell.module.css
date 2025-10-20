@@ -1,49 +1,52 @@
-table {
-  text-align: left;
-  font-size: 0.75rem !important;
+.fyllUtTabell {
   border-collapse: collapse;
+  width: 100%;
+  max-width: 75rem;
+}
+
+.fyllUtTabell :global(.navds-body-short) {
+  font-size: var(--a-font-size-small) !important;
+  line-height: var(--a-line-height-small) !important;
 }
 
 .label {
   text-align: left;
-  font-weight: 600;
+  font-size: var(--a-font-size-medium) !important;
+  line-height: var(--a-line-height-medium) !important;
 }
 
-td {
+.fyllUtTabell td {
   text-wrap: nowrap;
 }
 
-thead, tr, th {
+.fyllUtTabell thead,
+.fyllUtTabell tr,
+.fyllUtTabell th {
   font-weight: 400;
 }
 
-
 .aktivitet {
-  margin: 0 auto;
   text-align: left;
-  padding:  var(--a-spacing-1) var(--a-spacing-2);
-  border-radius: 40px;
-  @media (min-width: 1440px) {
-    white-space: nowrap;
-  }
+  padding: var(--a-space-2) var(--a-space-12);
+  border-radius: 999px;
+  font-size: var(--a-font-size-medium);
 }
 
 .aktivitetArbeid {
-    background: #99C3FF;
+  background: #99c3ff;
 }
 
 .aktivitetSyk {
-    background: #FFD399;
+  background: #ffd399;
 }
 
 .aktivitetFravaer {
-    background: #A8DCB1;
+  background: #a8dcb1;
 }
 
 .aktivitetUtdanning {
-    background: #D2A8DC;
+  background: #d2a8dc;
 }
-
 
 .trHoverArbeid:hover {
   background-color: rgba(153, 195, 255, 0.15); /* 50% opacity */
@@ -62,22 +65,18 @@ thead, tr, th {
 }
 
 .gap {
-  width: 15px;
+  width: 10px;
   border: none;
   background: transparent;
-  pointer-events: none; /* Forhindrer at gap-cellen er interaktiv */
+  pointer-events: none;
 }
 
-
-table td {
-  text-align: center;
-  vertical-align: middle;
-  padding: 2px;
+.fyllUtTabell tbody {
+  box-sizing: content-box;
 }
 
-table th {
-  text-align: center;
-  vertical-align: middle;
+.fyllUtTabell tbody tr {
+  height: 40px;
 }
 
 .checkboxWrapper {
@@ -89,13 +88,14 @@ table th {
 
 .ukedag {
   text-transform: capitalize;
+  display: grid;
 }
 
 .oppsummering {
-  width: 60px;
-  min-width: 60px;
-  max-width: 60px;
+  width: 70px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--a-font-size-small) !important;
+  line-height: var(--a-line-height-small) !important;
 }
