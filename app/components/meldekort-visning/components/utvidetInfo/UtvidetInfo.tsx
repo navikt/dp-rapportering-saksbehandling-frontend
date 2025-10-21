@@ -1,4 +1,5 @@
-import { Alert, BodyLong, Button, Table } from "@navikt/ds-react";
+import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
+import { useState } from "react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
@@ -12,6 +13,44 @@ interface IProps {
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
 }
+
+const MAX_LENGTH = 100;
+
+const TruncatedText = ({ text }: { text: string }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const shouldTruncate = text.length > MAX_LENGTH;
+
+  if (!shouldTruncate) {
+    return <>{text}</>;
+  }
+
+  const getTruncatedText = () => {
+    // Finn siste mellomrom før MAX_LENGTH
+    const lastSpaceIndex = text.lastIndexOf(" ", MAX_LENGTH);
+    const cutoffIndex = lastSpaceIndex > 0 ? lastSpaceIndex : MAX_LENGTH;
+    let truncated = text.slice(0, cutoffIndex);
+
+    // Fjern trailing tegnsetting (komma, punktum, etc.)
+    truncated = truncated.replace(/[,.:;!?]+$/, "");
+
+    return `${truncated}...`;
+  };
+
+  return (
+    <>
+      <span aria-live="polite">{isExpanded ? text : getTruncatedText()}</span>{" "}
+      <Link
+        as="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className={styles.visMerLink}
+        aria-expanded={isExpanded}
+        aria-label={isExpanded ? "Vis mindre av begrunnelsen" : "Vis mer av begrunnelsen"}
+      >
+        {isExpanded ? "Vis mindre" : "Vis mer"}
+      </Link>
+    </>
+  );
+};
 
 const DetailRow = ({
   label,
@@ -73,15 +112,16 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
 
           {periode.begrunnelse && (
             <DetailRow label="Begrunnelse:" alignTop>
-              {periode.begrunnelse}
+              <TruncatedText text={periode.begrunnelse} />
             </DetailRow>
           )}
 
-          {periode.registrertArbeidssoker && (
-            <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
-              {erArbeidssoker ? "Ja" : "Nei"}
-            </DetailRow>
-          )}
+          {periode.registrertArbeidssoker !== null &&
+            periode.registrertArbeidssoker !== undefined && (
+              <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
+                {erArbeidssoker ? "Ja" : "Nei"}
+              </DetailRow>
+            )}
         </Table.Body>
       </Table>
 

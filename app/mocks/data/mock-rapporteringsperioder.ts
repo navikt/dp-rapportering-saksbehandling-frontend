@@ -178,7 +178,8 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         id: "periode-korrigert-bruker-2-correction",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
-        begrunnelse: "Feil antall arbeidstimer. Hadde jobbet full tid",
+        begrunnelse:
+          "Feil antall arbeidstimer registrert i systemet. Bruker hadde faktisk jobbet full tid denne perioden, men det ble ved en inkurie registrert som deltid. Dette har ført til feil beregning av dagpenger for perioden og må korrigeres omgående. Bruker har også dokumentert arbeidstiden gjennom timeregistreringssystemet hos arbeidsgiver, og disse dokumentene kan fremlegges ved behov.",
         originalMeldekortId: "periode-korrigert-bruker-2-original",
         kilde: {
           rolle: ROLLE.Bruker,
