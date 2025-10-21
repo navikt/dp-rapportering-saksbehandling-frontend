@@ -5,7 +5,7 @@
 .skjema {
   display: flex;
   flex-direction: column;
-  max-width: 1400px;
+  max-width: 1250px;
   margin: 0 auto;
   background-color: white;
   padding: var(--a-space-16);
