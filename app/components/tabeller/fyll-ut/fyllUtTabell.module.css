@@ -1,5 +1,6 @@
 .fyllUtTabell {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: 100%;
   max-width: 75rem;
 }
@@ -17,6 +18,8 @@
 
 .fyllUtTabell td {
   text-wrap: nowrap;
+  vertical-align: middle;
+  text-align: center;
 }
 
 .fyllUtTabell thead,
@@ -66,7 +69,7 @@
 }
 
 .gap {
-  width: 10px;
+  width: 12px;
   border: none;
   background: transparent;
   pointer-events: none;
@@ -76,11 +79,23 @@
   box-sizing: content-box;
 }
 
+.fyllUtTabell tbody tr {
+  height: 40px;
+}
+
+.fyllUtTabell tbody tr td {
+  padding-top: 12px;
+}
+
+.fyllUtTabell tbody tr:first-child td {
+  padding-top: 0;
+}
+
 .checkboxWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
+  height: 100%;
 }
 
 .ukedag {
@@ -88,11 +103,19 @@
   display: grid;
 }
 
-.oppsummering {
-  width: 70px;
+.oppsummeringTall {
+  width: auto;
   white-space: nowrap;
   text-align: right;
   font-variant-numeric: tabular-nums;
+  font-size: var(--a-font-size-small) !important;
+  line-height: var(--a-line-height-small) !important;
+}
+
+.oppsummeringEnhet {
+  width: auto;
+  white-space: nowrap;
+  text-align: left;
   font-size: var(--a-font-size-small) !important;
   line-height: var(--a-line-height-small) !important;
 }

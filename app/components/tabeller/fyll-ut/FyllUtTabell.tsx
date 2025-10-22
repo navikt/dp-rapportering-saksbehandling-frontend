@@ -144,8 +144,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
           {uke2Dager.map((dag) => (
             <DagHeader key={`header-${dag.dato}`} dag={dag} />
           ))}
-          <th scope="col"></th>
-          <th scope="col" className="sr-only">
+          <th scope="col" colSpan={2} className="sr-only">
             Sum
           </th>
         </tr>
@@ -179,23 +178,27 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                   setKorrigerteDager={setKorrigerteDager}
                 />
               ))}
-              <td className={styles.gap} aria-hidden="true"></td>
               <td aria-hidden="true">=</td>
-              <td className={styles.oppsummering}>
+              <td className={styles.oppsummeringTall}>
                 {type === AKTIVITET_TYPE.Arbeid
-                  ? `${dager
+                  ? dager
                       .reduce((sum, dag) => {
                         const aktivitet = dag.aktiviteter.find((a) => a.type === type);
                         const timer = aktivitet?.timer ? parseFloat(aktivitet.timer) || 0 : 0;
                         return sum + timer;
                       }, 0)
                       .toString()
-                      .replace(".", ",")} timer`
+                      .replace(".", ",")
+                  : dager.filter((dag) => dag.aktiviteter.some((a) => a.type === type)).length}
+              </td>
+              <td className={styles.oppsummeringEnhet}>
+                {type === AKTIVITET_TYPE.Arbeid
+                  ? "timer"
                   : (() => {
                       const antallDager = dager.filter((dag) =>
                         dag.aktiviteter.some((a) => a.type === type),
                       ).length;
-                      return `${antallDager} ${antallDager === 1 ? "dag" : "dager"}`;
+                      return antallDager === 1 ? "dag" : "dager";
                     })()}
               </td>
             </tr>

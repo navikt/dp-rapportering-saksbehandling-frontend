@@ -1,5 +1,5 @@
 import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
@@ -14,41 +14,52 @@ interface IProps {
   ansvarligSystem: TAnsvarligSystem;
 }
 
-const MAX_LENGTH = 100;
+const MAX_LINES = 4;
 
 const TruncatedText = ({ text }: { text: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const shouldTruncate = text.length > MAX_LENGTH;
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
 
-  if (!shouldTruncate) {
-    return <>{text}</>;
-  }
-
-  const getTruncatedText = () => {
-    // Finn siste mellomrom før MAX_LENGTH
-    const lastSpaceIndex = text.lastIndexOf(" ", MAX_LENGTH);
-    const cutoffIndex = lastSpaceIndex > 0 ? lastSpaceIndex : MAX_LENGTH;
-    let truncated = text.slice(0, cutoffIndex);
-
-    // Fjern trailing tegnsetting (komma, punktum, etc.)
-    truncated = truncated.replace(/[,.:;!?]+$/, "");
-
-    return `${truncated}...`;
-  };
+  useEffect(() => {
+    if (textRef.current && !isExpanded) {
+      // Sjekk om teksten er faktisk kuttet av
+      const isClamped = textRef.current.scrollHeight > textRef.current.clientHeight;
+      setIsTruncated(isClamped);
+    }
+  }, [isExpanded]);
 
   return (
-    <>
-      <span aria-live="polite">{isExpanded ? text : getTruncatedText()}</span>{" "}
-      <Link
-        as="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className={styles.visMerLink}
-        aria-expanded={isExpanded}
-        aria-label={isExpanded ? "Vis mindre av begrunnelsen" : "Vis mer av begrunnelsen"}
+    <div>
+      <div
+        ref={textRef}
+        aria-live="polite"
+        className={isExpanded ? "" : styles.truncatedText}
+        style={
+          !isExpanded
+            ? {
+                display: "-webkit-box",
+                WebkitLineClamp: MAX_LINES,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }
+            : undefined
+        }
       >
-        {isExpanded ? "Vis mindre" : "Vis mer"}
-      </Link>
-    </>
+        {text}
+      </div>
+      {isTruncated && (
+        <Link
+          as="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={styles.visMerLink}
+          aria-expanded={isExpanded}
+          aria-label={isExpanded ? "Vis mindre av begrunnelsen" : "Vis mer av begrunnelsen"}
+        >
+          {isExpanded ? "Vis mindre" : "Vis mer"}
+        </Link>
+      )}
+    </div>
   );
 };
 
