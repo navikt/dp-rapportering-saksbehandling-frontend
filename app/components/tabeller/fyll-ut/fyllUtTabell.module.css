@@ -83,7 +83,7 @@
   height: 40px;
 }
 
-.fyllUtTabell tbody tr td {
+.fyllUtTabell tbody tr {
   padding-top: 12px;
 }
 
@@ -104,18 +104,18 @@
 }
 
 .oppsummeringTall {
-  width: auto;
+  width: 30px;
   white-space: nowrap;
-  text-align: right;
+  text-align: right !important;
   font-variant-numeric: tabular-nums;
   font-size: var(--a-font-size-small) !important;
   line-height: var(--a-line-height-small) !important;
 }
 
 .oppsummeringEnhet {
-  width: auto;
+  width: 40px;
   white-space: nowrap;
-  text-align: left;
+  text-align: left !important;
   font-size: var(--a-font-size-small) !important;
   line-height: var(--a-line-height-small) !important;
 }
