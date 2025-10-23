@@ -1,4 +1,5 @@
-import { Alert, BodyLong, Button, Table } from "@navikt/ds-react";
+import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
+import { useEffect, useRef, useState } from "react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
@@ -12,6 +13,55 @@ interface IProps {
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
 }
+
+const MAX_LINES = 4;
+
+const TruncatedText = ({ text }: { text: string }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (textRef.current && !isExpanded) {
+      // Sjekk om teksten er faktisk kuttet av
+      const isClamped = textRef.current.scrollHeight > textRef.current.clientHeight;
+      setIsTruncated(isClamped);
+    }
+  }, [isExpanded]);
+
+  return (
+    <div>
+      <div
+        ref={textRef}
+        aria-live="polite"
+        className={isExpanded ? "" : styles.truncatedText}
+        style={
+          !isExpanded
+            ? {
+                display: "-webkit-box",
+                WebkitLineClamp: MAX_LINES,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }
+            : undefined
+        }
+      >
+        {text}
+      </div>
+      {isTruncated && (
+        <Link
+          as="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={styles.visMerLink}
+          aria-expanded={isExpanded}
+          aria-label={isExpanded ? "Vis mindre av begrunnelsen" : "Vis mer av begrunnelsen"}
+        >
+          {isExpanded ? "Vis mindre" : "Vis mer"}
+        </Link>
+      )}
+    </div>
+  );
+};
 
 const DetailRow = ({
   label,
@@ -73,15 +123,16 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
 
           {periode.begrunnelse && (
             <DetailRow label="Begrunnelse:" alignTop>
-              {periode.begrunnelse}
+              <TruncatedText text={periode.begrunnelse} />
             </DetailRow>
           )}
 
-          {periode.registrertArbeidssoker && (
-            <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
-              {erArbeidssoker ? "Ja" : "Nei"}
-            </DetailRow>
-          )}
+          {periode.registrertArbeidssoker !== null &&
+            periode.registrertArbeidssoker !== undefined && (
+              <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
+                {erArbeidssoker ? "Ja" : "Nei"}
+              </DetailRow>
+            )}
         </Table.Body>
       </Table>
 
