@@ -1,7 +1,7 @@
-import classNames from "classnames";
-
+import { getActivityClasses, getActivityDotColor } from "~/utils/aktivitet.utils";
+import { AKTIVITET_LABELS_KORT, AKTIVITET_TYPE } from "~/utils/constants";
 import { formatterDag, konverterFraISO8601Varighet } from "~/utils/dato.utils";
-import type { IRapporteringsperiodeDag } from "~/utils/types";
+import type { IRapporteringsperiodeDag, TAktivitetType } from "~/utils/types";
 
 import styles from "./dag.module.css";
 
@@ -9,107 +9,64 @@ interface DagProps {
   dag: IRapporteringsperiodeDag;
 }
 
-const erAktivStil = (dag: IRapporteringsperiodeDag, typer: string[]) =>
-  typer.every((type) => dag.aktiviteter.some((a) => a.type === type));
+const getAktivitetBeskrivelse = (type: TAktivitetType, timer?: string): string => {
+  const beskrivelse = AKTIVITET_LABELS_KORT[type] || type;
 
-const dagKnappStyle = (dag: IRapporteringsperiodeDag) => ({
-  [styles.arbeid]: erAktivStil(dag, ["Arbeid"]),
-  [styles.sykdom]: erAktivStil(dag, ["Syk"]),
-  [styles.fravaer]: erAktivStil(dag, ["Fravaer"]),
-  [styles.utdanning]: erAktivStil(dag, ["Utdanning"]),
-  [styles.arbeidOgUtdanning]: erAktivStil(dag, ["Arbeid", "Utdanning"]),
-  [styles.sykOgUtdanning]: erAktivStil(dag, ["Syk", "Utdanning"]),
-  [styles.fravaerOgUtdanning]: erAktivStil(dag, ["Fravaer", "Utdanning"]),
-  [styles.sykOgFravaer]: erAktivStil(dag, ["Syk", "Fravaer"]),
-  [styles.sykFravaerOgUtdanning]: erAktivStil(dag, ["Syk", "Fravaer", "Utdanning"]),
-});
+  if (type === AKTIVITET_TYPE.Arbeid && timer) {
+    const arbeidTimer = konverterFraISO8601Varighet(timer);
+    return arbeidTimer ? `${beskrivelse} ${arbeidTimer}t` : beskrivelse;
+  }
 
-const getAktivitetsBakgrunn = (dag: IRapporteringsperiodeDag): string => {
-  const aktiviteter = dag.aktiviteter.filter((a) => a.type !== "Arbeid").map((a) => a.type);
-
-  if (aktiviteter.includes("Syk")) return "sykdom";
-  if (aktiviteter.includes("Fravaer")) return "fravaer";
-  if (aktiviteter.includes("Utdanning")) return "utdanning";
-
-  return "";
-};
-
-const getAktivitetsBeskrivelse = (dag: IRapporteringsperiodeDag): string => {
-  const aktiviteter = dag.aktiviteter.map((a) => a.type);
-  if (aktiviteter.length === 0) return "Ingen aktiviteter registrert";
-
-  const beskrivelser: { [key: string]: string } = {
-    Arbeid: "Arbeid",
-    Syk: "Sykdom",
-    Fravaer: "Fravær",
-    Utdanning: "Utdanning",
-  };
-
-  return aktiviteter.map((a) => beskrivelser[a] || a).join(" og ");
+  return beskrivelse;
 };
 
 export function Dag({ dag }: DagProps) {
-  const arbeidTimer = konverterFraISO8601Varighet(
-    dag.aktiviteter?.find((aktivitet) => aktivitet.type === "Arbeid")?.timer ?? "",
-  );
+  const harFlereAktiviteter = dag.aktiviteter && dag.aktiviteter.length > 1;
+  const harAktiviteter = dag.aktiviteter && dag.aktiviteter.length > 0;
+  const { datoColor, bgColor } = getActivityClasses(dag.aktiviteter);
 
-  const aktivitetsBeskrivelse = getAktivitetsBeskrivelse(dag);
-
-  // Finn ikke-arbeid aktiviteter
-  const ikkeArbeidAktiviteter = dag.aktiviteter.filter((a) => a.type !== "Arbeid");
-  const aktivitetsForkortelser = [
-    ...new Set(
-      ikkeArbeidAktiviteter.map((a) => {
-        switch (a.type) {
-          case "Syk":
-            return "S";
-          case "Fravaer":
-            return "F";
-          case "Utdanning":
-            return "U";
-          default:
-            return a.type.charAt(0);
-        }
-      }),
-    ),
-  ].join("");
-
-  const harArbeidstimer = arbeidTimer && aktivitetsBeskrivelse === "Arbeid";
-  const screenReaderText = harArbeidstimer
-    ? `${arbeidTimer} timer arbeid`
-    : `${aktivitetsBeskrivelse}${arbeidTimer ? `, ${arbeidTimer} timer arbeid` : ""}`;
-
-  const harIndicator = arbeidTimer || aktivitetsForkortelser;
+  // Sorter aktiviteter i visningsrekkefølge: Arbeid, Syk, Fravaer, Utdanning
+  const sorterteAktiviteter = harAktiviteter
+    ? [...dag.aktiviteter].sort((a, b) => {
+        const order = [
+          AKTIVITET_TYPE.Arbeid,
+          AKTIVITET_TYPE.Syk,
+          AKTIVITET_TYPE.Fravaer,
+          AKTIVITET_TYPE.Utdanning,
+        ];
+        return order.indexOf(a.type as TAktivitetType) - order.indexOf(b.type as TAktivitetType);
+      })
+    : [];
 
   return (
-    <td className={styles.rootContainer}>
-      <div className={classNames(styles.dagContainer, { [styles.utenTimer]: !harIndicator })}>
-        <span
-          className={classNames(styles.dag, styles.dato, dagKnappStyle(dag))}
-          aria-hidden="true"
-        >
-          {formatterDag(dag.dato)}
-        </span>
-        {arbeidTimer && (
-          <span className={styles.timer} aria-hidden="true">
-            J ({arbeidTimer}t)
-          </span>
-        )}
-        {!arbeidTimer && aktivitetsForkortelser && (
+    <td className={styles.tableCell}>
+      <div className={styles.dagWrapper}>
+        <div className={`${styles.dag} ${harAktiviteter ? bgColor : ""}`}>
           <span
-            className={classNames(
-              styles.timer,
-              styles.aktivitetsIndikator,
-              styles[getAktivitetsBakgrunn(dag)],
-            )}
             aria-hidden="true"
+            className={`${styles.dato} ${harAktiviteter ? datoColor : styles.ingenAktivitet}`}
           >
-            {aktivitetsForkortelser}
+            {formatterDag(dag.dato)}
           </span>
-        )}
-        <span className="sr-only">
-          {formatterDag(dag.dato)}, {screenReaderText}
-        </span>
+          {harAktiviteter && (
+            <div
+              className={`${styles.aktiviteterWrapper} ${harFlereAktiviteter ? styles.venstrestilt : ""}`}
+            >
+              {sorterteAktiviteter.map((aktivitet, index) => (
+                <span
+                  key={index}
+                  aria-hidden="true"
+                  className={`${styles.aktivitet} ${harFlereAktiviteter ? styles.flereAktiviteter : ""} ${harFlereAktiviteter ? getActivityDotColor(aktivitet.type) : ""}`}
+                >
+                  {getAktivitetBeskrivelse(
+                    aktivitet.type as TAktivitetType,
+                    aktivitet.timer ?? undefined,
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </td>
   );

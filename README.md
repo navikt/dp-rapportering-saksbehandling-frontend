@@ -128,7 +128,7 @@ Prosjektet bruker Husky for pre-commit hooks som automatisk:
 
 ```
 app/
-├── components/          # Gjenbrukbare React-komponenter
+├── components/         # Gjenbrukbare React-komponenter
 ├── routes/             # React Router ruter og sider
 ├── hooks/              # Custom React hooks
 ├── models/             # TypeScript typer og modeller
