@@ -1,0 +1,36 @@
+name: Manual PR Cleanup
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR-nummer å slette (f.eks. "123")'
+        required: true
+        type: string
+
+jobs:
+  cleanup:
+    name: Delete PR Preview App
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Delete NAIS application
+        uses: nais/deploy/actions/delete@v2
+        env:
+          TEAM: teamdagpenger
+          CLUSTER: dev-gcp
+          RESOURCE: dp-rapportering-saksbehandling-frontend-pr-${{ inputs.pr_number }}
+          IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          PROJECT_ID: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Cleanup fullført ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "PR-app \`dp-rapportering-saksbehandling-frontend-pr-${{ inputs.pr_number }}\` har blitt slettet fra NAIS." >> $GITHUB_STEP_SUMMARY
+        shell: bash

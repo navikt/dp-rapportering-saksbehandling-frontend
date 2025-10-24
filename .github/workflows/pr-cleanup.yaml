@@ -12,15 +12,29 @@ jobs:
     permissions:
       contents: 'read'
       id-token: 'write'
+      pull-requests: write
     steps:
       - uses: actions/checkout@v5
 
       - name: Delete NAIS application
         uses: nais/deploy/actions/delete@v2
-        with:
-          team: teamdagpenger
-          cluster: dev-gcp
-          app: dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}
         env:
+          TEAM: teamdagpenger
+          CLUSTER: dev-gcp
+          RESOURCE: dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}
           IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           PROJECT_ID: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
+      - name: Comment on PR
+        if: always()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const appName = `dp-rapportering-saksbehandling-frontend-pr-${prNumber}`;
+            github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🧹 **Preview cleanup**\n\nPR preview app \`${appName}\` har blitt slettet fra NAIS.`
+            })
