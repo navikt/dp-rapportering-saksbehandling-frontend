@@ -1,5 +1,6 @@
 import { BodyShort, Checkbox } from "@navikt/ds-react";
 import classNames from "classnames";
+import { uuidv7 } from "uuidv7";
 
 import { AKTIVITET_TYPE } from "~/utils/constants";
 import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
@@ -62,6 +63,7 @@ function DagCell({
           value={aktiv?.timer ?? ""}
           onChange={(value) => {
             let updated;
+
             if (value === "" || value === "0") {
               // Fjern arbeid-aktiviteten hvis feltet tømmes
               updated = dag.aktiviteter.filter((a) => a.type !== type);
@@ -70,7 +72,7 @@ function DagCell({
               updated = dag.aktiviteter.map((a) => (a.type === type ? { ...a, timer: value } : a));
             } else {
               // Legg til ny aktivitet
-              updated = [...dag.aktiviteter, { type, timer: value, dato: dag.dato }];
+              updated = [...dag.aktiviteter, { id: uuidv7(), type, timer: value, dato: dag.dato }];
             }
             setKorrigerteDager((prev) =>
               prev.map((d) => (d.dato === dag.dato ? { ...d, aktiviteter: updated } : d)),
