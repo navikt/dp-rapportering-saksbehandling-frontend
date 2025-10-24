@@ -48,7 +48,7 @@ export function Kalender({ periode }: IProps) {
       <tbody>
         <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} />
         <tr>
-          <td colSpan={7} className={styles.mellomrom} />
+          <td colSpan={7} className={styles.mellomrom} aria-hidden="true" />
         </tr>
         <UkeRad dager={andreUke} ukenummer={andreUkenummer} />
       </tbody>
