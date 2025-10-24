@@ -1,5 +1,4 @@
-import { AKTIVITET_TYPE } from "~/utils/constants";
-import { getWeekDays, konverterFraISO8601Varighet, ukenummer } from "~/utils/dato.utils";
+import { getWeekDays, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
 
 import { Dag } from "./components/Dag";
@@ -7,15 +6,6 @@ import styles from "./kalender.module.css";
 
 interface IProps {
   periode: IRapporteringsperiode;
-}
-
-function harArbeidstimer(dager: IRapporteringsperiodeDag[]): boolean {
-  return dager.some((dag) => {
-    const arbeidTimer = konverterFraISO8601Varighet(
-      dag.aktiviteter?.find((aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid)?.timer ?? "",
-    );
-    return (arbeidTimer ?? 0) > 0;
-  });
 }
 
 function UkeRad({ dager, ukenummer }: { dager: IRapporteringsperiodeDag[]; ukenummer: string }) {
@@ -38,7 +28,6 @@ export function Kalender({ periode }: IProps) {
   const andreUke = periode.dager.slice(7, 14);
   const ukedager = getWeekDays();
   const [forsteUkenummer, andreUkenummer] = ukenummer(periode).split("-");
-  const forsteUkeHarTimer = harArbeidstimer(forsteUke);
 
   return (
     <table className={styles.kalenderTabell}>
@@ -58,11 +47,9 @@ export function Kalender({ periode }: IProps) {
       </thead>
       <tbody>
         <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} />
-        {!forsteUkeHarTimer && (
-          <tr>
-            <td colSpan={8} className={styles.mellomrom} />
-          </tr>
-        )}
+        <tr>
+          <td colSpan={7} className={styles.mellomrom} aria-hidden="true" />
+        </tr>
         <UkeRad dager={andreUke} ukenummer={andreUkenummer} />
       </tbody>
     </table>

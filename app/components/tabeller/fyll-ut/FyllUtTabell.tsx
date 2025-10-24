@@ -2,7 +2,7 @@ import { BodyShort, Checkbox } from "@navikt/ds-react";
 import classNames from "classnames";
 import { uuidv7 } from "uuidv7";
 
-import { AKTIVITET_TYPE } from "~/utils/constants";
+import { AKTIVITET_LABELS_LANG, AKTIVITET_TYPE } from "~/utils/constants";
 import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IPeriode, TAktivitetType } from "~/utils/types";
 
@@ -22,10 +22,10 @@ interface IProps {
 }
 
 const aktiviteter = [
-  { type: AKTIVITET_TYPE.Arbeid, label: "Jobb" },
-  { type: AKTIVITET_TYPE.Syk, label: "Syk" },
-  { type: AKTIVITET_TYPE.Fravaer, label: "Ferie, fravær eller utenlandsopphold" },
-  { type: AKTIVITET_TYPE.Utdanning, label: "Tiltak, kurs eller utdanning" },
+  { type: AKTIVITET_TYPE.Arbeid, label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Arbeid] },
+  { type: AKTIVITET_TYPE.Syk, label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Syk] },
+  { type: AKTIVITET_TYPE.Fravaer, label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Fravaer] },
+  { type: AKTIVITET_TYPE.Utdanning, label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Utdanning] },
 ];
 
 function DagHeader({ dag }: { dag: IKorrigertDag }) {

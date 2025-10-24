@@ -27,6 +27,30 @@ export const AKTIVITET_TYPE = {
   Utdanning: "Utdanning",
 } as const;
 
+// Prioriteringsrekkefølge for aktivitetskombinasjon (første treff vinner)
+export const AKTIVITET_PRIORITET = [
+  AKTIVITET_TYPE.Syk,
+  AKTIVITET_TYPE.Fravaer,
+  AKTIVITET_TYPE.Arbeid,
+  AKTIVITET_TYPE.Utdanning,
+] as const;
+
+// Aktivitetslabels - kort versjon for kompakt visning (f.eks. kalender)
+export const AKTIVITET_LABELS_KORT = {
+  [AKTIVITET_TYPE.Arbeid]: "Jobb",
+  [AKTIVITET_TYPE.Syk]: "Syk",
+  [AKTIVITET_TYPE.Fravaer]: "Ferie",
+  [AKTIVITET_TYPE.Utdanning]: "Utdanning",
+} as const;
+
+// Aktivitetslabels - lang versjon for skjemaer og detaljerte visninger
+export const AKTIVITET_LABELS_LANG = {
+  [AKTIVITET_TYPE.Arbeid]: "Jobb",
+  [AKTIVITET_TYPE.Syk]: "Syk",
+  [AKTIVITET_TYPE.Fravaer]: "Ferie, fravær eller utenlandsopphold",
+  [AKTIVITET_TYPE.Utdanning]: "Tiltak, kurs eller utdanning",
+} as const;
+
 export const KORT_TYPE = {
   Ordinaer: "01",
   Erstatning: "03",
@@ -50,18 +74,29 @@ export const QUERY_PARAMS = {
   OPPDATERT: "oppdatert",
 } as const;
 
+// Legacy-eksport for bakoverkompatibilitet - bruker lange labels
 export const aktivitetsTyper = [
-  { type: "Arbeid", label: "Jobb", erDager: false, klasse: "arbeid" },
-  { type: "Syk", label: "Syk", erDager: true, klasse: "syk" },
   {
-    type: "Fravaer",
-    label: "Ferie, fravær og utenlandsopphold",
+    type: AKTIVITET_TYPE.Arbeid,
+    label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Arbeid],
+    erDager: false,
+    klasse: "arbeid",
+  },
+  {
+    type: AKTIVITET_TYPE.Syk,
+    label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Syk],
+    erDager: true,
+    klasse: "syk",
+  },
+  {
+    type: AKTIVITET_TYPE.Fravaer,
+    label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Fravaer],
     erDager: true,
     klasse: "fravaer",
   },
   {
-    type: "Utdanning",
-    label: "Tiltak, kurs eller utdanning",
+    type: AKTIVITET_TYPE.Utdanning,
+    label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Utdanning],
     erDager: true,
     klasse: "utdanning",
   },

@@ -1,163 +1,92 @@
-.root-container {
-  padding: 0;
+.table-cell {
   vertical-align: top;
 }
 
-:root {
-  --dato-strl: 14px;
-}
-
-.dag-container {
-  position: relative;
+.dagWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: var(--a-spacing-8);
-}
-
-.utenTimer {
-  margin-bottom: 0;
 }
 
 .dag {
-  display: flex;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2;
+  width: 4.5rem;
+  border-radius: 62.5rem 62.5rem 3.125rem 3.125rem;
 }
-
-.timer {
-  position: absolute;
-  top: calc(var(--dato-strl) * 2);
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  border-radius: 0 0 5px 5px;
-  width: calc(var(--dato-strl) * 2);
-  padding-top: 4px;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--a-surface-selected);
-  font-size: 0.765rem;
-  color: var(--a-text-subtle);
-  z-index: 1;
-}
-
-.aktivitetsIndikator.arbeid {
-  background-color: color-mix(in srgb, var(--a-blue-200) 20%, transparent);
-}
-
-.aktivitetsIndikator.sykdom {
-  background-color: color-mix(in srgb, var(--a-orange-200) 20%, transparent);
-}
-
-.aktivitetsIndikator.fravaer {
-  background-color: color-mix(in srgb, var(--a-green-200) 20%, transparent);
-}
-
-.aktivitetsIndikator.utdanning {
-  background-color: color-mix(in srgb, var(--a-purple-200) 20%, transparent);
-}
-
-.aktivitetsIndikator.sykOgFravaer {
-  background-color: color-mix(in srgb, var(--a-orange-200) 20%, transparent);
-}
-
-.aktivitetsIndikator.arbeidOgUtdanning {
-  background-color: color-mix(in srgb, var(--a-blue-200) 20%, transparent);
-}
-
-.aktivitetsIndikator.sykOgUtdanning {
-  background-color: color-mix(in srgb, var(--a-orange-200) 20%, transparent);
-}
-
-.aktivitetsIndikator.fravaerOgUtdanning {
-  background-color: color-mix(in srgb, var(--a-green-200) 20%, transparent);
-}
-
-.aktivitetsIndikator.sykFravaerOgUtdanning {
-  background-color: color-mix(in srgb, var(--a-orange-200) 20%, transparent);
-}
-
-/**/
 
 .dato {
-  padding-right: 4px;
-  padding-left: 6px;
-  background-color: var(--a-bg-subtle);
-  width: calc(var(--dato-strl) * 2.5);
-  height: calc(var(--dato-strl) * 2.5);
-  font-size: var(--a-font-size-small);
-  line-height: var(--a-font-size-small);
+  border-radius: 62.5rem;
+  display: flex;
+  width: 4.5rem;
+  height: 4.5rem;
+  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
 }
 
-.arbeid,
-.arbeidOgUtdanning,
-.arbeid.arbeidOgUtdanning {
+.aktiviteterWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.15rem;
+  background-color: transparent;
+}
+
+.venstrestilt {
+  align-items: flex-start;
+}
+
+.aktivitet {
+  font-size: 12px;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+
+.flereAktiviteter::before {
+  content: "";
+  display: inline-block;
+  width: 0.625rem; /* 10px */
+  height: 0.625rem; /* 10px */
+  border-radius: 62.5rem; /* 1000px */
+  margin-right: 0.15rem; /* spacing between dot and text */
+}
+
+.ingenAktivitet {
+  background-color: #f7f8f9;
+}
+
+/* 20% opacity versjoner for dag-containeren */
+.dag.arbeidBg {
+  background-color: rgba(153, 195, 255, 0.2);
+}
+
+.dag.sykBg {
+  background-color: rgba(255, 211, 153, 0.2);
+}
+
+.dag.fravaerBg {
+  background-color: rgba(168, 220, 177, 0.2);
+}
+
+.dag.utdanningBg {
+  background-color: rgba(210, 168, 220, 0.2);
+}
+
+/* Prikkefarger for pseudo-elementer - påfør kun bakgrunn til ::before */
+.flereAktiviteter.arbeidDot::before {
   background-color: var(--a-blue-200);
 }
 
-.sykOgUtdanning::after,
-.fravaerOgUtdanning::after,
-.arbeidOgUtdanning::after {
-  content: "";
-  position: absolute;
-  right: -12.5%;
-  top: -12.5%;
-  background-color: var(--a-purple-200);
-  border-radius: 50%;
-  height: 45%;
-  width: 45%;
-}
-
-.sykFravaerOgUtdanning::before {
-  content: "";
-  position: absolute;
-  left: -12.5%;
-  top: -12.5%;
-  background-color: var(--a-purple-200);
-  border-radius: 50%;
-  height: 45%;
-  width: 45%;
-}
-
-.utdanning {
-  background-color: var(--a-purple-200);
-}
-
-.ferie,
-.fravaer {
-  background-color: var(--a-green-200);
-}
-
-.sykdom,
-.sykOgFravaer {
+.flereAktiviteter.sykDot::before {
   background-color: var(--a-orange-200);
 }
 
-.sykOgFravaer::after {
-  content: "";
-  position: absolute;
-  right: -12.5%;
-  top: -12.5%;
+.flereAktiviteter.fravaerDot::before {
   background-color: var(--a-green-200);
-  border-radius: 50%;
-  height: 45%;
-  width: 45%;
 }
 
-@container (max-width: 530px) {
-  .dag-container {
-    margin-bottom: var(--a-spacing-6);
-  }
-
-  .dato {
-    width: clamp(30px, 5vw, var(--dato-strl));
-    height: clamp(30px, 5vw, var(--dato-strl));
-    font-size: clamp(12px, 2vw, var(--a-font-size-xsmall));
-    line-height: clamp(12px, 2vw, var(--a-font-size-xsmall));
-  }
+.flereAktiviteter.utdanningDot::before {
+  background-color: var(--aktivitet-utdanning-purple);
 }
