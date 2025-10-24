@@ -53,7 +53,7 @@ export const getActivityClasses = (
 };
 
 /**
- * Hent CSS-farve for prikkene til en spesifikk aktivitetstype
+ * Hent CSS-farge for prikkene til en spesifikk aktivitetstype
  * Brukes for pseudo-elementet (::before) når flere aktiviteter vises
  */
 export const getActivityDotColor = (type: string): string => {
