@@ -1,5 +1,9 @@
 /* === Aktiviteter Farger === */
 
+:root {
+  --aktivitet-utdanning-purple: #d2a8dc;
+}
+
 .arbeid {
   background-color: var(--a-blue-200);
 }
@@ -13,5 +17,5 @@
 }
 
 .utdanning {
-  background-color: #d2a8dc;
+  background-color: var(--aktivitet-utdanning-purple);
 }

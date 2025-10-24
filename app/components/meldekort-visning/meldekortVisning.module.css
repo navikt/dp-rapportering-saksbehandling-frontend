@@ -25,5 +25,5 @@
 .innhold {
   display: flex;
   flex-direction: row;
-  gap: var(--a-space-24);
+  gap: var(--a-space-28);
 }

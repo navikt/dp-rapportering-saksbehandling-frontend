@@ -1,5 +1,5 @@
 import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato } from "~/utils/dato.utils";
@@ -18,16 +18,16 @@ const MAX_LINES = 4;
 
 const TruncatedText = ({ text }: { text: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isTruncated, setIsTruncated] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (textRef.current && !isExpanded) {
-      // Sjekk om teksten er faktisk kuttet av
+  useLayoutEffect(() => {
+    if (textRef.current) {
+      // Sjekk om teksten er faktisk kuttet av ved å sammenligne scrollHeight med clientHeight
       const isClamped = textRef.current.scrollHeight > textRef.current.clientHeight;
-      setIsTruncated(isClamped);
+      setShowButton(isClamped);
     }
-  }, [isExpanded]);
+  }, [text]);
 
   return (
     <div>
@@ -48,7 +48,7 @@ const TruncatedText = ({ text }: { text: string }) => {
       >
         {text}
       </div>
-      {isTruncated && (
+      {showButton && (
         <Link
           as="button"
           onClick={() => setIsExpanded(!isExpanded)}
