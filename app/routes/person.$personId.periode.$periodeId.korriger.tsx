@@ -140,13 +140,21 @@ export default function Periode() {
         </div>
         <div className={styles.meldekort}>
           <div className={styles.meldekortSeksjon}>
-            <Heading level="2" size="small">
-              Meldekortet du korrigerer:
-            </Heading>
+            <div className={styles.header}>
+              <Heading level="2" size="small">
+                Korrigering av følgende meldekort
+              </Heading>
+              <BodyShort size="small">
+                Meldekortet ble innsendt{" "}
+                {periode.innsendtTidspunkt
+                  ? formatterDato({ dato: periode.innsendtTidspunkt })
+                  : "Ukjent tidspunkt"}
+              </BodyShort>
+            </div>
             <Kalender periode={periode} />
           </div>
           {periode.begrunnelse && (
-            <div className={styles.meldekortSeksjon}>
+            <div className={styles.header}>
               <Heading level="3" size="xsmall">
                 Begrunnelse for {erKorrigering ? "korrigering" : "innsending"}
               </Heading>

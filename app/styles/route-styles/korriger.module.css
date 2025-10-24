@@ -16,6 +16,12 @@
   gap: var(--a-space-24);
 }
 
+.meldekortSeksjon {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .meldekort {
   display: flex;
   flex-direction: column;
