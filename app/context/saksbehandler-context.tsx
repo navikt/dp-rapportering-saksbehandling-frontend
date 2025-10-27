@@ -6,6 +6,7 @@ interface ISaksbehandlerContext {
   setAktivtOppgaveSok: (sok: string) => void;
   skjulSensitiveOpplysninger: boolean;
   setSkjulSensitiveOpplysninger: (verdi: boolean) => void;
+  isReady: boolean;
 }
 
 export const SaksbehandlerContext = createContext<ISaksbehandlerContext | undefined>(undefined);
@@ -13,6 +14,7 @@ export const SaksbehandlerContext = createContext<ISaksbehandlerContext | undefi
 export function SaksbehandlerProvider({ children }: PropsWithChildren) {
   const [aktivtOppgaveSok, setAktivtOppgaveSok] = useState<string>("");
   const [skjulSensitiveOpplysninger, setSkjulSensitiveOpplysninger] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState(false);
 
   // Les fra localStorage etter mount (unngår hydration mismatch)
   useEffect(() => {
@@ -20,6 +22,7 @@ export function SaksbehandlerProvider({ children }: PropsWithChildren) {
     if (stored !== null) {
       setSkjulSensitiveOpplysninger(JSON.parse(stored));
     }
+    setIsReady(true);
   }, []);
 
   const handleSetSkjulSensitiveOpplysninger = useCallback((verdi: boolean) => {
@@ -33,8 +36,9 @@ export function SaksbehandlerProvider({ children }: PropsWithChildren) {
       setAktivtOppgaveSok,
       skjulSensitiveOpplysninger,
       setSkjulSensitiveOpplysninger: handleSetSkjulSensitiveOpplysninger,
+      isReady,
     }),
-    [aktivtOppgaveSok, skjulSensitiveOpplysninger, handleSetSkjulSensitiveOpplysninger],
+    [aktivtOppgaveSok, skjulSensitiveOpplysninger, handleSetSkjulSensitiveOpplysninger, isReady],
   );
 
   return (

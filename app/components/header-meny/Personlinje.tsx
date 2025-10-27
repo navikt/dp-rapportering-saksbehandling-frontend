@@ -1,5 +1,5 @@
 import { FigureOutwardFillIcon, SilhouetteFillIcon } from "@navikt/aksel-icons";
-import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
+import { BodyShort, Button, CopyButton, Skeleton } from "@navikt/ds-react";
 import classNames from "classnames";
 import { differenceInYears } from "date-fns";
 import { useMemo, useState } from "react";
@@ -72,7 +72,7 @@ const transformArbeidssokerperioderToHistoryEvents = (
 export default function Personlinje({ person, perioder = [], arbeidssokerperioder = [] }: IProps) {
   const fulltNavn = [person.fornavn, person.mellomnavn, person.etternavn].join(" ");
   const [modalOpen, setModalOpen] = useState(false);
-  const { skjulSensitiveOpplysninger } = useSaksbehandler();
+  const { skjulSensitiveOpplysninger, isReady } = useSaksbehandler();
 
   const events = useMemo(() => {
     return [
@@ -101,7 +101,9 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
             </span>
           )}
           <BodyShort size="small">
-            {skjulSensitiveOpplysninger ? (
+            {!isReady ? (
+              <Skeleton variant="text" width="150px" />
+            ) : skjulSensitiveOpplysninger ? (
               <span className={styles.sensitiv}>{maskerVerdi(fulltNavn)}</span>
             ) : (
               <strong>{fulltNavn}</strong>
@@ -111,12 +113,14 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
 
         <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
           Fødselsnummer:{" "}
-          {skjulSensitiveOpplysninger ? (
+          {!isReady ? (
+            <Skeleton variant="text" width="120px" />
+          ) : skjulSensitiveOpplysninger ? (
             <span className={styles.sensitiv}>{maskerVerdi(person.ident)}</span>
           ) : (
             <strong>{person.ident}</strong>
           )}{" "}
-          <CopyButton copyText={person.ident} size="xsmall" />
+          {isReady && <CopyButton copyText={person.ident} size="xsmall" />}
         </BodyShort>
 
         {person.fodselsdato && (
