@@ -1,7 +1,7 @@
 import { Outlet, redirect, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
-import PersonInformasjon from "~/components/header-meny/PersonInformasjon";
+import Personlinje from "~/components/header-meny/Personlinje";
 import { hentPerson } from "~/models/person.server";
 import {
   hentArbeidssokerperioder,
@@ -31,7 +31,7 @@ export default function Rapportering() {
   return (
     <>
       <aside aria-label="Informasjon om valgt person" className={styles.personInformasjon}>
-        <PersonInformasjon
+        <Personlinje
           person={person}
           perioder={perioder}
           arbeidssokerperioder={arbeidssokerperioder}

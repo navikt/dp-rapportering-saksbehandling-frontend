@@ -22,7 +22,7 @@ p {
   margin: 0;
 }
 
-/* Ekstern flate kompakt tekst - unngår PersonInformasjon */
+/* Ekstern flate kompakt tekst - unngår Personlinje */
 .ekstern-flate p {
     font-size: 0.75rem !important;
 }

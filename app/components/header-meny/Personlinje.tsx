@@ -2,7 +2,7 @@ import { FigureOutwardFillIcon, SilhouetteFillIcon } from "@navikt/aksel-icons";
 import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
 import classNames from "classnames";
 import { differenceInYears } from "date-fns";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import {
@@ -16,7 +16,7 @@ import { maskerVerdi } from "~/utils/skjul-sensitiv-opplysning";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import { HistorikkModal, type IHendelse } from "../../modals/historikk/HistorikkModal";
-import styles from "./PersonInformasjon.module.css";
+import styles from "./personlinje.module.css";
 
 interface IProps {
   person: IPerson;
@@ -69,28 +69,21 @@ const transformArbeidssokerperioderToHistoryEvents = (
     });
 };
 
-export default function PersonInformasjon({
-  person,
-  perioder = [],
-  arbeidssokerperioder = [],
-}: IProps) {
+export default function Personlinje({ person, perioder = [], arbeidssokerperioder = [] }: IProps) {
   const fulltNavn = [person.fornavn, person.mellomnavn, person.etternavn].join(" ");
   const [modalOpen, setModalOpen] = useState(false);
-  const [events, setEvents] = useState<IHendelse[]>([]);
   const { skjulSensitiveOpplysninger } = useSaksbehandler();
 
-  const handleOpenModal = () => {
-    setModalOpen(true);
-    const hendelser = [
+  const events = useMemo(() => {
+    return [
       ...transformArbeidssokerperioderToHistoryEvents(arbeidssokerperioder),
       ...transformPerioderToHistoryEvents(perioder),
     ].sort((a, b) => (a.dato < b.dato ? 1 : -1));
-    setEvents(hendelser);
-  };
+  }, [perioder, arbeidssokerperioder]);
 
   return (
-    <div className={styles.personInformasjonContainer}>
-      <div className={styles.personInformasjon}>
+    <div className={styles.personlinjeContainer}>
+      <div className={styles.personlinje}>
         <div className={styles.navnContainer}>
           {person.kjonn && (
             <span
@@ -108,13 +101,21 @@ export default function PersonInformasjon({
             </span>
           )}
           <BodyShort size="small">
-            {skjulSensitiveOpplysninger ? maskerVerdi(fulltNavn) : <strong>{fulltNavn}</strong>}
+            {skjulSensitiveOpplysninger ? (
+              <span className={styles.sensitiv}>{maskerVerdi(fulltNavn)}</span>
+            ) : (
+              <strong>{fulltNavn}</strong>
+            )}
           </BodyShort>
         </div>
 
         <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
           Fødselsnummer:{" "}
-          {skjulSensitiveOpplysninger ? maskerVerdi(person.ident) : <strong>{person.ident}</strong>}{" "}
+          {skjulSensitiveOpplysninger ? (
+            <span className={styles.sensitiv}>{maskerVerdi(person.ident)}</span>
+          ) : (
+            <strong>{person.ident}</strong>
+          )}{" "}
           <CopyButton copyText={person.ident} size="xsmall" />
         </BodyShort>
 
@@ -135,7 +136,7 @@ export default function PersonInformasjon({
         </BodyShort>
       </div>
       <div className={styles.historikkKnapp}>
-        <Button variant="secondary-neutral" size="xsmall" onClick={handleOpenModal}>
+        <Button variant="secondary-neutral" size="xsmall" onClick={() => setModalOpen(true)}>
           Historikk
         </Button>
       </div>

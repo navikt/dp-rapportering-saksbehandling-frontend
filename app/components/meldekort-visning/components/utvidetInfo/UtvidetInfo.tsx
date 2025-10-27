@@ -30,8 +30,8 @@ const TruncatedText = ({ text }: { text: string }) => {
   }, [text]);
 
   return (
-    <div>
-      <div
+    <>
+      <span
         ref={textRef}
         aria-live="polite"
         className={isExpanded ? "" : styles.truncatedText}
@@ -47,19 +47,22 @@ const TruncatedText = ({ text }: { text: string }) => {
         }
       >
         {text}
-      </div>
+      </span>
       {showButton && (
-        <Link
-          as="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={styles.visMerLink}
-          aria-expanded={isExpanded}
-          aria-label={isExpanded ? "Vis mindre av begrunnelsen" : "Vis mer av begrunnelsen"}
-        >
-          {isExpanded ? "Vis mindre" : "Vis mer"}
-        </Link>
+        <>
+          {" "}
+          <Link
+            as="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={styles.visMerLink}
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? "Vis mindre av begrunnelsen" : "Vis mer av begrunnelsen"}
+          >
+            {isExpanded ? "Vis mindre" : "Vis mer"}
+          </Link>
+        </>
       )}
-    </div>
+    </>
   );
 };
 

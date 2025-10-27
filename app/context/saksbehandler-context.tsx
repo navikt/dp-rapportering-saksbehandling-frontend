@@ -1,6 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { createContext, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
 interface ISaksbehandlerContext {
   aktivtOppgaveSok: string;
@@ -13,21 +12,32 @@ export const SaksbehandlerContext = createContext<ISaksbehandlerContext | undefi
 
 export function SaksbehandlerProvider({ children }: PropsWithChildren) {
   const [aktivtOppgaveSok, setAktivtOppgaveSok] = useState<string>("");
-  const [skjulSensitiveOpplysninger, setSkjulSensitiveOpplysninger] = useLocalStorage<boolean>(
-    "skjul-sensitive-opplysninger",
-    false,
+  const [skjulSensitiveOpplysninger, setSkjulSensitiveOpplysninger] = useState<boolean>(false);
+
+  // Les fra localStorage etter mount (unngår hydration mismatch)
+  useEffect(() => {
+    const stored = localStorage.getItem("skjul-sensitive-opplysninger");
+    if (stored !== null) {
+      setSkjulSensitiveOpplysninger(JSON.parse(stored));
+    }
+  }, []);
+
+  const handleSetSkjulSensitiveOpplysninger = useCallback((verdi: boolean) => {
+    setSkjulSensitiveOpplysninger(verdi);
+    localStorage.setItem("skjul-sensitive-opplysninger", JSON.stringify(verdi));
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      aktivtOppgaveSok,
+      setAktivtOppgaveSok,
+      skjulSensitiveOpplysninger,
+      setSkjulSensitiveOpplysninger: handleSetSkjulSensitiveOpplysninger,
+    }),
+    [aktivtOppgaveSok, skjulSensitiveOpplysninger, handleSetSkjulSensitiveOpplysninger],
   );
 
   return (
-    <SaksbehandlerContext.Provider
-      value={{
-        aktivtOppgaveSok,
-        setAktivtOppgaveSok,
-        skjulSensitiveOpplysninger,
-        setSkjulSensitiveOpplysninger,
-      }}
-    >
-      {children}
-    </SaksbehandlerContext.Provider>
+    <SaksbehandlerContext.Provider value={contextValue}>{children}</SaksbehandlerContext.Provider>
   );
 }

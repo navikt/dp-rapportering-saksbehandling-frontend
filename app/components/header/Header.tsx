@@ -34,15 +34,16 @@ const Header = ({ saksbehandler }: HeaderProps) => {
             aria-haspopup="menu"
             aria-expanded={dropdownOpen}
           />
-          <Dropdown.Menu role="menu" aria-label="Brukerhandlinger">
+          <Dropdown.Menu role="menu" aria-label="Brukerhandlinger" className={styles.dropdownMenu}>
             <Dropdown.Menu.List>
               <Dropdown.Menu.List.Item>
                 <Switch
                   checked={skjulSensitiveOpplysninger}
-                  size={"small"}
+                  size="small"
                   onChange={(e) => setSkjulSensitiveOpplysninger(e.target.checked)}
+                  description="Anbefales for økt sikkerhet"
                 >
-                  Skjul sensitive opplysninger (Best effort)
+                  Skjul sensitive opplysninger
                 </Switch>
               </Dropdown.Menu.List.Item>
               <Dropdown.Menu.List.Item role="menuitem">
