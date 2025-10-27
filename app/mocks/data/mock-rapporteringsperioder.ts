@@ -990,22 +990,28 @@ function lagMeldedatoer(
     innsendtTidspunktRelativTilPeriodeSlutt !== null &&
     innsendtTidspunktRelativTilPeriodeSlutt !== undefined
   ) {
-    innsendtTidspunkt = addDays(
-      new Date(tilOgMed),
-      innsendtTidspunktRelativTilPeriodeSlutt,
-    ).toISOString();
+    const baseDate = addDays(new Date(tilOgMed), innsendtTidspunktRelativTilPeriodeSlutt);
+    // Legg til realistisk tidspunkt (14:30 UTC)
+    baseDate.setUTCHours(14, 30, 0, 0);
+    innsendtTidspunkt = baseDate.toISOString();
   }
 
   // For innsendte meldekort uten eksplisitt dato, sett default
   if (!meldedato && !innsendtTidspunkt && tilOgMed) {
+    const defaultDate = addDays(new Date(tilOgMed), 1);
+    // Legg til realistisk tidspunkt (10:15 UTC)
+    defaultDate.setUTCHours(10, 15, 0, 0);
     return {
       meldedato: format(addDays(tilOgMed, 1), "yyyy-MM-dd"),
-      innsendtTidspunkt: new Date(addDays(tilOgMed, 1)).toISOString(),
+      innsendtTidspunkt: defaultDate.toISOString(),
     };
   }
 
   if (meldedato && !innsendtTidspunkt) {
-    return { meldedato, innsendtTidspunkt: new Date(meldedato).toISOString() };
+    const timestampDate = new Date(meldedato);
+    // Legg til realistisk tidspunkt (12:45 UTC)
+    timestampDate.setUTCHours(12, 45, 0, 0);
+    return { meldedato, innsendtTidspunkt: timestampDate.toISOString() };
   }
 
   if (!meldedato && innsendtTidspunkt) {

@@ -4,7 +4,8 @@
   height: 100%;
 }
 
-.periodeListe table {
+/* Kun direkte table-child, ikke nested tables i expandable rows */
+.periodeListe > :global(table) {
   table-layout: fixed;
   width: 100%;
 }

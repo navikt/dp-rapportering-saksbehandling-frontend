@@ -14,7 +14,7 @@ import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/styles/route-styles/korriger.module.css";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
-import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import { DatoFormat, formatterDato, formatterDatoUTC, ukenummer } from "~/utils/dato.utils";
 import {
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
@@ -147,7 +147,7 @@ export default function Periode() {
               <BodyShort size="small">
                 Meldekortet ble innsendt{" "}
                 {periode.innsendtTidspunkt
-                  ? formatterDato({ dato: periode.innsendtTidspunkt })
+                  ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
                   : "Ukjent tidspunkt"}
               </BodyShort>
             </div>

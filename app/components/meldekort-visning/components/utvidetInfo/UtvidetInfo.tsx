@@ -2,7 +2,7 @@ import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
 import { useLayoutEffect, useRef, useState } from "react";
 
 import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
-import { DatoFormat, formatterDato } from "~/utils/dato.utils";
+import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
@@ -100,6 +100,12 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
       format: DatoFormat.DagMndAarLang,
     });
 
+  const formatDatoUTC = (dato: string) =>
+    formatterDatoUTC({
+      dato,
+      format: DatoFormat.DagMndAarLang,
+    });
+
   return (
     <div className={styles.root}>
       <Table size="small" className={styles.detaljer}>
@@ -111,7 +117,7 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
 
           {periode.innsendtTidspunkt && (
             <DetailRow label={`Dato for ${erKorrigert ? "korrigering" : "innsending"}:`}>
-              {formatDato(periode.innsendtTidspunkt)}
+              {formatDatoUTC(periode.innsendtTidspunkt)}
             </DetailRow>
           )}
 

@@ -5,7 +5,13 @@ import { differenceInYears } from "date-fns";
 import { useState } from "react";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
-import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import {
+  DatoFormat,
+  formatterDato,
+  formatterDatoUTC,
+  formatterKlokkeslettUTC,
+  ukenummer,
+} from "~/utils/dato.utils";
 import { maskerVerdi } from "~/utils/skjul-sensitiv-opplysning";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
@@ -27,12 +33,12 @@ const transformPerioderToHistoryEvents = (perioder: IRapporteringsperiode[]): IH
 
       return {
         dato: innsendtDato,
-        visningsDato: formatterDato({
+        visningsDato: formatterDatoUTC({
           dato: periode.innsendtTidspunkt!,
           format: DatoFormat.DagMndAar,
         }),
-        time: innsendtDato.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" }),
-        event: `Meldekort uke ${ukenummerTekst} ${innsendtDato.getFullYear()}`,
+        time: formatterKlokkeslettUTC(periode.innsendtTidspunkt!),
+        event: `Meldekort uke ${ukenummerTekst} ${innsendtDato.getUTCFullYear()}`,
         hendelseType: periode.originalMeldekortId ? "Korrigert" : "Innsendt",
         type: "Elektronisk",
         kategori: "Meldekort",
@@ -56,7 +62,7 @@ const transformArbeidssokerperioderToHistoryEvents = (
       return {
         dato: new Date(dato),
         visningsDato: formatterDato({ dato: dato, format: DatoFormat.DagMndAar }),
-        time: new Date(dato).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" }),
+        time: "--:--",
         event: hendelse.sluttDato ? "Avregistrert som arbeidssøker" : "Registrert som arbeidssøker",
         kategori: "Arbeidssøkerregisteret",
       };

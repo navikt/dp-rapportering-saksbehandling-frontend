@@ -75,6 +75,68 @@ export function formatterDato({
   }
 }
 
+/**
+ * Formaterer dato i UTC tidssone (ikke konvertert til lokal tid)
+ * Bruk denne for tidspunkt som kommer fra backend (f.eks. innsendtTidspunkt)
+ */
+export function formatterDatoUTC({
+  dato,
+  format = DatoFormat.DagMnd,
+}: {
+  dato: string;
+  format?: DatoFormat;
+}): string {
+  const date = new Date(dato);
+  const locale = "nb-NO";
+
+  switch (format) {
+    case DatoFormat.DagMndAar:
+      return date.toLocaleDateString(locale, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "UTC",
+      });
+
+    case DatoFormat.DagMndAarLang:
+      return date.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      });
+
+    case DatoFormat.Kort:
+      return date.toLocaleDateString(locale, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        timeZone: "UTC",
+      });
+
+    case DatoFormat.DagMnd:
+    default:
+      return date.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+        timeZone: "UTC",
+      });
+  }
+}
+
+/**
+ * Formaterer klokkeslett i UTC tidssone (ikke konvertert til lokal tid)
+ * Bruk denne for tidspunkt som kommer fra backend (f.eks. innsendtTidspunkt)
+ */
+export function formatterKlokkeslettUTC(dato: string): string {
+  const date = new Date(dato);
+  return date.toLocaleTimeString("nb-NO", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  });
+}
+
 export function getWeekDays(): { kort: string; lang: string }[] {
   const weekDays = new Array(7).fill(null).map((_, index) => {
     const date = new Date(Date.UTC(2017, 0, 2 + index)); // 2017-01-02 is just a random Monday

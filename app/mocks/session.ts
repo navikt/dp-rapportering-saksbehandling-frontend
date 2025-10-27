@@ -61,22 +61,32 @@ class SessionRecord {
         status: faker.string.alpha,
         type: faker.string.numeric,
         periode: {
-          fraOgMed: () => faker.date.recent().toISOString(),
-          tilOgMed: () => faker.date.future().toISOString(),
+          fraOgMed: () => faker.date.recent().toISOString().split("T")[0],
+          tilOgMed: () => faker.date.future().toISOString().split("T")[0],
         },
         dager: Array,
         kanSendes: faker.datatype.boolean,
         kanEndres: faker.datatype.boolean,
-        kanSendesFra: () => faker.date.recent().toISOString(),
-        sisteFristForTrekk: nullable(() => faker.date.recent().toISOString()),
+        kanSendesFra: () => faker.date.recent().toISOString().split("T")[0],
+        sisteFristForTrekk: nullable(() => faker.date.recent().toISOString().split("T")[0]),
         opprettetAv: nullable(faker.string.alpha),
         originalMeldekortId: nullable(faker.string.uuid),
         kilde: nullable({
           rolle: nullable(faker.string.alpha),
           ident: nullable(faker.string.alpha),
         }),
-        innsendtTidspunkt: nullable(() => faker.date.recent().toISOString()),
-        meldedato: nullable(() => faker.date.recent().toISOString()),
+        innsendtTidspunkt: nullable(() => {
+          const date = faker.date.recent();
+          // Legg til realistisk tidspunkt (8-18 UTC)
+          date.setUTCHours(
+            faker.number.int({ min: 8, max: 18 }),
+            faker.number.int({ min: 0, max: 59 }),
+            0,
+            0,
+          );
+          return date.toISOString();
+        }),
+        meldedato: nullable(() => faker.date.recent({ days: 30 }).toISOString().split("T")[0]),
         registrertArbeidssoker: nullable(faker.datatype.boolean),
         begrunnelse: nullable(faker.string.sample),
       },
@@ -100,8 +110,8 @@ class SessionRecord {
       arbeidssokerperioder: {
         periodeId: primaryKey(faker.string.uuid),
         ident: faker.string.alpha,
-        startDato: () => faker.date.past().toISOString(),
-        sluttDato: nullable(() => faker.date.recent().toISOString()),
+        startDato: () => faker.date.past().toISOString().split("T")[0],
+        sluttDato: nullable(() => faker.date.recent().toISOString().split("T")[0]),
         status: () => faker.helpers.arrayElement(["Startet", "Avsluttet"]),
       },
     });
