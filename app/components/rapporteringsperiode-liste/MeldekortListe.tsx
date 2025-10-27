@@ -13,10 +13,17 @@ interface IProps {
 
 const KOLONNE_TITLER = ["", "Uke", "Dato", "Status", "Aktiviteter", "Meldedato", "Frist"];
 
+const KOLONNE_BREDDER = ["5%", "10%", "20%", "18%", "18%", "14%", "15%"];
+
 export function MeldekortListe({ perioder, personId, ansvarligSystem }: IProps) {
   return (
     <div className={styles.periodeListe}>
       <Table>
+        <colgroup>
+          {KOLONNE_BREDDER.map((bredde, index) => (
+            <col key={index} style={{ width: bredde }} />
+          ))}
+        </colgroup>
         <Table.Header>
           <Table.Row>
             {KOLONNE_TITLER.map((kolonne, index) => {

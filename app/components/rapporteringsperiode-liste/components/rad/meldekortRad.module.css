@@ -94,6 +94,14 @@
   background-color: transparent !important;
 }
 
+/* === Status === */
+
+.statusContainer {
+  display: flex;
+  gap: var(--a-space-6);
+  flex-wrap: wrap;
+}
+
 /* === Aktiviteter === */
 .aktiviteter {
   display: flex;

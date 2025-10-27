@@ -83,14 +83,12 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
       expandOnRowClick={!erOpprettet}
       expansionDisabled={erOpprettet}
     >
-      <Table.DataCell scope="row" {...cellProps} style={{ width: "10%" }}>
+      <Table.DataCell scope="row" {...cellProps}>
         {ukenummer(periode)}
       </Table.DataCell>
-      <Table.DataCell {...cellProps} style={{ width: "20%" }}>
-        {periodeDatoTekst}
-      </Table.DataCell>
-      <Table.DataCell {...cellProps} style={{ width: "15%" }}>
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+      <Table.DataCell {...cellProps}>{periodeDatoTekst}</Table.DataCell>
+      <Table.DataCell {...cellProps}>
+        <div className={styles.statusContainer}>
           <Tag variant={statusVariant} size="small">
             {statusText}
           </Tag>
@@ -101,7 +99,7 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
           )}
         </div>
       </Table.DataCell>
-      <Table.DataCell {...cellProps} style={{ width: "20%" }}>
+      <Table.DataCell {...cellProps}>
         <ul className={styles.aktiviteter}>
           {aktiviteter.map((type) => (
             <li
@@ -114,7 +112,7 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
           ))}
         </ul>
       </Table.DataCell>
-      <Table.DataCell {...cellProps} style={{ width: "15%" }}>
+      <Table.DataCell {...cellProps}>
         {skalViseInnsendt &&
           (erSendtForSent ? (
             <Tag variant="error" size="small">
@@ -125,7 +123,7 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
             formatterDato({ dato: periode.meldedato! })
           ))}
       </Table.DataCell>
-      <Table.DataCell {...cellProps} style={{ width: "15%" }}>
+      <Table.DataCell {...cellProps}>
         {periode.sisteFristForTrekk && formatterDato({ dato: periode.sisteFristForTrekk })}
       </Table.DataCell>
     </Table.ExpandableRow>
