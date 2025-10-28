@@ -23,11 +23,13 @@ jobs:
         uses: nais/login@v0
         with:
           team: teamdagpenger
-          prefix: gh
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
 
-      - name: Get GKE credentials
+      - name: Set NAIS context
         run: |
-          gcloud container clusters get-credentials dev-gcp --region europe-north1
+          kubectl config use-context dev-gcp && kubens teamdagpenger
 
       - name: Delete NAIS application
         id: delete
