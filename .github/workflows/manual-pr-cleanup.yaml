@@ -15,29 +15,34 @@ jobs:
     permissions:
       contents: 'read'
       id-token: 'write'
+      pull-requests: write
     steps:
       - uses: actions/checkout@v5
 
-      - uses: google-github-actions/auth@v2
+      - name: Login to NAIS
+        uses: nais/login@v0
         with:
-          workload_identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: gh-teamdagpenger@nais-management-233d.iam.gserviceaccount.com
+          team: teamdagpenger
 
-      - uses: google-github-actions/get-gke-credentials@v2
-        with:
-          cluster_name: dev-gcp
-          location: europe-north1
+      - name: Get GKE credentials
+        run: |
+          gcloud container clusters get-credentials dev-gcp --region europe-north1
 
       - name: Delete NAIS application
+        id: delete
         run: |
-          kubectl delete app dp-rapportering-saksbehandling-frontend-pr-${{ inputs.pr_number }} \
-            -n teamdagpenger \
-            --ignore-not-found=true
+          APP_NAME="dp-rapportering-saksbehandling-frontend-pr-${{ inputs.pr_number }}"
+          echo "Attempting to delete: $APP_NAME"
 
-      - name: Summary
-        if: always()
-        run: |
-          echo "### Cleanup fullført ✅" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "PR-app \`dp-rapportering-saksbehandling-frontend-pr-${{ inputs.pr_number }}\` har blitt slettet fra NAIS." >> $GITHUB_STEP_SUMMARY
-        shell: bash
+          if kubectl delete app "$APP_NAME" -n teamdagpenger --ignore-not-found=true; then
+            echo "result=success" >> $GITHUB_OUTPUT
+            echo "### ✅ Cleanup fullført" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "PR-app \`$APP_NAME\` har blitt slettet fra NAIS." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "result=failed" >> $GITHUB_OUTPUT
+            echo "### ❌ Cleanup feilet" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Kunne ikke slette \`$APP_NAME\`. Se loggen for detaljer." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
