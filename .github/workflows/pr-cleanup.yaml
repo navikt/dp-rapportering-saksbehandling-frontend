@@ -26,6 +26,7 @@ jobs:
 
       - name: Delete NAIS application
         run: |
+          kubectl config use-context dev-gcp && kubens teamdagpenger && \
           kubectl delete app dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }} \
             -n teamdagpenger \
             --ignore-not-found=true
