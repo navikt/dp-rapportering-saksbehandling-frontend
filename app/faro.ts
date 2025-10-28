@@ -10,9 +10,14 @@ export function initFaro() {
     return;
   }
 
+  const isLocalhost = getEnv<string>("IS_LOCALHOST") === "true";
+  const faroUrl = getEnv<string>("FARO_URL");
+
+  console.log("[Faro] Initializing with:", { isLocalhost, faroUrl, paused: isLocalhost });
+
   faro = initializeFaro({
-    paused: getEnv("IS_LOCALHOST") === "true",
-    url: getEnv("FARO_URL"),
+    paused: isLocalhost,
+    url: faroUrl,
     app: {
       name: "dp-rapportering-saksbehandling-frontend",
     },
