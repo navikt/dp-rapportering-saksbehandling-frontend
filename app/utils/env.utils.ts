@@ -1,14 +1,27 @@
 import type { IEnv } from "./types";
 
+// Client-side environment cache - populated by EnvProvider during hydration
+let clientEnv: Partial<IEnv> = {};
+
+export function setClientEnv(env: Partial<IEnv>) {
+  clientEnv = env;
+}
+
 function getEnvVariables() {
-  return typeof window === "undefined" ||
+  // Server-side or test environment
+  if (
+    typeof window === "undefined" ||
     (typeof process !== "undefined" && process?.env.NODE_ENV === "test")
-    ? process.env
-    : window.env;
+  ) {
+    return process.env;
+  }
+
+  // Client-side: use cached env from context
+  return clientEnv;
 }
 
 export function getEnv<T>(key: keyof IEnv): T {
-  const env = getEnvVariables();
+  const env = getEnvVariables() as Record<string, string | undefined>;
 
   const defaultEnv: IEnv = {
     IS_LOCALHOST: "false",
@@ -19,7 +32,6 @@ export function getEnv<T>(key: keyof IEnv): T {
     RUNTIME_ENVIRONMENT: "production",
   };
 
-  // @ts-expect-error IEnv inneholder ikke VITE_ prefix
   const value = (env[key] || env[`VITE_${key}`] || defaultEnv[key] || "") as unknown as T;
   return value;
 }

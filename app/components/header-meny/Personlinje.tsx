@@ -100,28 +100,32 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
               )}
             </span>
           )}
-          <BodyShort size="small">
-            {!isReady ? (
-              <Skeleton variant="text" width="150px" />
-            ) : skjulSensitiveOpplysninger ? (
-              <span className={styles.sensitiv}>{maskerVerdi(fulltNavn)}</span>
-            ) : (
-              <strong>{fulltNavn}</strong>
-            )}
-          </BodyShort>
+          {!isReady ? (
+            <Skeleton variant="text" width="150px" />
+          ) : (
+            <BodyShort size="small">
+              {skjulSensitiveOpplysninger ? (
+                <span className={styles.sensitiv}>{maskerVerdi(fulltNavn)}</span>
+              ) : (
+                <strong>{fulltNavn}</strong>
+              )}
+            </BodyShort>
+          )}
         </div>
 
-        <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-          Fødselsnummer:{" "}
-          {!isReady ? (
-            <Skeleton variant="text" width="120px" />
-          ) : skjulSensitiveOpplysninger ? (
-            <span className={styles.sensitiv}>{maskerVerdi(person.ident)}</span>
-          ) : (
-            <strong>{person.ident}</strong>
-          )}{" "}
-          {isReady && <CopyButton copyText={person.ident} size="xsmall" />}
-        </BodyShort>
+        {!isReady ? (
+          <Skeleton variant="text" width="200px" />
+        ) : (
+          <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+            Fødselsnummer:{" "}
+            {skjulSensitiveOpplysninger ? (
+              <span className={styles.sensitiv}>{maskerVerdi(person.ident)}</span>
+            ) : (
+              <strong>{person.ident}</strong>
+            )}{" "}
+            <CopyButton copyText={person.ident} size="xsmall" />
+          </BodyShort>
+        )}
 
         {person.fodselsdato && (
           <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
