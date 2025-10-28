@@ -27,6 +27,10 @@ jobs:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
 
+      - name: Generate kube config files
+        run: |
+          nais kubeconfig 
+
       - name: Set NAIS context
         run: |
           kubectl config use-context dev-gcp && kubens teamdagpenger
