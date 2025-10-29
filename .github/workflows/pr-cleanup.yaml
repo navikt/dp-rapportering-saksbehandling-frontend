@@ -16,26 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Login to NAIS
-        uses: nais/login@v0
-        with:
-          team: teamdagpenger
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-
-      - name: Generate kube config files
-        run: |
-          nais kubeconfig
-
-      - name: Set NAIS context
-        run: |
-          kubectl config use-context dev-gcp
-
       - name: Delete NAIS application
-        run: |
-          kubectl delete app dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }} \
-            -n teamdagpenger \
-            --ignore-not-found=true
+        uses: nais/deploy/actions/delete@v2
+        env:
+          TEAM: teamdagpenger
+          CLUSTER: dev-gcp
+          RESOURCE: dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}
+          IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          PROJECT_ID: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
       - name: Comment on PR
         if: always()
