@@ -1,62 +1,53 @@
-import { Heading, Modal } from "@navikt/ds-react";
+import { Heading, Label, Modal } from "@navikt/ds-react";
 
+import { groupByYear, sortYearsDescending } from "~/utils/dato.utils";
+
+import { HistorikkListeItem } from "./components/HistorikkListeItem";
 import styles from "./historikkModal.module.css";
 
 export interface IHendelse {
   dato: Date;
-  visningsDato: string;
+  innsendtDato: string;
   time: string;
   event: string;
   hendelseType?: "Innsendt" | "Korrigert";
   type?: "Elektronisk" | "Manuell";
-  kategori: "Meldekort" | "System" | "Arbeidssøkerregisteret";
+  kategori: "Meldekort" | "System";
+  erSendtForSent?: boolean;
 }
 
 interface HistorikkModalProps {
   open: boolean;
   onClose: () => void;
-  fulltNavn: string;
   hendelser: IHendelse[];
 }
 
-export function HistorikkModal({ open, onClose, fulltNavn, hendelser }: HistorikkModalProps) {
+export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps) {
+  const hendelserEtterAar = groupByYear(hendelser, (hendelse) => hendelse.dato);
+  const sortedYears = sortYearsDescending(hendelserEtterAar);
+
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="historikk-heading" closeOnBackdropClick>
       <Modal.Header>
         <Heading level="2" size="small" id="historikk-heading">
-          {`Historikk — ${fulltNavn}`}
+          Historikk
         </Heading>
       </Modal.Header>
       <Modal.Body>
-        <ol className={styles.list}>
-          {hendelser.map((hendelse, id) => (
-            <li key={`${hendelse.visningsDato}-${id}`} className={styles.row}>
-              <dl className={styles.tidspunkt}>
-                <dt className="sr-only">Dato</dt>
-                <dd>{hendelse.visningsDato}</dd>
-                <dt className="sr-only">Tid</dt>
-                <dd>kl {hendelse.time}</dd>
-              </dl>
-              <div aria-hidden="true" className={styles.line}>
-                <span
-                  className={`${styles.marker} ${hendelse.kategori === "Meldekort" ? styles.meldekort : styles.andreHendelser}`}
-                />
+        <div className={styles.modalContent}>
+          {sortedYears.map((year) => (
+            <div key={year} className={styles.yearList}>
+              <div className={styles.listTitle}>
+                <Label size="small">{year}</Label>
               </div>
-              <dl className={styles.hendelse}>
-                <dt className="sr-only">Meldekort</dt>
-                <dd>{hendelse.event}</dd>
-                {hendelse.hendelseType && (
-                  <>
-                    <dt className="sr-only">Hendelsestype</dt>
-                    <dd>{hendelse.hendelseType}</dd>
-                  </>
-                )}
-                <dt className="sr-only">Type</dt>
-                {hendelse.type && <dd className={styles.subtle}>{hendelse.type}</dd>}
-              </dl>
-            </li>
+              <ol className={styles.list}>
+                {hendelserEtterAar[year].map((hendelse, id) => (
+                  <HistorikkListeItem key={`${hendelse.innsendtDato}-${id}`} hendelse={hendelse} />
+                ))}
+              </ol>
+            </div>
           ))}
-        </ol>
+        </div>
       </Modal.Body>
     </Modal>
   );

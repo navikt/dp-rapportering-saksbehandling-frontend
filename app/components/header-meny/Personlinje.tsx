@@ -5,17 +5,14 @@ import { differenceInYears } from "date-fns";
 import { useMemo, useState } from "react";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
-import {
-  DatoFormat,
-  formatterDato,
-  formatterDatoUTC,
-  formatterKlokkeslettUTC,
-  ukenummer,
-} from "~/utils/dato.utils";
 import { maskerVerdi } from "~/utils/skjul-sensitiv-opplysning";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
-import { HistorikkModal, type IHendelse } from "../../modals/historikk/HistorikkModal";
+import {
+  transformArbeidssokerperioderToHistoryEvents,
+  transformPerioderToHistoryEvents,
+} from "../../modals/historikk/historikk.utils";
+import { HistorikkModal } from "../../modals/historikk/HistorikkModal";
 import styles from "./personlinje.module.css";
 
 interface IProps {
@@ -23,51 +20,6 @@ interface IProps {
   perioder?: IRapporteringsperiode[];
   arbeidssokerperioder?: IArbeidssokerperiode[];
 }
-
-const transformPerioderToHistoryEvents = (perioder: IRapporteringsperiode[]): IHendelse[] => {
-  return perioder
-    .filter((periode) => periode.innsendtTidspunkt) // Kun innsendte meldekort
-    .map((periode) => {
-      const innsendtDato = new Date(periode.innsendtTidspunkt!);
-      const ukenummerTekst = ukenummer(periode);
-
-      return {
-        dato: innsendtDato,
-        visningsDato: formatterDatoUTC({
-          dato: periode.innsendtTidspunkt!,
-          format: DatoFormat.DagMndAar,
-        }),
-        time: formatterKlokkeslettUTC(periode.innsendtTidspunkt!),
-        event: `Meldekort uke ${ukenummerTekst} ${innsendtDato.getUTCFullYear()}`,
-        hendelseType: periode.originalMeldekortId ? "Korrigert" : "Innsendt",
-        type: "Elektronisk",
-        kategori: "Meldekort",
-      };
-    });
-};
-
-const transformArbeidssokerperioderToHistoryEvents = (
-  arbeidssokerperioder: IArbeidssokerperiode[],
-): IHendelse[] => {
-  return arbeidssokerperioder
-    .reduce((hendelser, hendelse) => {
-      if (hendelse.sluttDato) {
-        return [...hendelser, hendelse, { ...hendelse, sluttDato: null }];
-      }
-      return [...hendelser, hendelse];
-    }, [] as IArbeidssokerperiode[])
-    .map((hendelse) => {
-      const dato = hendelse.sluttDato ?? hendelse.startDato;
-
-      return {
-        dato: new Date(dato),
-        visningsDato: formatterDato({ dato: dato, format: DatoFormat.DagMndAar }),
-        time: "--:--",
-        event: hendelse.sluttDato ? "Avregistrert som arbeidssøker" : "Registrert som arbeidssøker",
-        kategori: "Arbeidssøkerregisteret",
-      };
-    });
-};
 
 export default function Personlinje({ person, perioder = [], arbeidssokerperioder = [] }: IProps) {
   const fulltNavn = [person.fornavn, person.mellomnavn, person.etternavn].join(" ");
@@ -149,12 +101,7 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
         </Button>
       </div>
 
-      <HistorikkModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        fulltNavn={fulltNavn}
-        hendelser={events}
-      />
+      <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} hendelser={events} />
     </div>
   );
 }
