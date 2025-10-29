@@ -1,4 +1,5 @@
 import { AKTIVITET_TYPE } from "~/utils/constants";
+import { groupByYear } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, TAktivitetType } from "~/utils/types";
 
 export const aktivitetMapping: {
@@ -44,18 +45,5 @@ export function sorterAktiviteter(aktiviteter: TAktivitetType[]): TAktivitetType
 export function groupPeriodsByYear(
   perioder: IRapporteringsperiode[],
 ): Record<number, IRapporteringsperiode[]> {
-  return perioder.reduce(
-    (groups, periode) => {
-      // Bruk fraOgMed for å finne år
-      const fraOgMedDate = new Date(periode.periode.fraOgMed);
-      const year = fraOgMedDate.getFullYear();
-
-      if (!groups[year]) {
-        groups[year] = [];
-      }
-      groups[year].push(periode);
-      return groups;
-    },
-    {} as Record<number, IRapporteringsperiode[]>,
-  );
+  return groupByYear(perioder, (periode) => new Date(periode.periode.fraOgMed));
 }
