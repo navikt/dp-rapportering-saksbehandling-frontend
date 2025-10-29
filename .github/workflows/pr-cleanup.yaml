@@ -16,6 +16,17 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Login to NAIS
+        uses: nais/login@v0
+        with:
+          team: teamdagpenger
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
+      - name: Set up kubectl credentials
+        run: |
+          gcloud container clusters get-credentials dev-gcp --region europe-north1 --project ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
       - name: Delete NAIS application
         uses: nais/deploy/actions/delete@v2
         env:
