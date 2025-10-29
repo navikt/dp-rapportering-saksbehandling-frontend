@@ -23,13 +23,9 @@ jobs:
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
-      - name: Generate kube config files
+      - name: Set up kubectl credentials
         run: |
-          nais kubeconfig
-
-      - name: Set NAIS context
-        run: |
-          kubectl config use-context dev-gcp
+          gcloud container clusters get-credentials dev-gcp --region europe-north1 --project ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
       - name: Delete NAIS application
         run: |
