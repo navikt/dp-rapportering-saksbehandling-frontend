@@ -22,11 +22,17 @@ jobs:
           team: teamdagpenger
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-          build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
+
+      - name: Generate kube config files
+        run: |
+          nais kubeconfig
+
+      - name: Set NAIS context
+        run: |
+          kubectl config use-context dev-gcp
 
       - name: Delete NAIS application
         run: |
-          kubectl config use-context dev-gcp && kubens teamdagpenger && \
           kubectl delete app dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }} \
             -n teamdagpenger \
             --ignore-not-found=true
