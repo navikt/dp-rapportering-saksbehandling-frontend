@@ -1,6 +1,5 @@
 import {
   DatoFormat,
-  formatterDato,
   formatterDatoUTC,
   formatterKlokkeslettUTC,
   ukenummer,
@@ -61,8 +60,8 @@ export const transformArbeidssokerperioderToHistoryEvents = (
 
     return {
       dato: new Date(dato),
-      innsendtDato: formatterDato({ dato: dato, format: DatoFormat.DagMndAar }),
-      time: "--:--",
+      innsendtDato: formatterDatoUTC({ dato: dato, format: DatoFormat.DagMndAar }),
+      time: formatterKlokkeslettUTC(dato),
       event: erAvregistrering ? "Avregistrert som arbeidssøker" : "Registrert som arbeidssøker",
       kategori: "System",
     };

@@ -125,7 +125,7 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
       {
         periodeId: "1",
         ident: "12345678901",
-        startDato: "2024-01-15",
+        startDato: "2024-01-15T10:30:00Z",
         sluttDato: null,
         status: "Startet",
       },
@@ -136,7 +136,7 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
     expect(result).toHaveLength(1);
     expect(result[0].event).toBe("Registrert som arbeidssøker");
     expect(result[0].innsendtDato).toBe("15.01.2024");
-    expect(result[0].time).toBe("--:--");
+    expect(result[0].time).toBe("10:30");
     expect(result[0].kategori).toBe("System");
   });
 
@@ -145,8 +145,8 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
       {
         periodeId: "1",
         ident: "12345678901",
-        startDato: "2024-01-15",
-        sluttDato: "2024-03-20",
+        startDato: "2024-01-15T09:00:00Z",
+        sluttDato: "2024-03-20T14:30:00Z",
         status: "Avsluttet",
       },
     ];
@@ -158,10 +158,12 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
     // Første hendelse skal være registrering
     expect(result[0].event).toBe("Registrert som arbeidssøker");
     expect(result[0].innsendtDato).toBe("15.01.2024");
+    expect(result[0].time).toBe("09:00");
 
     // Andre hendelse skal være avregistrering
     expect(result[1].event).toBe("Avregistrert som arbeidssøker");
     expect(result[1].innsendtDato).toBe("20.03.2024");
+    expect(result[1].time).toBe("14:30");
   });
 
   it("skal håndtere flere perioder", () => {
@@ -169,14 +171,14 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
       {
         periodeId: "1",
         ident: "12345678901",
-        startDato: "2024-01-15",
-        sluttDato: "2024-02-20",
+        startDato: "2024-01-15T08:00:00Z",
+        sluttDato: "2024-02-20T16:00:00Z",
         status: "Avsluttet",
       },
       {
         periodeId: "2",
         ident: "12345678901",
-        startDato: "2024-03-01",
+        startDato: "2024-03-01T10:00:00Z",
         sluttDato: null,
         status: "Startet",
       },
@@ -204,7 +206,7 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
       {
         periodeId: "1",
         ident: "12345678901",
-        startDato: "2024-01-15",
+        startDato: "2024-01-15T10:30:00Z",
         sluttDato: null,
         status: "Startet",
       },
@@ -221,8 +223,8 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
       {
         periodeId: "1",
         ident: "12345678901",
-        startDato: "2024-01-15",
-        sluttDato: "2024-03-20",
+        startDato: "2024-01-15T08:00:00Z",
+        sluttDato: "2024-03-20T15:00:00Z",
         status: "Avsluttet",
       },
     ];
@@ -243,14 +245,14 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
       {
         periodeId: "1",
         ident: "12345678901",
-        startDato: "2024-01-15",
+        startDato: "2024-01-15T08:00:00Z",
         sluttDato: null,
         status: "Startet",
       },
       {
         periodeId: "2",
         ident: "12345678901",
-        startDato: "2024-03-01",
+        startDato: "2024-03-01T10:00:00Z",
         sluttDato: null,
         status: "Startet",
       },
@@ -267,7 +269,7 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
       {
         periodeId: "1",
         ident: "12345678901",
-        startDato: "2024-12-25",
+        startDato: "2024-12-25T14:30:00Z",
         sluttDato: null,
         status: "Startet",
       },
@@ -276,5 +278,6 @@ describe("transformArbeidssokerperioderToHistoryEvents", () => {
     const result = transformArbeidssokerperioderToHistoryEvents(perioder);
 
     expect(result[0].innsendtDato).toBe("25.12.2024");
+    expect(result[0].time).toBe("14:30");
   });
 });
