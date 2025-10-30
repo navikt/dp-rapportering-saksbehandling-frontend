@@ -182,3 +182,42 @@ export function konverterFraISO8601Varighet(periode?: string | null): number | u
     return undefined;
   }
 }
+
+/**
+ * Grupperer objekter etter år basert på en dato-property
+ * @param items - Array av objekter som skal grupperes
+ * @param getDate - Funksjon som henter datoen fra hvert objekt
+ * @returns Objekt med år som nøkler og arrays av objekter som verdier
+ *
+ * @example
+ * const hendelser = [{ dato: new Date('2024-01-01'), ... }, ...]
+ * const grouped = groupByYear(hendelser, item => item.dato)
+ */
+export function groupByYear<T>(items: T[], getDate: (item: T) => Date): Record<number, T[]> {
+  return items.reduce(
+    (groups, item) => {
+      const year = getDate(item).getFullYear();
+      if (!groups[year]) {
+        groups[year] = [];
+      }
+      groups[year].push(item);
+      return groups;
+    },
+    {} as Record<number, T[]>,
+  );
+}
+
+/**
+ * Sorterer år i synkende rekkefølge (nyeste først)
+ * @param groupedByYear - Objekt med år som nøkler
+ * @returns Array av år sortert fra nyeste til eldste
+ *
+ * @example
+ * const years = sortYearsDescending({ 2024: [...], 2023: [...] })
+ * // => [2024, 2023]
+ */
+export function sortYearsDescending(groupedByYear: Record<number, unknown[]>): number[] {
+  return Object.keys(groupedByYear)
+    .map(Number)
+    .sort((a, b) => b - a);
+}

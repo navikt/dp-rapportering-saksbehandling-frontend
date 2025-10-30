@@ -8,7 +8,7 @@ import type { loader as personLoader } from "~/routes/person.$personId";
 import styles from "~/styles/route-styles/perioder.module.css";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DEFAULT_PERSON } from "~/utils/constants";
-import { ukenummer } from "~/utils/dato.utils";
+import { sortYearsDescending, ukenummer } from "~/utils/dato.utils";
 
 import type { Route } from "./+types/person.$personId.perioder";
 
@@ -47,9 +47,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
   }, [searchParams, setSearchParams, perioder]);
 
   const groupedPeriods = groupPeriodsByYear(perioder);
-  const years = Object.keys(groupedPeriods)
-    .map(Number)
-    .sort((a, b) => b - a); // Nyeste år først
+  const years = sortYearsDescending(groupedPeriods);
 
   const [valgteAar, setValgteAar] = useState<number[]>(() => {
     const aarParam = searchParams.get(QUERY_PARAMS.AAR);

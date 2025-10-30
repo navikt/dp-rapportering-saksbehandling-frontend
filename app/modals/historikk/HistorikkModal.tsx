@@ -1,62 +1,104 @@
-import { Heading, Modal } from "@navikt/ds-react";
+import { CheckmarkIcon, XMarkIcon } from "@navikt/aksel-icons";
+import { BodyShort, Heading, Label, Modal, Process, Tag } from "@navikt/ds-react";
+
+import { groupByYear, sortYearsDescending } from "~/utils/dato.utils";
 
 import styles from "./historikkModal.module.css";
 
 export interface IHendelse {
   dato: Date;
-  visningsDato: string;
+  innsendtDato: string;
   time: string;
   event: string;
   hendelseType?: "Innsendt" | "Korrigert";
   type?: "Elektronisk" | "Manuell";
-  kategori: "Meldekort" | "System" | "Arbeidssøkerregisteret";
+  kategori: "Meldekort" | "System";
+  erSendtForSent?: boolean;
 }
 
 interface HistorikkModalProps {
   open: boolean;
   onClose: () => void;
-  fulltNavn: string;
   hendelser: IHendelse[];
 }
 
-export function HistorikkModal({ open, onClose, fulltNavn, hendelser }: HistorikkModalProps) {
+// Konstanter for event-typer
+export const EVENT_TYPES = {
+  REGISTERED: "Registrert som arbeidssøker",
+  UNREGISTERED: "Avregistrert som arbeidssøker",
+} as const;
+
+function getBullet(event: string) {
+  const isRegistered = event === EVENT_TYPES.REGISTERED;
+  const isUnregistered = event === EVENT_TYPES.UNREGISTERED;
+
+  if (isRegistered) {
+    return <CheckmarkIcon title="" fontSize="1.5rem" />;
+  }
+
+  if (isUnregistered) {
+    return <XMarkIcon title="" fontSize="1.5rem" />;
+  }
+
+  return undefined;
+}
+
+export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps) {
+  const hendelserEtterAar = groupByYear(hendelser, (hendelse) => hendelse.dato);
+  const sortedYears = sortYearsDescending(hendelserEtterAar);
+
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="historikk-heading" closeOnBackdropClick>
       <Modal.Header>
         <Heading level="2" size="small" id="historikk-heading">
-          {`Historikk — ${fulltNavn}`}
+          Historikk
         </Heading>
       </Modal.Header>
       <Modal.Body>
-        <ol className={styles.list}>
-          {hendelser.map((hendelse, id) => (
-            <li key={`${hendelse.visningsDato}-${id}`} className={styles.row}>
-              <dl className={styles.tidspunkt}>
-                <dt className="sr-only">Dato</dt>
-                <dd>{hendelse.visningsDato}</dd>
-                <dt className="sr-only">Tid</dt>
-                <dd>kl {hendelse.time}</dd>
-              </dl>
-              <div aria-hidden="true" className={styles.line}>
-                <span
-                  className={`${styles.marker} ${hendelse.kategori === "Meldekort" ? styles.meldekort : styles.andreHendelser}`}
-                />
+        <div className={styles.modalContent}>
+          {sortedYears.map((year) => (
+            <div key={year} className={styles.yearList}>
+              <div className={styles.listTitle}>
+                <Label>{year}</Label>
               </div>
-              <dl className={styles.hendelse}>
-                <dt className="sr-only">Meldekort</dt>
-                <dd>{hendelse.event}</dd>
-                {hendelse.hendelseType && (
-                  <>
-                    <dt className="sr-only">Hendelsestype</dt>
-                    <dd>{hendelse.hendelseType}</dd>
-                  </>
-                )}
-                <dt className="sr-only">Type</dt>
-                {hendelse.type && <dd className={styles.subtle}>{hendelse.type}</dd>}
-              </dl>
-            </li>
+              <Process>
+                {hendelserEtterAar[year].map((hendelse, id) => {
+                  const visningDatoTekst =
+                    hendelse.kategori === "Meldekort"
+                      ? `Innsendt: ${hendelse.innsendtDato}, kl. ${hendelse.time}`
+                      : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
+
+                  const bullet = getBullet(hendelse.event);
+
+                  return (
+                    <Process.Event
+                      key={`${hendelse.innsendtDato}-${id}`}
+                      title={hendelse.event}
+                      timestamp={visningDatoTekst}
+                      status="completed"
+                      bullet={bullet}
+                    >
+                      {hendelse.type && <BodyShort size="small">{hendelse.type}</BodyShort>}
+                      {hendelse.erSendtForSent && (
+                        <>
+                          <BodyShort size="small">Frist: {hendelse.innsendtDato}</BodyShort>
+                          <Tag variant="error" size="xsmall">
+                            Innsendt etter fristen
+                          </Tag>
+                        </>
+                      )}
+                      {hendelse.hendelseType === "Korrigert" && (
+                        <Tag variant="warning" size="small">
+                          Korrigert
+                        </Tag>
+                      )}
+                    </Process.Event>
+                  );
+                })}
+              </Process>
+            </div>
           ))}
-        </ol>
+        </div>
       </Modal.Body>
     </Modal>
   );
