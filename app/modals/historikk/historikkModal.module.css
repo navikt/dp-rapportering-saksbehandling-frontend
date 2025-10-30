@@ -10,7 +10,6 @@
 .year-list {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: var(--a-space-16);
   min-width: 336px;
 }
