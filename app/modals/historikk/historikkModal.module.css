@@ -27,15 +27,5 @@
 .list-title::after {
   content: "";
   flex: 1;
-  border-top: 1px dashed #c6c2bf;
-}
-
-.list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
+  border-top: 2px dashed #c6c2bf;
 }
