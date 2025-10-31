@@ -1,11 +1,11 @@
 import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
 
-import { ANSVARLIG_SYSTEM, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { KalenderOgAktiviteter } from "./components/kalenderOgAktiviteter/kalenderOgAktiviteter";
 import { UtvidetInfo } from "./components/utvidetInfo/UtvidetInfo";
+import { erPeriodeTilUtfylling, kanMeldekortSendes } from "./MeldekortVisning.helpers";
 import styles from "./meldekortVisning.module.css";
 
 interface IProps {
@@ -22,8 +22,8 @@ export function MeldekortVisning({ perioder, personId, ansvarligSystem }: IProps
     const uker = ukenummer(periode);
 
     // Sjekk om meldekort er tomt/klar til utfylling
-    const erTilUtfylling = periode.status === RAPPORTERINGSPERIODE_STATUS.TilUtfylling;
-    const kanSendes = periode.kanSendes && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
+    const erTilUtfylling = erPeriodeTilUtfylling(periode);
+    const kanSendes = kanMeldekortSendes(periode, ansvarligSystem);
 
     return (
       <section

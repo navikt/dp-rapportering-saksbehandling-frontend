@@ -39,8 +39,8 @@ export function sorterAktiviteter(aktiviteter: TAktivitetType[]): TAktivitetType
 }
 
 /**
- * Utility function to group periods by year based on fraOgMed date
- * Use the start date to determine which year the period belongs to
+ * Hjelpefunksjon for å gruppere perioder etter år basert på fraOgMed-dato
+ * Bruker startdatoen for å bestemme hvilket år perioden tilhører
  */
 export function groupPeriodsByYear(
   perioder: IRapporteringsperiode[],

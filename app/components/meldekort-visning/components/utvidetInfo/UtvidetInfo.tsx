@@ -1,11 +1,16 @@
 import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
 import { useLayoutEffect, useRef, useState } from "react";
 
-import { ANSVARLIG_SYSTEM, ROLLE } from "~/utils/constants";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
+import {
+  erKildeSaksbehandler,
+  erMeldekortKorrigert,
+  kanMeldekortEndres,
+  pluraliserDager,
+} from "./UtvidetInfo.helpers";
 import styles from "./utvidetInfo.module.css";
 
 interface IProps {
@@ -23,7 +28,7 @@ const TruncatedText = ({ text }: { text: string }) => {
 
   useLayoutEffect(() => {
     if (textRef.current) {
-      // Sjekk om teksten er faktisk kuttet av ved å sammenligne scrollHeight med clientHeight
+      // Sjekk om teksten er kuttet av ved å sammenligne scrollHeight med clientHeight
       const isClamped = textRef.current.scrollHeight > textRef.current.clientHeight;
       setShowButton(isClamped);
     }
@@ -91,11 +96,11 @@ const DetailRow = ({
 
 export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
-  const erKorrigert = !!periode.originalMeldekortId;
-  const kanEndres = periode.kanEndres && ansvarligSystem === ANSVARLIG_SYSTEM.DP;
+  const erKorrigert = erMeldekortKorrigert(periode);
+  const kanEndres = kanMeldekortEndres(periode, ansvarligSystem);
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const antallDagerForSent = dagerForSent(periode);
-  const erSaksbehandler = periode?.kilde?.rolle === ROLLE.Saksbehandler;
+  const erSaksbehandler = erKildeSaksbehandler(periode);
 
   const formatDato = (dato: string) =>
     formatterDato({
@@ -147,8 +152,8 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
 
       {erSendtForSent && (
         <Alert variant="warning" size="small">
-          Dette meldekortet er sendt inn {antallDagerForSent}{" "}
-          {antallDagerForSent !== null && antallDagerForSent > 1 ? " dager" : " dag"} etter fristen
+          Dette meldekortet er sendt inn {antallDagerForSent} {pluraliserDager(antallDagerForSent)}{" "}
+          etter fristen
         </Alert>
       )}
 

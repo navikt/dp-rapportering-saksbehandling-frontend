@@ -30,18 +30,18 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
   const [searchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
 
-  // Derived state
+  // States
   const erOpprettet = erPeriodeOpprettet(periode);
   const erKorrigert = erPeriodeKorrigert(periode);
   const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })}`;
 
-  // Display values
+  // Visningsverdier
   const statusConfig = getStatusConfig(periode);
   const skalViseInnsendt = skalViseInnsendtInfo(periode);
   const erSendtForSent = skalViseInnsendt && erMeldekortSendtForSent(periode);
   const aktiviteter = sorterAktiviteter(unikeAktiviteter(periode));
 
-  // Highlight effect
+  // Highlight-effekt
   useEffect(() => {
     const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
     if (oppdatertId === periode.id) {
@@ -57,7 +57,7 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
     [styles["periodeListe__row--disabled"]]: erOpprettet,
   });
 
-  // Common cell props
+  // Felles props for celler
   const cellProps = {
     textSize: "small" as const,
     className: radKlasse,

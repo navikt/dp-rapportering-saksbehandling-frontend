@@ -1,28 +1,15 @@
 import { BodyLong, Heading } from "@navikt/ds-react";
 
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
-import { AKTIVITET_TYPE, aktivitetsTyper } from "~/utils/constants";
-import { konverterFraISO8601Varighet } from "~/utils/dato.utils";
+import { aktivitetsTyper } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import { Kalender } from "../../../tabeller/kalender/Kalender";
+import { beregnTotalt } from "./kalenderOgAktiviteter.helpers";
 import styles from "./kalenderOgAktiviteter.module.css";
 
 interface IProps {
   periode: IRapporteringsperiode;
-}
-
-function beregnTotalt(periode: IRapporteringsperiode, type: string) {
-  return periode.dager.reduce((sum, dag) => {
-    const aktivitet = dag.aktiviteter.find((aktivitet) => aktivitet.type === type);
-    if (!aktivitet) return sum;
-
-    if (type === AKTIVITET_TYPE.Arbeid) {
-      return sum + (konverterFraISO8601Varighet(aktivitet.timer || "PT0H") || 0);
-    }
-
-    return sum + 1;
-  }, 0);
 }
 
 export function KalenderOgAktiviteter({ periode }: IProps) {

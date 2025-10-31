@@ -9,7 +9,7 @@ export interface StatusConfig {
 }
 
 /**
- * Determines the status configuration based on the period state
+ * Bestemmer statuskonfigurasjonen basert på periodens tilstand
  */
 export function getStatusConfig(periode: IRapporteringsperiode): StatusConfig {
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
@@ -27,7 +27,7 @@ export function getStatusConfig(periode: IRapporteringsperiode): StatusConfig {
 }
 
 /**
- * Checks if the period is in "opprettet" state (created but not ready)
+ * Sjekker om perioden er i "opprettet" tilstand (opprettet, men ikke klar)
  */
 export function erPeriodeOpprettet(periode: IRapporteringsperiode): boolean {
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
@@ -35,14 +35,14 @@ export function erPeriodeOpprettet(periode: IRapporteringsperiode): boolean {
 }
 
 /**
- * Checks if the period has been corrected (has an original meldekort ID)
+ * Sjekker om perioden har blitt korrigert (har en original meldekort-ID)
  */
 export function erPeriodeKorrigert(periode: IRapporteringsperiode): boolean {
   return !!periode.originalMeldekortId;
 }
 
 /**
- * Checks if innsending information should be displayed
+ * Sjekker om innsendingsinformasjon skal vises
  */
 export function skalViseInnsendtInfo(periode: IRapporteringsperiode): boolean {
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
