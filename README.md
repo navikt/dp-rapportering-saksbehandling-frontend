@@ -166,6 +166,16 @@ Applikasjonen deployes automatisk til NAIS ved push til main branch. Deployment-
 - Følg TypeScript strict mode
 - Skriv tester for ny funksjonalitet
 - Følg NAV Aksel designsystem
+- Ekstraher kompleks logikk til helpers/utils for lesbarhet
+
+#### Filnavn-konvensjoner
+
+- **`*.helpers.ts`** - Logikk kun for én spesifikk komponent (f.eks. `MeldekortRad.helpers.ts`)
+- **`*.utils.ts`** - Gjenbrukbare funksjoner delt mellom flere komponenter (f.eks. `dato.utils.ts`)
+
+**Tommelfingerregel**: Start med `.helpers.ts`, flytt til `.utils.ts` hvis funksjonen gjenbrukes.
+
+> 📖 Les mer om komponentstruktur og best practices i [`app/components/README.md`](app/components/README.md)
 
 ## Support
 

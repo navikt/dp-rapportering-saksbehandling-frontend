@@ -5,12 +5,19 @@ import { useSearchParams } from "react-router";
 
 import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
-import { QUERY_PARAMS, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { QUERY_PARAMS } from "~/utils/constants";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { aktivitetMapping, sorterAktiviteter, unikeAktiviteter } from "../../utils";
+import {
+  erPeriodeKorrigert,
+  erPeriodeOpprettet,
+  getStatusConfig,
+  HIGHLIGHT_DURATION_MS,
+  skalViseInnsendtInfo,
+} from "./MeldekortRad.helpers";
 import styles from "./meldekortRad.module.css";
 
 interface Props {
@@ -24,19 +31,13 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
   const [isHighlighted, setIsHighlighted] = useState(false);
 
   // Derived state
-  const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
-  const erOpprettet = !erInnsendt && !periode.kanSendes;
-  const erKorrigert = !!periode.originalMeldekortId;
+  const erOpprettet = erPeriodeOpprettet(periode);
+  const erKorrigert = erPeriodeKorrigert(periode);
   const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })}`;
 
   // Display values
-  const statusText = erInnsendt
-    ? "Innsendt"
-    : periode.kanSendes
-      ? "Klar til utfylling"
-      : "Meldekort opprettet";
-  const statusVariant = erInnsendt ? "success" : "info";
-  const skalViseInnsendt = erInnsendt && periode.innsendtTidspunkt && periode.meldedato;
+  const statusConfig = getStatusConfig(periode);
+  const skalViseInnsendt = skalViseInnsendtInfo(periode);
   const erSendtForSent = skalViseInnsendt && erMeldekortSendtForSent(periode);
   const aktiviteter = sorterAktiviteter(unikeAktiviteter(periode));
 
@@ -45,7 +46,7 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
     const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
     if (oppdatertId === periode.id) {
       setIsHighlighted(true);
-      const timer = setTimeout(() => setIsHighlighted(false), 3600);
+      const timer = setTimeout(() => setIsHighlighted(false), HIGHLIGHT_DURATION_MS);
       return () => clearTimeout(timer);
     }
   }, [searchParams, periode.id]);
@@ -89,8 +90,8 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
       <Table.DataCell {...cellProps}>{periodeDatoTekst}</Table.DataCell>
       <Table.DataCell {...cellProps}>
         <div className={styles.statusContainer}>
-          <Tag variant={statusVariant} size="small">
-            {statusText}
+          <Tag variant={statusConfig.variant} size="small">
+            {statusConfig.text}
           </Tag>
           {erKorrigert && (
             <Tag variant="warning" size="small">

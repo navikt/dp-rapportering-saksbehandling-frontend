@@ -2,8 +2,8 @@ import { Accordion } from "@navikt/ds-react";
 import { useEffect, useState } from "react";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 
-import { MeldekortListe } from "~/components/rapporteringsperiode-liste/MeldekortListe";
-import { groupPeriodsByYear } from "~/components/rapporteringsperiode-liste/utils";
+import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
+import { groupPeriodsByYear } from "~/components/meldekort-liste/utils";
 import type { loader as personLoader } from "~/routes/person.$personId";
 import styles from "~/styles/route-styles/perioder.module.css";
 import { QUERY_PARAMS } from "~/utils/constants";
