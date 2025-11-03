@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
+import { type IMeldekortSkjemaSubmitData, useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
-import type { IKorrigertDag } from "~/utils/korrigering.utils";
+import type { IKorrigertDag, SetKorrigerteDager } from "~/utils/korrigering.utils";
 
 // Mock navigation warning hook
 vi.mock("~/hooks/useNavigationWarning", () => ({
@@ -67,9 +67,9 @@ describe("useMeldekortSkjema", () => {
   const getDefaultProps = () => ({
     periode: mockPeriode,
     dager: mockDager,
-    setKorrigerteDager: mockSetKorrigerteDager,
-    onSubmit: mockOnSubmit,
-    onCancel: mockOnCancel,
+    setKorrigerteDager: mockSetKorrigerteDager as SetKorrigerteDager,
+    onSubmit: mockOnSubmit as (data: IMeldekortSkjemaSubmitData) => void,
+    onCancel: mockOnCancel as () => void,
   });
 
   describe("initial state", () => {
