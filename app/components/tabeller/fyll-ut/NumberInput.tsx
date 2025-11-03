@@ -1,6 +1,16 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@navikt/aksel-icons";
 import { useEffect, useId, useRef, useState } from "react";
 
+import {
+  dekrementerTimer,
+  erVedMaksimum,
+  erVedMinimum,
+  inkrementerTimer,
+  MAX_TIMER,
+  MIN_TIMER,
+  STEP_TIMER,
+  validerTimerInput,
+} from "./NumberInput.helpers";
 import styles from "./numberInput.module.css";
 
 interface NumberInputProps {
@@ -10,10 +20,6 @@ interface NumberInputProps {
   readOnly?: boolean;
   description?: string;
 }
-
-const MIN = 0.5;
-const MAX = 24;
-const STEP = 0.5;
 
 export function NumberInput({
   value,
@@ -26,8 +32,8 @@ export function NumberInput({
   const [validationError, setValidationError] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const currentValue = parseFloat(value) || 0;
-  const isAtMax = currentValue >= MAX;
-  const isAtMin = currentValue <= MIN;
+  const isAtMax = erVedMaksimum(currentValue);
+  const isAtMin = erVedMinimum(currentValue);
 
   useEffect(() => {
     if (validationError) {
@@ -46,13 +52,13 @@ export function NumberInput({
 
   const handleIncrement = () => {
     if (readOnly || isAtMax) return;
-    const newValue = Math.min(currentValue + STEP, MAX);
+    const newValue = inkrementerTimer(currentValue);
     onChange(newValue.toString());
   };
 
   const handleDecrement = () => {
     if (readOnly || isAtMin) return;
-    const newValue = Math.max(currentValue - STEP, MIN);
+    const newValue = dekrementerTimer(currentValue);
     onChange(newValue.toString());
   };
 
@@ -60,35 +66,10 @@ export function NumberInput({
     if (readOnly) return;
     const inputValue = e.target.value;
 
-    // Tillat tom streng for å kunne slette
-    if (inputValue === "") {
-      setValidationError(null);
-      onChange(inputValue);
-      return;
-    }
+    const validationResult = validerTimerInput(inputValue);
 
-    // Valider at bare tall med .5 desimal eller hele tall er tillatt
-    const numValue = parseFloat(inputValue);
-    if (isNaN(numValue)) {
-      setValidationError("Ugyldig tall");
-      return;
-    }
-
-    // Sjekk om verdien er innenfor min/max grenser
-    if (numValue < MIN) {
-      setValidationError(`Minimum ${MIN} timer`);
-      return;
-    }
-
-    if (numValue > MAX) {
-      setValidationError(`Maksimum ${MAX} timer`);
-      return;
-    }
-
-    // Sjekk om tallet er et gyldig step-increment (hele tall eller .5)
-    const decimal = numValue % 1;
-    if (decimal !== 0 && decimal !== 0.5) {
-      setValidationError("Kun hele eller halve timer (f.eks. 2 eller 2.5)");
+    if (!validationResult.isValid) {
+      setValidationError(validationResult.errorMessage);
       return;
     }
 
@@ -120,9 +101,9 @@ export function NumberInput({
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          min={MIN}
-          max={MAX}
-          step={STEP}
+          min={MIN_TIMER}
+          max={MAX_TIMER}
+          step={STEP_TIMER}
           readOnly={readOnly}
           title={description}
           aria-invalid={validationError ? true : undefined}

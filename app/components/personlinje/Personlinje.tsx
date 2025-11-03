@@ -1,7 +1,6 @@
 import { FigureOutwardFillIcon, SilhouetteFillIcon } from "@navikt/aksel-icons";
 import { BodyShort, Button, CopyButton, Skeleton } from "@navikt/ds-react";
 import classNames from "classnames";
-import { differenceInYears } from "date-fns";
 import { useMemo, useState } from "react";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
@@ -13,6 +12,13 @@ import {
   transformPerioderToHistoryEvents,
 } from "../../modals/historikk/historikk.utils";
 import { HistorikkModal } from "../../modals/historikk/HistorikkModal";
+import {
+  beregnAlder,
+  byggFulltNavn,
+  erKvinne,
+  erMann,
+  getKjonnKlasse,
+} from "./Personlinje.helpers";
 import styles from "./personlinje.module.css";
 
 interface IProps {
@@ -22,7 +28,7 @@ interface IProps {
 }
 
 export default function Personlinje({ person, perioder = [], arbeidssokerperioder = [] }: IProps) {
-  const fulltNavn = [person.fornavn, person.mellomnavn, person.etternavn].join(" ");
+  const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
   const [modalOpen, setModalOpen] = useState(false);
   const { skjulSensitiveOpplysninger, isReady } = useSaksbehandler();
 
@@ -39,15 +45,15 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
         <div className={styles.navnContainer}>
           {person.kjonn && (
             <span
-              className={classNames(styles.iconContainer, {
-                [styles.iconContainerMann]: person.kjonn === "MANN",
-                [styles.iconContainerKvinne]: person.kjonn === "KVINNE",
-              })}
+              className={classNames(
+                styles.iconContainer,
+                person.kjonn ? styles[getKjonnKlasse(person.kjonn)] : undefined,
+              )}
             >
-              {person.kjonn === "MANN" && (
+              {erMann(person.kjonn) && (
                 <SilhouetteFillIcon title="" fontSize="1.5rem" color="white" />
               )}
-              {person.kjonn === "KVINNE" && (
+              {erKvinne(person.kjonn) && (
                 <FigureOutwardFillIcon title="" fontSize="1.5rem" color="white" />
               )}
             </span>
@@ -81,7 +87,7 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
 
         {person.fodselsdato && (
           <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-            Alder: <b>{differenceInYears(new Date(), person.fodselsdato)}</b>
+            Alder: <b>{beregnAlder(person.fodselsdato)}</b>
           </BodyShort>
         )}
 

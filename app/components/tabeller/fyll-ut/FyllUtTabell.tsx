@@ -12,6 +12,12 @@ import {
   type IKorrigertDag,
   type SetKorrigerteDager,
 } from "../../../utils/korrigering.utils";
+import {
+  beregnTotaltAntallDager,
+  formaterTotalBeløp,
+  lagAktivitetKlassenavn,
+  pluraliserEnhet,
+} from "./FyllUtTabell.helpers";
 import styles from "./fyllUtTabell.module.css";
 import { NumberInput } from "./NumberInput";
 
@@ -153,8 +159,10 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
       </thead>
       <tbody>
         {aktiviteter.map(({ type, label }) => {
-          const hoverClass = styles[`trHover${type.charAt(0).toUpperCase() + type.slice(1)}`];
-          const aktivitetClass = styles[`aktivitet${type.charAt(0).toUpperCase() + type.slice(1)}`];
+          const hoverClass = styles[lagAktivitetKlassenavn(type, "trHover")];
+          const aktivitetClass = styles[lagAktivitetKlassenavn(type, "aktivitet")];
+          const antallDager = beregnTotaltAntallDager(dager, type);
+
           return (
             <tr key={type} className={hoverClass}>
               <th scope="row">
@@ -181,28 +189,8 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode }: IProps) {
                 />
               ))}
               <td aria-hidden="true">=</td>
-              <td className={styles.oppsummeringTall}>
-                {type === AKTIVITET_TYPE.Arbeid
-                  ? dager
-                      .reduce((sum, dag) => {
-                        const aktivitet = dag.aktiviteter.find((a) => a.type === type);
-                        const timer = aktivitet?.timer ? parseFloat(aktivitet.timer) || 0 : 0;
-                        return sum + timer;
-                      }, 0)
-                      .toString()
-                      .replace(".", ",")
-                  : dager.filter((dag) => dag.aktiviteter.some((a) => a.type === type)).length}
-              </td>
-              <td className={styles.oppsummeringEnhet}>
-                {type === AKTIVITET_TYPE.Arbeid
-                  ? "timer"
-                  : (() => {
-                      const antallDager = dager.filter((dag) =>
-                        dag.aktiviteter.some((a) => a.type === type),
-                      ).length;
-                      return antallDager === 1 ? "dag" : "dager";
-                    })()}
-              </td>
+              <td className={styles.oppsummeringTall}>{formaterTotalBeløp(dager, type)}</td>
+              <td className={styles.oppsummeringEnhet}>{pluraliserEnhet(antallDager, type)}</td>
             </tr>
           );
         })}

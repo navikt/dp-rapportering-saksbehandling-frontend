@@ -1,7 +1,7 @@
 import { Outlet, redirect, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
-import Personlinje from "~/components/header-meny/Personlinje";
+import Personlinje from "~/components/personlinje/Personlinje";
 import { hentPerson } from "~/models/person.server";
 import {
   hentArbeidssokerperioder,

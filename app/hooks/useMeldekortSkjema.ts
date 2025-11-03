@@ -9,7 +9,14 @@ import {
   type IKorrigertDag,
   type SetKorrigerteDager,
 } from "~/utils/korrigering.utils";
-import type { IPeriode } from "~/utils/types";
+import type { IValideringsKontekst } from "~/utils/meldekort-validering.helpers";
+import {
+  fokuserPaForsteFeil,
+  lagValideringsFeilmeldinger,
+  skalViseArbeidssokerSporsmal,
+  validerMeldekortSkjema,
+} from "~/utils/meldekort-validering.helpers";
+import type { IPeriode, IRapporteringsperiodeDag } from "~/utils/types";
 
 export interface IMeldekortSkjemaSubmitData {
   meldedato: Date | undefined;
@@ -24,10 +31,22 @@ interface UseMeldekortSkjemaOptions {
   setKorrigerteDager: SetKorrigerteDager;
   onSubmit: (data: IMeldekortSkjemaSubmitData) => void;
   onCancel: () => void;
+  /** @deprecated Bruk isKorrigering, meldekortType, og originalData i stedet */
   showArbeidssokerField?: boolean;
   initialMeldedato?: Date;
   initialBegrunnelse?: string;
+  /** @deprecated Bruk isKorrigering og originalData i stedet */
   onValidateChanges?: (data: IMeldekortSkjemaSubmitData) => boolean;
+  /** Om dette er en korrigering av eksisterende meldekort */
+  isKorrigering?: boolean;
+  /** Type meldekort fra backend (brukes for å sjekke om arbeidssøker-spørsmål skal vises)
+   * TODO: Aktiver når backend har lagt til "etterregistrert" type i meldekortregister */
+  meldekortType?: string;
+  /** Originale data for sammenligning ved korrigering */
+  originalData?: {
+    meldedato: string | null;
+    dager: IRapporteringsperiodeDag[];
+  };
 }
 
 export function useMeldekortSkjema({
@@ -40,7 +59,26 @@ export function useMeldekortSkjema({
   initialMeldedato,
   initialBegrunnelse = "",
   onValidateChanges,
+  isKorrigering = false,
+  meldekortType,
+  originalData,
 }: UseMeldekortSkjemaOptions) {
+  // Saksbehandlerflaten er alltid true i denne konteksten
+  const erSaksbehandlerFlate = true;
+
+  // Bestem om arbeidssøker-feltet skal vises
+  const showArbeidssokerFieldCalculated =
+    showArbeidssokerField ?? skalViseArbeidssokerSporsmal(meldekortType, erSaksbehandlerFlate);
+
+  // Bygg valideringskontekst
+  const valideringsKontekst: IValideringsKontekst = {
+    isKorrigering,
+    showArbeidssokerField: showArbeidssokerFieldCalculated,
+    originalData,
+  };
+
+  // Hent feilmeldinger basert på kontekst
+  const feilmeldinger = lagValideringsFeilmeldinger(valideringsKontekst);
   // Refs
   const formRef = useRef<HTMLFormElement>(null);
   const meldedatoRef = useRef<HTMLInputElement>(null);
@@ -106,7 +144,7 @@ export function useMeldekortSkjema({
         meldedato: valgtDato,
         // Kun send registrertArbeidssoker ved fyll-ut (når showArbeidssokerField er true)
         registrertArbeidssoker:
-          showArbeidssokerField && registrertArbeidssoker !== null
+          showArbeidssokerFieldCalculated && registrertArbeidssoker !== null
             ? registrertArbeidssoker
             : undefined, // undefined = ikke send dette feltet
         begrunnelse,
@@ -125,18 +163,17 @@ export function useMeldekortSkjema({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const harGyldigeAktiviteter = harMinstEnGyldigAktivitet(dager);
     const submitData = {
       meldedato: valgtDato,
       registrertArbeidssoker:
-        showArbeidssokerField && registrertArbeidssoker !== null
+        showArbeidssokerFieldCalculated && registrertArbeidssoker !== null
           ? registrertArbeidssoker
           : undefined,
       begrunnelse,
       dager,
     };
 
-    // Sjekk om det er gjort endringer (kun for korrigering)
+    // Fallback til gammel validering hvis onValidateChanges er gitt (bakoverkompatibilitet)
     if (onValidateChanges && !onValidateChanges(submitData)) {
       setVisIngenEndringerFeil(true);
       return;
@@ -144,30 +181,27 @@ export function useMeldekortSkjema({
 
     setVisIngenEndringerFeil(false);
 
-    const feil = {
-      meldedato: !valgtDato,
-      arbeidssoker: showArbeidssokerField && registrertArbeidssoker === null,
-      begrunnelse: begrunnelse.trim() === "",
-      aktiviteter: !harGyldigeAktiviteter,
+    // Bruk ny valideringslogikk
+    const skjemaData = {
+      meldedato: valgtDato ?? null,
+      registrertArbeidssoker,
+      begrunnelse,
+      dager,
     };
+
+    const feil = validerMeldekortSkjema(skjemaData, valideringsKontekst);
 
     setVisValideringsfeil(feil);
 
-    // Focus på første feil
-    if (feil.meldedato) {
-      meldedatoRef.current?.focus();
-      return;
-    }
-    if (feil.arbeidssoker) {
-      arbeidssokerRef.current?.focus();
-      return;
-    }
-    if (feil.begrunnelse) {
-      begrunnelseRef.current?.focus();
-      return;
-    }
-    if (feil.aktiviteter) {
-      aktiviteterRef.current?.focus();
+    // Sjekk om det er noen feil
+    const harFeil = Object.values(feil).some((harFeil) => harFeil);
+    if (harFeil) {
+      fokuserPaForsteFeil(feil, {
+        meldedatoRef,
+        arbeidssokerRef,
+        begrunnelseRef,
+        aktiviteterRef,
+      });
       return;
     }
 
@@ -193,7 +227,7 @@ export function useMeldekortSkjema({
     meldedato: valgtDato ? format(valgtDato, "yyyy-MM-dd") : "",
     // Kun send registrertArbeidssoker hvis showArbeidssokerField er true (dvs. ved fyll-ut)
     registrertArbeidssoker:
-      showArbeidssokerField && registrertArbeidssoker !== null
+      showArbeidssokerFieldCalculated && registrertArbeidssoker !== null
         ? registrertArbeidssoker.toString()
         : "", // Tom string når ikke relevant (korrigering) eller ikke svart
     begrunnelse,
@@ -220,6 +254,7 @@ export function useMeldekortSkjema({
       visValideringsfeil,
       visIngenEndringerFeil,
       hasChanges,
+      showArbeidssokerField: showArbeidssokerFieldCalculated,
     },
 
     // Date picker props
@@ -242,5 +277,8 @@ export function useMeldekortSkjema({
 
     // Form values
     hiddenFormValues,
+
+    // Feilmeldinger basert på kontekst
+    feilmeldinger,
   };
 }
