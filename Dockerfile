@@ -45,6 +45,7 @@ EXPOSE 3000
 
 COPY ./package.json ./package.json
 COPY --from=app-build /app/build/ ./build/
+COPY --from=app-build /app/public ./public
 COPY --from=app-dependencies /app/node_modules ./node_modules
 
 CMD ["./node_modules/@react-router/serve/dist/cli.js", "./build/server/index.js"]
