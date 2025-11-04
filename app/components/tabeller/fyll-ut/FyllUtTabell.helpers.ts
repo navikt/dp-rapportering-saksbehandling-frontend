@@ -74,3 +74,10 @@ export function formaterTotalBeløp(dager: IKorrigertDag[], type: TAktivitetType
 
   return total.toString();
 }
+
+/**
+ * Sjekker om alle aktiviteter har null/tomme verdier
+ */
+export function harNoenAktiviteter(dager: IKorrigertDag[]): boolean {
+  return dager.some((dag) => dag.aktiviteter.length > 0);
+}

@@ -1,4 +1,5 @@
-/* Original/Standard variant for korriger page */
+/* variant B for korriger page */
+
 .korrigering-container {
   display: flex;
   flex-direction: column;
@@ -14,7 +15,7 @@
   flex-direction: column;
   background-color: white;
   padding: var(--a-space-16);
-  gap: var(--a-space-24);
+  gap: var(--a-space-24) !important;
 }
 
 .meldekort {
@@ -24,20 +25,44 @@
   gap: var(--a-space-12);
   align-self: stretch;
 }
+
+.meldekort-seksjon {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-space-16);
+  align-self: stretch;
+}
+
 .header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
+.kalender-og-begrunnelse-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.625rem;
+  border: 2px solid var(--a-surface-action-subtle);
+  padding: var(--a-space-20);
+  gap: var(--a-space-12);
+}
+
 .kalender-container {
   display: flex;
-  padding: 1.25rem;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   gap: 0.625rem;
   align-self: stretch;
+}
+
+.begrunnelse-seksjon {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .skjema {

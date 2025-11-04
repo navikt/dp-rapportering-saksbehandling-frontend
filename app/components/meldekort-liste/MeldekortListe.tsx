@@ -1,5 +1,7 @@
 import { Table } from "@navikt/ds-react";
 
+import type { ABTestVariant } from "~/utils/ab-test.utils";
+import { getTogglePlacement } from "~/utils/ab-test.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { MeldekortRad } from "./components/rad/MeldekortRad";
@@ -9,13 +11,27 @@ interface IProps {
   perioder: IRapporteringsperiode[];
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
+  variant?: ABTestVariant;
 }
 
-const KOLONNE_TITLER = ["", "Uke", "Dato", "Status", "Aktiviteter", "Meldedato", "Frist"];
+export function MeldekortListe({ perioder, personId, ansvarligSystem, variant }: IProps) {
+  // Bestem toggle placement basert på variant (bruker helper-funksjon)
+  // null (ikke-demo miljø), Variant A og Variant C: toggle left (original)
+  // Variant B: toggle right
+  const togglePlacement = getTogglePlacement(variant ?? null);
 
-const KOLONNE_BREDDER = ["5%", "10%", "20%", "18%", "18%", "14%", "15%"];
+  // Original layout for null/A/C: toggle left with empty first column
+  // New layout for variant B: toggle right with empty last column
+  const KOLONNE_TITLER =
+    togglePlacement === "right"
+      ? ["Uke", "Dato", "Status", "Aktiviteter", "Meldedato", "Frist"]
+      : ["", "Uke", "Dato", "Status", "Aktiviteter", "Meldedato", "Frist"];
 
-export function MeldekortListe({ perioder, personId, ansvarligSystem }: IProps) {
+  const KOLONNE_BREDDER =
+    togglePlacement === "right"
+      ? ["10%", "20%", "20%", "15%", "15%", "15%", "5%"]
+      : ["5%", "10%", "20%", "18%", "18%", "14%", "15%"];
+
   return (
     <div className={styles.periodeListe}>
       <Table>
@@ -33,6 +49,11 @@ export function MeldekortListe({ perioder, personId, ansvarligSystem }: IProps) 
                 </Table.HeaderCell>
               );
             })}
+            {togglePlacement === "right" && (
+              <Table.HeaderCell scope="col" textSize="small">
+                {/* Tom header for toggle-kolonne */}
+              </Table.HeaderCell>
+            )}
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -43,6 +64,9 @@ export function MeldekortListe({ perioder, personId, ansvarligSystem }: IProps) 
                 periode={periode}
                 personId={personId}
                 ansvarligSystem={ansvarligSystem}
+                togglePlacement={togglePlacement}
+                variant={variant}
+                allePerioder={perioder}
               />
             );
           })}

@@ -84,7 +84,7 @@ export function useMeldekortSkjema({
   const meldedatoRef = useRef<HTMLInputElement>(null);
   const arbeidssokerRef = useRef<HTMLInputElement>(null);
   const begrunnelseRef = useRef<HTMLTextAreaElement>(null);
-  const aktiviteterRef = useRef<HTMLFieldSetElement>(null);
+  const aktiviteterRef = useRef<HTMLDivElement>(null);
 
   // State
   const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(null);

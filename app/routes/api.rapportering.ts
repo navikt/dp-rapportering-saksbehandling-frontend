@@ -2,6 +2,7 @@ import { type ActionFunctionArgs, redirect } from "react-router";
 import { uuidv7 } from "uuidv7";
 
 import { korrigerPeriode } from "~/models/rapporteringsperiode.server";
+import { getABTestVariant } from "~/utils/ab-test.server";
 import { QUERY_PARAMS } from "~/utils/constants";
 import type { IKorrigerMeldekort, IRapporteringsperiodeDag } from "~/utils/types";
 
@@ -35,7 +36,18 @@ export async function action({ request }: ActionFunctionArgs) {
   // Use the new corrected period ID for highlighting, fallback to original ID
   const oppdatertId = nyMeldekortId || periode.id;
 
-  return redirect(
-    `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${oppdatertId}&${QUERY_PARAMS.OPPDATERT}=${oppdatertId}`,
+  // Preserve variant parameter if present
+  const variant = getABTestVariant(request);
+  const url = new URL(`/person/${personId}/perioder`, request.url);
+  url.searchParams.set(
+    QUERY_PARAMS.AAR,
+    new Date(periode.periode.fraOgMed).getFullYear().toString(),
   );
+  url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, oppdatertId);
+  url.searchParams.set(QUERY_PARAMS.OPPDATERT, oppdatertId);
+  if (variant) {
+    url.searchParams.set("variant", variant);
+  }
+
+  return redirect(url.pathname + url.search);
 }

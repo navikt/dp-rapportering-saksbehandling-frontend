@@ -12,6 +12,10 @@
   align-items: flex-start;
 }
 
+.ukeContainer:first-of-type {
+  margin-bottom: var(--a-space-24);
+}
+
 .ukeCaption {
   min-width: fit-content;
 }
@@ -22,14 +26,11 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .legend {
-  display: flex;
-  flex-direction: column;
-  gap: var(--a-space-4);
   padding: 0;
+  margin-bottom: var(--a-space-8);
 }
 
 .tabellHeader {

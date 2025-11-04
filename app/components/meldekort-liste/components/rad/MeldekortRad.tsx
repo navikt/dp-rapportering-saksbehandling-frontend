@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router";
 
 import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
+import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
@@ -24,9 +25,19 @@ interface Props {
   periode: IRapporteringsperiode;
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
+  togglePlacement?: "left" | "right";
+  variant?: ABTestVariant;
+  allePerioder?: IRapporteringsperiode[];
 }
 
-export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
+export function MeldekortRad({
+  periode,
+  personId,
+  ansvarligSystem,
+  togglePlacement = "left",
+  variant = null,
+  allePerioder = [],
+}: Props) {
   const [searchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
 
@@ -34,6 +45,14 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
   const erOpprettet = erPeriodeOpprettet(periode);
   const erKorrigert = erPeriodeKorrigert(periode);
   const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })}`;
+
+  // Sjekk om denne perioden har en korrigering
+  const harKorrigering = allePerioder.some(
+    (p) => p.originalMeldekortId === periode.id && p.id !== periode.id,
+  );
+
+  // Variant B og C: Endre tekster for korrigering
+  const useVariantLabels = variant === "B" || variant === "C";
 
   // Visningsverdier
   const statusConfig = getStatusConfig(periode);
@@ -65,6 +84,7 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
 
   return (
     <Table.ExpandableRow
+      togglePlacement={togglePlacement}
       content={
         !erOpprettet && (
           <article
@@ -76,6 +96,7 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
               perioder={[periode]}
               personId={personId}
               ansvarligSystem={ansvarligSystem}
+              variant={variant}
             />
           </article>
         )
@@ -95,7 +116,12 @@ export function MeldekortRad({ periode, personId, ansvarligSystem }: Props) {
           </Tag>
           {erKorrigert && (
             <Tag variant="warning" size="small">
-              Korrigert
+              {useVariantLabels ? "Korrigering" : "Korrigert"}
+            </Tag>
+          )}
+          {!erKorrigert && harKorrigering && useVariantLabels && (
+            <Tag variant="neutral" size="small">
+              Har korrigering
             </Tag>
           )}
         </div>

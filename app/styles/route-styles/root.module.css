@@ -15,3 +15,20 @@
   top: 48px;
   z-index: 99;
 }
+
+.mainContent {
+  position: relative;
+}
+
+.contentWrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-inline: var(--a-spacing-4);
+}
+
+.variantSwitcherContainer {
+  position: fixed;
+  top: calc(100px + var(--a-spacing-6));
+  right: var(--a-spacing-6);
+  z-index: 10;
+}

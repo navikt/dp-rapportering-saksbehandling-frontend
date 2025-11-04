@@ -1,4 +1,4 @@
-import { BodyShort, Heading, LinkPanel } from "@navikt/ds-react";
+import { BodyShort, Box, Heading, LinkPanel, VStack } from "@navikt/ds-react";
 import { useLoaderData } from "react-router";
 
 import { getFullDemoPerson } from "~/mocks/data/mock-persons";
@@ -16,57 +16,42 @@ export default function Rapportering() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <main
+    <Box
+      as="main"
       id="main-content"
-      style={{
-        maxWidth: "800px",
-        margin: "0 auto",
-        padding: "2rem 1rem",
-      }}
+      paddingBlock="10"
+      paddingInline="4"
+      style={{ maxWidth: "800px", margin: "0 auto" }}
     >
-      <Heading level="1" size="small" id="page-title">
-        Saksbehandlerflate for meldekort
-      </Heading>
+      <VStack gap="6">
+        <Heading level="1" size="large">
+          Saksbehandlerflate for meldekort
+        </Heading>
 
-      {data.personer.length > 0 ? (
-        <>
-          <BodyShort size="small">
-            Velkommen til demoversjonen av saksbehandlerflaten for meldekort.
+        {data.personer.length > 0 ? (
+          <VStack gap="3">
+            {data.personer.map((person) => {
+              const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
+                person.etternavn
+              }`;
+              const link = `/person/${person.id}/perioder`;
+
+              return (
+                <LinkPanel key={person.id} href={link} border>
+                  <LinkPanel.Title>{navn}</LinkPanel.Title>
+                  <LinkPanel.Description>
+                    Åpne saksbehandling for denne personen
+                  </LinkPanel.Description>
+                </LinkPanel>
+              );
+            })}
+          </VStack>
+        ) : (
+          <BodyShort>
+            Ingen testpersoner tilgjengelig. Sørg for at MSW (Mock Service Worker) er aktivert.
           </BodyShort>
-          <BodyShort size="small">
-            Klikk på personen under for å se hele rapporteringsperioden deres.
-          </BodyShort>
-
-          <nav aria-label="Tilgjengelige testpersoner og alternativer">
-            <ul
-              style={{ listStyle: "none", padding: 0 }}
-              aria-label={`${data.personer.length} person${data.personer.length !== 1 ? "er" : ""} tilgjengelig for saksbehandling`}
-            >
-              {data.personer.map((person) => {
-                const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
-                  person.etternavn
-                }`;
-                const link = `/person/${person.id}/perioder`;
-
-                return (
-                  <li key={person.id} style={{ marginBottom: "1rem" }}>
-                    <LinkPanel href={link} border>
-                      <LinkPanel.Title>{navn}</LinkPanel.Title>
-                      <LinkPanel.Description>
-                        Åpne saksbehandling for denne personen
-                      </LinkPanel.Description>
-                    </LinkPanel>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-        </>
-      ) : (
-        <BodyShort size="small">
-          Ingen testpersoner tilgjengelig. Sørg for at MSW (Mock Service Worker) er aktivert.
-        </BodyShort>
-      )}
-    </main>
+        )}
+      </VStack>
+    </Box>
   );
 }

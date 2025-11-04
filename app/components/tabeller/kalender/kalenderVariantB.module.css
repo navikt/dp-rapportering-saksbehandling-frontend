@@ -1,0 +1,29 @@
+/* Variant B - weeks side by side */
+.kalender-variant-b {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.kalender-tabell-b {
+  border-collapse: separate;
+  border-spacing: 8px 0.75rem;
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+}
+
+.kalender-tabell-b th {
+  font-weight: var(--a-font-weight-light);
+  font-size: var(--a-font-size-small);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.uke-caption {
+  font-weight: var(--a-font-weight-semibold);
+  font-size: var(--a-font-size-medium);
+  text-align: left;
+  caption-side: top;
+}

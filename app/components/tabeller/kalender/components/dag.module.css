@@ -1,5 +1,6 @@
 .table-cell {
   vertical-align: top;
+  width: 14.28%; /* 100% / 7 dager */
 }
 
 .dagWrapper {
@@ -9,15 +10,21 @@
 }
 
 .dag {
-  width: 4.5rem;
+  width: 100%;
+  max-width: 4.5rem;
+  min-width: 3rem;
   border-radius: 62.5rem 62.5rem 3.125rem 3.125rem;
 }
 
 .dato {
   border-radius: 62.5rem;
   display: flex;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 4.5rem;
+  max-height: 4.5rem;
+  min-width: 3rem;
+  min-height: 3rem;
   padding: 0.5rem;
   justify-content: center;
   align-items: center;

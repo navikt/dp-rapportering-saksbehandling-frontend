@@ -44,7 +44,8 @@
 /* === NavDS Overrides === */
 
 /* Overstyrer padding inline på innholdet */
-:global(.navds-table__expanded-row-content--gutter-left) {
+:global(.navds-table__expanded-row-content--gutter-left),
+:global(.navds-table__expanded-row-content--gutter-right) {
   padding-inline: var(--__ac-table-expanded-row-pi);
 }
 

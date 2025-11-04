@@ -1,6 +1,7 @@
 import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
 import { useLayoutEffect, useRef, useState } from "react";
 
+import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -17,6 +18,7 @@ interface IProps {
   periode: IRapporteringsperiode;
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
+  variant?: ABTestVariant;
 }
 
 const MAX_LINES = 4;
@@ -94,13 +96,16 @@ const DetailRow = ({
   </Table.Row>
 );
 
-export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
+export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null }: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = erMeldekortKorrigert(periode);
   const kanEndres = kanMeldekortEndres(periode, ansvarligSystem);
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const antallDagerForSent = dagerForSent(periode);
   const erSaksbehandler = erKildeSaksbehandler(periode);
+  const useVariantLabels = variant === "B" || variant === "C";
+
+  const korrigerUrl = `/person/${personId}/periode/${periode.id}/korriger${variant ? `?variant=${variant}` : ""}`;
 
   const formatDato = (dato: string) =>
     formatterDato({
@@ -157,14 +162,29 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem }: IProps) {
         </Alert>
       )}
 
-      {kanEndres && (
+      {useVariantLabels && !kanEndres && (
+        <Alert variant="info" size="small">
+          Dette meldekortet har en korrigering og kan derfor ikke endres igjen.
+        </Alert>
+      )}
+
+      {useVariantLabels && (
         <div>
           <Button
             as="a"
-            href={`/person/${personId}/periode/${periode.id}/korriger`}
+            href={korrigerUrl}
             className={styles.korrigerKnapp}
             size="small"
+            disabled={!kanEndres}
           >
+            Korriger meldekort
+          </Button>
+        </div>
+      )}
+
+      {!useVariantLabels && kanEndres && (
+        <div>
+          <Button as="a" href={korrigerUrl} className={styles.korrigerKnapp} size="small">
             Korriger meldekort
           </Button>
         </div>

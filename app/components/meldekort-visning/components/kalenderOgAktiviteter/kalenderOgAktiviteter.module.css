@@ -28,3 +28,7 @@
   padding: var(--a-space-2) var(--a-space-12);
   line-height: normal;
 }
+
+.ingenAktiviteter {
+  color: var(--a-text-subtle);
+}

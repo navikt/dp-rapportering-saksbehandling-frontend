@@ -6,16 +6,24 @@ import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
 import { groupPeriodsByYear } from "~/components/meldekort-liste/utils";
 import type { loader as personLoader } from "~/routes/person.$personId";
 import styles from "~/styles/route-styles/perioder.module.css";
+import { getABTestVariant } from "~/utils/ab-test.server";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DEFAULT_PERSON } from "~/utils/constants";
 import { sortYearsDescending, ukenummer } from "~/utils/dato.utils";
 
 import type { Route } from "./+types/person.$personId.perioder";
 
-export default function Rapportering({ params }: Route.ComponentProps) {
+export async function loader({ request }: Route.LoaderArgs) {
+  const variant = getABTestVariant(request);
+
+  return { variant };
+}
+
+export default function Rapportering({ params, loaderData }: Route.ComponentProps) {
   const data = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
   const perioder = data?.perioder ?? [];
   const person = data?.person ?? DEFAULT_PERSON;
+  const { variant } = loaderData;
   const [searchParams, setSearchParams] = useSearchParams();
   const [announceUpdate, setAnnounceUpdate] = useState("");
 
@@ -100,6 +108,7 @@ export default function Rapportering({ params }: Route.ComponentProps) {
                   perioder={groupedPeriods[year]}
                   personId={params.personId}
                   ansvarligSystem={person.ansvarligSystem}
+                  variant={variant}
                 />
               </Accordion.Content>
             </Accordion.Item>

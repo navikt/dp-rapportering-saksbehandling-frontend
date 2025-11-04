@@ -18,6 +18,7 @@ import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/styles/route-styles/fyllUt.module.css";
+import { getABTestVariant } from "~/utils/ab-test.server";
 import {
   MODAL_ACTION_TYPE,
   QUERY_PARAMS,
@@ -39,8 +40,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const personId = params.personId;
 
   const periode = await hentPeriode(request, params.personId, params.periodeId);
+  const variant = getABTestVariant(request);
 
-  return { periode, personId };
+  return { periode, personId, variant };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
@@ -90,9 +92,17 @@ export async function action({ request, params }: Route.ActionArgs) {
     });
 
     // Redirect tilbake til perioder
-    return redirect(
-      `/person/${params.personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${params.periodeId}`,
+    const variant = getABTestVariant(request);
+    const url = new URL(`/person/${params.personId}/perioder`, request.url);
+    url.searchParams.set(
+      QUERY_PARAMS.AAR,
+      new Date(periode.periode.fraOgMed).getFullYear().toString(),
     );
+    url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, params.periodeId);
+    if (variant) {
+      url.searchParams.set("variant", variant);
+    }
+    return redirect(url.pathname + url.search);
   } catch (error) {
     console.error("Feil ved oppdatering av periode:", error);
     throw new Error("Kunne ikke oppdatere periode");
@@ -101,7 +111,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function FyllUtPeriode() {
   const navigate = useNavigate();
-  const { periode, personId } = useLoaderData<typeof loader>();
+  const { periode, personId, variant } = useLoaderData<typeof loader>();
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -115,9 +125,16 @@ export default function FyllUtPeriode() {
   };
 
   const handleCancel = () => {
-    navigate(
-      `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
+    const url = new URL(`/person/${personId}/perioder`, window.location.origin);
+    url.searchParams.set(
+      QUERY_PARAMS.AAR,
+      new Date(periode.periode.fraOgMed).getFullYear().toString(),
     );
+    url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, periode.id);
+    if (variant) {
+      url.searchParams.set("variant", variant);
+    }
+    navigate(url.pathname + url.search);
   };
 
   const skjema = useMeldekortSkjema({
@@ -133,9 +150,11 @@ export default function FyllUtPeriode() {
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
+  const skjemaClass = variant === "C" ? `${styles.skjema} ${styles.skjemaVariantC}` : styles.skjema;
+
   return (
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllUtContainer}>
-      <div className={styles.skjema}>
+      <div className={skjemaClass}>
         <div className={styles.title}>
           <Heading level="1" size="medium" id="fyll-ut-heading">
             Fyll ut meldekort
@@ -152,14 +171,20 @@ export default function FyllUtPeriode() {
           className={styles.container}
         >
           <div className={styles.container}>
-            <fieldset className={styles.fieldset} ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
-              <legend className="sr-only">Aktiviteter per dag</legend>
+            <div ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
               <FyllUtTabell
                 dager={dager}
                 setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
                 periode={periode.periode}
+                variant={variant}
               />
-            </fieldset>
+              {skjema.state.visValideringsfeil.aktiviteter && (
+                <div className="navds-error-message navds-error-message--medium" role="alert">
+                  Du må fylle ut minst én gyldig aktivitet. Arbeidsaktiviteter må ha minimum 0,5
+                  timer, eller la feltet stå tomt hvis ingen arbeid.
+                </div>
+              )}
+            </div>
             <fieldset className={classNames(styles.detaljer, styles.fieldset)}>
               <legend className="sr-only">Grunnleggende informasjon</legend>
               <DatePicker {...skjema.datepicker.datepickerProps}>
@@ -209,12 +234,6 @@ export default function FyllUtPeriode() {
             </fieldset>
           </div>
 
-          {skjema.state.visValideringsfeil.aktiviteter && (
-            <div className="navds-error-message navds-error-message--medium" role="alert">
-              Du må fylle ut minst én gyldig aktivitet. Arbeidsaktiviteter må ha minimum 0,5 timer,
-              eller la feltet stå tomt hvis ingen arbeid.
-            </div>
-          )}
           <div className={styles.handlinger}>
             <Button variant="secondary" size="small" onClick={skjema.handlers.handleAvbryt}>
               Avbryt utfylling

@@ -1,5 +1,7 @@
+/* Original/Standard variant - stacked weeks */
 .kalender-tabell {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 8px 0.75rem;
   width: 100%;
 }
 

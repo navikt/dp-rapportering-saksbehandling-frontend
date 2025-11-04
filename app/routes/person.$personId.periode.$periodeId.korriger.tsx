@@ -11,7 +11,10 @@ import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
-import styles from "~/styles/route-styles/korriger.module.css";
+import stylesOriginal from "~/styles/route-styles/korriger.module.css";
+import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
+import stylesVariantC from "~/styles/route-styles/korrigerVariantC.module.css";
+import { getABTestVariant } from "~/utils/ab-test.server";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, formatterDatoUTC, ukenummer } from "~/utils/dato.utils";
@@ -30,14 +33,17 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   const periode = await hentPeriode<IRapporteringsperiode>(request, personId, params.periodeId);
   const saksbehandler = await hentSaksbehandler(request);
+  const variant = getABTestVariant(request);
 
-  return { periode, saksbehandler, personId };
+  return { periode, saksbehandler, personId, variant };
 }
 
 export default function Periode() {
-  const { periode, saksbehandler, personId } = useLoaderData<typeof loader>();
+  const { periode, saksbehandler, personId, variant } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const navigate = useNavigate();
+  const styles =
+    variant === "C" ? stylesVariantC : variant === "B" ? stylesVariantB : stylesOriginal;
 
   // API handles redirect after successful submission
 
@@ -71,9 +77,16 @@ export default function Periode() {
   };
 
   const handleCancel = () => {
-    navigate(
-      `/person/${personId}/perioder?${QUERY_PARAMS.AAR}=${new Date(periode.periode.fraOgMed).getFullYear()}&${QUERY_PARAMS.RAPPORTERINGSID}=${periode.id}`,
+    const url = new URL(`/person/${personId}/perioder`, window.location.origin);
+    url.searchParams.set(
+      QUERY_PARAMS.AAR,
+      new Date(periode.periode.fraOgMed).getFullYear().toString(),
     );
+    url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, periode.id);
+    if (variant) {
+      url.searchParams.set("variant", variant);
+    }
+    navigate(url.pathname + url.search);
   };
 
   const skjema = useMeldekortSkjema({
@@ -109,7 +122,7 @@ export default function Periode() {
   const erKorrigering = !!periode.originalMeldekortId;
 
   return (
-    <div className={`${styles.korrigeringContainer}`}>
+    <div className={styles.korrigeringContainer}>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {fetcher.state === "submitting" && "Sender inn korrigering..."}
         {fetcher.state === "loading" && "Behandler korrigering..."}
@@ -130,7 +143,7 @@ export default function Periode() {
         </Alert>
       )}
       <div className={styles.hvitContainer}>
-        <div>
+        <div className={styles.maxWidth900}>
           <Heading level="1" size="medium">
             Korriger meldekort
           </Heading>
@@ -138,31 +151,35 @@ export default function Periode() {
             Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
           </BodyLong>
         </div>
-        <div className={styles.meldekort}>
-          <div className={styles.meldekortSeksjon}>
-            <div className={styles.header}>
-              <Heading level="2" size="small">
-                Korrigering av følgende meldekort
-              </Heading>
-              <BodyShort size="small">
-                Meldekortet ble innsendt{" "}
-                {periode.innsendtTidspunkt
-                  ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
-                  : "Ukjent tidspunkt"}
-              </BodyShort>
-            </div>
-            <Kalender periode={periode} />
+
+        <div className={`${styles.meldekortSeksjon} ${styles.maxWidth900}`}>
+          <div className={styles.header}>
+            <Heading level="2" size="small">
+              Korrigering av følgende meldekort
+            </Heading>
+            <BodyShort size="small">
+              Meldekortet ble innsendt{" "}
+              {periode.innsendtTidspunkt
+                ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
+                : "Ukjent tidspunkt"}
+            </BodyShort>
           </div>
-          {periode.begrunnelse && (
-            <div className={styles.header}>
-              <Heading level="3" size="xsmall">
-                Begrunnelse for {erKorrigering ? "korrigering" : "innsending"}
-              </Heading>
-              <BodyShort size="small" className={styles.kompaktTekst}>
-                {periode.begrunnelse}
-              </BodyShort>
+          <div className={styles.kalenderOgBegrunnelseWrapper}>
+            <div className={styles.kalenderContainer}>
+              <Kalender periode={periode} variant={variant} />
             </div>
-          )}
+
+            {periode.begrunnelse && (
+              <div className={styles.begrunnelseSeksjon}>
+                <Heading level="3" size="xsmall">
+                  Begrunnelse for {erKorrigering ? "korrigering" : "innsending"}
+                </Heading>
+                <BodyShort size="small" className={styles.kompaktTekst}>
+                  {periode.begrunnelse}
+                </BodyShort>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -177,21 +194,26 @@ export default function Periode() {
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
-        <div className={styles.skjema}>
-          <fieldset ref={skjema.refs.aktiviteterRef} tabIndex={-1} className={styles.fieldset}>
-            <legend className="sr-only">Aktiviteter per dag</legend>
+        <div className={`${styles.skjema} ${styles.maxWidth900}`}>
+          {(variant === "B" || variant === "C") && (
+            <div>
+              <Heading level="2" size="small">
+                Registrer ny korrigering
+              </Heading>
+              <BodyShort size="small">
+                Gjør endringer i aktiviteter, meldedato eller begrunnelse. Arbeid kan ikke
+                kombineres med annet fravær enn «tiltak, kurs eller utdanning» på samme dag.
+              </BodyShort>
+            </div>
+          )}
+          <div ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
             <FyllUtTabell
               dager={korrigerteDager}
               setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
               periode={periode.periode}
+              variant={variant}
             />
-            {skjema.state.visValideringsfeil.aktiviteter && (
-              <div className="navds-error-message navds-error-message--medium" role="alert">
-                Du må fylle ut minst én gyldig aktivitet. Arbeidsaktiviteter må ha minimum 0,5
-                timer, eller la feltet stå tomt hvis ingen arbeid.
-              </div>
-            )}
-          </fieldset>
+          </div>
           <div className={styles.annenInfo}>
             <DatePicker {...skjema.datepicker.datepickerProps}>
               <DatePicker.Input
