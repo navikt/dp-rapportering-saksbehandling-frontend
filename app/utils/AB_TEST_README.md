@@ -1,127 +1,277 @@
-# AB Testing System
+# ABC Testing System
 
-Dette er et fleksibelt AB-testing system for demo-miljøet.
+Dette er et fleksibelt ABC-testing system for demo-miljøet som lar oss teste ulike UI-varianter side-om-side.
 
 ## Oversikt
 
-- **Variant A**: Standard/original layout (toggle venstre)
-- **Variant B**: Toggle på høyre side
-- **Variant C**: Fleksibel variant som kan konfigureres per feature
+- **Ingen variant (standard)**: Original layout uten spesiell styling
+- **Variant A**: Standard layout med testing-spesifikk styling
+- **Variant B**: Toggle på høyre side + alternative labels
+- **Variant C**: Alternativ layout (f.eks. stacked kalender, større tekstfelt)
 
-## Hvordan bruke systemet
+## Hvordan det fungerer
 
-### 1. Enkel toggle placement
+### 1. Hente variant i route loader
 
-For å bare sjekke toggle placement (venstre/høyre):
+I en route (f.eks. `person.$personId.perioder.tsx`):
+
+```typescript
+import { getABTestVariant } from "~/utils/ab-test.server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const variant = getABTestVariant(request);
+  // Returnerer "A", "B", "C" eller null (kun i demo-miljø)
+
+  return { variant };
+}
+```
+
+### 2. Sende variant til komponenter
+
+```typescript
+export default function Rapportering({ loaderData }: Route.ComponentProps) {
+  const { variant } = loaderData;
+
+  return (
+    <MeldekortListe
+      perioder={perioder}
+      variant={variant}
+    />
+  );
+}
+```
+
+### 3. Bruke variant i komponenter
+
+#### Metode A: Velge CSS-fil basert på variant
+
+```typescript
+import stylesOriginal from "~/styles/route-styles/korriger.module.css";
+import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
+import stylesVariantC from "~/styles/route-styles/korrigerVariantC.module.css";
+
+export default function Korriger({ variant }) {
+  const styles =
+    variant === "C" ? stylesVariantC :
+    variant === "B" ? stylesVariantB :
+    stylesOriginal;
+
+  return <div className={styles.container}>...</div>;
+}
+```
+
+#### Metode B: Betinget rendering basert på variant
+
+```typescript
+export function Kalender({ variant }) {
+  // Variant C: Stacked layout med synlige uke-labels
+  if (variant === "C") {
+    return (
+      <table className={stylesVariantC.kalenderTabellC}>
+        <UkeRad dager={forsteUke} ukenummer={1} showLabel={true} />
+        <UkeRad dager={andreUke} ukenummer={2} showLabel={true} />
+      </table>
+    );
+  }
+
+  // Standard/Variant A/B: Side-by-side layout
+  return (
+    <table className={styles.kalenderTabell}>
+      <UkeRad dager={forsteUke} />
+      <UkeRad dager={andreUke} />
+    </table>
+  );
+}
+```
+
+#### Metode C: Toggle placement og labels
 
 ```typescript
 import { getTogglePlacement } from "~/utils/ab-test.server";
 
-const togglePlacement = getTogglePlacement(variant);
-// Returns "left" eller "right"
-```
+export function FyllUtTabell({ variant }) {
+  const togglePlacement = getTogglePlacement(variant);
+  // Returnerer "left" (default, A, C) eller "right" (B)
 
-### 2. Feature-spesifikk logikk (f.eks. for Variant C)
+  const useVariantLabels = variant === "B" || variant === "C";
+  // Variant B og C bruker alternative labels
 
-Hvis du vil at Variant C skal oppføre seg forskjellig basert på kontekst (f.eks. kun for korrigering):
-
-```typescript
-import { shouldShowFeature, AB_TEST_FEATURES } from "~/utils/ab-test.server";
-
-// I en komponent som har tilgang til periode-data:
-const erKorrigering = !!periode.originalMeldekortId;
-
-const skalViseSpesiellLayout = shouldShowFeature(
-  variant,
-  AB_TEST_FEATURES.KORRIGERING_LAYOUT,
-  { isKorrigering: erKorrigering }
-);
-
-if (skalViseSpesiellLayout) {
-  // Vis spesiell layout for Variant C + korrigering
-}
-```
-
-### 3. Legge til nye features
-
-I `ab-test.server.ts`:
-
-```typescript
-export const AB_TEST_FEATURES = {
-  TOGGLE_PLACEMENT: "toggle-placement",
-  KORRIGERING_LAYOUT: "korrigering-layout",
-  NY_FEATURE: "ny-feature", // Legg til her
-} as const;
-
-export const VARIANT_C_CONFIG: Record<ABTestFeature, string> = {
-  [AB_TEST_FEATURES.TOGGLE_PLACEMENT]: "left",
-  [AB_TEST_FEATURES.KORRIGERING_LAYOUT]: "special",
-  [AB_TEST_FEATURES.NY_FEATURE]: "config-value", // Legg til her
-};
-```
-
-Oppdater `shouldShowFeature` funksjonen med ny logikk:
-
-```typescript
-export function shouldShowFeature(
-  variant: ABTestVariant,
-  feature: ABTestFeature,
-  context?: Record<string, unknown>,
-): boolean {
-  if (!variant) return false;
-
-  if (variant === "C" && feature === AB_TEST_FEATURES.KORRIGERING_LAYOUT) {
-    return context?.isKorrigering === true;
-  }
-
-  // Legg til ny feature-logikk her
-  if (variant === "C" && feature === AB_TEST_FEATURES.NY_FEATURE) {
-    return context?.someCondition === true;
-  }
-
-  return false;
-}
-```
-
-## Eksempel: Variant C for korrigering
-
-```typescript
-// I MeldekortRad eller MeldekortListe:
-import { shouldShowFeature, AB_TEST_FEATURES } from "~/utils/ab-test.server";
-
-interface Props {
-  periode: IRapporteringsperiode;
-  variant?: ABTestVariant;
-  // ... andre props
-}
-
-export function MeldekortRad({ periode, variant, ... }: Props) {
-  const erKorrigering = !!periode.originalMeldekortId;
-
-  const skalViseKorrigeringLayout = shouldShowFeature(
-    variant,
-    AB_TEST_FEATURES.KORRIGERING_LAYOUT,
-    { isKorrigering: erKorrigering }
+  return (
+    <div>
+      {togglePlacement === "right" && <Toggle />}
+      <Label>{useVariantLabels ? "Ny label" : "Original label"}</Label>
+      {togglePlacement === "left" && <Toggle />}
+    </div>
   );
+}
+```
 
-  if (skalViseKorrigeringLayout) {
-    // Render spesiell layout for Variant C når det er korrigering
-    return <SpeciellKorrigeringLayout {...props} />;
-  }
+## Variant-spesifikk styling
 
-  // Normal layout
-  return <NormalLayout {...props} />;
+Hver komponent/route kan ha separate CSS-filer per variant:
+
+```
+app/styles/route-styles/
+  ├── korriger.module.css          # Standard/fallback
+  ├── korrigerVariantB.module.css  # Variant B spesifikk
+  └── korrigerVariantC.module.css  # Variant C spesifikk
+
+app/components/tabeller/kalender/
+  ├── kalender.module.css          # Standard/fallback
+  ├── kalenderVariantB.module.css  # Variant B spesifikk
+  └── kalenderVariantC.module.css  # Variant C spesifikk
+```
+
+### Eksempel på variant-spesifikk CSS
+
+```css
+/* korrigerVariantC.module.css */
+.begrunnelse {
+  flex: 2;
+}
+
+.begrunnelse :global(.navds-textarea__input) {
+  height: 115px !important;
+  --__ac-textarea-height: 115px;
+  --__axc-textarea-height: 115px;
 }
 ```
 
 ## URL-struktur
 
-- `/person/123/perioder` - I demo: default til Variant A
-- `/person/123/perioder?variant=A` - Variant A (toggle venstre)
-- `/person/123/perioder?variant=B` - Variant B (toggle høyre)
-- `/person/123/perioder?variant=C` - Variant C (kontekst-avhengig)
+```
+/person/123/perioder              → Ingen variant (null)
+/person/123/perioder?variant=A    → Variant A
+/person/123/perioder?variant=B    → Variant B
+/person/123/perioder?variant=C    → Variant C
+```
+
+## VariantSwitcher komponenten
+
+I demo-miljøet vises en `VariantSwitcher` komponent som lar brukere bytte variant via radio buttons:
+
+```typescript
+import { VariantSwitcher } from "~/components/variant-switcher/VariantSwitcher";
+
+// Vises kun i demo-miljø
+{isABTestingEnabled() && <VariantSwitcher />}
+```
+
+Komponenten:
+- Leser current variant fra URL
+- Lar brukeren bytte mellom Standard/B/C
+- Oppdaterer URL med ny variant
 
 ## Miljø
 
-- **Demo**: AB-testing er aktivt, default til Variant A
-- **Dev/Prod**: AB-testing er deaktivert, returnerer `null`
+- **Demo**: ABC-testing er aktivt, `getABTestVariant()` returnerer variant fra URL eller `null`
+- **Dev/Prod**: ABC-testing er deaktivert, `getABTestVariant()` returnerer alltid `null`
+
+## Utilities
+
+### `getABTestVariant(request: Request): ABTestVariant`
+
+Henter variant fra URL query parameter. Kun aktivt i demo-miljø.
+
+```typescript
+const variant = getABTestVariant(request);
+// Returnerer "A" | "B" | "C" | null
+```
+
+### `getTogglePlacement(variant: ABTestVariant): TogglePlacement`
+
+Bestemmer om toggle skal være på venstre eller høyre side.
+
+```typescript
+const placement = getTogglePlacement(variant);
+// Returnerer "left" (standard, A, C) eller "right" (B)
+```
+
+### `isABTestingEnabled(): boolean`
+
+Sjekker om ABC-testing er aktivert (dvs. om vi er i demo-miljø).
+
+```typescript
+if (isABTestingEnabled()) {
+  // Vis VariantSwitcher eller annen test-spesifikk UI
+}
+```
+
+### `buildVariantURL(baseURL: string, variant: ABTestVariant): string`
+
+Bygger URL med variant query parameter.
+
+```typescript
+const url = buildVariantURL("/person/123/perioder", "B");
+// Returnerer "/person/123/perioder?variant=B"
+```
+
+## Legge til en ny variant
+
+### 1. Oppdater type-definisjon (hvis nødvendig)
+
+```typescript
+// app/utils/ab-test.utils.ts
+export type ABTestVariant = "A" | "B" | "C" | "D" | null;
+```
+
+### 2. Opprett variant-spesifikk CSS
+
+```css
+/* app/styles/route-styles/korrigerVariantD.module.css */
+.container {
+  /* Variant D spesifikk styling */
+}
+```
+
+### 3. Importer og bruk i komponenten
+
+```typescript
+import stylesVariantD from "~/styles/route-styles/korrigerVariantD.module.css";
+
+const styles =
+  variant === "D" ? stylesVariantD :
+  variant === "C" ? stylesVariantC :
+  variant === "B" ? stylesVariantB :
+  stylesOriginal;
+```
+
+### 4. Legg til i VariantSwitcher (hvis ønsket)
+
+```typescript
+<Radio value="D">Variant D</Radio>
+```
+
+## Eksempel: Komplett flow
+
+```typescript
+// 1. Route loader henter variant
+export async function loader({ request }: Route.LoaderArgs) {
+  const variant = getABTestVariant(request);
+  return { variant };
+}
+
+// 2. Route bruker variant for å velge styles
+export default function Korriger({ loaderData }) {
+  const { variant } = loaderData;
+  const styles =
+    variant === "C" ? stylesVariantC :
+    variant === "B" ? stylesVariantB :
+    stylesOriginal;
+
+  return (
+    <div className={styles.container}>
+      <Kalender variant={variant} />
+      <FyllUtTabell variant={variant} />
+    </div>
+  );
+}
+
+// 3. Komponenter tilpasser UI basert på variant
+export function Kalender({ variant }) {
+  if (variant === "C") {
+    return <StackedKalender />;
+  }
+  return <SideBySideKalender />;
+}
+```
