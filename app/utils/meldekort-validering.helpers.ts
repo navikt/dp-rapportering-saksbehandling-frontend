@@ -1,12 +1,7 @@
 import type { RefObject } from "react";
 
+import { MELDEKORT_TYPE } from "./constants";
 import type { IAktivitet, IRapporteringsperiodeDag } from "./types";
-
-export const MELDEKORT_TYPE = {
-  Etterregistrert: "etterregistrert",
-} as const;
-
-export type TMeldekortType = (typeof MELDEKORT_TYPE)[keyof typeof MELDEKORT_TYPE];
 
 /**
  * Resultat fra validering av meldekortskjema
@@ -59,7 +54,7 @@ export function skalViseArbeidssokerSporsmal(
   }
 
   // Skjul spørsmålet for etterregistrerte meldekort i saksbehandlerflaten
-  return meldekortType !== MELDEKORT_TYPE.Etterregistrert;
+  return meldekortType !== MELDEKORT_TYPE.ETTERREGISTRERT;
 }
 
 /**

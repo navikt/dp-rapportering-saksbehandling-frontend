@@ -1,4 +1,4 @@
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MELDEKORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 export const HIGHLIGHT_DURATION_MS = 3600;
@@ -39,6 +39,13 @@ export function erPeriodeOpprettet(periode: IRapporteringsperiode): boolean {
  */
 export function erPeriodeKorrigert(periode: IRapporteringsperiode): boolean {
   return !!periode.originalMeldekortId;
+}
+
+/**
+ * Sjekker om meldekortet er av typen etterregistrert
+ */
+export function erPeriodeEtterregistrert(periode: IRapporteringsperiode): boolean {
+  return periode.type === MELDEKORT_TYPE.ETTERREGISTRERT;
 }
 
 /**

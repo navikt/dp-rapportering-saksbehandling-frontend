@@ -3,7 +3,7 @@ import { format, subDays } from "date-fns";
 import { useRef, useState } from "react";
 
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
-import { MODAL_ACTION_TYPE } from "~/utils/constants";
+import { MELDEKORT_TYPE, MODAL_ACTION_TYPE } from "~/utils/constants";
 import {
   harMinstEnGyldigAktivitet,
   type IKorrigertDag,
@@ -13,7 +13,6 @@ import type { IValideringsKontekst } from "~/utils/meldekort-validering.helpers"
 import {
   fokuserPaForsteFeil,
   lagValideringsFeilmeldinger,
-  MELDEKORT_TYPE,
   skalViseArbeidssokerSporsmal,
   validerMeldekortSkjema,
 } from "~/utils/meldekort-validering.helpers";
@@ -55,7 +54,7 @@ export function useMeldekortSkjema({
   setKorrigerteDager,
   onSubmit,
   onCancel,
-  showArbeidssokerField = false,
+  showArbeidssokerField,
   initialMeldedato,
   initialBegrunnelse = "",
   onValidateChanges,
@@ -89,7 +88,7 @@ export function useMeldekortSkjema({
   // State
   // For etterregistrerte meldekort, sett automatisk registrertArbeidssoker til true
   const initialRegistrertArbeidssoker =
-    meldekortType === MELDEKORT_TYPE.Etterregistrert ? true : null;
+    meldekortType === MELDEKORT_TYPE.ETTERREGISTRERT ? true : null;
   const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(
     initialRegistrertArbeidssoker,
   );

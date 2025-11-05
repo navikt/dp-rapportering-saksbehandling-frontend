@@ -20,6 +20,7 @@ import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/styles/route-styles/fyllUt.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import {
+  MELDEKORT_TYPE,
   MODAL_ACTION_TYPE,
   QUERY_PARAMS,
   RAPPORTERINGSPERIODE_STATUS,
@@ -31,7 +32,6 @@ import {
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
 } from "~/utils/korrigering.utils";
-import { MELDEKORT_TYPE } from "~/utils/meldekort-validering.helpers";
 import type { ISendInnMeldekort } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
@@ -69,7 +69,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     // For etterregistrerte meldekort, sett alltid registrertArbeidssoker til true
     // For andre typer, bruk verdien fra skjemaet
     const registrertArbeidssoker =
-      periode.type === MELDEKORT_TYPE.Etterregistrert
+      periode.type === MELDEKORT_TYPE.ETTERREGISTRERT
         ? true
         : formData.get("registrertArbeidssoker") === "true";
 

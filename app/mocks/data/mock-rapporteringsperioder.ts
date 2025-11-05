@@ -1,7 +1,12 @@
 import { addDays, addWeeks, differenceInWeeks, format, startOfWeek, subWeeks } from "date-fns";
 import { uuidv7 } from "uuidv7";
 
-import { AKTIVITET_TYPE, RAPPORTERINGSPERIODE_STATUS, ROLLE } from "~/utils/constants";
+import {
+  AKTIVITET_TYPE,
+  MELDEKORT_TYPE,
+  RAPPORTERINGSPERIODE_STATUS,
+  ROLLE,
+} from "~/utils/constants";
 import { konverterTilISO8601Varighet } from "~/utils/dato.utils";
 import { ScenarioType } from "~/utils/scenario.types";
 import type {
@@ -364,6 +369,12 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
   ],
 
   [ScenarioType.FULL_DEMO]: [
+    {
+      periode: {
+        type: MELDEKORT_TYPE.ETTERREGISTRERT,
+      },
+      ukerFraIDag: 100,
+    },
     // 1. Ferdig beregnet
     {
       periode: {

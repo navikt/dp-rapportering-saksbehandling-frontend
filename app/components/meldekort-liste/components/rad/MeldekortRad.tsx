@@ -13,6 +13,7 @@ import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { aktivitetMapping, sorterAktiviteter, unikeAktiviteter } from "../../utils";
 import {
+  erPeriodeEtterregistrert,
   erPeriodeKorrigert,
   erPeriodeOpprettet,
   getStatusConfig,
@@ -44,6 +45,7 @@ export function MeldekortRad({
   // States
   const erOpprettet = erPeriodeOpprettet(periode);
   const erKorrigert = erPeriodeKorrigert(periode);
+  const erEtterregistrert = erPeriodeEtterregistrert(periode);
   const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })}`;
 
   // Sjekk om denne perioden har en korrigering
@@ -114,11 +116,17 @@ export function MeldekortRad({
           <Tag variant={statusConfig.variant} size="small">
             {statusConfig.text}
           </Tag>
+          {erEtterregistrert && (
+            <Tag variant="info" size="small">
+              Etterregistrert
+            </Tag>
+          )}
           {erKorrigert && (
             <Tag variant="warning" size="small">
               {useVariantLabels ? "Korrigering" : "Korrigert"}
             </Tag>
           )}
+
           {!erKorrigert && harKorrigering && useVariantLabels && (
             <Tag variant="neutral" size="small">
               Har korrigering

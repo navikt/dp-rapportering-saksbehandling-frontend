@@ -4,7 +4,7 @@ import { uuidv7 } from "uuidv7";
 import {
   AKTIVITET_TYPE,
   ARBEIDSSOKERPERIODE_STATUS,
-  KORT_TYPE,
+  MELDEKORT_TYPE,
   OPPRETTET_AV,
   RAPPORTERINGSPERIODE_STATUS,
 } from "~/utils/constants";
@@ -82,7 +82,7 @@ export function lagRapporteringsperiode(
     id: uuidv7(),
     ident: person?.ident || createFnr().ident,
     status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
-    type: KORT_TYPE.Elektronisk,
+    type: props.type ?? MELDEKORT_TYPE.ORDINAERT,
     periode: {
       fraOgMed,
       tilOgMed,

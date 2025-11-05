@@ -4,6 +4,7 @@ import type {
   AKTIVITET_TYPE,
   ANSVARLIG_SYSTEM,
   KJONN,
+  MELDEKORT_TYPE,
   OPPRETTET_AV,
   RAPPORTERING_TYPE,
   ROLLE,
@@ -51,6 +52,8 @@ export type TAnsvarligSystem = (typeof ANSVARLIG_SYSTEM)[keyof typeof ANSVARLIG_
 
 export type TKjonn = (typeof KJONN)[keyof typeof KJONN];
 
+export type TMeldekortType = (typeof MELDEKORT_TYPE)[keyof typeof MELDEKORT_TYPE];
+
 export type TArbeidssokerperiodeStatus =
   (typeof ARBEIDSSOKERPERIODE_STATUS)[keyof typeof ARBEIDSSOKERPERIODE_STATUS];
 
@@ -90,7 +93,7 @@ export interface IRapporteringsperiode {
   id: string;
   ident: string;
   status: TRapporteringsperiodeStatus;
-  type: string;
+  type: TMeldekortType;
   periode: IPeriode;
   dager: IRapporteringsperiodeDag[];
   kanSendes: boolean;

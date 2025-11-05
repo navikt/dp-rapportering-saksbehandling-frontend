@@ -113,6 +113,11 @@ export const KJONN = {
   UKJENT: "UKJENT",
 } as const;
 
+export const MELDEKORT_TYPE = {
+  ETTERREGISTRERT: "Etterregistrert",
+  ORDINAERT: "Ordinaert",
+};
+
 export const DEFAULT_PERSON: IPerson = {
   ansvarligSystem: ANSVARLIG_SYSTEM.DP,
   fornavn: "",
