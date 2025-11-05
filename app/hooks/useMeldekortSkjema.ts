@@ -13,6 +13,7 @@ import type { IValideringsKontekst } from "~/utils/meldekort-validering.helpers"
 import {
   fokuserPaForsteFeil,
   lagValideringsFeilmeldinger,
+  MELDEKORT_TYPE,
   skalViseArbeidssokerSporsmal,
   validerMeldekortSkjema,
 } from "~/utils/meldekort-validering.helpers";
@@ -39,8 +40,7 @@ interface UseMeldekortSkjemaOptions {
   onValidateChanges?: (data: IMeldekortSkjemaSubmitData) => boolean;
   /** Om dette er en korrigering av eksisterende meldekort */
   isKorrigering?: boolean;
-  /** Type meldekort fra backend (brukes for å sjekke om arbeidssøker-spørsmål skal vises)
-   * TODO: Aktiver når backend har lagt til "etterregistrert" type i meldekortregister */
+  /** Type meldekort fra backend (brukes for å sjekke om arbeidssøker-spørsmål skal vises) */
   meldekortType?: string;
   /** Originale data for sammenligning ved korrigering */
   originalData?: {
@@ -87,7 +87,12 @@ export function useMeldekortSkjema({
   const aktiviteterRef = useRef<HTMLDivElement>(null);
 
   // State
-  const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(null);
+  // For etterregistrerte meldekort, sett automatisk registrertArbeidssoker til true
+  const initialRegistrertArbeidssoker =
+    meldekortType === MELDEKORT_TYPE.Etterregistrert ? true : null;
+  const [registrertArbeidssoker, setRegistrertArbeidssoker] = useState<boolean | null>(
+    initialRegistrertArbeidssoker,
+  );
   const [begrunnelse, setBegrunnelse] = useState<string>(initialBegrunnelse);
   const [valgtDato, setValgtDato] = useState<Date | undefined>(initialMeldedato);
   const [modalOpen, setModalOpen] = useState(false);

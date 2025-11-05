@@ -4,10 +4,18 @@ Dette er et fleksibelt ABC-testing system for demo-miljøet som lar oss teste ul
 
 ## Oversikt
 
-- **Ingen variant (standard)**: Original layout uten spesiell styling
-- **Variant A**: Standard layout med testing-spesifikk styling
-- **Variant B**: Toggle på høyre side + alternative labels
-- **Variant C**: Alternativ layout (f.eks. stacked kalender, større tekstfelt)
+ABC-testing systemet lar deg teste ulike UI-varianter i demo-miljøet ved å legge til `?variant=A/B/C` i URL-en.
+
+**Varianter:**
+- **Standard (ingen query param)** - Original layout
+- **Variant A** (`?variant=A`) - Identisk med standard
+- **Variant B** (`?variant=B`) - Alternativ UI-variant
+- **Variant C** (`?variant=C`) - Alternativ UI-variant
+
+**Viktig:**
+- Kun aktivt i demo-miljø (dev/prod returnerer alltid `null`)
+- Variant A og "ingen variant" bruker samme kode/styling
+- Hver variant kan ha egne CSS-filer og/eller betinget rendering-logikk
 
 ## Hvordan det fungerer
 
@@ -51,10 +59,11 @@ import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
 import stylesVariantC from "~/styles/route-styles/korrigerVariantC.module.css";
 
 export default function Korriger({ variant }) {
+  // Variant A og null bruker begge stylesOriginal (standard)
   const styles =
     variant === "C" ? stylesVariantC :
     variant === "B" ? stylesVariantB :
-    stylesOriginal;
+    stylesOriginal; // Fallback for både Variant A og null
 
   return <div className={styles.container}>...</div>;
 }
@@ -74,7 +83,7 @@ export function Kalender({ variant }) {
     );
   }
 
-  // Standard/Variant A/B: Side-by-side layout
+  // Standard (null/A/B): Side-by-side layout
   return (
     <table className={styles.kalenderTabell}>
       <UkeRad dager={forsteUke} />

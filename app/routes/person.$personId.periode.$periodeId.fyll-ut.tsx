@@ -31,6 +31,7 @@ import {
   konverterTimerFraISO8601Varighet,
   konverterTimerTilISO8601Varighet,
 } from "~/utils/korrigering.utils";
+import { MELDEKORT_TYPE } from "~/utils/meldekort-validering.helpers";
 import type { ISendInnMeldekort } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
@@ -53,7 +54,6 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const personId = params.personId;
   const meldedato = formData.get("meldedato") as string;
-  const registrertArbeidssoker = formData.get("registrertArbeidssoker") === "true";
   const begrunnelse = formData.get("begrunnelse") as string;
   const dagerData = formData.get("dager") as string;
 
@@ -65,6 +65,13 @@ export async function action({ request, params }: Route.ActionArgs) {
     // Sjekk om dette er en ekte korrigering (perioden har allerede data) eller første gangs utfylling
 
     const periode = await hentPeriode(request, personId, params.periodeId);
+
+    // For etterregistrerte meldekort, sett alltid registrertArbeidssoker til true
+    // For andre typer, bruk verdien fra skjemaet
+    const registrertArbeidssoker =
+      periode.type === MELDEKORT_TYPE.Etterregistrert
+        ? true
+        : formData.get("registrertArbeidssoker") === "true";
 
     const oppdatertPeriode: ISendInnMeldekort = {
       ident: periode.ident,
@@ -143,7 +150,7 @@ export default function FyllUtPeriode() {
     setKorrigerteDager: setDager,
     onSubmit: handleSubmit,
     onCancel: handleCancel,
-    showArbeidssokerField: true,
+    meldekortType: periode.type,
   });
 
   const { fraOgMed, tilOgMed } = periode.periode;
@@ -199,22 +206,24 @@ export default function FyllUtPeriode() {
                   }
                 />
               </DatePicker>
-              <RadioGroup
-                size="small"
-                legend="Registrert som arbeidssøker de neste 14 dagene?"
-                error={
-                  skjema.state.visValideringsfeil.arbeidssoker
-                    ? "Du må velge om bruker skal være registrert som arbeidssøker"
-                    : undefined
-                }
-                value={skjema.state.registrertArbeidssoker?.toString() || ""}
-                onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
-              >
-                <Radio ref={skjema.refs.arbeidssokerRef} value="true">
-                  Ja
-                </Radio>
-                <Radio value="false">Nei</Radio>
-              </RadioGroup>
+              {skjema.state.showArbeidssokerField && (
+                <RadioGroup
+                  size="small"
+                  legend="Registrert som arbeidssøker de neste 14 dagene?"
+                  error={
+                    skjema.state.visValideringsfeil.arbeidssoker
+                      ? "Du må velge om bruker skal være registrert som arbeidssøker"
+                      : undefined
+                  }
+                  value={skjema.state.registrertArbeidssoker?.toString() || ""}
+                  onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
+                >
+                  <Radio ref={skjema.refs.arbeidssokerRef} value="true">
+                    Ja
+                  </Radio>
+                  <Radio value="false">Nei</Radio>
+                </RadioGroup>
+              )}
               <Textarea
                 resize
                 ref={skjema.refs.begrunnelseRef}

@@ -2,12 +2,11 @@ import type { RefObject } from "react";
 
 import type { IAktivitet, IRapporteringsperiodeDag } from "./types";
 
-// TODO: Aktiver når backend har lagt til type i meldekortregister
-// export const MELDEKORT_TYPE = {
-//   Etterregistrert: "etterregistrert",
-// } as const;
-//
-// export type TMeldekortType = (typeof MELDEKORT_TYPE)[keyof typeof MELDEKORT_TYPE];
+export const MELDEKORT_TYPE = {
+  Etterregistrert: "etterregistrert",
+} as const;
+
+export type TMeldekortType = (typeof MELDEKORT_TYPE)[keyof typeof MELDEKORT_TYPE];
 
 /**
  * Resultat fra validering av meldekortskjema
@@ -47,32 +46,20 @@ export interface ISkjemaData {
 /**
  * Sjekker om arbeidssøker-spørsmålet skal vises basert på meldekorttype.
  *
- * TODO: Når backend har lagt til "etterregistrert" type i meldekortregister,
- * aktiver logikken nedenfor for å skjule spørsmålet for etterregistrerte meldekort.
- * Husk også å fjerne eslint-disable kommentarene på parameterne.
- *
- * @param _meldekortType - Type meldekort fra IRapporteringsperiode.type (TODO: bruk når backend er klar)
- * @param _erSaksbehandlerFlate - Om dette er saksbehandlerflaten (TODO: bruk når backend er klar)
+ * @param meldekortType - Type meldekort fra IRapporteringsperiode.type
+ * @param erSaksbehandlerFlate - Om dette er saksbehandlerflaten
  * @returns true hvis spørsmålet skal vises
  */
 export function skalViseArbeidssokerSporsmal(
-  // TODO: Fjern eslint-disable når backend er klar
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _meldekortType: string | undefined,
-  // TODO: Fjern eslint-disable når backend er klar
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _erSaksbehandlerFlate: boolean,
+  meldekortType: string | undefined,
+  erSaksbehandlerFlate: boolean,
 ): boolean {
-  // TODO: Aktiver når backend er klar
-  // if (!_erSaksbehandlerFlate) {
-  //   return true;
-  // }
-  //
-  // // Skjul spørsmålet for etterregistrerte meldekort i saksbehandlerflaten
-  // return _meldekortType !== MELDEKORT_TYPE.Etterregistrert;
+  if (!erSaksbehandlerFlate) {
+    return true;
+  }
 
-  // Inntil videre: vis alltid spørsmålet
-  return true;
+  // Skjul spørsmålet for etterregistrerte meldekort i saksbehandlerflaten
+  return meldekortType !== MELDEKORT_TYPE.Etterregistrert;
 }
 
 /**
