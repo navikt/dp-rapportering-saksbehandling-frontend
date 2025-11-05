@@ -119,6 +119,7 @@ export function useMeldekortSkjema({
     },
     defaultSelected: valgtDato,
     fromDate: subDays(new Date(periode.periode.tilOgMed), 1),
+    defaultMonth: new Date(periode.periode.tilOgMed),
     inputFormat: "dd.MM.yyyy",
   });
 
