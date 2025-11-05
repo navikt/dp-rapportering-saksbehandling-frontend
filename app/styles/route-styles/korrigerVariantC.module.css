@@ -86,7 +86,6 @@
   display: flex;
   flex-direction: row;
   gap: var(--a-space-24);
-  max-width: 60%;
 }
 
 .knapper {
@@ -97,4 +96,10 @@
 
 .begrunnelse {
   flex: 2;
+}
+
+.begrunnelse :global(.navds-textarea__input) {
+  height: 115px !important;
+  --__ac-textarea-height: 115px;
+  --__axc-textarea-height: 115px;
 }
