@@ -18,11 +18,11 @@
 }
 
 .uke-label {
+  vertical-align: middle;
   font-weight: var(--a-font-weight-semibold);
   font-size: var(--a-font-size-small);
   text-align: left;
   padding-right: var(--a-space-4);
-  vertical-align: top;
 }
 
 .uke-header {

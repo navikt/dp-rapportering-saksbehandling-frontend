@@ -37,7 +37,7 @@ export function MeldekortRad({
   ansvarligSystem,
   togglePlacement = "left",
   variant = null,
-  allePerioder = [],
+  // allePerioder = [],
 }: Props) {
   const [searchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -48,13 +48,13 @@ export function MeldekortRad({
   const erEtterregistrert = erPeriodeEtterregistrert(periode);
   const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })}`;
 
-  // Sjekk om denne perioden har en korrigering
-  const harKorrigering = allePerioder.some(
-    (p) => p.originalMeldekortId === periode.id && p.id !== periode.id,
-  );
+  // // Sjekk om denne perioden har en korrigering
+  // const harKorrigering = allePerioder.some(
+  //   (p) => p.originalMeldekortId === periode.id && p.id !== periode.id,
+  // );
 
-  // Variant B og C: Endre tekster for korrigering
-  const useVariantLabels = variant === "B" || variant === "C";
+  // // Variant B og C: Endre tekster for korrigering
+  // const useVariantLabels = variant === "B" || variant === "C";
 
   // Visningsverdier
   const statusConfig = getStatusConfig(periode);
@@ -123,15 +123,16 @@ export function MeldekortRad({
           )}
           {erKorrigert && (
             <Tag variant="warning" size="small">
-              {useVariantLabels ? "Korrigering" : "Korrigert"}
+              Korrigert
+              {/* {useVariantLabels ? "Korrigering" : "Korrigert"} */}
             </Tag>
           )}
 
-          {!erKorrigert && harKorrigering && useVariantLabels && (
+          {/* {!erKorrigert && harKorrigering && useVariantLabels && (
             <Tag variant="neutral" size="small">
               Har korrigering
             </Tag>
-          )}
+          )} */}
         </div>
       </Table.DataCell>
       <Table.DataCell {...cellProps}>

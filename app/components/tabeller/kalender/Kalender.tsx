@@ -14,19 +14,11 @@ interface IProps {
   variant?: ABTestVariant;
 }
 
-function UkeRad({
-  dager,
-  ukenummer,
-  showLabel = false,
-}: {
-  dager: IRapporteringsperiodeDag[];
-  ukenummer: string;
-  showLabel?: boolean;
-}) {
+function UkeRad({ dager, ukenummer }: { dager: IRapporteringsperiodeDag[]; ukenummer: string }) {
   return (
     <tr>
-      <th scope="row" className={showLabel ? stylesVariantC.ukeLabel : "sr-only"}>
-        {showLabel ? <Label size="small">Uke {ukenummer}</Label> : `Uke ${ukenummer}`}
+      <th scope="row" className={stylesVariantC.ukeLabel}>
+        <Label size="small">Uke {ukenummer}</Label>
       </th>
       {dager.map((dag) => (
         <Dag key={dag.dato} dag={dag} />
@@ -121,11 +113,11 @@ export function Kalender({ periode, variant = null }: IProps) {
           </tr>
         </thead>
         <tbody>
-          <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} showLabel={true} />
+          <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} />
           <tr>
             <td colSpan={8} className={stylesVariantC.mellomrom} aria-hidden="true" />
           </tr>
-          <UkeRad dager={andreUke} ukenummer={andreUkenummer} showLabel={true} />
+          <UkeRad dager={andreUke} ukenummer={andreUkenummer} />
         </tbody>
       </table>
     );

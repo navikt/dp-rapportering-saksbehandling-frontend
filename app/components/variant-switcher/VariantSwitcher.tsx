@@ -33,7 +33,7 @@ export function VariantSwitcher() {
         value={currentVariant || "none"}
         onChange={handleVariantChange}
       >
-        <Radio value="none">Standard</Radio>
+        <Radio value="none">Variant A</Radio>
         <Radio value="B">Variant B</Radio>
         {isKorrigerPage && <Radio value="C">Variant C</Radio>}
       </RadioGroup>

@@ -141,10 +141,10 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode, variant = nul
       <fieldset className={styles.fieldset}>
         {useVariantLabels ? (
           <legend className={styles.legend}>
-            <Label size="small">Registrer aktiviteter</Label>
+            <Label size="small">Før opp aktiviteter</Label>
           </legend>
         ) : (
-          <legend className="sr-only">Registrer aktiviteter</legend>
+          <legend className="sr-only">Før opp aktiviteter</legend>
         )}
         {/* Uke 1 */}
         <div className={styles.ukeContainer}>
@@ -264,11 +264,11 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode, variant = nul
     <fieldset className={styles.fieldset}>
       {useVariantLabels && (
         <legend className={styles.legend}>
-          <Label size="small">Registrer aktiviteter</Label>
+          <Label size="small">Før opp aktiviteter</Label>
         </legend>
       )}
       <table className={styles.fyllUtTabell}>
-        <caption className="sr-only">Registrer aktiviteter</caption>
+        <caption className="sr-only">Før opp aktiviteter</caption>
         <thead>
           <tr>
             <th scope="col" className="sr-only">

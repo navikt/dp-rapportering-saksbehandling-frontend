@@ -7,12 +7,14 @@ Dette er et fleksibelt ABC-testing system for demo-miljøet som lar oss teste ul
 ABC-testing systemet lar deg teste ulike UI-varianter i demo-miljøet ved å legge til `?variant=A/B/C` i URL-en.
 
 **Varianter:**
+
 - **Standard (ingen query param)** - Original layout
 - **Variant A** (`?variant=A`) - Identisk med standard
 - **Variant B** (`?variant=B`) - Alternativ UI-variant
 - **Variant C** (`?variant=C`) - Alternativ UI-variant
 
 **Viktig:**
+
 - Kun aktivt i demo-miljø (dev/prod returnerer alltid `null`)
 - Variant A og "ingen variant" bruker samme kode/styling
 - Hver variant kan ha egne CSS-filer og/eller betinget rendering-logikk
@@ -150,7 +152,7 @@ app/components/tabeller/kalender/
 
 ```
 /person/123/perioder              → Ingen variant (null)
-/person/123/perioder?variant=A    → Variant A
+/person/123/perioder?variant=A    → Ingen variant (null)
 /person/123/perioder?variant=B    → Variant B
 /person/123/perioder?variant=C    → Variant C
 ```
@@ -167,6 +169,7 @@ import { VariantSwitcher } from "~/components/variant-switcher/VariantSwitcher";
 ```
 
 Komponenten:
+
 - Leser current variant fra URL
 - Lar brukeren bytte mellom Standard/B/C
 - Oppdaterer URL med ny variant
@@ -239,10 +242,13 @@ export type ABTestVariant = "A" | "B" | "C" | "D" | null;
 import stylesVariantD from "~/styles/route-styles/korrigerVariantD.module.css";
 
 const styles =
-  variant === "D" ? stylesVariantD :
-  variant === "C" ? stylesVariantC :
-  variant === "B" ? stylesVariantB :
-  stylesOriginal;
+  variant === "D"
+    ? stylesVariantD
+    : variant === "C"
+      ? stylesVariantC
+      : variant === "B"
+        ? stylesVariantB
+        : stylesOriginal;
 ```
 
 ### 4. Legg til i VariantSwitcher (hvis ønsket)

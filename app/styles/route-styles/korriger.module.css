@@ -24,6 +24,15 @@
   gap: var(--a-space-12);
   align-self: stretch;
 }
+
+.meldekort-seksjon {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-space-16);
+  align-self: stretch;
+}
+
 .header {
   display: flex;
   flex-direction: column;
@@ -38,6 +47,13 @@
   align-items: flex-start;
   gap: 0.625rem;
   align-self: stretch;
+}
+
+.kalender-og-begrunnelse-wrapper {
+  width: 100%;
+  border-radius: 0.625rem;
+  border: 2px solid var(--a-surface-action-subtle);
+  padding: var(--a-space-16);
 }
 
 .skjema {

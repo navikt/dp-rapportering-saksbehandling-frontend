@@ -157,12 +157,12 @@ export default function Periode() {
             <Heading level="2" size="small">
               Korrigering av følgende meldekort
             </Heading>
-            <BodyShort size="small">
+            <BodyLong size="small">
               Meldekortet ble innsendt{" "}
               {periode.innsendtTidspunkt
                 ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
                 : "Ukjent tidspunkt"}
-            </BodyShort>
+            </BodyLong>
           </div>
           <div className={styles.kalenderOgBegrunnelseWrapper}>
             <div className={styles.kalenderContainer}>
@@ -195,17 +195,15 @@ export default function Periode() {
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
         </div>
         <div className={`${styles.skjema} ${styles.maxWidth900}`}>
-          {(variant === "B" || variant === "C") && (
-            <div>
-              <Heading level="2" size="small">
-                Registrer ny korrigering
-              </Heading>
-              <BodyShort size="small">
-                Gjør endringer i aktiviteter, meldedato eller begrunnelse. Arbeid kan ikke
-                kombineres med annet fravær enn «tiltak, kurs eller utdanning» på samme dag.
-              </BodyShort>
-            </div>
-          )}
+          <div>
+            <Heading level="2" size="small">
+              Registrer ny korrigering
+            </Heading>
+            <BodyShort size="small">
+              Gjør endringer i aktiviteter eller meldedato. Arbeid kan ikke kombineres med annet
+              fravær enn «tiltak, kurs eller utdanning» på samme dag.
+            </BodyShort>
+          </div>
           <div ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
             <FyllUtTabell
               dager={korrigerteDager}
