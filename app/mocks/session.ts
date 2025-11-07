@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { factory, nullable, primaryKey } from "@mswjs/data";
 
+import { ScenarioType } from "~/utils/scenario.types";
 import type { IPerson, ISaksbehandler } from "~/utils/types";
 
 import { hentArbeidssokerperioder } from "./data/mock-arbeidssokerperioder";
@@ -29,12 +30,11 @@ class SessionRecord {
 
       // Lag personer med perioder
       mockPersons.forEach((personData) => {
-        const { scenario, ...person } = personData;
-        const createdPerson = db.personer.create(person) as IPerson;
+        const createdPerson = db.personer.create(personData) as IPerson;
 
-        // Generer perioder basert på personens scenario
+        // Generer perioder basert på FULL_DEMO scenario
         const periods = hentRapporteringsperioderForScenario(
-          scenario,
+          ScenarioType.FULL_DEMO,
           createdPerson,
           createdSaksbehandler,
         );

@@ -484,8 +484,8 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         null, // helg
         null, // mandag uke 2
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // tirsdag uke 2
-        [{ type: AKTIVITET_TYPE.Utdanning }], // onsdag uke 2
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // torsdag uke 2
+        null, // onsdag uke 2 (27. nov - SLETTET)
+        null, // torsdag uke 2 (28. nov - SLETTET)
         [{ type: AKTIVITET_TYPE.Syk }], // fredag uke 2
         null,
         null, // helg

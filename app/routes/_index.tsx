@@ -1,13 +1,12 @@
-import { BodyShort, Box, Heading, LinkPanel, VStack } from "@navikt/ds-react";
+import { BodyShort, Box, GuidePanel, Heading, LinkCard, VStack } from "@navikt/ds-react";
 import { useLoaderData } from "react-router";
 
-import { getFullDemoPerson } from "~/mocks/data/mock-persons";
+import { mockPersons } from "~/mocks/data/mock-persons";
 import { usesMsw } from "~/utils/env.utils";
 
 export async function loader() {
   if (usesMsw) {
-    const fullDemoPerson = getFullDemoPerson();
-    return { personer: fullDemoPerson ? [fullDemoPerson] : [] };
+    return { personer: mockPersons };
   }
   return { personer: [] };
 }
@@ -23,28 +22,47 @@ export default function Rapportering() {
       paddingInline="4"
       style={{ maxWidth: "800px", margin: "0 auto" }}
     >
-      <VStack gap="6">
-        <Heading level="1" size="large">
-          Saksbehandlerflate for meldekort
-        </Heading>
+      <VStack gap="space-48">
+        <GuidePanel>
+          <Heading level="1" size="small" spacing>
+            Hei NAY-coach!
+          </Heading>
+          Velkommen til brukertest av saksbehandlerflaten for meldekort.
+        </GuidePanel>
 
         {data.personer.length > 0 ? (
-          <VStack gap="3">
-            {data.personer.map((person) => {
-              const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
-                person.etternavn
-              }`;
-              const link = `/person/${person.id}/perioder`;
+          <VStack gap="space-24">
+            <Heading level="2" size="medium">
+              Gå til løsningen:
+            </Heading>
+            <VStack gap="3">
+              {data.personer.map((person) => {
+                const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
+                  person.etternavn
+                }`;
 
-              return (
-                <LinkPanel key={person.id} href={link} border>
-                  <LinkPanel.Title>{navn}</LinkPanel.Title>
-                  <LinkPanel.Description>
-                    Åpne saksbehandling for denne personen
-                  </LinkPanel.Description>
-                </LinkPanel>
-              );
-            })}
+                return (
+                  <>
+                    <LinkCard key={`${person.id}-A`}>
+                      <LinkCard.Title>
+                        <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=A`}>
+                          {navn}
+                        </LinkCard.Anchor>
+                      </LinkCard.Title>
+                      <LinkCard.Description>Variant A</LinkCard.Description>
+                    </LinkCard>
+                    <LinkCard key={`${person.id}-B`}>
+                      <LinkCard.Title>
+                        <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=B`}>
+                          {navn}
+                        </LinkCard.Anchor>
+                      </LinkCard.Title>
+                      <LinkCard.Description>Variant B</LinkCard.Description>
+                    </LinkCard>
+                  </>
+                );
+              })}
+            </VStack>
           </VStack>
         ) : (
           <BodyShort>
