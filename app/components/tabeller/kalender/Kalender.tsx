@@ -12,14 +12,25 @@ import stylesVariantC from "./kalenderVariantC.module.css";
 interface IProps {
   periode: IRapporteringsperiode;
   variant?: ABTestVariant;
+  hideWeekLabels?: boolean;
 }
 
-function UkeRad({ dager, ukenummer }: { dager: IRapporteringsperiodeDag[]; ukenummer: string }) {
+function UkeRad({
+  dager,
+  ukenummer,
+  hideWeekLabel = false,
+}: {
+  dager: IRapporteringsperiodeDag[];
+  ukenummer: string;
+  hideWeekLabel?: boolean;
+}) {
   return (
     <tr>
-      <th scope="row" className={stylesVariantC.ukeLabel}>
-        <Label size="small">Uke {ukenummer}</Label>
-      </th>
+      {!hideWeekLabel && (
+        <th scope="row" className={stylesVariantC.ukeLabel}>
+          <Label size="small">Uke {ukenummer}</Label>
+        </th>
+      )}
       {dager.map((dag) => (
         <Dag key={dag.dato} dag={dag} />
       ))}
@@ -27,7 +38,7 @@ function UkeRad({ dager, ukenummer }: { dager: IRapporteringsperiodeDag[]; ukenu
   );
 }
 
-export function Kalender({ periode, variant = null }: IProps) {
+export function Kalender({ periode, variant = null, hideWeekLabels = false }: IProps) {
   if (!periode) return null;
 
   const forsteUke = periode.dager.slice(0, 7);
@@ -40,9 +51,11 @@ export function Kalender({ periode, variant = null }: IProps) {
     return (
       <div className={stylesVariantB.kalenderVariantB}>
         <table className={stylesVariantB.kalenderTabellB}>
-          <caption className={stylesVariantB.ukeCaption}>
-            <Label size="small">Uke {forsteUkenummer}</Label>
-          </caption>
+          {!hideWeekLabels && (
+            <caption className={stylesVariantB.ukeCaption}>
+              <Label size="small">Uke {forsteUkenummer}</Label>
+            </caption>
+          )}
           <thead>
             <tr>
               {ukedager.map((ukedag, index) => (
@@ -65,9 +78,11 @@ export function Kalender({ periode, variant = null }: IProps) {
         </table>
 
         <table className={stylesVariantB.kalenderTabellB}>
-          <caption className={stylesVariantB.ukeCaption}>
-            <Label size="small">Uke {andreUkenummer}</Label>
-          </caption>
+          {!hideWeekLabels && (
+            <caption className={stylesVariantB.ukeCaption}>
+              <Label size="small">Uke {andreUkenummer}</Label>
+            </caption>
+          )}
           <thead>
             <tr>
               {ukedager.map((ukedag, index) => (
@@ -113,11 +128,15 @@ export function Kalender({ periode, variant = null }: IProps) {
           </tr>
         </thead>
         <tbody>
-          <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} />
+          <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} hideWeekLabel={hideWeekLabels} />
           <tr>
-            <td colSpan={8} className={stylesVariantC.mellomrom} aria-hidden="true" />
+            <td
+              colSpan={hideWeekLabels ? 7 : 8}
+              className={stylesVariantC.mellomrom}
+              aria-hidden="true"
+            />
           </tr>
-          <UkeRad dager={andreUke} ukenummer={andreUkenummer} />
+          <UkeRad dager={andreUke} ukenummer={andreUkenummer} hideWeekLabel={hideWeekLabels} />
         </tbody>
       </table>
     );
@@ -143,11 +162,11 @@ export function Kalender({ periode, variant = null }: IProps) {
         </tr>
       </thead>
       <tbody>
-        <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} />
+        <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} hideWeekLabel={hideWeekLabels} />
         <tr>
           <td colSpan={7} className={stylesOriginal.mellomrom} aria-hidden="true" />
         </tr>
-        <UkeRad dager={andreUke} ukenummer={andreUkenummer} />
+        <UkeRad dager={andreUke} ukenummer={andreUkenummer} hideWeekLabel={hideWeekLabels} />
       </tbody>
     </table>
   );

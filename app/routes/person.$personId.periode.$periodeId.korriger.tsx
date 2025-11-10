@@ -70,17 +70,21 @@ export default function Periode() {
   }, [fetcher.state, fetcher.data]);
 
   const handleSubmit = () => {
-    const korrigertPeriode: IRapporteringsperiode = {
-      ...periode,
-      meldedato: skjema.state.valgtDato
-        ? format(skjema.state.valgtDato, "yyyy-MM-dd")
-        : periode.meldedato,
+    // Send kun IKorrigerMeldekort felter - ikke hele IRapporteringsperiode
+    // Dette unngår at API-ruten feiltolker requesten som en oppdatering
+    const korrigertPeriode = {
+      ident: periode.ident,
+      originalMeldekortId: periode.id,
+      periode: periode.periode,
       dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
-      begrunnelse: skjema.state.begrunnelse,
       kilde: {
         rolle: "Saksbehandler",
         ident: saksbehandler.onPremisesSamAccountName,
       },
+      begrunnelse: skjema.state.begrunnelse,
+      meldedato: skjema.state.valgtDato
+        ? format(skjema.state.valgtDato, "yyyy-MM-dd")
+        : periode.meldedato!,
     };
 
     fetcher.submit(
@@ -212,7 +216,7 @@ export default function Periode() {
             <Heading level="2" size="small">
               Registrer ny korrigering
             </Heading>
-            <BodyShort size="small">
+            <BodyShort size="small" className="sr-only">
               Gjør endringer i aktiviteter eller meldedato. Arbeid kan ikke kombineres med annet
               fravær enn «tiltak, kurs eller utdanning» på samme dag.
             </BodyShort>

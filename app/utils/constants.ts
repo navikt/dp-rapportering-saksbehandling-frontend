@@ -51,18 +51,6 @@ export const AKTIVITET_LABELS_LANG = {
   [AKTIVITET_TYPE.Utdanning]: "Tiltak, kurs eller utdanning",
 } as const;
 
-export const KORT_TYPE = {
-  Ordinaer: "01",
-  Erstatning: "03",
-  Retur: "04",
-  Elektronisk: "05",
-  Aap: "06",
-  Ordinaer_manuell: "07",
-  Maskinelt_oppdatert: "08",
-  Manuell_arena: "09",
-  Korrigert_elektronisk: "10",
-} as const;
-
 export const MODAL_ACTION_TYPE = {
   AVBRYT: "avbryt",
   FULLFOR: "fullfor",
