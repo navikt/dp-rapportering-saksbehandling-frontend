@@ -63,6 +63,15 @@ export function validerTimerInput(inputValue: string): ValidationResult {
     };
   }
 
+  // Sjekk om det bare er komma/punktum uten tall (f.eks. ".", ",", ".,", osv.)
+  const trimmedValue = inputValue.trim();
+  if (/^[.,]+$/.test(trimmedValue)) {
+    return {
+      isValid: false,
+      errorMessage: "Ugyldig tall",
+    };
+  }
+
   const numValue = parseFloat(inputValue);
 
   if (isNaN(numValue)) {

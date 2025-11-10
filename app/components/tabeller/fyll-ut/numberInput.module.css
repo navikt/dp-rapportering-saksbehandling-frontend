@@ -129,6 +129,15 @@
   white-space: nowrap;
   z-index: 100;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tooltipIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 .tooltip::after {
@@ -139,4 +148,13 @@
   transform: translateX(-50%);
   border: 4px solid transparent;
   border-bottom-color: var(--a-surface-danger);
+}
+
+.errorMessage {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  white-space: nowrap;
+  z-index: 100;
 }

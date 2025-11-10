@@ -41,7 +41,12 @@ describe("api.rapportering action", () => {
         body: formData,
       });
 
-      const response = await action({ request, params: {}, context: {} });
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
 
       // Skal redirecte til perioder med det nye meldekort-IDet
       expect(response.status).toBe(302);
@@ -79,7 +84,12 @@ describe("api.rapportering action", () => {
         body: formData,
       });
 
-      const response = await action({ request, params: {}, context: {} });
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
 
       // Skal redirecte til perioder med det eksisterende meldekort-IDet
       expect(response.status).toBe(302);
@@ -117,7 +127,12 @@ describe("api.rapportering action", () => {
         body: formData,
       });
 
-      const response = await action({ request, params: {}, context: {} });
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
 
       // Skal fallback til originalMeldekortId
       expect(response.status).toBe(302);
@@ -154,7 +169,12 @@ describe("api.rapportering action", () => {
         body: formData,
       });
 
-      const response = await action({ request, params: {}, context: {} });
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
 
       // Skal behandles som korrigering og få nytt ID
       expect(response.status).toBe(302);
@@ -189,7 +209,12 @@ describe("api.rapportering action", () => {
         body: formData,
       });
 
-      const response = await action({ request, params: {}, context: {} });
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
       const location = response.headers.get("Location");
 
       expect(location).toContain("/person/test-person-123/perioder");

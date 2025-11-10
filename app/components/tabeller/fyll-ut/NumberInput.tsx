@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@navikt/aksel-icons";
+import { ChevronDownIcon, ChevronUpIcon, ExclamationmarkTriangleIcon } from "@navikt/aksel-icons";
 import { useEffect, useId, useRef, useState } from "react";
 
 import {
@@ -6,9 +6,6 @@ import {
   erVedMaksimum,
   erVedMinimum,
   inkrementerTimer,
-  MAX_TIMER,
-  MIN_TIMER,
-  STEP_TIMER,
   validerTimerInput,
 } from "./NumberInput.helpers";
 import styles from "./numberInput.module.css";
@@ -66,15 +63,29 @@ export function NumberInput({
     if (readOnly) return;
     const inputValue = e.target.value;
 
-    const validationResult = validerTimerInput(inputValue);
+    // Tillat midlertidige tilstander mens man skriver (tom streng, komma, etc.)
+    // Kun valider strenge regler på blur
+    setValidationError(null);
+    onChange(inputValue);
+  };
 
-    if (!validationResult.isValid) {
-      setValidationError(validationResult.errorMessage);
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (readOnly) return;
+    const inputValue = e.target.value;
+
+    // Tomt felt er tillatt
+    if (inputValue === "") {
+      setValidationError(null);
       return;
     }
 
-    setValidationError(null);
-    onChange(inputValue);
+    // Valider kun hvis det er innhold
+    const validationResult = validerTimerInput(inputValue);
+    if (!validationResult.isValid) {
+      setValidationError(validationResult.errorMessage);
+    } else {
+      setValidationError(null);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -95,21 +106,21 @@ export function NumberInput({
           {label}
         </label>
         <input
-          type="number"
+          type="text"
+          inputMode="decimal"
           id={id}
           className={`${styles.input} ${validationError ? styles.inputError : ""}`}
           value={value}
           onChange={handleInputChange}
+          onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          min={MIN_TIMER}
-          max={MAX_TIMER}
-          step={STEP_TIMER}
           readOnly={readOnly}
           title={description}
           aria-invalid={validationError ? true : undefined}
         />
         {validationError && (
           <div className={styles.tooltip} role="alert">
+            <ExclamationmarkTriangleIcon className={styles.tooltipIcon} aria-hidden="true" />
             {validationError}
           </div>
         )}

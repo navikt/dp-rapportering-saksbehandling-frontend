@@ -153,6 +153,36 @@ describe("NumberInput.helpers", () => {
       expect(validerTimerInput("8.25").isValid).toBe(false); // Ugyldig steg
       expect(validerTimerInput("30").isValid).toBe(false); // Over maksimum
     });
+
+    it("skal avvise input som bare består av punktum", () => {
+      const result = validerTimerInput(".");
+      expect(result.isValid).toBe(false);
+      expect(result.errorMessage).toBe("Ugyldig tall");
+    });
+
+    it("skal avvise input som bare består av komma", () => {
+      const result = validerTimerInput(",");
+      expect(result.isValid).toBe(false);
+      expect(result.errorMessage).toBe("Ugyldig tall");
+    });
+
+    it("skal avvise input som bare består av flere punktum/komma", () => {
+      expect(validerTimerInput("..").isValid).toBe(false);
+      expect(validerTimerInput(",,").isValid).toBe(false);
+      expect(validerTimerInput(".,").isValid).toBe(false);
+      expect(validerTimerInput(".,.").isValid).toBe(false);
+    });
+
+    it("skal avvise input med punktum/komma og mellomrom", () => {
+      expect(validerTimerInput(". ").isValid).toBe(false);
+      expect(validerTimerInput(" .").isValid).toBe(false);
+      expect(validerTimerInput(" . ").isValid).toBe(false);
+    });
+
+    it("skal godkjenne gyldige desimaler med punktum", () => {
+      expect(validerTimerInput("7.5").isValid).toBe(true);
+      expect(validerTimerInput("10.5").isValid).toBe(true);
+    });
   });
 
   describe("inkrementerTimer", () => {

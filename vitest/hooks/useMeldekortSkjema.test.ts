@@ -114,11 +114,11 @@ describe("useMeldekortSkjema", () => {
       expect(result.current.state.visValideringsfeil.begrunnelse).toBe(true);
     });
 
-    it("should validate arbeidssoker field when showArbeidssokerField is true", () => {
+    it("should validate arbeidssoker field when meldekortType is true", () => {
       const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
-          showArbeidssokerField: true, // Fyll-ut krever arbeidssoker
+          meldekortType: "Ordinaert", // Fyll-ut krever arbeidssoker
         }),
       );
 
@@ -131,11 +131,11 @@ describe("useMeldekortSkjema", () => {
       expect(result.current.state.visValideringsfeil.arbeidssoker).toBe(true);
     });
 
-    it("should NOT validate arbeidssoker field when showArbeidssokerField is false", () => {
+    it("should NOT validate arbeidssoker field when meldekortType is false", () => {
       const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
-          showArbeidssokerField: false, // Korrigering krever ikke arbeidssoker
+          isKorrigering: true, // Korrigering krever ikke arbeidssoker
         }),
       );
 
@@ -265,11 +265,11 @@ describe("useMeldekortSkjema", () => {
     });
 
     describe("registrertArbeidssoker logikk", () => {
-      it("should send registrertArbeidssoker when showArbeidssokerField is true", () => {
+      it("should send registrertArbeidssoker when meldekortType is true", () => {
         const { result } = renderHook(() =>
           useMeldekortSkjema({
             ...getDefaultProps(),
-            showArbeidssokerField: true, // Fyll-ut scenario
+            meldekortType: "Ordinaert", // Fyll-ut scenario
           }),
         );
 
@@ -297,11 +297,11 @@ describe("useMeldekortSkjema", () => {
         });
       });
 
-      it("should NOT send registrertArbeidssoker when showArbeidssokerField is false", () => {
+      it("should NOT send registrertArbeidssoker when isKorrigering is true", () => {
         const { result } = renderHook(() =>
           useMeldekortSkjema({
             ...getDefaultProps(),
-            showArbeidssokerField: false, // Korrigering scenario
+            isKorrigering: true, // Korrigering scenario
           }),
         );
 
@@ -386,7 +386,7 @@ describe("useMeldekortSkjema", () => {
           ...getDefaultProps(),
           initialMeldedato: testDate,
           initialBegrunnelse: "Test begrunnelse",
-          showArbeidssokerField: true,
+          meldekortType: "Ordinaert",
         }),
       );
 
@@ -406,22 +406,22 @@ describe("useMeldekortSkjema", () => {
       expect(result.current.hiddenFormValues.meldedato).toBe("");
     });
 
-    it("should return empty string for registrertArbeidssoker when showArbeidssokerField is false", () => {
+    it("should return empty string for registrertArbeidssoker when isKorrigering", () => {
       const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
-          showArbeidssokerField: false, // Korrigering
+          isKorrigering: true, // Korrigering
         }),
       );
 
       expect(result.current.hiddenFormValues.registrertArbeidssoker).toBe("");
     });
 
-    it("should return boolean string for registrertArbeidssoker when showArbeidssokerField is true", () => {
+    it("should return boolean string for registrertArbeidssoker when meldekortType is Ordinaert", () => {
       const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
-          showArbeidssokerField: true, // Fyll-ut
+          meldekortType: "Ordinaert", // Fyll-ut
         }),
       );
 
@@ -436,7 +436,7 @@ describe("useMeldekortSkjema", () => {
       const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
-          showArbeidssokerField: true, // Selv ved fyll-ut, før bruker svarer
+          meldekortType: "Ordinaert", // Selv ved fyll-ut, før bruker svarer
         }),
       );
 

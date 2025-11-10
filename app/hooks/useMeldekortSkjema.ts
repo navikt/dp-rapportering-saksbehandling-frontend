@@ -31,12 +31,8 @@ interface UseMeldekortSkjemaOptions {
   setKorrigerteDager: SetKorrigerteDager;
   onSubmit: (data: IMeldekortSkjemaSubmitData) => void;
   onCancel: () => void;
-  /** @deprecated Bruk isKorrigering, meldekortType, og originalData i stedet */
-  showArbeidssokerField?: boolean;
   initialMeldedato?: Date;
   initialBegrunnelse?: string;
-  /** @deprecated Bruk isKorrigering og originalData i stedet */
-  onValidateChanges?: (data: IMeldekortSkjemaSubmitData) => boolean;
   /** Om dette er en korrigering av eksisterende meldekort */
   isKorrigering?: boolean;
   /** Type meldekort fra backend (brukes for å sjekke om arbeidssøker-spørsmål skal vises) */
@@ -54,10 +50,8 @@ export function useMeldekortSkjema({
   setKorrigerteDager,
   onSubmit,
   onCancel,
-  showArbeidssokerField,
   initialMeldedato,
   initialBegrunnelse = "",
-  onValidateChanges,
   isKorrigering = false,
   meldekortType,
   originalData,
@@ -66,8 +60,10 @@ export function useMeldekortSkjema({
   const erSaksbehandlerFlate = true;
 
   // Bestem om arbeidssøker-feltet skal vises
-  const showArbeidssokerFieldCalculated =
-    showArbeidssokerField ?? skalViseArbeidssokerSporsmal(meldekortType, erSaksbehandlerFlate);
+  const showArbeidssokerFieldCalculated = skalViseArbeidssokerSporsmal(
+    meldekortType,
+    erSaksbehandlerFlate,
+  );
 
   // Bygg valideringskontekst
   const valideringsKontekst: IValideringsKontekst = {
@@ -102,7 +98,6 @@ export function useMeldekortSkjema({
     begrunnelse: false,
     aktiviteter: false,
   });
-  const [visIngenEndringerFeil, setVisIngenEndringerFeil] = useState(false);
 
   // Navigation warning
   const hasChanges =
@@ -168,24 +163,6 @@ export function useMeldekortSkjema({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const submitData = {
-      meldedato: valgtDato,
-      registrertArbeidssoker:
-        showArbeidssokerFieldCalculated && registrertArbeidssoker !== null
-          ? registrertArbeidssoker
-          : undefined,
-      begrunnelse,
-      dager,
-    };
-
-    // Fallback til gammel validering hvis onValidateChanges er gitt (bakoverkompatibilitet)
-    if (onValidateChanges && !onValidateChanges(submitData)) {
-      setVisIngenEndringerFeil(true);
-      return;
-    }
-
-    setVisIngenEndringerFeil(false);
 
     // Bruk ny valideringslogikk
     const skjemaData = {
@@ -262,7 +239,6 @@ export function useMeldekortSkjema({
       modalOpen,
       modalType,
       visValideringsfeil,
-      visIngenEndringerFeil,
       hasChanges,
       showArbeidssokerField: showArbeidssokerFieldCalculated,
     },

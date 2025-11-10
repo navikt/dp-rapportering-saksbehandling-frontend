@@ -93,21 +93,6 @@ export default function Periode() {
     );
   };
 
-  const validateChanges = (data: {
-    meldedato: Date | undefined;
-    registrertArbeidssoker?: boolean | null;
-    begrunnelse: string;
-    dager: IKorrigertDag[];
-  }) => {
-    // Sjekk om det er gjort endringer
-    const harMeldedatoEndringer =
-      data.meldedato && format(data.meldedato, "yyyy-MM-dd") !== periode.meldedato;
-    const harDagEndringer =
-      JSON.stringify(data.dager.map(konverterTimerTilISO8601Varighet)) !==
-      JSON.stringify(periode.dager);
-    return harMeldedatoEndringer || harDagEndringer;
-  };
-
   const handleCancel = () => {
     const url = new URL(`/person/${personId}/perioder`, window.location.origin);
     url.searchParams.set(
@@ -127,10 +112,13 @@ export default function Periode() {
     setKorrigerteDager: setKorrigerteDager,
     onSubmit: handleSubmit,
     onCancel: handleCancel,
-    showArbeidssokerField: false, // Korriger viser ikke arbeidssøker felt
+    isKorrigering: true,
     initialMeldedato,
     initialBegrunnelse: "",
-    onValidateChanges: validateChanges,
+    originalData: {
+      meldedato: periode.meldedato,
+      dager: periode.dager,
+    },
   });
 
   const { fraOgMed, tilOgMed } = periode.periode;
@@ -207,6 +195,7 @@ export default function Periode() {
         method="post"
         ref={skjema.refs.formRef}
         onSubmit={skjema.handlers.handleSubmit}
+        noValidate
       >
         <div className="sr-only" aria-live="polite">
           For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
@@ -255,9 +244,9 @@ export default function Periode() {
             />
           </div>
           <div className={styles.knapper}>
-            {skjema.state.visIngenEndringerFeil && (
+            {skjema.state.visValideringsfeil.aktiviteter && (
               <div className="navds-error-message navds-error-message--medium" role="alert">
-                Du må gjøre endringer for å kunne korrigere
+                {skjema.feilmeldinger.aktiviteter}
               </div>
             )}
             <Button
