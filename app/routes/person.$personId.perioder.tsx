@@ -1,5 +1,5 @@
 import { Accordion } from "@navikt/ds-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 
 import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
@@ -27,6 +27,16 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
   const [searchParams, setSearchParams] = useSearchParams();
   const [announceUpdate, setAnnounceUpdate] = useState("");
 
+  const isMountedRef = useRef(true);
+
+  // Cleanup ved unmount
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   // Håndter announcement for skjermlesere når en periode er oppdatert
   useEffect(() => {
     const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
@@ -41,15 +51,25 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
         setAnnounceUpdate(melding);
 
         // fjern parametere etter melding er satt
-        setTimeout(() => {
-          const newSearchParams = new URLSearchParams(searchParams);
-          newSearchParams.delete(QUERY_PARAMS.OPPDATERT);
-          setSearchParams(newSearchParams, { replace: true });
+        const paramTimeout = setTimeout(() => {
+          if (isMountedRef.current) {
+            const newSearchParams = new URLSearchParams(searchParams);
+            newSearchParams.delete(QUERY_PARAMS.OPPDATERT);
+            setSearchParams(newSearchParams, { replace: true });
+          }
         }, 0);
+
         // fjern melding etter 5 sekunder
-        setTimeout(() => {
-          setAnnounceUpdate("");
-        }, 5000);
+        const messageTimeout = setTimeout(() => {
+          if (isMountedRef.current) {
+            setAnnounceUpdate("");
+          }
+        }, 8000);
+
+        return () => {
+          clearTimeout(paramTimeout);
+          clearTimeout(messageTimeout);
+        };
       }
     }
   }, [searchParams, setSearchParams, perioder]);

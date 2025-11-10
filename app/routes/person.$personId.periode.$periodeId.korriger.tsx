@@ -1,7 +1,7 @@
 import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
 import { BodyLong, BodyShort, Heading } from "@navikt/ds-react";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
@@ -45,16 +45,44 @@ export default function Periode() {
   const styles =
     variant === "C" ? stylesVariantC : variant === "B" ? stylesVariantB : stylesOriginal;
 
-  // API handles redirect after successful submission
+  const isMountedRef = useRef(true);
 
-  const [korrigertPeriode, setKorrigertPeriode] = useState<IRapporteringsperiode>(periode);
   const [korrigerteDager, setKorrigerteDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
   );
 
   const initialMeldedato = periode.meldedato ? new Date(periode.meldedato) : undefined;
 
+  // Cleanup ved unmount eller navigering
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  // Håndter navigation etter vellykket submit
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data && !fetcher.data.error && isMountedRef.current) {
+      // Fetcher har fullført uten feil
+      // React Router håndterer redirect automatisk
+    }
+  }, [fetcher.state, fetcher.data]);
+
   const handleSubmit = () => {
+    const korrigertPeriode: IRapporteringsperiode = {
+      ...periode,
+      meldedato: skjema.state.valgtDato
+        ? format(skjema.state.valgtDato, "yyyy-MM-dd")
+        : periode.meldedato,
+      dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
+      begrunnelse: skjema.state.begrunnelse,
+      kilde: {
+        rolle: "Saksbehandler",
+        ident: saksbehandler.onPremisesSamAccountName,
+      },
+    };
+
     fetcher.submit(
       { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId },
       { method: "post", action: "/api/rapportering" },
@@ -100,21 +128,6 @@ export default function Periode() {
     initialBegrunnelse: "",
     onValidateChanges: validateChanges,
   });
-
-  useEffect(() => {
-    setKorrigertPeriode((prev) => ({
-      ...prev,
-      meldedato: skjema.state.valgtDato
-        ? format(skjema.state.valgtDato, "yyyy-MM-dd")
-        : prev.meldedato,
-      dager: korrigerteDager.map(konverterTimerTilISO8601Varighet),
-      begrunnelse: skjema.state.begrunnelse,
-      kilde: {
-        rolle: "Saksbehandler",
-        ident: saksbehandler.onPremisesSamAccountName,
-      },
-    }));
-  }, [korrigerteDager, skjema.state.begrunnelse, skjema.state.valgtDato, saksbehandler]);
 
   const { fraOgMed, tilOgMed } = periode.periode;
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
@@ -219,6 +232,7 @@ export default function Periode() {
                 label="Meldedato"
                 placeholder="dd.mm.åååå"
                 size="small"
+                onBlur={skjema.handlers.handleMeldedatoBlur}
               />
             </DatePicker>
             <Textarea
@@ -229,6 +243,7 @@ export default function Periode() {
               size="small"
               value={skjema.state.begrunnelse}
               onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
+              onBlur={skjema.handlers.handleBegrunnelseBlur}
               error={
                 skjema.state.visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined
               }
@@ -254,8 +269,6 @@ export default function Periode() {
             </Button>
           </div>
         </div>
-        <input type="hidden" name="rapporteringsperiode" value={JSON.stringify(korrigertPeriode)} />
-        <input type="hidden" name="personId" value={personId} />
         <BekreftModal
           open={skjema.state.modalOpen}
           onClose={() => skjema.handlers.setModalOpen(false)}

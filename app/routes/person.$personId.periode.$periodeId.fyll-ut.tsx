@@ -1,5 +1,7 @@
 import {
+  Alert,
   BodyLong,
+  BodyShort,
   Button,
   DatePicker,
   Heading,
@@ -8,14 +10,15 @@ import {
   Textarea,
 } from "@navikt/ds-react";
 import classNames from "classnames";
-import { useState } from "react";
-import { Form, redirect, useLoaderData, useNavigate } from "react-router";
+import { format } from "date-fns";
+import { useEffect, useRef, useState } from "react";
+import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
-import { hentPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
+import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/styles/route-styles/fyllUt.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
@@ -41,94 +44,68 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const personId = params.personId;
 
   const periode = await hentPeriode(request, params.personId, params.periodeId);
+  const saksbehandler = await hentSaksbehandler(request);
   const variant = getABTestVariant(request);
 
-  return { periode, personId, variant };
+  return { periode, saksbehandler, personId, variant };
 }
 
-export async function action({ request, params }: Route.ActionArgs) {
-  invariant(params.personId, "Person ID mangler");
-  invariant(params.periodeId, "Periode ID mangler");
+export default function FyllUtPeriode() {
+  const navigate = useNavigate();
+  const { periode, saksbehandler, personId, variant } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher();
 
-  const formData = await request.formData();
+  const isMountedRef = useRef(true);
 
-  const personId = params.personId;
-  const meldedato = formData.get("meldedato") as string;
-  const begrunnelse = formData.get("begrunnelse") as string;
-  const dagerData = formData.get("dager") as string;
+  const [dager, setDager] = useState<IKorrigertDag[]>(
+    periode.dager.map(konverterTimerFraISO8601Varighet),
+  );
 
-  try {
-    const saksbehandler = await hentSaksbehandler(request);
+  // Cleanup ved unmount eller navigering
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
-    const dager = JSON.parse(dagerData);
+  // Håndter navigation etter vellykket submit
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data && !fetcher.data.error && isMountedRef.current) {
+      // Fetcher har fullført uten feil
+      // React Router håndterer redirect automatisk
+    }
+  }, [fetcher.state, fetcher.data]);
 
-    // Sjekk om dette er en ekte korrigering (perioden har allerede data) eller første gangs utfylling
-
-    const periode = await hentPeriode(request, personId, params.periodeId);
-
+  const handleSubmit = () => {
     // For etterregistrerte meldekort, sett alltid registrertArbeidssoker til true
-    // For andre typer, bruk verdien fra skjemaet
     const registrertArbeidssoker =
       periode.type === MELDEKORT_TYPE.ETTERREGISTRERT
         ? true
-        : formData.get("registrertArbeidssoker") === "true";
+        : (skjema.state.registrertArbeidssoker ?? false);
 
     const oppdatertPeriode: ISendInnMeldekort = {
       ident: periode.ident,
       id: periode.id,
       periode: periode.periode,
       registrertArbeidssoker,
-      begrunnelse,
+      begrunnelse: skjema.state.begrunnelse,
       status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       dager: dager.map(konverterTimerTilISO8601Varighet),
       kilde: {
         rolle: ROLLE.Saksbehandler,
         ident: saksbehandler.onPremisesSamAccountName,
       },
-      meldedato,
+      meldedato: skjema.state.valgtDato ? format(skjema.state.valgtDato, "yyyy-MM-dd") : null,
       kanSendesFra: periode.kanSendesFra,
       sisteFristForTrekk: periode.sisteFristForTrekk,
       opprettetAv: periode.opprettetAv,
     };
 
-    // Oppdater perioden via mock/backend
-    await oppdaterPeriode({
-      periode: oppdatertPeriode,
-      personId,
-      request,
-    });
-
-    // Redirect tilbake til perioder
-    const variant = getABTestVariant(request);
-    const url = new URL(`/person/${params.personId}/perioder`, request.url);
-    url.searchParams.set(
-      QUERY_PARAMS.AAR,
-      new Date(periode.periode.fraOgMed).getFullYear().toString(),
+    fetcher.submit(
+      { rapporteringsperiode: JSON.stringify(oppdatertPeriode), personId },
+      { method: "post", action: "/api/rapportering" },
     );
-    url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, params.periodeId);
-    if (variant) {
-      url.searchParams.set("variant", variant);
-    }
-    return redirect(url.pathname + url.search);
-  } catch (error) {
-    console.error("Feil ved oppdatering av periode:", error);
-    throw new Error("Kunne ikke oppdatere periode");
-  }
-}
-
-export default function FyllUtPeriode() {
-  const navigate = useNavigate();
-  const { periode, personId, variant } = useLoaderData<typeof loader>();
-
-  const [dager, setDager] = useState<IKorrigertDag[]>(
-    periode.dager.map(konverterTimerFraISO8601Varighet),
-  );
-
-  const handleSubmit = () => {
-    // Submit via form ref siden vi trenger native form submission
-    if (skjema.refs.formRef.current) {
-      skjema.refs.formRef.current.submit();
-    }
   };
 
   const handleCancel = () => {
@@ -161,6 +138,26 @@ export default function FyllUtPeriode() {
 
   return (
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllUtContainer}>
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {fetcher.state === "submitting" && "Sender inn meldekort..."}
+        {fetcher.state === "loading" && "Behandler meldekort..."}
+        {fetcher.state === "idle" &&
+          fetcher.data &&
+          !fetcher.data.error &&
+          "Meldekort sendt inn. Går tilbake til periodeoversikten..."}
+        {fetcher.data?.error && `Feil ved innsending: ${fetcher.data.error}`}
+      </div>
+
+      {fetcher.data?.error && (
+        <Alert variant="error" className={styles.errorAlert} role="alert">
+          <Heading size="small">Feil ved innsending av meldekort</Heading>
+          <BodyShort>{fetcher.data.error}</BodyShort>
+          {fetcher.data.details && (
+            <BodyShort size="small">Detaljer: {fetcher.data.details}</BodyShort>
+          )}
+        </Alert>
+      )}
+
       <div className={skjemaClass}>
         <div className={styles.title}>
           <Heading level="1" size="medium" id="fyll-ut-heading">
@@ -171,8 +168,9 @@ export default function FyllUtPeriode() {
           </BodyLong>
         </div>
 
-        <Form
+        <fetcher.Form
           method="post"
+          action="/api/rapportering"
           ref={skjema.refs.formRef}
           onSubmit={skjema.handlers.handleSubmit}
           className={styles.container}
@@ -185,12 +183,6 @@ export default function FyllUtPeriode() {
                 periode={periode.periode}
                 variant={variant}
               />
-              {skjema.state.visValideringsfeil.aktiviteter && (
-                <div className="navds-error-message navds-error-message--medium" role="alert">
-                  Du må fylle ut minst én gyldig aktivitet. Arbeidsaktiviteter må ha minimum 0,5
-                  timer, eller la feltet stå tomt hvis ingen arbeid.
-                </div>
-              )}
             </div>
             <fieldset className={classNames(styles.detaljer, styles.fieldset)}>
               <legend className="sr-only">Grunnleggende informasjon</legend>
@@ -201,6 +193,7 @@ export default function FyllUtPeriode() {
                   label="Sett meldedato"
                   placeholder="dd.mm.åååå"
                   size="small"
+                  onBlur={skjema.handlers.handleMeldedatoBlur}
                   error={
                     skjema.state.visValideringsfeil.meldedato ? "Meldedato må fylles ut" : undefined
                   }
@@ -237,6 +230,7 @@ export default function FyllUtPeriode() {
                 }
                 value={skjema.state.begrunnelse}
                 onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
+                onBlur={skjema.handlers.handleBegrunnelseBlur}
                 rows={3}
                 className={styles.begrunnelse}
               />
@@ -251,16 +245,7 @@ export default function FyllUtPeriode() {
               Send inn meldekort
             </Button>
           </div>
-          {/* Skjulte input felter for form data */}
-          <input type="hidden" name="meldedato" value={skjema.hiddenFormValues.meldedato} />
-          <input
-            type="hidden"
-            name="registrertArbeidssoker"
-            value={skjema.hiddenFormValues.registrertArbeidssoker}
-          />
-          <input type="hidden" name="begrunnelse" value={skjema.hiddenFormValues.begrunnelse} />
-          <input type="hidden" name="dager" value={skjema.hiddenFormValues.dager} />
-        </Form>
+        </fetcher.Form>
 
         <BekreftModal
           open={skjema.state.modalOpen}

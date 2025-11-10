@@ -111,17 +111,18 @@ export function useMeldekortSkjema({
 
   // Date picker
   const { inputProps, datepickerProps } = useDatepicker({
-    onDateChange: (date) => {
-      setValgtDato(date);
-      if (date && visValideringsfeil.meldedato) {
-        setVisValideringsfeil((prev) => ({ ...prev, meldedato: false }));
-      }
-    },
+    onDateChange: setValgtDato,
     defaultSelected: valgtDato,
     fromDate: subDays(new Date(periode.periode.tilOgMed), 1),
     defaultMonth: new Date(periode.periode.tilOgMed),
     inputFormat: "dd.MM.yyyy",
   });
+
+  const handleMeldedatoBlur = () => {
+    if (valgtDato && visValideringsfeil.meldedato) {
+      setVisValideringsfeil((prev) => ({ ...prev, meldedato: false }));
+    }
+  };
 
   // Handlers
   const handleSetKorrigerteDager: SetKorrigerteDager = (nyeDager) => {
@@ -215,13 +216,17 @@ export function useMeldekortSkjema({
 
   const handleBegrunnelseChange = (value: string) => {
     setBegrunnelse(value);
-    if (value.trim() !== "" && visValideringsfeil.begrunnelse) {
+  };
+
+  const handleBegrunnelseBlur = () => {
+    if (begrunnelse.trim() !== "" && visValideringsfeil.begrunnelse) {
       setVisValideringsfeil((prev) => ({ ...prev, begrunnelse: false }));
     }
   };
 
   const handleArbeidssokerChange = (value: boolean) => {
     setRegistrertArbeidssoker(value);
+    // Fjern feil umiddelbart når bruker velger et svar
     if (visValideringsfeil.arbeidssoker) {
       setVisValideringsfeil((prev) => ({ ...prev, arbeidssoker: false }));
     }
@@ -275,6 +280,8 @@ export function useMeldekortSkjema({
       handleAvbryt,
       handleBekreft,
       handleBegrunnelseChange,
+      handleBegrunnelseBlur,
+      handleMeldedatoBlur,
       handleArbeidssokerChange,
       openModal,
       setModalOpen,

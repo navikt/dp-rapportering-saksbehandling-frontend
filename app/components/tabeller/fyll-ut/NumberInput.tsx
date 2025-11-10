@@ -37,10 +37,10 @@ export function NumberInput({
 
   useEffect(() => {
     if (validationError) {
-      // Skjul feilmelding etter 3 sekunder
+      // Skjul feilmelding etter 5 sekunder
       timeoutRef.current = setTimeout(() => {
         setValidationError(null);
-      }, 3000);
+      }, 5000);
     }
 
     return () => {

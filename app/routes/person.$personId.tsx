@@ -41,14 +41,14 @@ export default function Rapportering() {
         />
       </aside>
       <main id="main-content" className={styles.mainContent}>
+        {showABTesting && (
+          <div className={styles.variantSwitcherContainer}>
+            <VariantSwitcher />
+          </div>
+        )}
         <div className={styles.contentWrapper}>
           <Outlet />
         </div>
-        {showABTesting && (
-          <aside className={styles.variantSwitcherContainer}>
-            <VariantSwitcher />
-          </aside>
-        )}
       </main>
     </>
   );

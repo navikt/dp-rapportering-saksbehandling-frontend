@@ -163,6 +163,10 @@ describe("useMeldekortSkjema", () => {
         result.current.handlers.handleBegrunnelseChange("Test begrunnelse");
       });
 
+      act(() => {
+        result.current.handlers.handleBegrunnelseBlur();
+      });
+
       expect(result.current.state.visValideringsfeil.begrunnelse).toBe(false);
     });
   });

@@ -1,4 +1,4 @@
-import { Radio, RadioGroup } from "@navikt/ds-react";
+import { ActionMenu, Button } from "@navikt/ds-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
@@ -25,18 +25,36 @@ export function VariantSwitcher() {
     navigate(url.pathname + url.search);
   };
 
+  const getVariantLabel = () => {
+    if (currentVariant === "B") return "Variant B";
+    if (currentVariant === "C") return "Variant C";
+    return "Variant A";
+  };
+
   return (
-    <div className={styles.variantSwitcher}>
-      <RadioGroup
-        legend="Demo"
-        size="small"
-        value={currentVariant || "none"}
-        onChange={handleVariantChange}
-      >
-        <Radio value="none">Variant A</Radio>
-        <Radio value="B">Variant B</Radio>
-        {isKorrigerPage && <Radio value="C">Variant C</Radio>}
-      </RadioGroup>
+    <div className={styles.variantButtonContainer}>
+      <ActionMenu>
+        <ActionMenu.Trigger>
+          <Button variant="primary-neutral" size="small">
+            Demo: {getVariantLabel()}
+          </Button>
+        </ActionMenu.Trigger>
+        <ActionMenu.Content>
+          <ActionMenu.Group label="Velg variant">
+            <ActionMenu.Item onSelect={() => handleVariantChange("none")}>
+              Variant A {!currentVariant && "✓"}
+            </ActionMenu.Item>
+            <ActionMenu.Item onSelect={() => handleVariantChange("B")}>
+              Variant B {currentVariant === "B" && "✓"}
+            </ActionMenu.Item>
+            {isKorrigerPage && (
+              <ActionMenu.Item onSelect={() => handleVariantChange("C")}>
+                Variant C {currentVariant === "C" && "✓"}
+              </ActionMenu.Item>
+            )}
+          </ActionMenu.Group>
+        </ActionMenu.Content>
+      </ActionMenu>
     </div>
   );
 }

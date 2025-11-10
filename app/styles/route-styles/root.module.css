@@ -18,17 +18,29 @@
 
 .mainContent {
   position: relative;
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .contentWrapper {
   max-width: 1400px;
   margin: 0 auto;
-  padding-inline: var(--a-spacing-4);
 }
 
 .variantSwitcherContainer {
-  position: fixed;
-  top: calc(100px + var(--a-spacing-6));
-  right: var(--a-spacing-6);
-  z-index: 10;
+  /* På små skjermer: Vis over innholdet */
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Store skjermer: Fixed posisjon */
+@media (min-width: 1200px) {
+  .variantSwitcherContainer {
+    position: fixed;
+    top: calc(100px + var(--a-spacing-6));
+    right: var(--a-spacing-6);
+    z-index: 10;
+  }
 }
