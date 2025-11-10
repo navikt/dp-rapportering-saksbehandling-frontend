@@ -27,7 +27,7 @@ export default function Rapportering() {
           <Heading level="1" size="small" spacing>
             Hei NAY-coach!
           </Heading>
-          Velkommen til brukertest av saksbehandlerflaten for meldekort.
+          Velkommen til demo av saksbehandlerflaten for meldekort.
         </GuidePanel>
 
         {data.personer.length > 0 ? (

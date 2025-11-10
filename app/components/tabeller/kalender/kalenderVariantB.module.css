@@ -7,8 +7,6 @@
 }
 
 .kalender-tabell-b {
-  border-collapse: separate;
-  border-spacing: 8px 0.75rem;
   width: 100%;
   flex: 1;
   min-width: 0;
