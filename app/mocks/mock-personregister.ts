@@ -10,8 +10,8 @@ export function mockPersonregister(database?: ReturnType<typeof withDb>) {
   return [
     http.get(
       `${getEnv("DP_PERSONREGISTER_URL")}/arbeidssokerperioder/:personId`,
-      ({ cookies, params }) => {
-        const db = database || getDatabase(cookies);
+      async ({ cookies, params }) => {
+        const db = database || (await getDatabase(cookies));
 
         const personId = params.personId as string;
         const person = db.hentArbeidssokerperioder();

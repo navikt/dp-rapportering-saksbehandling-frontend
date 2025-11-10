@@ -11,37 +11,25 @@ import type {
 import { type Database } from "./session";
 
 function hentAlleRapporteringsperioder(db: Database) {
-  return db.rapporteringsperioder.findMany({
-    orderBy: [
-      {
-        periode: {
-          fraOgMed: "desc",
-        },
+  return db.rapporteringsperioder.findMany((q) => q.where({}), {
+    orderBy: {
+      periode: {
+        fraOgMed: "desc",
       },
-      {
-        innsendtTidspunkt: "desc",
-      },
-      {
-        originalMeldekortId: "asc",
-      },
-    ],
+      innsendtTidspunkt: "desc",
+      originalMeldekortId: "asc",
+    },
   }) as IRapporteringsperiode[];
 }
 
 function hentRapporteringsperiodeMedId(db: Database, id: string) {
-  return db.rapporteringsperioder.findFirst({
-    where: {
-      id: {
-        equals: id,
-      },
-    },
-  }) as IRapporteringsperiode;
+  return db.rapporteringsperioder.findFirst((q) => q.where({ id: id })) as IRapporteringsperiode;
 }
 
 function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
   const id = uuidv7();
 
-  const nyPeriode = db.rapporteringsperioder.create({
+  return db.rapporteringsperioder.create({
     ...rapporteringsperiode,
     id,
     originalMeldekortId: rapporteringsperiode.id,
@@ -51,11 +39,13 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
     kanEndres: true,
     sisteFristForTrekk: null,
   });
-
-  return nyPeriode;
 }
 
-function oppdaterPeriode(db: Database, periodeId: string, oppdateringer: IRapporteringsperiode) {
+async function oppdaterPeriode(
+  db: Database,
+  periodeId: string,
+  oppdateringer: IRapporteringsperiode,
+) {
   const eksisterendePeriode = hentRapporteringsperiodeMedId(db, periodeId);
 
   if (!eksisterendePeriode) {
@@ -70,17 +60,10 @@ function oppdaterPeriode(db: Database, periodeId: string, oppdateringer: IRappor
     kanEndres: true,
   };
 
-  db.rapporteringsperioder.update({
-    where: {
-      id: {
-        equals: periodeId,
-      },
-    },
-    data: oppdatertPeriode,
-  });
+  await oppdaterRapporteringsperiode(db, oppdatertPeriode);
 }
 
-function periodeKanIkkeLengerSendes(db: Database, periodeId: string) {
+async function periodeKanIkkeLengerSendes(db: Database, periodeId: string) {
   const eksisterendePeriode = hentRapporteringsperiodeMedId(db, periodeId);
 
   if (!eksisterendePeriode) {
@@ -93,45 +76,50 @@ function periodeKanIkkeLengerSendes(db: Database, periodeId: string) {
     kanEndres: false,
   };
 
-  db.rapporteringsperioder.update({
-    where: {
-      id: {
-        equals: periodeId,
-      },
-    },
-    data: oppdatertPeriode,
-  });
+  await oppdaterRapporteringsperiode(db, oppdatertPeriode);
 
   return hentRapporteringsperiodeMedId(db, periodeId);
 }
 
-function hentPerson(db: Database, personId: string) {
-  return db.personer.findFirst({
-    where: {
-      id: {
-        equals: personId,
-      },
+async function oppdaterRapporteringsperiode(db: Database, oppdatertPeriode: IRapporteringsperiode) {
+  await db.rapporteringsperioder.update((q) => q.where({ id: oppdatertPeriode.id }), {
+    data(periode) {
+      periode.id = oppdatertPeriode.id;
+      periode.ident = oppdatertPeriode.ident;
+      periode.status = oppdatertPeriode.status;
+      periode.type = oppdatertPeriode.type;
+      periode.periode = oppdatertPeriode.periode;
+      periode.dager = oppdatertPeriode.dager;
+      periode.kanSendes = oppdatertPeriode.kanSendes;
+      periode.kanEndres = oppdatertPeriode.kanEndres;
+      periode.kanSendesFra = oppdatertPeriode.kanSendesFra;
+      periode.sisteFristForTrekk = oppdatertPeriode.sisteFristForTrekk;
+      periode.opprettetAv = oppdatertPeriode.opprettetAv;
+      periode.originalMeldekortId = oppdatertPeriode.originalMeldekortId;
+      periode.kilde = oppdatertPeriode.kilde;
+      periode.innsendtTidspunkt = oppdatertPeriode.innsendtTidspunkt;
+      periode.meldedato = oppdatertPeriode.meldedato;
+      periode.registrertArbeidssoker = oppdatertPeriode.registrertArbeidssoker;
+      periode.begrunnelse = oppdatertPeriode.begrunnelse;
     },
-  }) as IPerson;
+  });
+}
+
+function hentPerson(db: Database, personId: string) {
+  return db.personer.findFirst((q) => q.where({ id: personId })) as IPerson;
 }
 
 function hentSaksbehandler(db: Database, saksbehandlerId: string) {
-  return db.saksbehandlere.findFirst({
-    where: {
-      onPremisesSamAccountName: {
-        equals: saksbehandlerId,
-      },
-    },
-  }) as ISaksbehandler;
+  return db.saksbehandlere.findFirst((q) =>
+    q.where({ onPremisesSamAccountName: saksbehandlerId }),
+  ) as ISaksbehandler;
 }
 
 function hentArbeidssokerperioder(db: Database) {
-  return db.arbeidssokerperioder.findMany({
-    orderBy: [
-      {
-        startDato: "desc",
-      },
-    ],
+  return db.arbeidssokerperioder.findMany((q) => q.where({}), {
+    orderBy: {
+      startDato: "desc",
+    },
   }) as IArbeidssokerperiode[];
 }
 
