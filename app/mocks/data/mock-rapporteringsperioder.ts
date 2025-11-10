@@ -160,7 +160,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
   [ScenarioType.KORRIGERT_AV_BRUKER]: [
     {
       periode: {
-        id: "periode-korrigert-bruker-1",
+        id: "019a6dec-6b18-7b0b-b884-f9f13fa47660",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -170,7 +170,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
     {
       periode: {
-        id: "periode-korrigert-bruker-2-original",
+        id: "019a6de1-eecb-7b61-b2f7-cda0ff7cd303",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -180,12 +180,12 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
     {
       periode: {
-        id: "periode-korrigert-bruker-2-correction",
+        id: "019a6de2-3081-7ada-8e8b-f3e96f7e07ff",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse:
           "Feil antall arbeidstimer registrert i systemet. Bruker hadde faktisk jobbet full tid denne perioden, men det ble ved en inkurie registrert som deltid. Dette har ført til feil beregning av dagpenger for perioden og må korrigeres omgående. Bruker har også dokumentert arbeidstiden gjennom timeregistreringssystemet hos arbeidsgiver, og disse dokumentene kan fremlegges ved behov.",
-        originalMeldekortId: "periode-korrigert-bruker-2-original",
+        originalMeldekortId: "019a6de1-eecb-7b61-b2f7-cda0ff7cd303",
         kilde: {
           rolle: ROLLE.Bruker,
           ident: "987654321",
@@ -203,7 +203,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
   [ScenarioType.KORRIGERT_AV_SAKSBEHANDLER]: [
     {
       periode: {
-        id: "periode-korrigert-saksbehandler-1",
+        id: "019a6dec-d7a3-7b41-8c3d-9106fa980ffd",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -213,7 +213,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
     {
       periode: {
-        id: "periode-korrigert-saksbehandler-2-original",
+        id: "019a6ded-1125-717e-9317-079007ce6902",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -223,11 +223,11 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
     {
       periode: {
-        id: "periode-korrigert-saksbehandler-2-correction",
+        id: "019a6ded-3ccd-7925-a528-66516f71772d",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse: "Feil antall arbeidstimer",
-        originalMeldekortId: "periode-korrigert-saksbehandler-2-original",
+        originalMeldekortId: "019a6ded-1125-717e-9317-079007ce6902",
         kilde: {
           rolle: ROLLE.Saksbehandler,
           ident: "Z123456",
@@ -523,11 +523,11 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 7. Korrigering Innsendt, Glemt å føre aktiviteter
     {
       periode: {
-        id: "periode-korrigert-av-saksbehandler-1-korrigert-1",
+        id: "019a6ded-91d5-7ee2-948d-eb1cc7766885",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse: "Glemt å føre aktiviteter.",
-        originalMeldekortId: "periode-korrigert-av-saksbehandler-1-original",
+        originalMeldekortId: "019a6ded-c7ef-788e-9850-e1c7188d6ba6",
         kanSendes: false,
         kanEndres: true,
         sisteFristForTrekk: null,
@@ -556,7 +556,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 8. Ferdig beregnet
     {
       periode: {
-        id: "periode-korrigert-av-saksbehandler-1-original",
+        id: "019a6ded-c7ef-788e-9850-e1c7188d6ba6",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -705,11 +705,11 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 16. Korrigering Innsendt, Glemt å føre aktiviteter, Saksbehandler
     {
       periode: {
-        id: "periode-korrigert-av-bruker-2-korrigert-1",
+        id: "019a6dee-4eb6-703e-a421-b427edcb2cae",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         begrunnelse: "Glemt å føre aktiviteter.",
-        originalMeldekortId: "periode-korrigert-av-bruker-2-original",
+        originalMeldekortId: "019a6dee-13ba-7996-a2b5-2205d22593d5",
         kilde: { rolle: ROLLE.Saksbehandler, ident: "Z993298" },
         kanSendes: false,
         kanEndres: true,
@@ -738,7 +738,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 17. Ferdig beregnet, Arbeid 4h onsdag, Syk torsdag-fredag uke 40
     {
       periode: {
-        id: "periode-korrigert-av-bruker-2-original",
+        id: "019a6dee-13ba-7996-a2b5-2205d22593d5",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,

@@ -1,5 +1,5 @@
-import { faker } from "@faker-js/faker";
-import { factory, nullable, primaryKey } from "@mswjs/data";
+import { Collection } from "@msw/data";
+import z from "zod";
 
 import { ScenarioType } from "~/utils/scenario.types";
 import type { IPerson, ISaksbehandler } from "~/utils/types";
@@ -20,101 +20,123 @@ class SessionRecord {
     this.sessions = new Map();
   }
 
-  public getDatabase(sessionId: string): ReturnType<SessionRecord["createDatabase"]> {
+  public async getDatabase(
+    sessionId: string
+  ): Promise<ReturnType<SessionRecord["createDatabase"]>> {
     if (!this.sessions.has(sessionId)) {
       const db = this.createDatabase();
 
       this.sessions.set(sessionId, db);
 
-      const createdSaksbehandler = db.saksbehandlere.create(mockSaksbehandler) as ISaksbehandler;
+      const createdSaksbehandler = (await db.saksbehandlere.create(
+        mockSaksbehandler
+      )) as ISaksbehandler;
 
       // Lag personer med perioder
-      mockPersons.forEach((personData) => {
-        const createdPerson = db.personer.create(personData) as IPerson;
+      for (const personData of mockPersons) {
+        const createdPerson = (await db.personer.create(personData)) as IPerson;
 
         // Generer perioder basert på FULL_DEMO scenario
         const periods = hentRapporteringsperioderForScenario(
           ScenarioType.FULL_DEMO,
           createdPerson,
-          createdSaksbehandler,
+          createdSaksbehandler
         );
 
-        periods.forEach((rapporteringsperiode) => {
-          db.rapporteringsperioder.create(rapporteringsperiode);
-        });
+        await Promise.all(
+          periods.map((rapporteringsperiode) => {
+            db.rapporteringsperioder.create(rapporteringsperiode);
+          })
+        );
 
         const arbeidssokerperioder = hentArbeidssokerperioder(periods, createdPerson);
-        arbeidssokerperioder.forEach((arbeidssokerperiode) => {
-          db.arbeidssokerperioder.create(arbeidssokerperiode);
-        });
-      });
+        await Promise.all(
+          arbeidssokerperioder.map((arbeidssokerperiode) =>
+            db.arbeidssokerperioder.create(arbeidssokerperiode)
+          )
+        );
+      }
     }
 
     return this.sessions.get(sessionId)!;
   }
 
   private createDatabase() {
-    return factory({
-      rapporteringsperioder: {
-        id: primaryKey(faker.string.uuid),
-        ident: faker.string.alpha,
-        status: faker.string.alpha,
-        type: faker.string.numeric,
-        periode: {
-          fraOgMed: () => faker.date.recent().toISOString().split("T")[0],
-          tilOgMed: () => faker.date.future().toISOString().split("T")[0],
-        },
-        dager: Array,
-        kanSendes: faker.datatype.boolean,
-        kanEndres: faker.datatype.boolean,
-        kanSendesFra: () => faker.date.recent().toISOString().split("T")[0],
-        sisteFristForTrekk: nullable(() => faker.date.recent().toISOString().split("T")[0]),
-        opprettetAv: nullable(faker.string.alpha),
-        originalMeldekortId: nullable(faker.string.uuid),
-        kilde: nullable({
-          rolle: nullable(faker.string.alpha),
-          ident: nullable(faker.string.alpha),
-        }),
-        innsendtTidspunkt: nullable(() => {
-          const date = faker.date.recent();
-          // Legg til realistisk tidspunkt (8-18 UTC)
-          date.setUTCHours(
-            faker.number.int({ min: 8, max: 18 }),
-            faker.number.int({ min: 0, max: 59 }),
-            0,
-            0,
-          );
-          return date.toISOString();
-        }),
-        meldedato: nullable(() => faker.date.recent({ days: 30 }).toISOString().split("T")[0]),
-        registrertArbeidssoker: nullable(faker.datatype.boolean),
-        begrunnelse: nullable(faker.string.sample),
-      },
-      personer: {
-        ident: primaryKey(faker.string.alpha),
-        id: faker.string.alpha,
-        etternavn: faker.string.alpha,
-        fornavn: faker.string.alpha,
-        mellomnavn: faker.string.alpha,
-        statsborgerskap: faker.string.alpha,
-        ansvarligSystem: () => faker.helpers.arrayElement(["ARENA", "DP"]),
-        fodselsdato: nullable(() => faker.date.past().toISOString()),
-        kjonn: nullable(() => faker.helpers.arrayElement(["MANN", "KVINNE", "UKJENT"])),
-      },
-      saksbehandlere: {
-        onPremisesSamAccountName: primaryKey(faker.string.alphanumeric),
-        displayName: faker.string.alpha,
-        givenName: faker.string.alpha,
-        mail: () => faker.internet.email(),
-      },
-      arbeidssokerperioder: {
-        periodeId: primaryKey(faker.string.uuid),
-        ident: faker.string.alpha,
-        startDato: () => faker.date.past().toISOString().split("T")[0],
-        sluttDato: nullable(() => faker.date.recent().toISOString().split("T")[0]),
-        status: () => faker.helpers.arrayElement(["Startet", "Avsluttet"]),
-      },
-    });
+    return {
+      rapporteringsperioder: new Collection({
+        schema: z.object({
+          id: z.uuid(),
+          ident: z.string(),
+          status: z.string(),
+          type: z.string(),
+          periode: z.object({
+            fraOgMed: z.string(),
+            tilOgMed: z.string()
+          }),
+          dager: z.array(
+            z.object({
+              type: z.string(),
+              dagIndex: z.number(),
+              dato: z.string(),
+              aktiviteter: z.array(
+                z.object({
+                  id: z.string().optional(),
+                  type: z.string(),
+                  dato: z.string(),
+                  timer: z.string().nullable().optional()
+                })
+              )
+            })
+          ),
+          kanSendes: z.boolean(),
+          kanEndres: z.boolean(),
+          kanSendesFra: z.string(),
+          sisteFristForTrekk: z.string().nullable(),
+          opprettetAv: z.string().nullable(),
+          originalMeldekortId: z.uuid().nullable(),
+          kilde: z
+            .object({
+              rolle: z.string().nullable(),
+              ident: z.string().nullable()
+            })
+            .nullable(),
+          innsendtTidspunkt: z.string().nullable(),
+          meldedato: z.string().nullable(),
+          registrertArbeidssoker: z.boolean().nullable(),
+          begrunnelse: z.string().optional()
+        })
+      }),
+      personer: new Collection({
+        schema: z.object({
+          ident: z.string(),
+          id: z.string(),
+          etternavn: z.string(),
+          fornavn: z.string(),
+          mellomnavn: z.string().optional(),
+          statsborgerskap: z.string().optional(),
+          ansvarligSystem: z.enum(["ARENA", "DP"]),
+          fodselsdato: z.string().optional(),
+          kjonn: z.enum(["MANN", "KVINNE", "UKJENT"]).optional()
+        })
+      }),
+      saksbehandlere: new Collection({
+        schema: z.object({
+          onPremisesSamAccountName: z.string(),
+          displayName: z.string(),
+          givenName: z.string(),
+          mail: z.email()
+        })
+      }),
+      arbeidssokerperioder: new Collection({
+        schema: z.object({
+          periodeId: z.uuid(),
+          ident: z.string(),
+          startDato: z.string(),
+          sluttDato: z.string().nullable(),
+          status: z.enum(["Startet", "Avsluttet"])
+        })
+      })
+    };
   }
 }
 
