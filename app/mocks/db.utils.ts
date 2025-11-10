@@ -17,14 +17,14 @@ type CallbackArgs = {
 
 export const withDbHandler =
   <T extends JsonBodyType>(callback: (args: CallbackArgs) => T, db?: ReturnType<typeof withDb>) =>
-  ({ cookies, request, params }: RequestHandler) => {
+  async ({ cookies, request, params }: RequestHandler) => {
     const sessionId = cookies["sessionId"];
 
     if (db) {
       return callback({ db, request, params });
     }
 
-    const defaultDb = sessionId ? withDb(sessionRecord.getDatabase(sessionId)) : null;
+    const defaultDb = sessionId ? withDb(await sessionRecord.getDatabase(sessionId)) : null;
 
     if (defaultDb) {
       return callback({ db: defaultDb, request, params });
@@ -33,8 +33,8 @@ export const withDbHandler =
     return HttpResponse.json([]);
   };
 
-export function getDatabase(cookies: Record<string, string>) {
+export async function getDatabase(cookies: Record<string, string>) {
   const sessionId = cookies["sessionId"];
 
-  return withDb(sessionRecord.getDatabase(sessionId));
+  return withDb(await sessionRecord.getDatabase(sessionId));
 }

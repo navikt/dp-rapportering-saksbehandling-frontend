@@ -9,27 +9,30 @@ import { getDatabase } from "./db.utils";
 
 export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
   return [
-    http.get(`${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId`, ({ cookies, params }) => {
-      const db = database || getDatabase(cookies);
+    http.get(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId`,
+      async ({ cookies, params }) => {
+        const db = database || (await getDatabase(cookies));
 
-      const personId = params.personId as string;
-      const person = db.hentPerson(personId);
+        const personId = params.personId as string;
+        const person = db.hentPerson(personId);
 
-      if (!person) {
-        logger.error(`[mock meldekortregister]: Fant ikke person ${personId}`);
+        if (!person) {
+          logger.error(`[mock meldekortregister]: Fant ikke person ${personId}`);
 
-        return HttpResponse.json(null, { status: 404 });
-      }
+          return HttpResponse.json(null, { status: 404 });
+        }
 
-      logger.info(`[mock meldekortregister]: Hentet person ${personId}`);
+        logger.info(`[mock meldekortregister]: Hentet person ${personId}`);
 
-      return HttpResponse.json(person);
-    }),
+        return HttpResponse.json(person);
+      },
+    ),
 
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort`,
-      ({ params, cookies }) => {
-        const db = database || getDatabase(cookies);
+      async ({ params, cookies }) => {
+        const db = database || (await getDatabase(cookies));
         const personId = params.personId as string;
         const person = db.hentPerson(personId);
 
@@ -49,8 +52,8 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
 
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:meldekortId`,
-      ({ params, cookies }) => {
-        const db = database || getDatabase(cookies);
+      async ({ params, cookies }) => {
+        const db = database || (await getDatabase(cookies));
 
         const meldekortId: string = params.meldekortId as string;
         const rapporteringsperiode = db.hentRapporteringsperiodeMedId(meldekortId);
@@ -69,7 +72,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
     http.post(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId`,
       async ({ params, request, cookies }) => {
-        const db = database || getDatabase(cookies);
+        const db = database || (await getDatabase(cookies));
         const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
         const oppdateringer = (await request.json()) as IRapporteringsperiode;
 
@@ -82,7 +85,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           return HttpResponse.json(null, { status: 404 });
         }
 
-        db.oppdaterPeriode(rapporteringsperiodeId, oppdateringer);
+        await db.oppdaterPeriode(rapporteringsperiodeId, oppdateringer);
 
         logger.info(
           `[mock meldekortregister]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
@@ -95,7 +98,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
     http.post(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId/korriger`,
       async ({ params, request, cookies }) => {
-        const db = database || getDatabase(cookies);
+        const db = database || (await getDatabase(cookies));
         const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
         const oppdateringer = (await request.json()) as IRapporteringsperiode;
 
@@ -108,8 +111,8 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           return HttpResponse.json(null, { status: 404 });
         }
 
-        const nyPeriode = db.korrigerPeriode(oppdateringer);
-        db.periodeKanIkkeLengerSendes(rapporteringsperiodeId);
+        const nyPeriode = await db.korrigerPeriode(oppdateringer);
+        await db.periodeKanIkkeLengerSendes(rapporteringsperiodeId);
 
         logger.info(
           `[mock meldekortregister]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,

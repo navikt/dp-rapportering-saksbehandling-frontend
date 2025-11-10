@@ -8,8 +8,8 @@ import { getDatabase } from "./db.utils";
 
 export function mockAzure(database?: ReturnType<typeof withDb>) {
   return [
-    http.get("https://graph.microsoft.com/v1.0/me/", ({ cookies }) => {
-      const db = database || getDatabase(cookies);
+    http.get("https://graph.microsoft.com/v1.0/me/", async ({ cookies }) => {
+      const db = database || (await getDatabase(cookies));
 
       const saksbehandlerId = mockSaksbehandler.onPremisesSamAccountName;
       const saksbehandler = db.hentSaksbehandler(saksbehandlerId);
