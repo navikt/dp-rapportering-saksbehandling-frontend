@@ -25,7 +25,7 @@ export default function Rapportering() {
       <VStack gap="space-48">
         <GuidePanel>
           <Heading level="1" size="small" spacing>
-            Hei NAY-coach!
+            Hei!
           </Heading>
           Velkommen til demo av saksbehandlerflaten for meldekort.
         </GuidePanel>
