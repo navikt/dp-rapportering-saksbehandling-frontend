@@ -21,7 +21,7 @@ class SessionRecord {
   }
 
   public async getDatabase(
-    sessionId: string
+    sessionId: string,
   ): Promise<ReturnType<SessionRecord["createDatabase"]>> {
     if (!this.sessions.has(sessionId)) {
       const db = this.createDatabase();
@@ -29,7 +29,7 @@ class SessionRecord {
       this.sessions.set(sessionId, db);
 
       const createdSaksbehandler = (await db.saksbehandlere.create(
-        mockSaksbehandler
+        mockSaksbehandler,
       )) as ISaksbehandler;
 
       // Lag personer med perioder
@@ -40,20 +40,20 @@ class SessionRecord {
         const periods = hentRapporteringsperioderForScenario(
           ScenarioType.FULL_DEMO,
           createdPerson,
-          createdSaksbehandler
+          createdSaksbehandler,
         );
 
         await Promise.all(
           periods.map((rapporteringsperiode) => {
             db.rapporteringsperioder.create(rapporteringsperiode);
-          })
+          }),
         );
 
         const arbeidssokerperioder = hentArbeidssokerperioder(periods, createdPerson);
         await Promise.all(
           arbeidssokerperioder.map((arbeidssokerperiode) =>
-            db.arbeidssokerperioder.create(arbeidssokerperiode)
-          )
+            db.arbeidssokerperioder.create(arbeidssokerperiode),
+          ),
         );
       }
     }
@@ -68,10 +68,10 @@ class SessionRecord {
           id: z.uuid(),
           ident: z.string(),
           status: z.string(),
-          type: z.string().optional(),
+          type: z.string(),
           periode: z.object({
             fraOgMed: z.string(),
-            tilOgMed: z.string()
+            tilOgMed: z.string(),
           }),
           dager: z.array(
             z.object({
@@ -83,28 +83,28 @@ class SessionRecord {
                   id: z.string().optional(),
                   type: z.string(),
                   dato: z.string(),
-                  timer: z.string().nullable().optional()
-                })
-              )
-            })
+                  timer: z.string().nullable().optional(),
+                }),
+              ),
+            }),
           ),
           kanSendes: z.boolean(),
           kanEndres: z.boolean(),
-          kanSendesFra: z.string().optional(),
+          kanSendesFra: z.string(),
           sisteFristForTrekk: z.string().nullable(),
-          opprettetAv: z.string().nullable().optional(),
-          originalMeldekortId: z.uuid().nullable().optional(),
+          opprettetAv: z.string().nullable(),
+          originalMeldekortId: z.uuid().nullable(),
           kilde: z
             .object({
               rolle: z.string().nullable(),
-              ident: z.string().nullable()
+              ident: z.string().nullable(),
             })
             .nullable(),
           innsendtTidspunkt: z.string().nullable(),
           meldedato: z.string().nullable(),
-          registrertArbeidssoker: z.boolean().nullable().optional(),
-          begrunnelse: z.string().optional()
-        })
+          registrertArbeidssoker: z.boolean().nullable(),
+          begrunnelse: z.string().optional(),
+        }),
       }),
       personer: new Collection({
         schema: z.object({
@@ -116,16 +116,16 @@ class SessionRecord {
           statsborgerskap: z.string().optional(),
           ansvarligSystem: z.enum(["ARENA", "DP"]),
           fodselsdato: z.string().optional(),
-          kjonn: z.enum(["MANN", "KVINNE", "UKJENT"]).optional()
-        })
+          kjonn: z.enum(["MANN", "KVINNE", "UKJENT"]).optional(),
+        }),
       }),
       saksbehandlere: new Collection({
         schema: z.object({
           onPremisesSamAccountName: z.string(),
           displayName: z.string(),
           givenName: z.string(),
-          mail: z.email()
-        })
+          mail: z.email(),
+        }),
       }),
       arbeidssokerperioder: new Collection({
         schema: z.object({
@@ -133,9 +133,9 @@ class SessionRecord {
           ident: z.string(),
           startDato: z.string(),
           sluttDato: z.string().nullable(),
-          status: z.enum(["Startet", "Avsluttet"])
-        })
-      })
+          status: z.enum(["Startet", "Avsluttet"]),
+        }),
+      }),
     };
   }
 }
