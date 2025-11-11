@@ -14,6 +14,7 @@ export interface IHendelse {
   type?: "Elektronisk" | "Manuell";
   kategori: "Meldekort" | "System";
   erSendtForSent?: boolean;
+  sisteFristForTrekk?: string | null;
 }
 
 interface HistorikkModalProps {
@@ -81,7 +82,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
                       {hendelse.type && <BodyShort size="small">{hendelse.type}</BodyShort>}
                       {hendelse.erSendtForSent && (
                         <>
-                          <BodyShort size="small">Frist: {hendelse.innsendtDato}</BodyShort>
+                          <BodyShort size="small">Frist: {hendelse.sisteFristForTrekk}</BodyShort>
                           <Tag variant="error" size="xsmall">
                             Innsendt etter fristen
                           </Tag>

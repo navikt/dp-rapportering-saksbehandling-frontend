@@ -18,6 +18,7 @@ export const transformPerioderToHistoryEvents = (
       const innsendtDato = new Date(periode.innsendtTidspunkt!);
       const ukenummerTekst = ukenummer(periode).replace(" - ", " og ");
       const erSendtForSent = erMeldekortSendtForSent(periode);
+
       return {
         dato: innsendtDato,
         innsendtDato: formatterDatoUTC({
@@ -30,6 +31,12 @@ export const transformPerioderToHistoryEvents = (
         type: "Elektronisk",
         kategori: "Meldekort",
         erSendtForSent: erSendtForSent,
+        sisteFristForTrekk: periode.sisteFristForTrekk
+          ? formatterDatoUTC({
+              dato: periode.sisteFristForTrekk,
+              format: DatoFormat.DagMndAar,
+            })
+          : null,
       };
     });
 };
