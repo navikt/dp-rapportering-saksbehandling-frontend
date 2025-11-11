@@ -111,7 +111,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           return HttpResponse.json(null, { status: 404 });
         }
 
-        const nyPeriode = await db.korrigerPeriode(oppdateringer);
+        const nyPeriode = await db.korrigerPeriode({ ...eksisterendePeriode, ...oppdateringer });
         await db.periodeKanIkkeLengerSendes(rapporteringsperiodeId);
 
         logger.info(
