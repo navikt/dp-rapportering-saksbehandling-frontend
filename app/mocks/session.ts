@@ -68,7 +68,7 @@ class SessionRecord {
           id: z.uuid(),
           ident: z.string(),
           status: z.string(),
-          type: z.string(),
+          type: z.string().optional(),
           periode: z.object({
             fraOgMed: z.string(),
             tilOgMed: z.string()
@@ -90,10 +90,10 @@ class SessionRecord {
           ),
           kanSendes: z.boolean(),
           kanEndres: z.boolean(),
-          kanSendesFra: z.string(),
+          kanSendesFra: z.string().optional(),
           sisteFristForTrekk: z.string().nullable(),
-          opprettetAv: z.string().nullable(),
-          originalMeldekortId: z.uuid().nullable(),
+          opprettetAv: z.string().nullable().optional(),
+          originalMeldekortId: z.uuid().nullable().optional(),
           kilde: z
             .object({
               rolle: z.string().nullable(),
@@ -102,7 +102,7 @@ class SessionRecord {
             .nullable(),
           innsendtTidspunkt: z.string().nullable(),
           meldedato: z.string().nullable(),
-          registrertArbeidssoker: z.boolean().nullable(),
+          registrertArbeidssoker: z.boolean().nullable().optional(),
           begrunnelse: z.string().optional()
         })
       }),
