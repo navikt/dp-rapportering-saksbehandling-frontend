@@ -195,7 +195,9 @@ export default function FyllUtPeriode() {
                   size="small"
                   onBlur={skjema.handlers.handleMeldedatoBlur}
                   error={
-                    skjema.state.visValideringsfeil.meldedato ? "Meldedato må fylles ut" : undefined
+                    skjema.state.visValideringsfeil.meldedato
+                      ? "Meldedato er ugyldig eller må fylles ut"
+                      : undefined
                   }
                 />
               </DatePicker>

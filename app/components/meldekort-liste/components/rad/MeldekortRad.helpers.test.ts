@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import {
@@ -15,7 +15,7 @@ describe("MeldekortRad.helpers", () => {
   const basePeriode: IRapporteringsperiode = {
     id: "test-1",
     ident: "12345678901",
-    type: "meldekort",
+    type: MELDEKORT_TYPE.ORDINAERT,
     periode: {
       fraOgMed: "2024-01-01",
       tilOgMed: "2024-01-14",
@@ -25,8 +25,8 @@ describe("MeldekortRad.helpers", () => {
     kanEndres: false,
     kanSendesFra: "2024-01-14T00:00:00",
     sisteFristForTrekk: null,
-    status: "TilUtfylling",
-    opprettetAv: "Dagpenger",
+    status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+    opprettetAv: OPPRETTET_AV.Dagpenger,
     kilde: null,
     originalMeldekortId: null,
     innsendtTidspunkt: null,
@@ -59,7 +59,7 @@ describe("MeldekortRad.helpers", () => {
       const periode: IRapporteringsperiode = {
         ...basePeriode,
         kanSendes: true,
-        status: "TilUtfylling",
+        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
       };
 
       const result = getStatusConfig(periode);
@@ -74,7 +74,7 @@ describe("MeldekortRad.helpers", () => {
       const periode: IRapporteringsperiode = {
         ...basePeriode,
         kanSendes: false,
-        status: "TilUtfylling",
+        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
       };
 
       const result = getStatusConfig(periode);
@@ -90,7 +90,7 @@ describe("MeldekortRad.helpers", () => {
     it("skal returnere true for periode som ikke er innsendt og ikke kan sendes", () => {
       const periode: IRapporteringsperiode = {
         ...basePeriode,
-        status: "TilUtfylling",
+        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
         kanSendes: false,
       };
 
@@ -110,7 +110,7 @@ describe("MeldekortRad.helpers", () => {
     it("skal returnere false for periode som kan sendes", () => {
       const periode: IRapporteringsperiode = {
         ...basePeriode,
-        status: "TilUtfylling",
+        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
         kanSendes: true,
       };
 
@@ -163,7 +163,7 @@ describe("MeldekortRad.helpers", () => {
     it("skal returnere false når periode ikke er innsendt", () => {
       const periode: IRapporteringsperiode = {
         ...basePeriode,
-        status: "TilUtfylling",
+        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
         innsendtTidspunkt: "2024-01-15T10:00:00",
         meldedato: "2024-01-15",
       };

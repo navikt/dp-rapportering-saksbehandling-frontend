@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IArbeidssokerperiode, IRapporteringsperiode } from "~/utils/types";
 
 import {
@@ -12,8 +13,8 @@ function lagTestPeriode(overrides: Partial<IRapporteringsperiode>): IRapporterin
   return {
     id: "1",
     ident: "12345678901",
-    status: "TilUtfylling",
-    type: "elektronisk",
+    status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+    type: MELDEKORT_TYPE.ORDINAERT,
     periode: {
       fraOgMed: "2024-01-01",
       tilOgMed: "2024-01-14",
@@ -23,7 +24,7 @@ function lagTestPeriode(overrides: Partial<IRapporteringsperiode>): IRapporterin
     kanEndres: false,
     kanSendesFra: "2024-01-15",
     sisteFristForTrekk: null,
-    opprettetAv: "Arena",
+    opprettetAv: OPPRETTET_AV.Arena,
     kilde: null,
     originalMeldekortId: null,
     innsendtTidspunkt: null,

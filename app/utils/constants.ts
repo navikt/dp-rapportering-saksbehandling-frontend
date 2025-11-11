@@ -104,7 +104,12 @@ export const KJONN = {
 export const MELDEKORT_TYPE = {
   ETTERREGISTRERT: "Etterregistrert",
   ORDINAERT: "Ordinaert",
-};
+} as const;
+
+export const ARBEIDSSOKERPERIODE_STATUS = {
+  STARTET: "Startet",
+  AVSLUTTET: "Avsluttet",
+} as const;
 
 export const DEFAULT_PERSON: IPerson = {
   ansvarligSystem: ANSVARLIG_SYSTEM.DP,
@@ -113,8 +118,3 @@ export const DEFAULT_PERSON: IPerson = {
   kjonn: KJONN.UKJENT,
   ident: "",
 };
-
-export const ARBEIDSSOKERPERIODE_STATUS = {
-  STARTET: "Startet",
-  AVSLUTTET: "Avsluttet",
-} as const;

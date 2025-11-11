@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { action } from "~/routes/api.rapportering";
+import { OPPRETTET_AV } from "~/utils/constants";
 import type { IKorrigerMeldekort, ISendInnMeldekort } from "~/utils/types";
 
 // Mock dependencies
@@ -64,7 +65,7 @@ describe("api.rapportering action", () => {
         dager: [],
         kanSendesFra: "2025-08-30",
         sisteFristForTrekk: "2025-09-08",
-        opprettetAv: "Arena",
+        opprettetAv: OPPRETTET_AV.Arena,
         status: "Innsendt",
         kilde: {
           rolle: "Saksbehandler",

@@ -2,13 +2,14 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { Kalender } from "~/components/tabeller/kalender/Kalender";
+import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 describe("Kalender", () => {
   const mockPeriode: IRapporteringsperiode = {
     id: "test-periode-1",
     ident: "12345678901",
-    type: "meldekort",
+    type: MELDEKORT_TYPE.ORDINAERT,
     periode: {
       fraOgMed: "2024-01-01",
       tilOgMed: "2024-01-14",
@@ -85,8 +86,8 @@ describe("Kalender", () => {
     kanEndres: true,
     kanSendesFra: "2024-01-14T00:00:00",
     sisteFristForTrekk: null,
-    status: "TilUtfylling",
-    opprettetAv: "Dagpenger",
+    status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+    opprettetAv: OPPRETTET_AV.Dagpenger,
     kilde: null,
     originalMeldekortId: null,
     innsendtTidspunkt: null,

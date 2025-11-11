@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { AKTIVITET_TYPE } from "~/utils/constants";
+import {
+  AKTIVITET_TYPE,
+  MELDEKORT_TYPE,
+  OPPRETTET_AV,
+  RAPPORTERINGSPERIODE_STATUS,
+} from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import { beregnTotalt } from "./kalenderOgAktiviteter.helpers";
@@ -9,7 +14,7 @@ describe("kalenderOgAktiviteter.helpers", () => {
   const basePeriode: IRapporteringsperiode = {
     id: "test-1",
     ident: "12345678901",
-    type: "meldekort",
+    type: MELDEKORT_TYPE.ORDINAERT,
     periode: {
       fraOgMed: "2024-01-01",
       tilOgMed: "2024-01-14",
@@ -19,8 +24,8 @@ describe("kalenderOgAktiviteter.helpers", () => {
     kanEndres: false,
     kanSendesFra: "2024-01-14T00:00:00",
     sisteFristForTrekk: null,
-    status: "TilUtfylling",
-    opprettetAv: "Dagpenger",
+    status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+    opprettetAv: OPPRETTET_AV.Dagpenger,
     kilde: null,
     originalMeldekortId: null,
     innsendtTidspunkt: null,

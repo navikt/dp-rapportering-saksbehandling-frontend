@@ -16,7 +16,7 @@ import {
   skalViseArbeidssokerSporsmal,
   validerMeldekortSkjema,
 } from "~/utils/meldekort-validering.helpers";
-import type { IPeriode, IRapporteringsperiodeDag } from "~/utils/types";
+import type { IPeriode, IRapporteringsperiodeDag, TMeldekortType } from "~/utils/types";
 
 export interface IMeldekortSkjemaSubmitData {
   meldedato: Date | undefined;
@@ -36,7 +36,7 @@ interface UseMeldekortSkjemaOptions {
   /** Om dette er en korrigering av eksisterende meldekort */
   isKorrigering?: boolean;
   /** Type meldekort fra backend (brukes for å sjekke om arbeidssøker-spørsmål skal vises) */
-  meldekortType?: string;
+  meldekortType?: TMeldekortType;
   /** Originale data for sammenligning ved korrigering */
   originalData?: {
     meldedato: string | null;
