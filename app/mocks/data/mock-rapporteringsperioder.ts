@@ -372,8 +372,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     {
       periode: {
         type: MELDEKORT_TYPE.ETTERREGISTRERT,
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       },
-      ukerFraIDag: 100,
+      ukerFraIDag: 60,
     },
     // 1. Ferdig beregnet
     {
@@ -826,6 +827,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanSendes: false,
         kanEndres: true,
       },
+      innsendtTidspunktRelativTilPeriodeSlutt: 9,
       ukerFraIDag: 20,
     },
     // 23. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
@@ -942,26 +944,64 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       },
       ukerFraIDag: 10,
     },
-    // 28. Opprettet, ikke registrert arbeidssøker
+    // 28.
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 8,
+    },
+    // 29.
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 6,
+    },
+    // 30.
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 4,
+    },
+    // 31.
+    {
+      periode: {
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 2,
+    },
+    // 32. Nyeste innsendte meldekort
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
         kanSendes: true,
-        kanEndres: false, // Kan ikke endres fordi den ikke er innsendt ennå
-        registrertArbeidssoker: false,
-        // Merk: Ikke sendt ennå, så ingen innsendtTidspunkt
+        kanEndres: false,
       },
-      ukerFraIDag: 8,
+      ukerFraIDag: 0,
     },
-    // 29. Opprettet, ingen data ennå
+
+    // 33. Opprettet meldekort
     {
       periode: {
         status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
         kanSendes: false,
         kanEndres: false, // Kan ikke endres fordi den ikke er innsendt ennå
-        // Merk: Ikke opprettet ennå, så ingen innsendtTidspunkt
       },
-      ukerFraIDag: 6,
+      ukerFraIDag: -2,
     },
   ],
 };
