@@ -10,7 +10,7 @@
   gap: var(--a-spacing-2);
 }
 
-.person-informasjon {
+.personInformasjon {
   position: sticky;
   top: 48px;
   z-index: 99;
