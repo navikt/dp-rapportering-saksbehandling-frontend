@@ -148,9 +148,11 @@ export function Kalender({ periode, variant = null, hideWeekLabels = false }: IP
       <caption className="sr-only">Oversikt over rapporterte dager for perioden</caption>
       <thead>
         <tr>
-          <th scope="col" className="sr-only">
-            Ukedag
-          </th>
+          {!hideWeekLabels && (
+            <th scope="col" className="sr-only">
+              Ukedag
+            </th>
+          )}
           {ukedager.map((ukedag, index) => (
             <th key={`${periode.id}-${index}`} scope="col">
               <Label size="small" as="span">
