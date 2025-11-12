@@ -3,6 +3,7 @@ import { uuidv7 } from "uuidv7";
 
 import { korrigerPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
 import { getABTestVariant } from "~/utils/ab-test.server";
+import { addVariantToURL } from "~/utils/ab-test.utils";
 import { QUERY_PARAMS } from "~/utils/constants";
 import type {
   IKorrigerMeldekort,
@@ -59,7 +60,11 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   // ta vare på variant fra AB-testen ved redirect
-  const variant = getABTestVariant(request);
+  // Les variant fra referer (siden brukeren kom fra) siden action URL ikke har variant
+  const referer = request.headers.get("referer");
+  const refererRequest = referer ? new Request(referer) : request;
+  const variant = getABTestVariant(refererRequest);
+
   const url = new URL(`/person/${personId}/perioder`, request.url);
   url.searchParams.set(
     QUERY_PARAMS.AAR,
@@ -67,9 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
   );
   url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, oppdatertId);
   url.searchParams.set(QUERY_PARAMS.OPPDATERT, oppdatertId);
-  if (variant) {
-    url.searchParams.set("variant", variant);
-  }
+  addVariantToURL(url, variant);
 
   return redirect(url.pathname + url.search);
 }

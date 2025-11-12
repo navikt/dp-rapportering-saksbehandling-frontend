@@ -14,3 +14,13 @@ export function getTogglePlacement(variant: ABTestVariant): TogglePlacement {
   // Kun Variant B har toggle på høyre side
   return variant === "B" ? "right" : "left";
 }
+
+/**
+ * Legger til variant query parameter til en URL hvis variant finnes
+ * Kan brukes både på server og klient
+ */
+export function addVariantToURL(url: URL, variant: ABTestVariant): void {
+  if (variant) {
+    url.searchParams.set("variant", variant);
+  }
+}

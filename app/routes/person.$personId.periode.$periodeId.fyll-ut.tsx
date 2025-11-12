@@ -22,6 +22,7 @@ import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/styles/route-styles/fyllUt.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
+import { addVariantToURL } from "~/utils/ab-test.utils";
 import {
   MELDEKORT_TYPE,
   MODAL_ACTION_TYPE,
@@ -115,9 +116,7 @@ export default function FyllUtPeriode() {
       new Date(periode.periode.fraOgMed).getFullYear().toString(),
     );
     url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, periode.id);
-    if (variant) {
-      url.searchParams.set("variant", variant);
-    }
+    addVariantToURL(url, variant);
     navigate(url.pathname + url.search);
   };
 

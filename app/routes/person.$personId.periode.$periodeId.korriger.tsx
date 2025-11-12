@@ -15,6 +15,7 @@ import stylesOriginal from "~/styles/route-styles/korriger.module.css";
 import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
 import stylesVariantC from "~/styles/route-styles/korrigerVariantC.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
+import { addVariantToURL } from "~/utils/ab-test.utils";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, formatterDatoUTC, ukenummer } from "~/utils/dato.utils";
@@ -100,9 +101,7 @@ export default function Periode() {
       new Date(periode.periode.fraOgMed).getFullYear().toString(),
     );
     url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, periode.id);
-    if (variant) {
-      url.searchParams.set("variant", variant);
-    }
+    addVariantToURL(url, variant);
     navigate(url.pathname + url.search);
   };
 

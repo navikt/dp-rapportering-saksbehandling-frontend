@@ -223,5 +223,93 @@ describe("api.rapportering action", () => {
       expect(location).toContain("rapporteringsid=ny-meldekort-id-123");
       expect(location).toContain("oppdatert=ny-meldekort-id-123");
     });
+
+    it("skal bevare variant fra referer header i redirect URL", async () => {
+      const { getABTestVariant } = await import("~/utils/ab-test.server");
+      vi.mocked(getABTestVariant).mockReturnValueOnce("B");
+
+      const korrigerMeldekort: IKorrigerMeldekort = {
+        ident: "12345678901",
+        originalMeldekortId: "original-id-123",
+        periode: {
+          fraOgMed: "2025-08-18",
+          tilOgMed: "2025-08-31",
+        },
+        dager: [],
+        kilde: {
+          rolle: "Saksbehandler",
+          ident: "Z123456",
+        },
+        begrunnelse: "Test",
+        meldedato: "2025-09-01",
+      };
+
+      const formData = new FormData();
+      formData.append("rapporteringsperiode", JSON.stringify(korrigerMeldekort));
+      formData.append("personId", "test-person-123");
+
+      const request = new Request("http://localhost/api/rapportering", {
+        method: "POST",
+        body: formData,
+        headers: {
+          referer:
+            "http://localhost/person/test-person-123/periode/original-id-123/korriger?variant=B",
+        },
+      });
+
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
+      const location = response.headers.get("Location");
+
+      expect(location).toContain("variant=B");
+      expect(getABTestVariant).toHaveBeenCalledWith(expect.any(Request));
+    });
+
+    it("skal ikke inkludere variant når den ikke finnes i referer", async () => {
+      const { getABTestVariant } = await import("~/utils/ab-test.server");
+      vi.mocked(getABTestVariant).mockReturnValueOnce(null);
+
+      const korrigerMeldekort: IKorrigerMeldekort = {
+        ident: "12345678901",
+        originalMeldekortId: "original-id-123",
+        periode: {
+          fraOgMed: "2025-08-18",
+          tilOgMed: "2025-08-31",
+        },
+        dager: [],
+        kilde: {
+          rolle: "Saksbehandler",
+          ident: "Z123456",
+        },
+        begrunnelse: "Test",
+        meldedato: "2025-09-01",
+      };
+
+      const formData = new FormData();
+      formData.append("rapporteringsperiode", JSON.stringify(korrigerMeldekort));
+      formData.append("personId", "test-person-123");
+
+      const request = new Request("http://localhost/api/rapportering", {
+        method: "POST",
+        body: formData,
+        headers: {
+          referer: "http://localhost/person/test-person-123/periode/original-id-123/korriger",
+        },
+      });
+
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
+      const location = response.headers.get("Location");
+
+      expect(location).not.toContain("variant=");
+    });
   });
 });
