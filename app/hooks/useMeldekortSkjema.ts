@@ -9,7 +9,7 @@ import {
   type IKorrigertDag,
   type SetKorrigerteDager,
 } from "~/utils/korrigering.utils";
-import type { IValideringsKontekst } from "~/utils/meldekort-validering.helpers";
+import type { IValideringsFeil, IValideringsKontekst } from "~/utils/meldekort-validering.helpers";
 import {
   fokuserPaForsteFeil,
   lagValideringsFeilmeldinger,
@@ -25,24 +25,15 @@ export interface IMeldekortSkjemaSubmitData {
   dager: IKorrigertDag[];
 }
 
-// Validation error state
-interface ValidationErrors {
-  meldedato: boolean;
-  arbeidssoker: boolean;
-  begrunnelse: boolean;
-  aktiviteter: boolean;
-  aktiviteterType?: "ingen-endringer" | "ugyldige-verdier";
-}
-
 // Validation actions
 type ValidationAction =
-  | { type: "SET_ALL"; payload: ValidationErrors }
+  | { type: "SET_ALL"; payload: IValideringsFeil }
   | { type: "CLEAR_MELDEDATO" }
   | { type: "CLEAR_ARBEIDSSOKER" }
   | { type: "CLEAR_BEGRUNNELSE" }
   | { type: "CLEAR_AKTIVITETER" };
 
-function validationReducer(state: ValidationErrors, action: ValidationAction): ValidationErrors {
+function validationReducer(state: IValideringsFeil, action: ValidationAction): IValideringsFeil {
   switch (action.type) {
     case "SET_ALL":
       return action.payload;

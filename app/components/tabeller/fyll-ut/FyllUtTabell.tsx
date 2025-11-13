@@ -80,7 +80,7 @@ function DagCell({
               // Fjern arbeid-aktiviteten hvis feltet er helt tomt
               updated = dag.aktiviteter.filter((a) => a.type !== type);
             } else if (aktivitetstyper.includes(type)) {
-              // Oppdater eksisterende aktivitet (inkludert midlertidige verdier som "0", "0.")
+              // Oppdater eksisterende aktivitet (behold verdien uansett, validering skjer på blur/submit)
               updated = dag.aktiviteter.map((a) => (a.type === type ? { ...a, timer: value } : a));
             } else {
               // Legg til ny aktivitet

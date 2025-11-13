@@ -79,7 +79,7 @@ export function NumberInput({
       return;
     }
 
-    // Valider alle verdier inkludert "0"
+    // Tomt felt er tillatt, valider alle andre verdier inkludert "0"
     const validationResult = validerTimerInput(inputValue);
     if (!validationResult.isValid) {
       setValidationError(validationResult.errorMessage);
