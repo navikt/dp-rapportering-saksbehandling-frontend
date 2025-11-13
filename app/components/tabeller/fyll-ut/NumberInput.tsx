@@ -79,7 +79,7 @@ export function NumberInput({
       return;
     }
 
-    // Valider kun hvis det er innhold
+    // Valider alle verdier inkludert "0"
     const validationResult = validerTimerInput(inputValue);
     if (!validationResult.isValid) {
       setValidationError(validationResult.errorMessage);

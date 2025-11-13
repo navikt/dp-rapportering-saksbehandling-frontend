@@ -76,11 +76,11 @@ function DagCell({
           onChange={(value) => {
             let updated;
 
-            if (value === "" || value === "0") {
-              // Fjern arbeid-aktiviteten hvis feltet tømmes
+            if (value === "") {
+              // Fjern arbeid-aktiviteten hvis feltet er helt tomt
               updated = dag.aktiviteter.filter((a) => a.type !== type);
             } else if (aktivitetstyper.includes(type)) {
-              // Oppdater eksisterende aktivitet
+              // Oppdater eksisterende aktivitet (inkludert midlertidige verdier som "0", "0.")
               updated = dag.aktiviteter.map((a) => (a.type === type ? { ...a, timer: value } : a));
             } else {
               // Legg til ny aktivitet
