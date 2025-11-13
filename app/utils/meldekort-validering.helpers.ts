@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 
 import { MELDEKORT_TYPE } from "./constants";
+import { erAlleArbeidsaktiviteterGyldige, type IKorrigertDag } from "./korrigering.utils";
 import type { IAktivitet, IRapporteringsperiodeDag } from "./types";
 
 /**
@@ -11,6 +12,7 @@ export interface IValideringsFeil {
   arbeidssoker: boolean;
   begrunnelse: boolean;
   aktiviteter: boolean;
+  aktiviteterType?: "ingen-endringer" | "ugyldige-verdier";
 }
 
 /**
@@ -35,7 +37,7 @@ export interface ISkjemaData {
   meldedato: Date | null;
   registrertArbeidssoker: boolean | null;
   begrunnelse: string;
-  dager: IRapporteringsperiodeDag[];
+  dager: IKorrigertDag[];
 }
 
 /**
@@ -188,18 +190,27 @@ export function validerMeldekortSkjema(
   skjemaData: ISkjemaData,
   kontekst: IValideringsKontekst,
 ): IValideringsFeil {
-  const { meldedato, registrertArbeidssoker, begrunnelse } = skjemaData;
+  const { meldedato, registrertArbeidssoker, begrunnelse, dager } = skjemaData;
   const { isKorrigering, showArbeidssokerField } = kontekst;
+
+  // Sjekk om alle arbeidsaktiviteter har gyldige timer-verdier
+  const harUgyldigeAktiviteter = dager ? !erAlleArbeidsaktiviteterGyldige(dager) : false;
 
   if (isKorrigering) {
     // Korrigering: Må ha endringer (meldedato ELLER aktivitet) + begrunnelse
     const harEndringer = harSkjemaEndringer(skjemaData, kontekst);
+    const harAktivitetFeil = !harEndringer || harUgyldigeAktiviteter;
 
     return {
       meldedato: false, // Meldedato er ikke påkrevd ved korrigering (kan være uendret)
       arbeidssoker: false, // Arbeidssøker-spørsmålet vises ikke ved korrigering
       begrunnelse: begrunnelse.trim() === "",
-      aktiviteter: !harEndringer, // Feil hvis ingen endringer i det hele tatt
+      aktiviteter: harAktivitetFeil,
+      aktiviteterType: harAktivitetFeil
+        ? harUgyldigeAktiviteter
+          ? "ugyldige-verdier"
+          : "ingen-endringer"
+        : undefined,
     };
   } else {
     // Fyll ut: Må ha meldedato + besvart arbeidssøker + begrunnelse (aktivitet IKKE påkrevd)
@@ -207,7 +218,8 @@ export function validerMeldekortSkjema(
       meldedato: !meldedato,
       arbeidssoker: showArbeidssokerField && registrertArbeidssoker === null,
       begrunnelse: begrunnelse.trim() === "",
-      aktiviteter: false, // Aktivitet er ikke påkrevd ved fyll ut
+      aktiviteter: harUgyldigeAktiviteter,
+      aktiviteterType: harUgyldigeAktiviteter ? "ugyldige-verdier" : undefined,
     };
   }
 }

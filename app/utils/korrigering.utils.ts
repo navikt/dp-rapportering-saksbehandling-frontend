@@ -27,10 +27,20 @@ export function konverterTimerFraISO8601Varighet(dag: IRapporteringsperiodeDag):
 export function konverterTimerTilISO8601Varighet(dag: IKorrigertDag): IRapporteringsperiodeDag {
   return {
     ...dag,
-    aktiviteter: dag.aktiviteter.map((aktivitet) => ({
-      ...aktivitet,
-      timer: aktivitet.timer ? konverterTilISO8601Varighet(aktivitet.timer.toString()) : null,
-    })),
+    aktiviteter: dag.aktiviteter
+      .filter((aktivitet) => {
+        // Filtrer bort arbeidsaktiviteter med ugyldige timer-verdier (0, 0., tomme strenger)
+        if (aktivitet.type === AKTIVITET_TYPE.Arbeid) {
+          if (!aktivitet.timer || aktivitet.timer.trim() === "") return false;
+          const timerNum = Number(aktivitet.timer.replace(",", "."));
+          if (isNaN(timerNum) || timerNum === 0) return false;
+        }
+        return true;
+      })
+      .map((aktivitet) => ({
+        ...aktivitet,
+        timer: aktivitet.timer ? konverterTilISO8601Varighet(aktivitet.timer.toString()) : null,
+      })),
   };
 }
 

@@ -1,6 +1,6 @@
 import { useDatepicker } from "@navikt/ds-react";
-import { format, subDays } from "date-fns";
-import { useRef, useState } from "react";
+import { subDays } from "date-fns";
+import { useReducer, useRef, useState } from "react";
 
 import { useNavigationWarning } from "~/hooks/useNavigationWarning";
 import { MELDEKORT_TYPE, MODAL_ACTION_TYPE } from "~/utils/constants";
@@ -9,7 +9,7 @@ import {
   type IKorrigertDag,
   type SetKorrigerteDager,
 } from "~/utils/korrigering.utils";
-import type { IValideringsKontekst } from "~/utils/meldekort-validering.helpers";
+import type { IValideringsFeil, IValideringsKontekst } from "~/utils/meldekort-validering.helpers";
 import {
   fokuserPaForsteFeil,
   lagValideringsFeilmeldinger,
@@ -23,6 +23,31 @@ export interface IMeldekortSkjemaSubmitData {
   registrertArbeidssoker?: boolean | null;
   begrunnelse: string;
   dager: IKorrigertDag[];
+}
+
+// Validation actions
+type ValidationAction =
+  | { type: "SET_ALL"; payload: IValideringsFeil }
+  | { type: "CLEAR_MELDEDATO" }
+  | { type: "CLEAR_ARBEIDSSOKER" }
+  | { type: "CLEAR_BEGRUNNELSE" }
+  | { type: "CLEAR_AKTIVITETER" };
+
+function validationReducer(state: IValideringsFeil, action: ValidationAction): IValideringsFeil {
+  switch (action.type) {
+    case "SET_ALL":
+      return action.payload;
+    case "CLEAR_MELDEDATO":
+      return { ...state, meldedato: false };
+    case "CLEAR_ARBEIDSSOKER":
+      return { ...state, arbeidssoker: false };
+    case "CLEAR_BEGRUNNELSE":
+      return { ...state, begrunnelse: false };
+    case "CLEAR_AKTIVITETER":
+      return { ...state, aktiviteter: false, aktiviteterType: undefined };
+    default:
+      return state;
+  }
 }
 
 interface UseMeldekortSkjemaOptions {
@@ -60,20 +85,15 @@ export function useMeldekortSkjema({
   const erSaksbehandlerFlate = true;
 
   // Bestem om arbeidssøker-feltet skal vises
-  const showArbeidssokerFieldCalculated = skalViseArbeidssokerSporsmal(
-    meldekortType,
-    erSaksbehandlerFlate,
-  );
+  const visArbeidsokerSpm = skalViseArbeidssokerSporsmal(meldekortType, erSaksbehandlerFlate);
 
   // Bygg valideringskontekst
   const valideringsKontekst: IValideringsKontekst = {
     isKorrigering,
-    showArbeidssokerField: showArbeidssokerFieldCalculated,
+    showArbeidssokerField: visArbeidsokerSpm,
     originalData,
   };
 
-  // Hent feilmeldinger basert på kontekst
-  const feilmeldinger = lagValideringsFeilmeldinger(valideringsKontekst);
   // Refs
   const formRef = useRef<HTMLFormElement>(null);
   const meldedatoRef = useRef<HTMLInputElement>(null);
@@ -92,11 +112,12 @@ export function useMeldekortSkjema({
   const [valgtDato, setValgtDato] = useState<Date | undefined>(initialMeldedato);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
-  const [visValideringsfeil, setVisValideringsfeil] = useState({
+  const [visValideringsfeil, dispatchValidation] = useReducer(validationReducer, {
     meldedato: false,
     arbeidssoker: false,
     begrunnelse: false,
     aktiviteter: false,
+    aktiviteterType: undefined,
   });
 
   // Navigation warning
@@ -115,7 +136,7 @@ export function useMeldekortSkjema({
 
   const handleMeldedatoBlur = () => {
     if (valgtDato && visValideringsfeil.meldedato) {
-      setVisValideringsfeil((prev) => ({ ...prev, meldedato: false }));
+      dispatchValidation({ type: "CLEAR_MELDEDATO" });
     }
   };
 
@@ -125,7 +146,7 @@ export function useMeldekortSkjema({
     if (typeof nyeDager !== "function") {
       const harGyldigeAktiviteter = harMinstEnGyldigAktivitet(nyeDager);
       if (harGyldigeAktiviteter && visValideringsfeil.aktiviteter) {
-        setVisValideringsfeil((prev) => ({ ...prev, aktiviteter: false }));
+        dispatchValidation({ type: "CLEAR_AKTIVITETER" });
       }
     }
   };
@@ -145,9 +166,7 @@ export function useMeldekortSkjema({
         meldedato: valgtDato,
         // Kun send registrertArbeidssoker ved fyll-ut (når showArbeidssokerField er true)
         registrertArbeidssoker:
-          showArbeidssokerFieldCalculated && registrertArbeidssoker !== null
-            ? registrertArbeidssoker
-            : undefined, // undefined = ikke send dette feltet
+          visArbeidsokerSpm && registrertArbeidssoker !== null ? registrertArbeidssoker : undefined, // undefined = ikke send dette feltet
         begrunnelse,
         dager,
       });
@@ -174,7 +193,7 @@ export function useMeldekortSkjema({
 
     const feil = validerMeldekortSkjema(skjemaData, valideringsKontekst);
 
-    setVisValideringsfeil(feil);
+    dispatchValidation({ type: "SET_ALL", payload: feil });
 
     // Sjekk om det er noen feil
     const harFeil = Object.values(feil).some((harFeil) => harFeil);
@@ -197,7 +216,7 @@ export function useMeldekortSkjema({
 
   const handleBegrunnelseBlur = () => {
     if (begrunnelse.trim() !== "" && visValideringsfeil.begrunnelse) {
-      setVisValideringsfeil((prev) => ({ ...prev, begrunnelse: false }));
+      dispatchValidation({ type: "CLEAR_BEGRUNNELSE" });
     }
   };
 
@@ -205,20 +224,25 @@ export function useMeldekortSkjema({
     setRegistrertArbeidssoker(value);
     // Fjern feil umiddelbart når bruker velger et svar
     if (visValideringsfeil.arbeidssoker) {
-      setVisValideringsfeil((prev) => ({ ...prev, arbeidssoker: false }));
+      dispatchValidation({ type: "CLEAR_ARBEIDSSOKER" });
     }
   };
 
-  // Hidden form values
-  const hiddenFormValues = {
-    meldedato: valgtDato ? format(valgtDato, "yyyy-MM-dd") : "",
-    // Kun send registrertArbeidssoker hvis showArbeidssokerField er true (dvs. ved fyll-ut)
-    registrertArbeidssoker:
-      showArbeidssokerFieldCalculated && registrertArbeidssoker !== null
-        ? registrertArbeidssoker.toString()
-        : "", // Tom string når ikke relevant (korrigering) eller ikke svart
-    begrunnelse,
-    dager: JSON.stringify(dager),
+  // Generer feilmeldinger basert på kontekst og aktiviteterType
+  const baseFeilmeldinger = lagValideringsFeilmeldinger(valideringsKontekst);
+
+  // Generer aktivitet-feilmelding basert på type
+  let aktivitetFeilmelding = baseFeilmeldinger.aktiviteter;
+  if (visValideringsfeil.aktiviteterType === "ugyldige-verdier") {
+    aktivitetFeilmelding =
+      "Du må rette opp ugyldige timer-verdier (minimum 0,5 timer, kun hele eller halve timer)";
+  }
+
+  const feilmeldinger = {
+    meldedato: baseFeilmeldinger.meldedato,
+    arbeidssoker: baseFeilmeldinger.arbeidssoker,
+    begrunnelse: baseFeilmeldinger.begrunnelse,
+    aktiviteter: aktivitetFeilmelding,
   };
 
   return {
@@ -240,7 +264,7 @@ export function useMeldekortSkjema({
       modalType,
       visValideringsfeil,
       hasChanges,
-      showArbeidssokerField: showArbeidssokerFieldCalculated,
+      showArbeidssokerField: visArbeidsokerSpm,
     },
 
     // Date picker props
@@ -262,9 +286,6 @@ export function useMeldekortSkjema({
       openModal,
       setModalOpen,
     },
-
-    // Form values
-    hiddenFormValues,
 
     // Feilmeldinger basert på kontekst
     feilmeldinger,
