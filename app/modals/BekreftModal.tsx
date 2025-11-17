@@ -38,7 +38,7 @@ export function BekreftModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} header={{ heading: tittel }}>
+    <Modal open={open} onClose={onClose} header={{ heading: tittel }} portal>
       <Modal.Body>{tekst}</Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={handleBekreft} size="small">

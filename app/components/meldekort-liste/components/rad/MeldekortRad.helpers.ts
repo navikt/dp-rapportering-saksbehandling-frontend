@@ -1,7 +1,8 @@
 import { MELDEKORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-export const HIGHLIGHT_DURATION_MS = 3600;
+// Re-eksporter fra constants fil for bakoverkompatibilitet
+export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
 
 export interface StatusConfig {
   text: string;

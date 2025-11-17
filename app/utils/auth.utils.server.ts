@@ -38,22 +38,51 @@ export async function getOnBehalfOfToken(request: Request, audience: string, fal
   const token = getToken(request);
 
   if (!token) {
-    logger.error("Missing token");
-    throw new Response("Missing token", { status: 401 });
+    // Manglende token er vanligvis utgått sesjon, ikke systemfeil
+    logger.info("401: Missing token in request - session likely expired");
+    throw Response.json(
+      {
+        error: "Manglende autentisering",
+        detail: "Ingen token funnet i forespørselen",
+      },
+      { status: 401 },
+    );
   }
 
   const validation = await validateToken(token);
 
   if (!validation.ok) {
-    logger.error(`Failed to validate token: ${validation.error}`);
-    throw new Response("Token validation failed", { status: 401 });
+    // Token-valideringsfeil kan være utgått token (normalt) eller faktisk feil
+    // Utgått token inneholder vanligvis "expired" i error-melding
+    const errorMessage = validation.error?.message || String(validation.error);
+    const isExpired = errorMessage.toLowerCase().includes("expired");
+    if (isExpired) {
+      logger.info(`401: Token expired: ${errorMessage}`);
+    } else {
+      logger.warn(`401: Token validation failed: ${errorMessage}`);
+    }
+
+    throw Response.json(
+      {
+        error: "Ugyldig autentisering",
+        detail: `Failed to validate token: ${errorMessage}`,
+      },
+      { status: 401 },
+    );
   }
 
   const obo = await requestOboToken(token, audience);
 
   if (!obo.ok) {
-    logger.error(`Failed to get OBO token: ${obo.error}`);
-    throw new Response("Unauthorized", { status: 401 });
+    // OBO-token feil er uventet og bør undersøkes
+    logger.error(`401: Failed to get OBO token: ${obo.error}`, { audience });
+    throw Response.json(
+      {
+        error: "Kunne ikke hente tilgangstoken",
+        detail: `Failed to get OBO token for audience ${audience}`,
+      },
+      { status: 401 },
+    );
   }
 
   return obo.token;

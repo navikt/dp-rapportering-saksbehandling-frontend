@@ -1,4 +1,4 @@
-import { Alert, Button, DatePicker, Textarea } from "@navikt/ds-react";
+import { Button, DatePicker, Textarea } from "@navikt/ds-react";
 import { BodyLong, BodyShort, Heading } from "@navikt/ds-react";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +7,7 @@ import invariant from "tiny-invariant";
 
 import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
 import { Kalender } from "~/components/tabeller/kalender/Kalender";
+import { useToast } from "~/context/toast-context";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
@@ -15,10 +16,10 @@ import stylesOriginal from "~/styles/route-styles/korriger.module.css";
 import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
 import stylesVariantC from "~/styles/route-styles/korrigerVariantC.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
-import { addVariantToURL } from "~/utils/ab-test.utils";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, formatterDatoUTC, ukenummer } from "~/utils/dato.utils";
+import { addDemoParamsToURL, buildURLWithDemoParams } from "~/utils/demo-params.utils";
 import {
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
@@ -43,6 +44,7 @@ export default function Periode() {
   const { periode, saksbehandler, personId, variant } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const navigate = useNavigate();
+  const { showSuccess, showError } = useToast();
   const styles =
     variant === "C" ? stylesVariantC : variant === "B" ? stylesVariantB : stylesOriginal;
 
@@ -62,13 +64,30 @@ export default function Periode() {
     };
   }, []);
 
-  // Håndter navigation etter vellykket submit
+  // Håndter suksess eller feil etter submit
   useEffect(() => {
-    if (fetcher.state === "idle" && fetcher.data && !fetcher.data.error && isMountedRef.current) {
-      // Fetcher har fullført uten feil
-      // React Router håndterer redirect automatisk
+    if (fetcher.state === "idle" && fetcher.data && isMountedRef.current) {
+      if (fetcher.data.error) {
+        // Vis error toast med detaljert informasjon
+        const title = fetcher.data.title || "Korrigering feilet";
+        let message = fetcher.data.detail;
+        if (fetcher.data.correlationId) {
+          message = message
+            ? `${message}\n\nFeil-ID: ${fetcher.data.correlationId}`
+            : `Feil-ID: ${fetcher.data.correlationId}`;
+        }
+        showError(title, message);
+      } else if (fetcher.data.success) {
+        // Vis toast først, deretter naviger
+        showSuccess("Meldekortet ble korrigert");
+        setTimeout(() => {
+          if (isMountedRef.current) {
+            navigate(fetcher.data.redirectUrl);
+          }
+        }, 500); // Kort delay slik at toast rekker å vises
+      }
     }
-  }, [fetcher.state, fetcher.data]);
+  }, [fetcher.state, fetcher.data, showSuccess, showError, navigate]);
 
   const handleSubmit = () => {
     // Send kun IKorrigerMeldekort felter - ikke hele IRapporteringsperiode
@@ -88,21 +107,21 @@ export default function Periode() {
         : periode.meldedato!,
     };
 
+    const actionUrl = new URL("/api/rapportering", window.location.origin);
+    addDemoParamsToURL(actionUrl);
+
     fetcher.submit(
       { rapporteringsperiode: JSON.stringify(korrigertPeriode), personId },
-      { method: "post", action: "/api/rapportering" },
+      { method: "post", action: actionUrl.pathname + actionUrl.search },
     );
   };
 
   const handleCancel = () => {
-    const url = new URL(`/person/${personId}/perioder`, window.location.origin);
-    url.searchParams.set(
-      QUERY_PARAMS.AAR,
-      new Date(periode.periode.fraOgMed).getFullYear().toString(),
-    );
-    url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, periode.id);
-    addVariantToURL(url, variant);
-    navigate(url.pathname + url.search);
+    const cancelUrl = buildURLWithDemoParams(`/person/${personId}/perioder`, {
+      [QUERY_PARAMS.AAR]: new Date(periode.periode.fraOgMed).getFullYear().toString(),
+      [QUERY_PARAMS.RAPPORTERINGSID]: periode.id,
+    });
+    navigate(cancelUrl);
   };
 
   const skjema = useMeldekortSkjema({
@@ -130,22 +149,12 @@ export default function Periode() {
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {fetcher.state === "submitting" && "Sender inn korrigering..."}
         {fetcher.state === "loading" && "Behandler korrigering..."}
+        {fetcher.state === "idle" && fetcher.data && fetcher.data.error && "Korrigering feilet"}
         {fetcher.state === "idle" &&
           fetcher.data &&
           !fetcher.data.error &&
           "Korrigering sendt inn. Går tilbake til periodeoversikten..."}
-        {fetcher.data?.error && `Feil ved innsending: ${fetcher.data.error}`}
       </div>
-
-      {fetcher.data?.error && (
-        <Alert variant="error" className={styles.errorAlert} role="alert">
-          <Heading size="small">Feil ved innsending av korrigering</Heading>
-          <BodyShort>{fetcher.data.error}</BodyShort>
-          {fetcher.data.details && (
-            <BodyShort size="small">Detaljer: {fetcher.data.details}</BodyShort>
-          )}
-        </Alert>
-      )}
       <div className={styles.hvitContainer}>
         <div className={styles.maxWidth900}>
           <Heading level="1" size="medium">
@@ -253,10 +262,16 @@ export default function Periode() {
               variant="secondary"
               onClick={skjema.handlers.handleAvbryt}
               size="small"
+              disabled={fetcher.state === "submitting"}
             >
               Avbryt korrigering
             </Button>
-            <Button type="submit" variant="primary" size="small">
+            <Button
+              type="submit"
+              variant="primary"
+              size="small"
+              loading={fetcher.state === "submitting"}
+            >
               Fullfør korrigering
             </Button>
           </div>

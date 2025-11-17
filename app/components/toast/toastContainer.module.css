@@ -1,0 +1,26 @@
+:root {
+  --toast-container-top: 6rem;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --toast-container-top: 4rem;
+  }
+}
+
+.toastContainer {
+  position: fixed;
+  top: var(--toast-container-top);
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.toastContainer > * {
+  pointer-events: auto;
+}

@@ -1,4 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+
+import { useNavigationWarningContextOptional } from "~/context/navigation-warning-context";
 
 interface UseNavigationWarningOptions {
   hasChanges: boolean;
@@ -12,15 +14,21 @@ interface UseNavigationWarningOptions {
  * @returns disableWarning - Funksjon for å midlertidig deaktivere advarselen
  */
 export function useNavigationWarning({ hasChanges }: UseNavigationWarningOptions) {
-  const isDisabledRef = useRef(false);
+  const context = useNavigationWarningContextOptional();
+
+  // Bruk context hvis tilgjengelig, ellers lag lokal ref (fallback)
+  const isDisabledRef = context?.isDisabledRef;
 
   const disableWarning = () => {
-    isDisabledRef.current = true;
+    if (context) {
+      context.disableWarning();
+    }
   };
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (hasChanges && !isDisabledRef.current) {
+      const isDisabled = isDisabledRef?.current ?? false;
+      if (hasChanges && !isDisabled) {
         event.preventDefault();
         return "";
       }
@@ -31,7 +39,7 @@ export function useNavigationWarning({ hasChanges }: UseNavigationWarningOptions
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [hasChanges]);
+  }, [hasChanges, isDisabledRef]);
 
   return { disableWarning };
 }

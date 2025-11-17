@@ -1,7 +1,9 @@
 import { ActionMenu, Button } from "@navikt/ds-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
 
+import { useNavigationWarningContextOptional } from "~/context/navigation-warning-context";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
+import type { DemoAction, DemoStatus } from "~/utils/demo-params.utils";
 
 import styles from "./variantSwitcher.module.css";
 
@@ -9,26 +11,43 @@ export function VariantSwitcher() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const navigationWarningContext = useNavigationWarningContextOptional();
 
   const currentVariant = (searchParams.get("variant") as ABTestVariant) || null;
+  const currentStatus = (searchParams.get("status") as DemoStatus) || null;
+  const currentAction = (searchParams.get("action") as DemoAction) || null;
+
+  // Sjekk hvilke sider vi er på for betinget visning av parametere
   const isKorrigerPage = location.pathname.includes("/korriger");
+  const isFyllUtPage = location.pathname.includes("/fyll-ut");
+  const isActionPage = isKorrigerPage || isFyllUtPage; // Sider hvor man sender inn data
 
-  const handleVariantChange = (variant: string) => {
+  const handleParamChange = (param: string, value: string) => {
+    // Deaktiver navigasjonsadvarsel før vi endrer demo-parametere
+    navigationWarningContext?.disableWarning();
     const url = new URL(location.pathname + location.search, window.location.origin);
+    const isRemovingParam = value === "none";
 
-    if (variant === "none") {
-      url.searchParams.delete("variant");
+    if (isRemovingParam) {
+      url.searchParams.delete(param);
     } else {
-      url.searchParams.set("variant", variant);
+      url.searchParams.set(param, value);
     }
 
-    navigate(url.pathname + url.search);
-  };
-
-  const getVariantLabel = () => {
-    if (currentVariant === "B") return "Variant B";
-    if (currentVariant === "C") return "Variant C";
-    return "Variant A";
+    // For status og action params: full page reload for å trigge loader på nytt
+    // For variant: klient-side navigasjon er OK
+    if (param === "status" || param === "action") {
+      // Hvis vi fjerner en feilsimulering mens vi er på error boundary,
+      // må vi først oppdatere URL og deretter reloade
+      if (isRemovingParam) {
+        window.history.replaceState({}, "", url.pathname + url.search);
+        window.location.reload();
+      } else {
+        window.location.href = url.pathname + url.search;
+      }
+    } else {
+      navigate(url.pathname + url.search);
+    }
   };
 
   return (
@@ -36,23 +55,84 @@ export function VariantSwitcher() {
       <ActionMenu>
         <ActionMenu.Trigger>
           <Button variant="primary-neutral" size="small">
-            Demo: {getVariantLabel()}
+            Verktøy
           </Button>
         </ActionMenu.Trigger>
         <ActionMenu.Content>
-          <ActionMenu.Group label="Velg variant">
-            <ActionMenu.Item onSelect={() => handleVariantChange("none")}>
-              Variant A {!currentVariant && "✓"}
-            </ActionMenu.Item>
-            <ActionMenu.Item onSelect={() => handleVariantChange("B")}>
-              Variant B {currentVariant === "B" && "✓"}
-            </ActionMenu.Item>
-            {isKorrigerPage && (
-              <ActionMenu.Item onSelect={() => handleVariantChange("C")}>
-                Variant C {currentVariant === "C" && "✓"}
-              </ActionMenu.Item>
-            )}
-          </ActionMenu.Group>
+          {!isActionPage && (
+            <>
+              <ActionMenu.Group label="Variant:">
+                <ActionMenu.Item onSelect={() => handleParamChange("variant", "none")}>
+                  Variant A {!currentVariant && "✓"}
+                </ActionMenu.Item>
+                <ActionMenu.Item onSelect={() => handleParamChange("variant", "B")}>
+                  Variant B {currentVariant === "B" && "✓"}
+                </ActionMenu.Item>
+                {isKorrigerPage && (
+                  <ActionMenu.Item onSelect={() => handleParamChange("variant", "C")}>
+                    Variant C {currentVariant === "C" && "✓"}
+                  </ActionMenu.Item>
+                )}
+              </ActionMenu.Group>
+
+              <ActionMenu.Divider />
+
+              <ActionMenu.Group label="Simuler feil:">
+                <ActionMenu.Item onSelect={() => handleParamChange("status", "none")}>
+                  Ingen feil {!currentStatus && "✓"}
+                </ActionMenu.Item>
+                <ActionMenu.Item onSelect={() => handleParamChange("status", "404-person")}>
+                  Fant ikke personen {currentStatus === "404-person" && "✓"}
+                </ActionMenu.Item>
+                <ActionMenu.Item onSelect={() => handleParamChange("status", "404-perioder")}>
+                  Fant ingen meldekort {currentStatus === "404-perioder" && "✓"}
+                </ActionMenu.Item>
+                <ActionMenu.Item onSelect={() => handleParamChange("status", "404-page")}>
+                  Siden eksisterer ikke {currentStatus === "404-page" && "✓"}
+                </ActionMenu.Item>
+              </ActionMenu.Group>
+            </>
+          )}
+
+          {isActionPage && (
+            <>
+              <ActionMenu.Group label="Variant:">
+                <ActionMenu.Item onSelect={() => handleParamChange("variant", "none")}>
+                  Variant A {!currentVariant && "✓"}
+                </ActionMenu.Item>
+                <ActionMenu.Item onSelect={() => handleParamChange("variant", "B")}>
+                  Variant B {currentVariant === "B" && "✓"}
+                </ActionMenu.Item>
+                {isKorrigerPage && (
+                  <ActionMenu.Item onSelect={() => handleParamChange("variant", "C")}>
+                    Variant C {currentVariant === "C" && "✓"}
+                  </ActionMenu.Item>
+                )}
+              </ActionMenu.Group>
+
+              <ActionMenu.Divider />
+
+              <ActionMenu.Group label="Simuler feil ved innsending:">
+                <ActionMenu.Item onSelect={() => handleParamChange("action", "none")}>
+                  Ingen feil {!currentAction && "✓"}
+                </ActionMenu.Item>
+                <ActionMenu.Item onSelect={() => handleParamChange("action", "fail")}>
+                  Innsending skal feile {currentAction === "fail" && "✓"}
+                </ActionMenu.Item>
+              </ActionMenu.Group>
+
+              <ActionMenu.Divider />
+
+              <ActionMenu.Group label="Simuler feil ved lasting:">
+                <ActionMenu.Item onSelect={() => handleParamChange("status", "none")}>
+                  Ingen feil {!currentStatus && "✓"}
+                </ActionMenu.Item>
+                <ActionMenu.Item onSelect={() => handleParamChange("status", "404-periode")}>
+                  Fant ikke meldekortet {currentStatus === "404-periode" && "✓"}
+                </ActionMenu.Item>
+              </ActionMenu.Group>
+            </>
+          )}
         </ActionMenu.Content>
       </ActionMenu>
     </div>

@@ -49,9 +49,13 @@ describe("api.rapportering action", () => {
         unstable_pattern: "",
       });
 
-      // Skal redirecte til perioder med det nye meldekort-IDet
-      expect(response.status).toBe(302);
-      expect(response.headers.get("Location")).toContain("ny-meldekort-id-123");
+      // Skal returnere success med redirect URL
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("success", true);
+      expect(response).toHaveProperty("redirectUrl");
+      if ("redirectUrl" in response) {
+        expect(response.redirectUrl).toContain("ny-meldekort-id-123");
+      }
     });
 
     it("skal detektere oppdatering når originalMeldekortId ikke er til stede", async () => {
@@ -92,9 +96,13 @@ describe("api.rapportering action", () => {
         unstable_pattern: "",
       });
 
-      // Skal redirecte til perioder med det eksisterende meldekort-IDet
-      expect(response.status).toBe(302);
-      expect(response.headers.get("Location")).toContain("existing-id-456");
+      // Skal returnere success med redirect URL
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("success", true);
+      expect(response).toHaveProperty("redirectUrl");
+      if ("redirectUrl" in response) {
+        expect(response.redirectUrl).toContain("existing-id-456");
+      }
     });
   });
 
@@ -136,8 +144,12 @@ describe("api.rapportering action", () => {
       });
 
       // Skal fallback til originalMeldekortId
-      expect(response.status).toBe(302);
-      expect(response.headers.get("Location")).toContain("original-id-789");
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("success", true);
+      expect(response).toHaveProperty("redirectUrl");
+      if ("redirectUrl" in response) {
+        expect(response.redirectUrl).toContain("original-id-789");
+      }
     });
 
     it("skal ikke feiltolke korrigering som oppdatering når kun originalMeldekortId finnes", async () => {
@@ -178,8 +190,12 @@ describe("api.rapportering action", () => {
       });
 
       // Skal behandles som korrigering og få nytt ID
-      expect(response.status).toBe(302);
-      expect(response.headers.get("Location")).toContain("ny-meldekort-id-123");
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("success", true);
+      expect(response).toHaveProperty("redirectUrl");
+      if ("redirectUrl" in response) {
+        expect(response.redirectUrl).toContain("ny-meldekort-id-123");
+      }
     });
   });
 
@@ -216,12 +232,16 @@ describe("api.rapportering action", () => {
         context: {},
         unstable_pattern: "",
       });
-      const location = response.headers.get("Location");
 
-      expect(location).toContain("/person/test-person-123/perioder");
-      expect(location).toContain("aar=2025");
-      expect(location).toContain("rapporteringsid=ny-meldekort-id-123");
-      expect(location).toContain("oppdatert=ny-meldekort-id-123");
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("success", true);
+      expect(response).toHaveProperty("redirectUrl");
+      if ("redirectUrl" in response) {
+        expect(response.redirectUrl).toContain("/person/test-person-123/perioder");
+        expect(response.redirectUrl).toContain("aar=2025");
+        expect(response.redirectUrl).toContain("rapporteringsid=ny-meldekort-id-123");
+        expect(response.redirectUrl).toContain("oppdatert=ny-meldekort-id-123");
+      }
     });
 
     it("skal bevare variant fra referer header i redirect URL", async () => {
@@ -248,13 +268,10 @@ describe("api.rapportering action", () => {
       formData.append("rapporteringsperiode", JSON.stringify(korrigerMeldekort));
       formData.append("personId", "test-person-123");
 
-      const request = new Request("http://localhost/api/rapportering", {
+      // Variant kommer nå fra request URL, ikke referer
+      const request = new Request("http://localhost/api/rapportering?variant=B", {
         method: "POST",
         body: formData,
-        headers: {
-          referer:
-            "http://localhost/person/test-person-123/periode/original-id-123/korriger?variant=B",
-        },
       });
 
       const response = await action({
@@ -263,10 +280,13 @@ describe("api.rapportering action", () => {
         context: {},
         unstable_pattern: "",
       });
-      const location = response.headers.get("Location");
 
-      expect(location).toContain("variant=B");
-      expect(getABTestVariant).toHaveBeenCalledWith(expect.any(Request));
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("success", true);
+      expect(response).toHaveProperty("redirectUrl");
+      if ("redirectUrl" in response) {
+        expect(response.redirectUrl).toContain("variant=B");
+      }
     });
 
     it("skal ikke inkludere variant når den ikke finnes i referer", async () => {
@@ -307,9 +327,102 @@ describe("api.rapportering action", () => {
         context: {},
         unstable_pattern: "",
       });
-      const location = response.headers.get("Location");
 
-      expect(location).not.toContain("variant=");
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("success", true);
+      expect(response).toHaveProperty("redirectUrl");
+      if ("redirectUrl" in response) {
+        expect(response.redirectUrl).not.toContain("variant=");
+      }
+    });
+  });
+
+  describe("error handling", () => {
+    it("skal returnere error objekt når oppdaterPeriode feiler", async () => {
+      const { oppdaterPeriode } = await import("~/models/rapporteringsperiode.server");
+      vi.mocked(oppdaterPeriode).mockRejectedValueOnce(new Error("Database feil"));
+
+      const sendInnMeldekort: ISendInnMeldekort = {
+        ident: "12345678901",
+        id: "existing-id-456",
+        periode: {
+          fraOgMed: "2025-08-18",
+          tilOgMed: "2025-08-31",
+        },
+        dager: [],
+        kanSendesFra: "2025-08-30",
+        sisteFristForTrekk: "2025-09-08",
+        opprettetAv: OPPRETTET_AV.Arena,
+        status: "Innsendt",
+        kilde: {
+          rolle: "Saksbehandler",
+          ident: "Z123456",
+        },
+        begrunnelse: "Test oppdatering",
+        registrertArbeidssoker: true,
+        meldedato: "2025-09-01",
+      };
+
+      const formData = new FormData();
+      formData.append("rapporteringsperiode", JSON.stringify(sendInnMeldekort));
+      formData.append("personId", "test-person-id");
+
+      const request = new Request("http://localhost/api/rapportering", {
+        method: "POST",
+        body: formData,
+      });
+
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
+
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("error", true);
+      expect(response).toHaveProperty("title", "Database feil");
+    });
+
+    it("skal returnere error objekt når korrigerPeriode feiler", async () => {
+      const { korrigerPeriode } = await import("~/models/rapporteringsperiode.server");
+      vi.mocked(korrigerPeriode).mockRejectedValueOnce(new Error("Korrigering feilet"));
+
+      const korrigerMeldekort: IKorrigerMeldekort = {
+        ident: "12345678901",
+        originalMeldekortId: "original-id-123",
+        periode: {
+          fraOgMed: "2025-08-18",
+          tilOgMed: "2025-08-31",
+        },
+        dager: [],
+        kilde: {
+          rolle: "Saksbehandler",
+          ident: "Z123456",
+        },
+        begrunnelse: "Test korrigering",
+        meldedato: "2025-09-01",
+      };
+
+      const formData = new FormData();
+      formData.append("rapporteringsperiode", JSON.stringify(korrigerMeldekort));
+      formData.append("personId", "test-person-id");
+
+      const request = new Request("http://localhost/api/rapportering", {
+        method: "POST",
+        body: formData,
+      });
+
+      const response = await action({
+        request,
+        params: {},
+        context: {},
+        unstable_pattern: "",
+      });
+
+      expect(response).not.toBeInstanceOf(Response);
+      expect(response).toHaveProperty("error", true);
+      expect(response).toHaveProperty("title", "Korrigering feilet");
     });
   });
 });

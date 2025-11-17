@@ -1,11 +1,11 @@
-import { uuidv7 } from "uuidv7";
-
 import {
   DP_MELDEKORTREGISTER_AUDIENCE,
   DP_PERSONREGISTER_AUDIENCE,
 } from "~/utils/auth.utils.server";
+import { getDemoParams } from "~/utils/demo-params.utils";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
+import { httpRequest } from "~/utils/http-client.server";
 import { sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
 import type {
   IArbeidssokerperiode,
@@ -14,222 +14,147 @@ import type {
   ISendInnMeldekort,
 } from "~/utils/types";
 
-import { logger } from "./logger.server";
-
+/**
+ * Henter arbeidssøkerperioder for en person
+ */
 export async function hentArbeidssokerperioder(
   request: Request,
   personId: string,
 ): Promise<IArbeidssokerperiode[]> {
   const url = `${getEnv("DP_PERSONREGISTER_URL")}/arbeidssokerperioder/${personId}`;
 
-  try {
-    const response = await fetch(url, {
+  return httpRequest<IArbeidssokerperiode[]>(
+    url,
+    {
       method: "GET",
       headers: await getHeaders({ request, audience: DP_PERSONREGISTER_AUDIENCE }),
-    });
-
-    if (!response.ok) {
-      throw new Response(`Feil ved henting av arbeidssokerperioder for person med ID ${personId}`, {
-        status: response.status,
-        statusText: response.statusText,
-      });
-    }
-
-    const arbeidssokerperioder: IArbeidssokerperiode[] = await response.json();
-
-    return arbeidssokerperioder;
-  } catch (error) {
-    const errorId = uuidv7();
-
-    if (error instanceof Response) {
-      logger.error(error.statusText, { errorId });
-      throw Response.json(
-        { errorId, message: error.statusText },
-        { status: error.status, statusText: error.statusText },
-      );
-    }
-
-    const melding = `Feil ved henting av arbeidssokerperioder for person med ID ${personId}: ${error}`;
-    logger.error(melding, { errorId });
-    throw Response.json({ errorId, message: melding }, { status: 500 });
-  }
+    },
+    "Henting av arbeidssokerperioder",
+    { personId },
+  );
 }
 
+/**
+ * Henter meldekort for en person
+ */
 export async function hentRapporteringsperioder(
   request: Request,
   personId: string,
 ): Promise<IRapporteringsperiode[]> {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort`;
+  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort`;
 
-  try {
-    const response = await fetch(url, {
+  // Legg til demo params fra original request (for testing/demo-miljø)
+  const demoParams = getDemoParams(request);
+  const url = new URL(baseUrl);
+  Object.entries(demoParams).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+
+  const rapporteringsperioder = await httpRequest<IRapporteringsperiode[]>(
+    url.toString(),
+    {
       method: "GET",
       headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
-    });
+    },
+    "Henting av rapporteringsperioder",
+    { personId },
+  );
 
-    if (!response.ok) {
-      throw new Response(
-        `Feil ved henting av rapporteringsperioder for person med ID ${personId}`,
-        {
-          status: response.status,
-          statusText: response.statusText,
-        },
-      );
-    }
-
-    const rapporteringsperioder: IRapporteringsperiode[] = await response.json();
-
-    return rapporteringsperioder.sort(sorterMeldekort);
-  } catch (error) {
-    const errorId = uuidv7();
-
-    if (error instanceof Response) {
-      logger.error(error.statusText, { errorId });
-      throw Response.json(
-        { errorId, message: error.statusText },
-        { status: error.status, statusText: error.statusText },
-      );
-    }
-
-    const melding = `Feil ved henting av rapporteringsperioder for person med ID ${personId}: ${error}`;
-    logger.error(melding, { errorId });
-    throw Response.json({ errorId, message: melding }, { status: 500 });
-  }
+  return rapporteringsperioder.sort(sorterMeldekort);
 }
 
+/**
+ * Henter et spesifikt meldekort for en person
+ */
 export async function hentPeriode<T extends IRapporteringsperiode>(
   request: Request,
   personId: string,
   periodeId: string,
 ): Promise<T> {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periodeId}`;
+  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periodeId}`;
 
-  try {
-    const response = await fetch(url, {
+  // Legg til demo params fra original request (for testing/demo-miljø)
+  const demoParams = getDemoParams(request);
+  const url = new URL(baseUrl);
+  Object.entries(demoParams).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+
+  return httpRequest<T>(
+    url.toString(),
+    {
       method: "GET",
       headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
-    });
-
-    if (!response.ok) {
-      throw new Response(
-        `Feil ved henting av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}`,
-        {
-          status: response.status,
-          statusText: response.statusText,
-        },
-      );
-    }
-
-    const rapporteringsperiode: T = await response.json();
-
-    return rapporteringsperiode;
-  } catch (error) {
-    const errorId = uuidv7();
-    const message = `Feil ved henting av rapporteringsperiode med ID ${periodeId} for person med ID ${personId}: ${error}`;
-
-    if (error instanceof Response) {
-      logger.error(message, { errorId });
-      throw Response.json(
-        { errorId, message: error.statusText },
-        { status: error.status, statusText: error.statusText },
-      );
-    }
-
-    logger.error(message, { errorId });
-    throw Response.json({ errorId, message }, { status: 500 });
-  }
+    },
+    "Henting av rapporteringsperiode",
+    { personId, periodeId },
+  );
 }
 
-type OppdaterPeriodeProps = {
+/**
+ * Oppdaterer et meldekort for en person
+ */
+export async function oppdaterPeriode({
+  periode,
+  personId,
+  request,
+}: {
   periode: ISendInnMeldekort;
   personId: string;
   request: Request;
-};
+}) {
+  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}`;
 
-export async function oppdaterPeriode({ periode, personId, request }: OppdaterPeriodeProps) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}`;
+  // Legg til demo params fra original request (for testing/demo-miljø)
+  const demoParams = getDemoParams(request);
+  const url = new URL(baseUrl);
+  Object.entries(demoParams).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
 
-  try {
-    const response = await fetch(url, {
+  await httpRequest(
+    url.toString(),
+    {
       method: "POST",
       headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
       body: JSON.stringify(periode),
-    });
-
-    if (!response.ok) {
-      throw new Response(
-        `Feil ved oppdatering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}`,
-        {
-          status: response.status,
-          statusText: response.statusText,
-        },
-      );
-    }
-
-    return Promise.resolve();
-  } catch (error) {
-    const errorId = uuidv7();
-    const message = `Feil ved oppdatering av rapporteringsperiode med ID ${periode.id} for person med ID ${personId}: ${error}`;
-
-    if (error instanceof Response) {
-      logger.error(message, { errorId });
-      throw Response.json(
-        { errorId, message: error.statusText },
-        { status: error.status, statusText: error.statusText },
-      );
-    }
-
-    logger.error(message, { errorId });
-    throw Response.json({ errorId, message }, { status: 500 });
-  }
+    },
+    "Oppdatering av rapporteringsperiode",
+    { personId, periodeId: periode.id },
+  );
 }
 
-type KorrigerPeriodeProps = {
+/**
+ * Korrigerer et meldekort for en person
+ */
+export async function korrigerPeriode({
+  periode,
+  personId,
+  request,
+}: {
   periode: IKorrigerMeldekort;
   personId: string;
   request: Request;
-};
+}) {
+  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.originalMeldekortId}/korriger`;
 
-export async function korrigerPeriode({ periode, personId, request }: KorrigerPeriodeProps) {
-  const url = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.originalMeldekortId}/korriger`;
+  // Legg til demo params fra original request (for testing/demo-miljø)
+  const demoParams = getDemoParams(request);
+  const url = new URL(baseUrl);
+  Object.entries(demoParams).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
 
-  try {
-    const response = await fetch(url, {
+  const responseData = await httpRequest<{ id?: string }>(
+    url.toString(),
+    {
       method: "POST",
       headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
       body: JSON.stringify(periode),
-    });
+    },
+    "Korrigering av rapporteringsperiode",
+    { personId, originalMeldekortId: periode.originalMeldekortId },
+  );
 
-    if (!response.ok) {
-      throw new Response(
-        `Feil ved korrigering av rapporteringsperiode med ID ${periode.originalMeldekortId} for person med ID ${personId}`,
-        {
-          status: response.status,
-          statusText: response.statusText,
-        },
-      );
-    }
-
-    // Return the new corrected period ID if available
-    try {
-      const responseData = await response.json();
-      return responseData?.id || null;
-    } catch {
-      return null;
-    }
-  } catch (error) {
-    const errorId = uuidv7();
-    const message = `Feil ved korrigering av rapporteringsperiode med ID ${periode.originalMeldekortId} for person med ID ${personId}: ${JSON.stringify(error)}`;
-
-    if (error instanceof Response) {
-      logger.error(message, { errorId });
-      throw Response.json(
-        { errorId, message: error.statusText },
-        { status: error.status, statusText: error.statusText },
-      );
-    }
-
-    logger.error(message, { errorId });
-    throw Response.json({ errorId, message }, { status: 500 });
-  }
+  return responseData?.id || null;
 }

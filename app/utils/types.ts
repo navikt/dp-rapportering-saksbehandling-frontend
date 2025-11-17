@@ -37,6 +37,19 @@ interface INetworkResponseError {
 
 export type INetworkResponse<T = void> = INetworkResponseSuccess<T> | INetworkResponseError;
 
+/**
+ * Brukes av backend for standardisert feilhåndtering
+ */
+export interface IHttpProblem {
+  type: string;
+  title: string;
+  status: number;
+  detail?: string;
+  instance: string;
+  errorType?: string;
+  correlationId: string;
+}
+
 export type TAktivitetType = (typeof AKTIVITET_TYPE)[keyof typeof AKTIVITET_TYPE];
 
 export type TRapporteringsperiodeStatus =

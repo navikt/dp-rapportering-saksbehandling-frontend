@@ -66,7 +66,7 @@ export function MeldekortListe({ perioder, personId, ansvarligSystem, variant }:
                 ansvarligSystem={ansvarligSystem}
                 togglePlacement={togglePlacement}
                 variant={variant}
-                // allePerioder={perioder}
+                allePerioder={perioder}
               />
             );
           })}

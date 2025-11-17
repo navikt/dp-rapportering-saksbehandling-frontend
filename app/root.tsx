@@ -1,7 +1,7 @@
 import "./app.css";
 import "@navikt/ds-css";
 
-import { BodyShort, Box, Heading, Link, List, Page } from "@navikt/ds-react";
+import { BodyShort, Box, Heading, Page } from "@navikt/ds-react";
 import {
   isRouteErrorResponse,
   Links,
@@ -16,13 +16,29 @@ import { uuidv7 } from "uuidv7";
 
 import type { Route } from "./+types/root";
 import Header from "./components/header/Header";
+import { VariantSwitcher } from "./components/variant-switcher/VariantSwitcher";
 import { EnvProvider } from "./context/env-context";
+import { NavigationWarningProvider } from "./context/navigation-warning-context";
 import { SaksbehandlerProvider } from "./context/saksbehandler-context";
+import { ToastProvider } from "./context/toast-context";
 import { getSessionId } from "./mocks/session";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { getEnv, isLocalOrDemo } from "./utils/env.utils";
 
 export async function loader({ request }: Route.LoaderArgs) {
+  // Sjekk for demo 404-page simulering
+  const url = new URL(request.url);
+  const demoStatus = url.searchParams.get("status");
+  if (demoStatus === "404-page") {
+    throw new Response(
+      JSON.stringify({
+        message: "Siden du prøver å nå eksisterer ikke",
+        errorId: "demo-404-page-error",
+      }),
+      { status: 404, statusText: "Not Found" },
+    );
+  }
+
   const saksbehandler = await hentSaksbehandler(request);
 
   if (getEnv("NODE_ENV") !== "test" && isLocalOrDemo) {
@@ -103,10 +119,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <EnvProvider env={env}>
           <SaksbehandlerProvider>
-            {saksbehandler && <Header saksbehandler={saksbehandler} />}
-            {children}
-            <ScrollRestoration />
-            <Scripts />
+            <NavigationWarningProvider>
+              <ToastProvider>
+                {saksbehandler && <Header saksbehandler={saksbehandler} />}
+                {children}
+                <ScrollRestoration />
+                <Scripts />
+              </ToastProvider>
+            </NavigationWarningProvider>
           </SaksbehandlerProvider>
         </EnvProvider>
       </body>
@@ -121,43 +141,67 @@ export default function App() {
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let title: string = "Det har skjedd en feil";
   let description: string = "Vi beklager, men noe gikk galt.";
+  let detail: string | undefined = undefined;
+  let errorId: string | undefined = undefined;
   let stack: string | undefined = undefined;
 
   if (isRouteErrorResponse(error)) {
-    const { errorId, message } = error.data as { errorId: string; message: string };
+    const errorData = error.data as {
+      errorId?: string;
+      correlationId?: string;
+      message?: string;
+      error?: string;
+      detail?: string;
+      details?: string;
+    };
 
     title =
       error.status === 404
         ? "Siden du leter etter eksisterer ikke"
         : "Beklager, det har skjedd en feil";
-    description = `${message ?? description} ${errorId ? `Om du trenger hjelp kan du oppgi feil-ID ${errorId}.` : ""}`;
+    // Støtt både 'message' og 'error' som hovedmelding
+    description = errorData.message || errorData.error || description;
+    // Støtt både 'detail' og 'details' som detaljmelding
+    detail = errorData.detail || errorData.details;
+    // Støtt både 'errorId' og 'correlationId'
+    errorId = errorData.errorId || errorData.correlationId;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     description = error.message;
     stack = error.stack;
   }
 
-  return (
-    <Page.Block as="main" width="xl" gutters id="main-content">
-      <Box paddingBlock="20 16" data-aksel-template="404-v2">
-        <div>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
-          <BodyShort>{description}</BodyShort>
-          <List>
-            <List.Item>Bruk gjerne søket eller menyen</List.Item>
-            <List.Item>
-              <Link href="/">Gå til forsiden</Link>
-            </List.Item>
-          </List>
+  // Sjekk om vi er i demo-miljø (MSW aktivert)
+  // getEnv bruker import.meta.env som fallback, så det fungerer selv utenfor EnvProvider
+  const isDemoMode = getEnv("USE_MSW") === "true";
 
-          {stack && (
-            <pre>
-              <code>{stack}</code>
-            </pre>
-          )}
-        </div>
-      </Box>
-    </Page.Block>
+  return (
+    <>
+      <Page.Block as="main" width="xl" gutters id="main-content">
+        <Box paddingBlock="20 16" data-aksel-template="404-v2">
+          <div>
+            {isDemoMode && (
+              <div style={{ position: "fixed", top: "5rem", right: "1rem", zIndex: 1000 }}>
+                <VariantSwitcher />
+              </div>
+            )}
+            <Heading level="1" size="large" spacing>
+              {title}
+            </Heading>
+            <BodyShort spacing>{description}</BodyShort>
+            {detail && <BodyShort spacing>{detail}</BodyShort>}
+            {errorId && (
+              <BodyShort size="small">
+                Om du trenger hjelp kan du oppgi feil-ID: {errorId}
+              </BodyShort>
+            )}
+            {stack && (
+              <pre style={{ marginTop: "2rem", padding: "1rem", background: "#f5f5f5" }}>
+                <code>{stack}</code>
+              </pre>
+            )}
+          </div>
+        </Box>
+      </Page.Block>
+    </>
   );
 }

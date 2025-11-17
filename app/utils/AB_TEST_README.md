@@ -1,23 +1,48 @@
-# ABC Testing System
+# AB Testing System
 
-Dette er et fleksibelt ABC-testing system for demo-miljøet som lar oss teste ulike UI-varianter side-om-side.
+Dette er et fleksibelt AB-testing system for demo-miljøet som lar oss teste ulike UI-varianter side-om-side.
 
 ## Oversikt
 
-ABC-testing systemet lar deg teste ulike UI-varianter i demo-miljøet ved å legge til `?variant=A/B/C` i URL-en.
+AB-testing systemet lar deg teste ulike UI-varianter i demo-miljøet. Varianter kan velges på to måter:
+1. Via lenker på forsiden (`/`) som automatisk legger til `?variant=A` eller `?variant=B` i URL-en
+2. Ved å legge til `?variant=A/B` manuelt i URL-en
 
 **Varianter:**
 
-- **Standard (ingen query param)** - Original layout
-- **Variant A** (`?variant=A`) - Identisk med standard
-- **Variant B** (`?variant=B`) - Alternativ UI-variant
-- **Variant C** (`?variant=C`) - Alternativ UI-variant
+- **Standard (ingen query param)** - Original layout (samme som Variant A)
+- **Variant A** (`?variant=A`) - Standardversjon av grensesnittet
+- **Variant B** (`?variant=B`) - Alternativ UI-variant for testing
 
 **Viktig:**
 
 - Kun aktivt i demo-miljø (dev/prod returnerer alltid `null`)
 - Variant A og "ingen variant" bruker samme kode/styling
 - Hver variant kan ha egne CSS-filer og/eller betinget rendering-logikk
+
+## Demo-forsiden
+
+I demo-miljøet viser forsiden (`/`) en liste over testpersoner. For hver person vises to lenker:
+
+```typescript
+// app/routes/_index.tsx
+{data.personer.flatMap((person) => [
+  <LinkCard key={`${person.id}-A`}>
+    <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=A`}>
+      {navn}
+    </LinkCard.Anchor>
+    <LinkCard.Description>Variant A</LinkCard.Description>
+  </LinkCard>,
+  <LinkCard key={`${person.id}-B`}>
+    <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=B`}>
+      {navn}
+    </LinkCard.Anchor>
+    <LinkCard.Description>Variant B</LinkCard.Description>
+  </LinkCard>,
+])}
+```
+
+Dette gjør det enkelt å åpne samme testperson i ulike varianter for sammenligning.
 
 ## Hvordan det fungerer
 
@@ -151,10 +176,10 @@ app/components/tabeller/kalender/
 ## URL-struktur
 
 ```
-/person/123/perioder              → Ingen variant (null)
-/person/123/perioder?variant=A    → Ingen variant (null)
-/person/123/perioder?variant=B    → Variant B
-/person/123/perioder?variant=C    → Variant C
+/                                 → Demo-forsiden med liste over testpersoner
+/person/123/perioder              → Ingen variant (null, bruker standard)
+/person/123/perioder?variant=A    → Variant A (standard)
+/person/123/perioder?variant=B    → Variant B (alternativ UI)
 ```
 
 ## VariantSwitcher komponenten
@@ -171,37 +196,44 @@ import { VariantSwitcher } from "~/components/variant-switcher/VariantSwitcher";
 Komponenten:
 
 - Leser current variant fra URL
-- Lar brukeren bytte mellom Standard/B/C
+- Lar brukeren bytte mellom Standard/A/B
 - Oppdaterer URL med ny variant
+- Gjør det enkelt å sammenligne varianter uten å gå tilbake til forsiden
 
 ## Miljø
 
-- **Demo**: ABC-testing er aktivt, `getABTestVariant()` returnerer variant fra URL eller `null`
-- **Dev/Prod**: ABC-testing er deaktivert, `getABTestVariant()` returnerer alltid `null`
+- **Demo** (MSW aktivert): AB-testing er aktivt, `getABTestVariant()` returnerer variant fra URL eller `null`
+  - Forsiden viser liste over testpersoner med lenker til Variant A og B
+  - VariantSwitcher vises for å bytte mellom varianter
+- **Dev/Prod**: AB-testing er deaktivert, `getABTestVariant()` returnerer alltid `null`
+  - Demo-forsiden vises ikke
+  - Kun standard UI brukes
 
 ## Utilities
 
-### `getABTestVariant(request: Request): ABTestVariant`
+### AB Test utilities (ab-test.server.ts / ab-test.utils.ts)
+
+#### `getABTestVariant(request: Request): ABTestVariant`
 
 Henter variant fra URL query parameter. Kun aktivt i demo-miljø.
 
 ```typescript
 const variant = getABTestVariant(request);
-// Returnerer "A" | "B" | "C" | null
+// Returnerer "A" | "B" | null
 ```
 
-### `getTogglePlacement(variant: ABTestVariant): TogglePlacement`
+#### `getTogglePlacement(variant: ABTestVariant): TogglePlacement`
 
 Bestemmer om toggle skal være på venstre eller høyre side.
 
 ```typescript
 const placement = getTogglePlacement(variant);
-// Returnerer "left" (standard, A, C) eller "right" (B)
+// Returnerer "left" (standard, A) eller "right" (B)
 ```
 
-### `isABTestingEnabled(): boolean`
+#### `isABTestingEnabled(): boolean`
 
-Sjekker om ABC-testing er aktivert (dvs. om vi er i demo-miljø).
+Sjekker om AB-testing er aktivert (dvs. om vi er i demo-miljø).
 
 ```typescript
 if (isABTestingEnabled()) {
@@ -209,7 +241,7 @@ if (isABTestingEnabled()) {
 }
 ```
 
-### `buildVariantURL(baseURL: string, variant: ABTestVariant): string`
+#### `buildVariantURL(baseURL: string, variant: ABTestVariant): string`
 
 Bygger URL med variant query parameter.
 
@@ -217,6 +249,69 @@ Bygger URL med variant query parameter.
 const url = buildVariantURL("/person/123/perioder", "B");
 // Returnerer "/person/123/perioder?variant=B"
 ```
+
+### Demo params utilities (demo-params.utils.ts)
+
+Disse utilities håndterer automatisk propagering av demo-parametere (som `variant`) gjennom navigasjon og redirects.
+
+#### `getDemoParams(url: string | URL | Request): Record<string, string>`
+
+Henter alle demo-relevante query params fra en URL.
+
+```typescript
+const params = getDemoParams(request);
+// Returnerer { variant: "B" } hvis URL er /person/123?variant=B
+```
+
+#### `addDemoParamsToURL(targetUrl: URL, sourceUrl?: string | URL | Request): void`
+
+Legger til alle demo params fra source URL til target URL. Brukes i redirects for å bevare variant.
+
+```typescript
+// I en action function
+const url = new URL(`/person/${personId}/perioder`, request.url);
+addDemoParamsToURL(url, request); // Bevarer ?variant=B fra request
+return redirect(url.pathname + url.search);
+```
+
+#### `buildURLWithDemoParams(path: string, additionalParams?: Record<string, string>): string`
+
+Lager en URL med demo params fra current context. Brukes i Link-komponenter.
+
+```typescript
+// I en komponent
+const href = buildURLWithDemoParams(`/person/${personId}/periode/${periodeId}/fyll-ut`);
+// Automatisk legger til ?variant=B hvis det er i current URL
+```
+
+#### `getVariant(url: string | URL | Request): ABTestVariant`
+
+Type-safe getter for variant parameter.
+
+```typescript
+const variant = getVariant(request);
+// Returnerer "A" | "B" | null
+```
+
+### Hvorfor demo-params utilities?
+
+Før disse utilities ble lagt til, måtte vi manuelt propagere `variant` parameter i hver redirect og link. Dette var feilutsatt og lett å glemme.
+
+**Før:**
+```typescript
+// Måtte manuelt legge til variant i hver redirect
+return redirect(`/person/${personId}/perioder?variant=${variant}`);
+```
+
+**Etter:**
+```typescript
+// Automatisk propagering av alle demo params
+const url = new URL(`/person/${personId}/perioder`, request.url);
+addDemoParamsToURL(url, request);
+return redirect(url.pathname + url.search);
+```
+
+Dette sikrer at variant-parameter aldri går tapt når brukere navigerer rundt i applikasjonen.
 
 ## Legge til en ny variant
 

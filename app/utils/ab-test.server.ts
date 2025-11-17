@@ -1,7 +1,7 @@
 import type { ABTestVariant } from "./ab-test.utils";
 
 export type { ABTestVariant, TogglePlacement } from "./ab-test.utils";
-export { getTogglePlacement } from "./ab-test.utils";
+export { buildVariantURL, getTogglePlacement } from "./ab-test.utils";
 
 /**
  * Henter AB-test variant fra URL query params.
@@ -29,22 +29,16 @@ export function getABTestVariant(request: Request): ABTestVariant {
 
 /**
  * Sjekker om AB-testing er aktivert (dvs. om vi er i demo-miljø)
+ * @deprecated Bruk isDemoToolsEnabled() for bredere kontekst
  */
 export function isABTestingEnabled(): boolean {
   return process.env.RUNTIME_ENVIRONMENT === "demo";
 }
 
 /**
- * Bygger URL med variant query parameter
+ * Sjekker om demo-verktøy er aktivert (AB-testing, feilsimulering, etc.)
+ * Dette er alias for isABTestingEnabled() men med mer beskrivende navn
  */
-export function buildVariantURL(baseURL: string, variant: ABTestVariant): string {
-  const url = new URL(baseURL, "http://dummy.com"); // Dummy base for relative URLs
-
-  if (variant) {
-    url.searchParams.set("variant", variant);
-  } else {
-    url.searchParams.delete("variant");
-  }
-
-  return url.pathname + url.search;
+export function isDemoToolsEnabled(): boolean {
+  return process.env.RUNTIME_ENVIRONMENT === "demo";
 }

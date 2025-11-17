@@ -2,6 +2,7 @@ import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
 import { useLayoutEffect, useRef, useState } from "react";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
+import { buildVariantURL } from "~/utils/ab-test.utils";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -105,7 +106,10 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null
   const erSaksbehandler = erKildeSaksbehandler(periode);
   const useVariantLabels = variant === "B" || variant === "C";
 
-  const korrigerUrl = `/person/${personId}/periode/${periode.id}/korriger${variant ? `?variant=${variant}` : ""}`;
+  const korrigerUrl = buildVariantURL(
+    `/person/${personId}/periode/${periode.id}/korriger`,
+    variant ?? null,
+  );
 
   const formatDato = (dato: string) =>
     formatterDato({

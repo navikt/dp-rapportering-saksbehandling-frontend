@@ -36,31 +36,29 @@ export default function Rapportering() {
               Gå til løsningen:
             </Heading>
             <VStack gap="3">
-              {data.personer.map((person) => {
+              {data.personer.flatMap((person) => {
                 const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
                   person.etternavn
                 }`;
 
-                return (
-                  <>
-                    <LinkCard key={`${person.id}-A`}>
-                      <LinkCard.Title>
-                        <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=A`}>
-                          {navn}
-                        </LinkCard.Anchor>
-                      </LinkCard.Title>
-                      <LinkCard.Description>Variant A</LinkCard.Description>
-                    </LinkCard>
-                    <LinkCard key={`${person.id}-B`}>
-                      <LinkCard.Title>
-                        <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=B`}>
-                          {navn}
-                        </LinkCard.Anchor>
-                      </LinkCard.Title>
-                      <LinkCard.Description>Variant B</LinkCard.Description>
-                    </LinkCard>
-                  </>
-                );
+                return [
+                  <LinkCard key={`${person.id}-A`}>
+                    <LinkCard.Title>
+                      <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=A`}>
+                        {navn}
+                      </LinkCard.Anchor>
+                    </LinkCard.Title>
+                    <LinkCard.Description>Variant A</LinkCard.Description>
+                  </LinkCard>,
+                  <LinkCard key={`${person.id}-B`}>
+                    <LinkCard.Title>
+                      <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=B`}>
+                        {navn}
+                      </LinkCard.Anchor>
+                    </LinkCard.Title>
+                    <LinkCard.Description>Variant B</LinkCard.Description>
+                  </LinkCard>,
+                ];
               })}
             </VStack>
           </VStack>

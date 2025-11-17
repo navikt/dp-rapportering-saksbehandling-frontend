@@ -1,6 +1,6 @@
 import type { IEnv } from "./types";
 
-// Client-side environment cache - populated by EnvProvider during hydration
+// Client side environment cache - populeres av EnvProvider under hydration
 let clientEnv: Partial<IEnv> = {};
 
 export function setClientEnv(env: Partial<IEnv>) {
@@ -8,7 +8,7 @@ export function setClientEnv(env: Partial<IEnv>) {
 }
 
 function getEnvVariables() {
-  // Server-side or test environment
+  // Server side eller test-miljø
   if (
     typeof window === "undefined" ||
     (typeof process !== "undefined" && process?.env.NODE_ENV === "test")
@@ -16,8 +16,13 @@ function getEnvVariables() {
     return process.env;
   }
 
-  // Client-side: use cached env from context
-  return clientEnv;
+  // Client side: bruk cached env fra context, med import.meta.env som fallback
+  // import.meta.env er alltid tilgjengelig på klient, også utenfor EnvProvider context
+  // EnvProvider er fortsatt nyttig for runtime config og for å eksplisitt definere hvilke verdier som er safe å eksponere
+  return {
+    ...import.meta.env,
+    ...clientEnv, // clientEnv overstyrer import.meta.env hvis tilgjengelig (for runtime verdier)
+  };
 }
 
 export function getEnv<T>(key: keyof IEnv): T {

@@ -147,7 +147,7 @@ describe("MeldekortRad", () => {
       expect(screen.getByText("Innsendt")).toBeInTheDocument();
     });
 
-    it("skal vise 'Korrigert' tag når periode er korrigert", () => {
+    it("skal vise 'Korrigering' tag når periode er korrigert", () => {
       renderInTable(
         <MeldekortRad
           periode={{
@@ -159,15 +159,15 @@ describe("MeldekortRad", () => {
         />,
       );
 
-      expect(screen.getByText("Korrigert")).toBeInTheDocument();
+      expect(screen.getByText("Korrigering")).toBeInTheDocument();
     });
 
-    it("skal ikke vise 'Korrigert' tag når periode ikke er korrigert", () => {
+    it("skal ikke vise 'Korrigering' tag når periode ikke er korrigert", () => {
       renderInTable(
         <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
       );
 
-      expect(screen.queryByText("Korrigert")).not.toBeInTheDocument();
+      expect(screen.queryByText("Korrigering")).not.toBeInTheDocument();
     });
   });
 

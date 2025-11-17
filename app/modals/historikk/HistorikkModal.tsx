@@ -49,7 +49,13 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
   const sortedYears = sortYearsDescending(hendelserEtterAar);
 
   return (
-    <Modal open={open} onClose={onClose} aria-labelledby="historikk-heading" closeOnBackdropClick>
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="historikk-heading"
+      closeOnBackdropClick
+      portal
+    >
       <Modal.Header>
         <Heading level="2" size="small" id="historikk-heading">
           Historikk

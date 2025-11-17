@@ -65,6 +65,27 @@
   transition: background-color 0.2s ease-out;
 }
 
+/* Mykere animasjon på innholdet når rad åpnes */
+:global(.navds-table__expanded-row-content) {
+  transition: all 0.5s ease-in-out;
+}
+
+/* Fade in animasjon for expanded row content */
+:global(.navds-table__expandable-row--open) :global(.navds-table__expanded-row-content) {
+  animation: expandFadeIn 0.6s ease-out;
+}
+
+@keyframes expandFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Override hover/selected states for expanded rows */
 :global(.navds-table__expandable-row--open:hover),
 :global(.navds-table__row--shade-on-hover.navds-table__expandable-row--open):hover,
@@ -148,5 +169,24 @@
   }
   100% {
     background-color: transparent;
+  }
+}
+
+/* Enklere animasjon for brukere som foretrekker redusert bevegelse */
+@media (prefers-reduced-motion: reduce) {
+  .periodeListe__row--highlighted {
+    animation: highlightSimple 3.6s ease-out;
+  }
+
+  @keyframes highlightSimple {
+    0% {
+      background-color: var(--a-blue-100);
+    }
+    50% {
+      background-color: var(--a-blue-100);
+    }
+    100% {
+      background-color: transparent;
+    }
   }
 }

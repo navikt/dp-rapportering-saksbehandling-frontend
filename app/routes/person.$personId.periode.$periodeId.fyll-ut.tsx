@@ -1,7 +1,5 @@
 import {
-  Alert,
   BodyLong,
-  BodyShort,
   Button,
   DatePicker,
   Heading,
@@ -16,13 +14,13 @@ import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 
 import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
+import { useToast } from "~/context/toast-context";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/styles/route-styles/fyllUt.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
-import { addVariantToURL } from "~/utils/ab-test.utils";
 import {
   MELDEKORT_TYPE,
   MODAL_ACTION_TYPE,
@@ -31,6 +29,7 @@ import {
   ROLLE,
 } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import { addDemoParamsToURL, buildURLWithDemoParams } from "~/utils/demo-params.utils";
 import {
   type IKorrigertDag,
   konverterTimerFraISO8601Varighet,
@@ -55,6 +54,7 @@ export default function FyllUtPeriode() {
   const navigate = useNavigate();
   const { periode, saksbehandler, personId, variant } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
+  const { showSuccess, showError } = useToast();
 
   const isMountedRef = useRef(true);
 
@@ -70,13 +70,30 @@ export default function FyllUtPeriode() {
     };
   }, []);
 
-  // Håndter navigation etter vellykket submit
+  // Håndter suksess eller feil etter submit
   useEffect(() => {
-    if (fetcher.state === "idle" && fetcher.data && !fetcher.data.error && isMountedRef.current) {
-      // Fetcher har fullført uten feil
-      // React Router håndterer redirect automatisk
+    if (fetcher.state === "idle" && fetcher.data && isMountedRef.current) {
+      if (fetcher.data.error) {
+        // Vis error toast med detaljert informasjon
+        const title = fetcher.data.title || "Innsending feilet";
+        let message = fetcher.data.detail;
+        if (fetcher.data.correlationId) {
+          message = message
+            ? `${message}\n\nFeil-ID: ${fetcher.data.correlationId}`
+            : `Feil-ID: ${fetcher.data.correlationId}`;
+        }
+        showError(title, message);
+      } else if (fetcher.data.success) {
+        // Vis toast først, deretter naviger
+        showSuccess("Meldekortet ble sendt inn");
+        setTimeout(() => {
+          if (isMountedRef.current) {
+            navigate(fetcher.data.redirectUrl);
+          }
+        }, 500); // Kort delay slik at toast rekker å vises
+      }
     }
-  }, [fetcher.state, fetcher.data]);
+  }, [fetcher.state, fetcher.data, showSuccess, showError, navigate]);
 
   const handleSubmit = () => {
     // For etterregistrerte meldekort, sett alltid registrertArbeidssoker til true
@@ -103,21 +120,21 @@ export default function FyllUtPeriode() {
       opprettetAv: periode.opprettetAv,
     };
 
+    const actionUrl = new URL("/api/rapportering", window.location.origin);
+    addDemoParamsToURL(actionUrl);
+
     fetcher.submit(
       { rapporteringsperiode: JSON.stringify(oppdatertPeriode), personId },
-      { method: "post", action: "/api/rapportering" },
+      { method: "post", action: actionUrl.pathname + actionUrl.search },
     );
   };
 
   const handleCancel = () => {
-    const url = new URL(`/person/${personId}/perioder`, window.location.origin);
-    url.searchParams.set(
-      QUERY_PARAMS.AAR,
-      new Date(periode.periode.fraOgMed).getFullYear().toString(),
-    );
-    url.searchParams.set(QUERY_PARAMS.RAPPORTERINGSID, periode.id);
-    addVariantToURL(url, variant);
-    navigate(url.pathname + url.search);
+    const cancelUrl = buildURLWithDemoParams(`/person/${personId}/perioder`, {
+      [QUERY_PARAMS.AAR]: new Date(periode.periode.fraOgMed).getFullYear().toString(),
+      [QUERY_PARAMS.RAPPORTERINGSID]: periode.id,
+    });
+    navigate(cancelUrl);
   };
 
   const skjema = useMeldekortSkjema({
@@ -140,22 +157,12 @@ export default function FyllUtPeriode() {
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {fetcher.state === "submitting" && "Sender inn meldekort..."}
         {fetcher.state === "loading" && "Behandler meldekort..."}
+        {fetcher.state === "idle" && fetcher.data && fetcher.data.error && "Innsending feilet"}
         {fetcher.state === "idle" &&
           fetcher.data &&
           !fetcher.data.error &&
           "Meldekort sendt inn. Går tilbake til periodeoversikten..."}
-        {fetcher.data?.error && `Feil ved innsending: ${fetcher.data.error}`}
       </div>
-
-      {fetcher.data?.error && (
-        <Alert variant="error" className={styles.errorAlert} role="alert">
-          <Heading size="small">Feil ved innsending av meldekort</Heading>
-          <BodyShort>{fetcher.data.error}</BodyShort>
-          {fetcher.data.details && (
-            <BodyShort size="small">Detaljer: {fetcher.data.details}</BodyShort>
-          )}
-        </Alert>
-      )}
 
       <div className={skjemaClass}>
         <div className={styles.title}>
@@ -239,10 +246,20 @@ export default function FyllUtPeriode() {
           </div>
 
           <div className={styles.handlinger}>
-            <Button variant="secondary" size="small" onClick={skjema.handlers.handleAvbryt}>
+            <Button
+              variant="secondary"
+              size="small"
+              onClick={skjema.handlers.handleAvbryt}
+              disabled={fetcher.state === "submitting"}
+            >
               Avbryt utfylling
             </Button>
-            <Button type="submit" variant="primary" size="small">
+            <Button
+              type="submit"
+              variant="primary"
+              size="small"
+              loading={fetcher.state === "submitting"}
+            >
               Send inn meldekort
             </Button>
           </div>

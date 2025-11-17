@@ -24,3 +24,19 @@ export function addVariantToURL(url: URL, variant: ABTestVariant): void {
     url.searchParams.set("variant", variant);
   }
 }
+
+/**
+ * Bygger URL med variant query parameter
+ * Kan brukes både på server og klient
+ */
+export function buildVariantURL(baseURL: string, variant: ABTestVariant): string {
+  const url = new URL(baseURL, "http://dummy.com"); // Dummy base for relative URLs
+
+  if (variant) {
+    url.searchParams.set("variant", variant);
+  } else {
+    url.searchParams.delete("variant");
+  }
+
+  return url.pathname + url.search;
+}
