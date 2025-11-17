@@ -183,6 +183,12 @@ describe("NumberInput.helpers", () => {
       expect(validerTimerInput("7.5").isValid).toBe(true);
       expect(validerTimerInput("10.5").isValid).toBe(true);
     });
+
+    it("skal validere 0 som under minimum", () => {
+      const result = validerTimerInput("0");
+      expect(result.isValid).toBe(false);
+      expect(result.errorMessage).toBe("Minimum 0.5 timer");
+    });
   });
 
   describe("inkrementerTimer", () => {

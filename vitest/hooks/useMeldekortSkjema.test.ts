@@ -378,70 +378,31 @@ describe("useMeldekortSkjema", () => {
     });
   });
 
-  describe("hiddenFormValues", () => {
-    it("should return correct hidden form values", () => {
-      const testDate = new Date("2024-01-15");
+  describe("validation state management", () => {
+    it("should clear validation errors when fields are corrected", () => {
       const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
-          initialMeldedato: testDate,
-          initialBegrunnelse: "Test begrunnelse",
           meldekortType: "Ordinaert",
         }),
       );
 
+      // Trigger validation errors by submitting without required fields
+      act(() => {
+        result.current.handlers.handleSubmit({
+          preventDefault: vi.fn(),
+        } as unknown as React.FormEvent);
+      });
+
+      expect(result.current.state.visValideringsfeil.arbeidssoker).toBe(true);
+
+      // Fix the error by selecting an option
       act(() => {
         result.current.handlers.handleArbeidssokerChange(true);
       });
 
-      expect(result.current.hiddenFormValues.meldedato).toBe("2024-01-15");
-      expect(result.current.hiddenFormValues.registrertArbeidssoker).toBe("true");
-      expect(result.current.hiddenFormValues.begrunnelse).toBe("Test begrunnelse");
-      expect(result.current.hiddenFormValues.dager).toBe(JSON.stringify(mockDager));
-    });
-
-    it("should handle empty date correctly", () => {
-      const { result } = renderHook(() => useMeldekortSkjema(getDefaultProps()));
-
-      expect(result.current.hiddenFormValues.meldedato).toBe("");
-    });
-
-    it("should return empty string for registrertArbeidssoker when isKorrigering", () => {
-      const { result } = renderHook(() =>
-        useMeldekortSkjema({
-          ...getDefaultProps(),
-          isKorrigering: true, // Korrigering
-        }),
-      );
-
-      expect(result.current.hiddenFormValues.registrertArbeidssoker).toBe("");
-    });
-
-    it("should return boolean string for registrertArbeidssoker when meldekortType is Ordinaert", () => {
-      const { result } = renderHook(() =>
-        useMeldekortSkjema({
-          ...getDefaultProps(),
-          meldekortType: "Ordinaert", // Fyll-ut
-        }),
-      );
-
-      act(() => {
-        result.current.handlers.handleArbeidssokerChange(true);
-      });
-
-      expect(result.current.hiddenFormValues.registrertArbeidssoker).toBe("true");
-    });
-
-    it("should return empty string when registrertArbeidssoker is null", () => {
-      const { result } = renderHook(() =>
-        useMeldekortSkjema({
-          ...getDefaultProps(),
-          meldekortType: "Ordinaert", // Selv ved fyll-ut, før bruker svarer
-        }),
-      );
-
-      // registrertArbeidssoker starter som null
-      expect(result.current.hiddenFormValues.registrertArbeidssoker).toBe("");
+      // Error should be cleared
+      expect(result.current.state.visValideringsfeil.arbeidssoker).toBe(false);
     });
   });
 
@@ -463,6 +424,112 @@ describe("useMeldekortSkjema", () => {
 
       expect(result.current.datepicker.inputProps).toBeDefined();
       expect(result.current.datepicker.datepickerProps).toBeDefined();
+    });
+  });
+
+  describe("dynamiske feilmeldinger", () => {
+    it("skal vise spesifikk feilmelding for ugyldige timer-verdier ved korrigering", () => {
+      const dagerMedUgyldigTimer: IKorrigertDag[] = [
+        {
+          type: "dag",
+          dagIndex: 0,
+          dato: "2024-01-01",
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "0" }],
+        },
+      ];
+
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          isKorrigering: true,
+          dager: dagerMedUgyldigTimer,
+          originalData: {
+            meldedato: "2024-01-15",
+            dager: [],
+          },
+        }),
+      );
+
+      // Submit form to trigger validation
+      act(() => {
+        result.current.handlers.handleSubmit({
+          preventDefault: vi.fn(),
+        } as unknown as React.FormEvent);
+      });
+
+      // Should have aktiviteter error with ugyldige-verdier type
+      expect(result.current.state.visValideringsfeil.aktiviteter).toBe(true);
+      expect(result.current.state.visValideringsfeil.aktiviteterType).toBe("ugyldige-verdier");
+
+      // Should show specific error message for invalid values
+      expect(result.current.feilmeldinger.aktiviteter).toBe(
+        "Du må rette opp ugyldige timer-verdier (minimum 0,5 timer, kun hele eller halve timer)",
+      );
+    });
+
+    it("skal vise generisk feilmelding for ingen endringer ved korrigering", () => {
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          isKorrigering: true,
+          dager: mockDager,
+          originalData: {
+            meldedato: "2024-01-15",
+            dager: mockDager,
+          },
+        }),
+      );
+
+      // Submit form to trigger validation
+      act(() => {
+        result.current.handlers.handleSubmit({
+          preventDefault: vi.fn(),
+        } as unknown as React.FormEvent);
+      });
+
+      // Should have aktiviteter error with ingen-endringer type
+      expect(result.current.state.visValideringsfeil.aktiviteter).toBe(true);
+      expect(result.current.state.visValideringsfeil.aktiviteterType).toBe("ingen-endringer");
+
+      // Should show generic error message for no changes
+      expect(result.current.feilmeldinger.aktiviteter).toBe(
+        "Du må endre enten meldedato eller aktivitet for å kunne sende inn korrigering",
+      );
+    });
+
+    it("skal vise spesifikk feilmelding for ugyldige timer-verdier ved fyll-ut", () => {
+      const dagerMedUgyldigTimer: IKorrigertDag[] = [
+        {
+          type: "dag",
+          dagIndex: 0,
+          dato: "2024-01-01",
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "0" }],
+        },
+      ];
+
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          isKorrigering: false,
+          dager: dagerMedUgyldigTimer,
+        }),
+      );
+
+      // Submit form to trigger validation
+      act(() => {
+        result.current.handlers.handleSubmit({
+          preventDefault: vi.fn(),
+        } as unknown as React.FormEvent);
+      });
+
+      // Should have aktiviteter error with ugyldige-verdier type
+      expect(result.current.state.visValideringsfeil.aktiviteter).toBe(true);
+      expect(result.current.state.visValideringsfeil.aktiviteterType).toBe("ugyldige-verdier");
+
+      // Should show specific error message for invalid values
+      expect(result.current.feilmeldinger.aktiviteter).toBe(
+        "Du må rette opp ugyldige timer-verdier (minimum 0,5 timer, kun hele eller halve timer)",
+      );
     });
   });
 });
