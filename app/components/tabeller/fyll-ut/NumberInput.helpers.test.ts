@@ -17,7 +17,7 @@ import {
 describe("NumberInput.helpers", () => {
   describe("Constants", () => {
     it("skal ha riktige konstantverdier", () => {
-      expect(MIN_TIMER).toBe(0.5);
+      expect(MIN_TIMER).toBe(0);
       expect(MAX_TIMER).toBe(24);
       expect(STEP_TIMER).toBe(0.5);
     });
@@ -77,9 +77,9 @@ describe("NumberInput.helpers", () => {
     });
 
     it("skal avvise verdi under minimum", () => {
-      const result = validerTimerGrenser(0.2);
+      const result = validerTimerGrenser(-0.5);
       expect(result.isValid).toBe(false);
-      expect(result.errorMessage).toBe("Minimum 0.5 timer");
+      expect(result.errorMessage).toBe("Minimum 0 timer");
     });
 
     it("skal avvise verdi over maksimum", () => {
@@ -88,16 +88,16 @@ describe("NumberInput.helpers", () => {
       expect(result.errorMessage).toBe("Maksimum 24 timer");
     });
 
-    it("skal avvise 0", () => {
+    it("skal godkjenne 0", () => {
       const result = validerTimerGrenser(0);
-      expect(result.isValid).toBe(false);
-      expect(result.errorMessage).toBe("Minimum 0.5 timer");
+      expect(result.isValid).toBe(true);
+      expect(result.errorMessage).toBeNull();
     });
 
     it("skal avvise negative tall", () => {
       const result = validerTimerGrenser(-1);
       expect(result.isValid).toBe(false);
-      expect(result.errorMessage).toBe("Minimum 0.5 timer");
+      expect(result.errorMessage).toBe("Minimum 0 timer");
     });
   });
 
@@ -154,9 +154,9 @@ describe("NumberInput.helpers", () => {
     });
 
     it("skal avvise tall under minimum", () => {
-      const result = validerTimerInput("0.2");
+      const result = validerTimerInput("-1");
       expect(result.isValid).toBe(false);
-      expect(result.errorMessage).toBe("Minimum 0.5 timer");
+      expect(result.errorMessage).toBe("Minimum 0 timer");
     });
 
     it("skal avvise tall over maksimum", () => {
@@ -182,7 +182,7 @@ describe("NumberInput.helpers", () => {
     });
 
     it("skal håndtere flere edge cases", () => {
-      expect(validerTimerInput("0").isValid).toBe(false); // Under minimum
+      expect(validerTimerInput("0").isValid).toBe(true); // 0 er nå tillatt
       expect(validerTimerInput("8").isValid).toBe(true); // Hele timer
       expect(validerTimerInput("8.5").isValid).toBe(true); // Halv time
       expect(validerTimerInput("8.25").isValid).toBe(false); // Ugyldig steg
@@ -231,10 +231,16 @@ describe("NumberInput.helpers", () => {
       expect(result.errorMessage).toBe("Kun hele eller halve timer (f.eks. 2 eller 2.5)");
     });
 
-    it("skal validere 0 som under minimum", () => {
+    it("skal godkjenne 0 som gyldig verdi", () => {
       const result = validerTimerInput("0");
-      expect(result.isValid).toBe(false);
-      expect(result.errorMessage).toBe("Minimum 0.5 timer");
+      expect(result.isValid).toBe(true);
+      expect(result.errorMessage).toBeNull();
+    });
+
+    it("skal godkjenne 0 med komma", () => {
+      const result = validerTimerInput("0,0");
+      expect(result.isValid).toBe(true);
+      expect(result.errorMessage).toBeNull();
     });
   });
 
@@ -254,7 +260,7 @@ describe("NumberInput.helpers", () => {
     });
 
     it("skal håndtere minimum verdi", () => {
-      expect(inkrementerTimer(MIN_TIMER)).toBe(1);
+      expect(inkrementerTimer(MIN_TIMER)).toBe(0.5);
     });
   });
 
@@ -262,11 +268,13 @@ describe("NumberInput.helpers", () => {
     it("skal redusere verdi med STEP", () => {
       expect(dekrementerTimer(8)).toBe(7.5);
       expect(dekrementerTimer(7.5)).toBe(7);
+      expect(dekrementerTimer(1)).toBe(0.5);
+      expect(dekrementerTimer(0.5)).toBe(0);
     });
 
     it("skal ikke gå under minimum", () => {
-      expect(dekrementerTimer(1)).toBe(0.5);
-      expect(dekrementerTimer(0.5)).toBe(0.5);
+      expect(dekrementerTimer(0)).toBe(0);
+      expect(dekrementerTimer(-1)).toBe(0);
     });
 
     it("skal håndtere maksimum verdi", () => {
@@ -293,12 +301,12 @@ describe("NumberInput.helpers", () => {
 
   describe("erVedMinimum", () => {
     it("skal returnere true når verdi er ved eller under minimum", () => {
-      expect(erVedMinimum(0.5)).toBe(true);
       expect(erVedMinimum(0)).toBe(true);
       expect(erVedMinimum(-1)).toBe(true);
     });
 
     it("skal returnere false når verdi er over minimum", () => {
+      expect(erVedMinimum(0.5)).toBe(false);
       expect(erVedMinimum(1)).toBe(false);
       expect(erVedMinimum(8)).toBe(false);
       expect(erVedMinimum(24)).toBe(false);
@@ -315,9 +323,9 @@ describe("NumberInput.helpers", () => {
         values.push(value);
       }
 
-      expect(values[0]).toBe(0.5);
+      expect(values[0]).toBe(0);
       expect(values[values.length - 1]).toBe(24);
-      expect(values.length).toBe(48); // (24 - 0.5) / 0.5 + 1
+      expect(values.length).toBe(49); // (24 - 0) / 0.5 + 1
     });
 
     it("skal håndtere komplett dekrement-syklus fra maks til min", () => {
@@ -330,8 +338,8 @@ describe("NumberInput.helpers", () => {
       }
 
       expect(values[0]).toBe(24);
-      expect(values[values.length - 1]).toBe(0.5);
-      expect(values.length).toBe(48);
+      expect(values[values.length - 1]).toBe(0);
+      expect(values.length).toBe(49);
     });
 
     it("skal validere alle steg fra min til maks", () => {

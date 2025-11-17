@@ -434,7 +434,7 @@ describe("useMeldekortSkjema", () => {
           type: "dag",
           dagIndex: 0,
           dato: "2024-01-01",
-          aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "0" }],
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "0.3" }],
         },
       ];
 
@@ -463,7 +463,7 @@ describe("useMeldekortSkjema", () => {
 
       // Should show specific error message for invalid values
       expect(result.current.feilmeldinger.aktiviteter).toBe(
-        "Du må rette opp ugyldige timer-verdier (minimum 0,5 timer, kun hele eller halve timer)",
+        "Du må rette opp ugyldige timer-verdier (minimum 0 timer, kun hele eller halve timer)",
       );
     });
 
@@ -503,7 +503,7 @@ describe("useMeldekortSkjema", () => {
           type: "dag",
           dagIndex: 0,
           dato: "2024-01-01",
-          aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "0" }],
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "0.3" }],
         },
       ];
 
@@ -528,7 +528,7 @@ describe("useMeldekortSkjema", () => {
 
       // Should show specific error message for invalid values
       expect(result.current.feilmeldinger.aktiviteter).toBe(
-        "Du må rette opp ugyldige timer-verdier (minimum 0,5 timer, kun hele eller halve timer)",
+        "Du må rette opp ugyldige timer-verdier (minimum 0 timer, kun hele eller halve timer)",
       );
     });
   });

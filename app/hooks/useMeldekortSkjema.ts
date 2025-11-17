@@ -235,7 +235,7 @@ export function useMeldekortSkjema({
   let aktivitetFeilmelding = baseFeilmeldinger.aktiviteter;
   if (visValideringsfeil.aktiviteterType === "ugyldige-verdier") {
     aktivitetFeilmelding =
-      "Du må rette opp ugyldige timer-verdier (minimum 0,5 timer, kun hele eller halve timer)";
+      "Du må rette opp ugyldige timer-verdier (minimum 0 timer, kun hele eller halve timer)";
   }
 
   const feilmeldinger = {

@@ -1,4 +1,4 @@
-export const MIN_TIMER = 0.5;
+export const MIN_TIMER = 0;
 export const MAX_TIMER = 24;
 export const STEP_TIMER = 0.5;
 
@@ -19,6 +19,7 @@ export function parseNorskDesimal(value: string): number {
 
 /**
  * Validerer at en tallverdi er innenfor gyldig område (MIN-MAX)
+ * Merk: 0 er tillatt i frontend, men vil filtreres bort før sending til backend
  */
 export function validerTimerGrenser(value: number): ValidationResult {
   if (value < MIN_TIMER) {
