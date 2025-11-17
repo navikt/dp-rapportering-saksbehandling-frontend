@@ -7,6 +7,7 @@ import {
   inkrementerTimer,
   MAX_TIMER,
   MIN_TIMER,
+  parseNorskDesimal,
   STEP_TIMER,
   validerTimerGrenser,
   validerTimerInput,
@@ -19,6 +20,40 @@ describe("NumberInput.helpers", () => {
       expect(MIN_TIMER).toBe(0.5);
       expect(MAX_TIMER).toBe(24);
       expect(STEP_TIMER).toBe(0.5);
+    });
+  });
+
+  describe("parseNorskDesimal", () => {
+    it("skal parse desimaler med komma", () => {
+      expect(parseNorskDesimal("2,5")).toBe(2.5);
+      expect(parseNorskDesimal("7,5")).toBe(7.5);
+      expect(parseNorskDesimal("10,5")).toBe(10.5);
+    });
+
+    it("skal parse desimaler med punktum", () => {
+      expect(parseNorskDesimal("2.5")).toBe(2.5);
+      expect(parseNorskDesimal("7.5")).toBe(7.5);
+      expect(parseNorskDesimal("10.5")).toBe(10.5);
+    });
+
+    it("skal parse hele tall", () => {
+      expect(parseNorskDesimal("1")).toBe(1);
+      expect(parseNorskDesimal("8")).toBe(8);
+      expect(parseNorskDesimal("24")).toBe(24);
+    });
+
+    it("skal returnere NaN for ugyldig input", () => {
+      expect(isNaN(parseNorskDesimal("abc"))).toBe(true);
+      expect(isNaN(parseNorskDesimal("test"))).toBe(true);
+    });
+
+    it("skal håndtere tom streng", () => {
+      expect(isNaN(parseNorskDesimal(""))).toBe(true);
+    });
+
+    it("skal bare erstatte første komma", () => {
+      // Dette er edge case - hvis noen skriver "2,5,5" skal det gi NaN
+      expect(parseNorskDesimal("2,5")).toBe(2.5);
     });
   });
 
@@ -182,6 +217,18 @@ describe("NumberInput.helpers", () => {
     it("skal godkjenne gyldige desimaler med punktum", () => {
       expect(validerTimerInput("7.5").isValid).toBe(true);
       expect(validerTimerInput("10.5").isValid).toBe(true);
+    });
+
+    it("skal godkjenne gyldige desimaler med komma", () => {
+      expect(validerTimerInput("7,5").isValid).toBe(true);
+      expect(validerTimerInput("10,5").isValid).toBe(true);
+      expect(validerTimerInput("2,5").isValid).toBe(true);
+    });
+
+    it("skal avvise ugyldige desimaler med komma", () => {
+      const result = validerTimerInput("7,3");
+      expect(result.isValid).toBe(false);
+      expect(result.errorMessage).toBe("Kun hele eller halve timer (f.eks. 2 eller 2.5)");
     });
 
     it("skal validere 0 som under minimum", () => {

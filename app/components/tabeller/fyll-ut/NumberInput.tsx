@@ -6,6 +6,7 @@ import {
   erVedMaksimum,
   erVedMinimum,
   inkrementerTimer,
+  parseNorskDesimal,
   validerTimerInput,
 } from "./NumberInput.helpers";
 import styles from "./numberInput.module.css";
@@ -28,7 +29,7 @@ export function NumberInput({
   const id = useId();
   const [validationError, setValidationError] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const currentValue = parseFloat(value) || 0;
+  const currentValue = parseNorskDesimal(value) || 0;
   const isAtMax = erVedMaksimum(currentValue);
   const isAtMin = erVedMinimum(currentValue);
 

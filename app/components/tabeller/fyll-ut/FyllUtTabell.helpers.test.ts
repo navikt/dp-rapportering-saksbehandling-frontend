@@ -105,6 +105,45 @@ describe("FyllUtTabell.helpers", () => {
 
       expect(beregnTotaltAntallTimer(dager, AKTIVITET_TYPE.Syk)).toBe(0);
     });
+
+    it("skal håndtere timer med komma som desimalskilletegn", () => {
+      const dager: IKorrigertDag[] = [
+        {
+          ...baseDag,
+          dato: "2024-01-01",
+          aktiviteter: [{ id: "1", type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "2,5" }],
+        },
+        {
+          ...baseDag,
+          dato: "2024-01-02",
+          aktiviteter: [{ id: "2", type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-02", timer: "7,5" }],
+        },
+        {
+          ...baseDag,
+          dato: "2024-01-03",
+          aktiviteter: [{ id: "3", type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-03", timer: "4" }],
+        },
+      ];
+
+      expect(beregnTotaltAntallTimer(dager, AKTIVITET_TYPE.Arbeid)).toBe(14);
+    });
+
+    it("skal håndtere blanding av komma og punktum som desimalskilletegn", () => {
+      const dager: IKorrigertDag[] = [
+        {
+          ...baseDag,
+          dato: "2024-01-01",
+          aktiviteter: [{ id: "1", type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "2,5" }],
+        },
+        {
+          ...baseDag,
+          dato: "2024-01-02",
+          aktiviteter: [{ id: "2", type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-02", timer: "7.5" }],
+        },
+      ];
+
+      expect(beregnTotaltAntallTimer(dager, AKTIVITET_TYPE.Arbeid)).toBe(10);
+    });
   });
 
   describe("beregnTotaltAntallDager", () => {

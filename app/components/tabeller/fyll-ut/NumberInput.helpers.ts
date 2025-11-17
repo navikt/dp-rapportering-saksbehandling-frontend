@@ -8,6 +8,16 @@ export interface ValidationResult {
 }
 
 /**
+ * Parser et norsk desimaltall (med komma eller punktum) til number
+ * Håndterer både "2.5" og "2,5" som 2.5
+ */
+export function parseNorskDesimal(value: string): number {
+  // Erstatt komma med punktum før parsing
+  const normalized = value.replace(",", ".");
+  return parseFloat(normalized);
+}
+
+/**
  * Validerer at en tallverdi er innenfor gyldig område (MIN-MAX)
  */
 export function validerTimerGrenser(value: number): ValidationResult {
@@ -72,7 +82,7 @@ export function validerTimerInput(inputValue: string): ValidationResult {
     };
   }
 
-  const numValue = parseFloat(inputValue);
+  const numValue = parseNorskDesimal(inputValue);
 
   if (isNaN(numValue)) {
     return {

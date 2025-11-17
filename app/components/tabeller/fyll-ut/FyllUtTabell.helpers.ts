@@ -2,6 +2,7 @@ import { AKTIVITET_TYPE } from "~/utils/constants";
 import type { TAktivitetType } from "~/utils/types";
 
 import type { IKorrigertDag } from "../../../utils/korrigering.utils";
+import { parseNorskDesimal } from "./NumberInput.helpers";
 
 /**
  * Beregner totalt antall arbeidstimer for en gitt aktivitetstype på tvers av alle dager
@@ -9,7 +10,7 @@ import type { IKorrigertDag } from "../../../utils/korrigering.utils";
 export function beregnTotaltAntallTimer(dager: IKorrigertDag[], type: TAktivitetType): number {
   return dager.reduce((sum, dag) => {
     const aktivitet = dag.aktiviteter.find((a) => a.type === type);
-    const timer = aktivitet?.timer ? parseFloat(aktivitet.timer) || 0 : 0;
+    const timer = aktivitet?.timer ? parseNorskDesimal(aktivitet.timer) || 0 : 0;
     return sum + timer;
   }, 0);
 }
