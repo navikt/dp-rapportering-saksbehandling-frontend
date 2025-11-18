@@ -4,6 +4,7 @@ import invariant from "tiny-invariant";
 
 import Personlinje from "~/components/personlinje/Personlinje";
 import { VariantSwitcher } from "~/components/variant-switcher/VariantSwitcher";
+import { hentBehandlinger } from "~/models/behandling.server";
 import { hentPerson } from "~/models/person.server";
 import {
   hentArbeidssokerperioder,
@@ -12,7 +13,7 @@ import {
 import styles from "~/styles/route-styles/root.module.css";
 import { isDemoToolsEnabled } from "~/utils/ab-test.server";
 import { getEnv } from "~/utils/env.utils";
-import type { IPerson } from "~/utils/types";
+import type { IBehandling, IPerson } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId";
 
@@ -32,8 +33,13 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     // Prøv å hente perioder og arbeidssokerperioder
     const perioder = await hentRapporteringsperioder(request, params.personId);
     const arbeidssokerperioder = await hentArbeidssokerperioder(request, params.personId);
+    let behandlinger: IBehandling[] = [];
 
-    return { person, perioder, arbeidssokerperioder, showDemoTools };
+    if (getEnv("USE_MSW")) {
+      behandlinger = await hentBehandlinger(request, person.ident);
+    }
+
+    return { person, perioder, arbeidssokerperioder, showDemoTools, behandlinger };
   } catch (error) {
     // Hvis henting av perioder feiler, legg til person-data i error response
     // slik at ErrorBoundary kan vise Personlinje

@@ -185,6 +185,10 @@ export interface IPerson {
   kjonn?: TKjonn;
 }
 
+export interface IBehandling {
+  [key: string]: unknown;
+}
+
 export const boolskeVerdier = ["true", "false"] as const;
 
 export type TrueOrFalse = (typeof boolskeVerdier)[number];
@@ -194,6 +198,7 @@ export interface IEnv {
   DP_MELDEKORTREGISTER_TOKEN?: string;
   DP_PERSONREGISTER_URL: string;
   DP_PERSONREGISTER_TOKEN?: string;
+  DP_BEHANDLING_URL: string;
   MICROSOFT_TOKEN?: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
