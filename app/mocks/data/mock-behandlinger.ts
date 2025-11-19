@@ -1,6 +1,7 @@
 import { addDays } from "date-fns";
 import { uuidv7 } from "uuidv7";
 
+import { overlapper } from "~/utils/behandlinger.utils";
 import type {
   IBehandlingsresultat,
   IPengeVerdi,
@@ -8,23 +9,19 @@ import type {
 } from "~/utils/behandlingsresultat.types";
 import { OPPRINNELSE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { erMeldekortSendtForSent, sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
-import type { IPerson, IRapporteringsperiode } from "~/utils/types";
+import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
+
 export function mockBehandling(
   person: IPerson,
   rapporteringsperioder: IRapporteringsperiode[],
 ): IBehandlingsresultat {
   const sorterteMeldekort = rapporteringsperioder.sort(sorterMeldekort);
-  const sisteInnsendteMeldekort = sorterteMeldekort.find(
-    (meldekort) => meldekort.status === RAPPORTERINGSPERIODE_STATUS.Innsendt,
-  );
   const dagsats = 1119;
 
-  const pengerSomSkalUtbetales = rapporteringsperioder
-    .sort(sorterMeldekort)
+  const pengerSomSkalUtbetales = sorterteMeldekort
     .filter(
       (meldekort) =>
         meldekort.status === RAPPORTERINGSPERIODE_STATUS.Innsendt &&
-        meldekort.id !== sisteInnsendteMeldekort?.id &&
         !erMeldekortSendtForSent(meldekort) &&
         !meldekort.originalMeldekortId &&
         meldekort.meldedato,
@@ -11825,6 +11822,20 @@ export function mockBehandling(
 export function hentBehandlingsresultat(
   person: IPerson,
   rapporteringsperioder: IRapporteringsperiode[],
+  arbeidssokerperioder: IArbeidssokerperiode[],
 ) {
-  return [mockBehandling(person, rapporteringsperioder)];
+  console.log(arbeidssokerperioder);
+  // TODO: Det bør være et behandlingsresultat per arbeidssøkerperiode
+  const meldekortPerArbeidssokerperiode = arbeidssokerperioder.map((arbeidssokerperiode) =>
+    rapporteringsperioder.filter((meldekort) =>
+      overlapper(
+        { ...meldekort.periode },
+        {
+          fraOgMed: arbeidssokerperiode.startDato,
+          tilOgMed: arbeidssokerperiode.sluttDato || undefined,
+        },
+      ),
+    ),
+  );
+  return meldekortPerArbeidssokerperiode.map((meldekort) => mockBehandling(person, meldekort));
 }

@@ -1,9 +1,9 @@
 import type { IBehandlingsresultat, IOpplysning, IPengeVerdi } from "./behandlingsresultat.types";
-import type { IPeriode as IBehandlingsresultatPeriode } from "./behandlingsresultat.types";
+import type { IPeriode } from "./behandlingsresultat.types";
 import { DATA_TYPE, RAPPORTERINGSPERIODE_STATUS } from "./constants";
-import type { IPeriode, IRapporteringsperiode } from "./types";
+import type { IRapporteringsperiode } from "./types";
 
-export interface IBehandlingsresultatPeriodeMedMeta<T> extends IBehandlingsresultatPeriode<T> {
+export interface IBehandlingsresultatPeriodeMedMeta<T> extends IPeriode<T> {
   oppgaveId: string;
   behandlingsId: string;
   regelsettId: string;
@@ -16,24 +16,22 @@ export interface IBehandlingerPerPeriode {
 
 const pengerSomSkalUtbetalesOpplysningsId = "01994cfd-9a27-762e-81fa-61f550467c95";
 
-function overlapper(
-  periode: IPeriode,
-  opplysning: IBehandlingsresultatPeriode<IPengeVerdi>,
+export function overlapper(
+  a: { fraOgMed: string; tilOgMed: string },
+  b: { fraOgMed?: string; tilOgMed?: string },
 ): boolean {
-  if (opplysning.gyldigFraOgMed && opplysning.gyldigTilOgMed) {
-    return (
-      periode.fraOgMed <= opplysning.gyldigTilOgMed && periode.tilOgMed >= opplysning.gyldigFraOgMed
-    );
+  if (b.fraOgMed && b.tilOgMed) {
+    return a.fraOgMed <= b.tilOgMed && a.tilOgMed >= b.fraOgMed;
   }
 
   // Åpen slutt (gyldigTilOgMed mangler)
-  if (opplysning.gyldigFraOgMed && !opplysning.gyldigTilOgMed) {
-    return periode.tilOgMed >= opplysning.gyldigFraOgMed;
+  if (b.fraOgMed && !b.tilOgMed) {
+    return a.tilOgMed >= b.fraOgMed;
   }
 
   // Åpen start (gyldigFraOgMed mangler)
-  if (!opplysning.gyldigFraOgMed && opplysning.gyldigTilOgMed) {
-    return periode.fraOgMed <= opplysning.gyldigTilOgMed;
+  if (!b.fraOgMed && b.tilOgMed) {
+    return a.fraOgMed <= b.tilOgMed;
   }
 
   // Fullt åpent intervall → overlapper alltid
@@ -74,7 +72,10 @@ export function finnBehandlingerForPerioder(
     return [
       periode.id,
       pengerSomSkalUtbetalesOpplysninger.filter((opplysning) =>
-        overlapper(periode.periode, opplysning),
+        overlapper(
+          { fraOgMed: periode.periode.fraOgMed, tilOgMed: periode.periode.tilOgMed },
+          { fraOgMed: opplysning.gyldigFraOgMed, tilOgMed: opplysning.gyldigTilOgMed },
+        ),
       ),
     ];
   });

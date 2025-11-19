@@ -58,7 +58,11 @@ class SessionRecord {
           ),
         );
 
-        const behandlingsresultat = hentBehandlingsresultat(createdPerson, periods);
+        const behandlingsresultat = hentBehandlingsresultat(
+          createdPerson,
+          periods,
+          arbeidssokerperioder,
+        );
 
         await Promise.all(
           behandlingsresultat.map((behandling) => db.behandlingsresultat.create(behandling)),
