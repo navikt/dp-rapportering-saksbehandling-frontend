@@ -14,8 +14,34 @@ vi.mock("~/utils/ab-test.server", () => ({
   getABTestVariant: vi.fn().mockReturnValue(null),
 }));
 
+/**
+ * Integration tests for api.rapportering action
+ *
+ * Denne action håndterer innsending av både nye meldekort og korrigeringer.
+ * Den må kunne:
+ * 1. Detektere om det er en oppdatering eller korrigering basert på originalMeldekortId
+ * 2. Kalle riktig backend-funksjon (oppdaterPeriode eller korrigerPeriode)
+ * 3. Bygge riktig redirect URL basert på response fra backend
+ * 4. Håndtere feil fra backend gracefully
+ *
+ * VIKTIG: Vi mocker kun eksterne avhengigheter (server models), ikke selve action-logikken.
+ * Dette sikrer at vi tester den faktiske request-handling logikken.
+ */
 describe("api.rapportering action", () => {
   describe("deteksjon av request-type", () => {
+    /**
+     * KORRIGERING vs OPPDATERING:
+     *
+     * - KORRIGERING: Brukes når saksbehandler skal endre et allerede innsendt meldekort
+     *   - Har originalMeldekortId felt
+     *   - Kaller korrigerPeriode() backend-funksjon
+     *   - Oppretter NYTT meldekort med ny ID i backend
+     *
+     * - OPPDATERING: Brukes når bruker fyller ut et tomt meldekort for første gang
+     *   - Har IKKE originalMeldekortId felt
+     *   - Kaller oppdaterPeriode() backend-funksjon
+     *   - Oppdaterer eksisterende meldekort med samme ID
+     */
     it("skal detektere korrigering når originalMeldekortId er til stede", async () => {
       const korrigerMeldekort: IKorrigerMeldekort = {
         ident: "12345678901",

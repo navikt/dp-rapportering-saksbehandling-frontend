@@ -220,19 +220,30 @@ describe("useMeldekortSkjema", () => {
   });
 
   describe("modal workflow", () => {
+    /**
+     * Modal workflow tester verifiserer flyt for bekreftelsesdialoger:
+     * 1. Bruker klikker "Send inn" eller "Avbryt"
+     * 2. Bekreftelsesmodal vises (FULLFOR eller AVBRYT type)
+     * 3. Bruker bekrefter eller lukker modal
+     * 4. Riktig callback kalles (onSubmit eller onCancel)
+     * 5. Modal lukkes etter bekreftelse
+     *
+     * Dette to-trinns mønsteret forhindrer utilsiktet innsending/avbrytelse.
+     */
     it("should call onCancel when confirming cancel action", () => {
       const { result } = renderHook(() => useMeldekortSkjema(getDefaultProps()));
 
-      // Set modal to cancel type
+      // Steg 1: Åpne avbryt-modal
       act(() => {
         result.current.handlers.openModal(MODAL_ACTION_TYPE.AVBRYT);
       });
 
-      // Confirm the cancel
+      // Steg 2: Bruker bekrefter avbrytelse i modal
       act(() => {
         result.current.handlers.handleBekreft();
       });
 
+      // Steg 3: Verifiser at onCancel ble kalt og modal lukket
       expect(mockOnCancel).toHaveBeenCalled();
       expect(result.current.state.modalOpen).toBe(false);
     });
@@ -265,15 +276,30 @@ describe("useMeldekortSkjema", () => {
     });
 
     describe("registrertArbeidssoker logikk", () => {
+      /**
+       * registrertArbeidssoker har forskjellig logikk for fyll-ut vs korrigering:
+       *
+       * FYLL-UT (meldekortType = "Ordinaert"):
+       * - Feltet er SYNLIG og PÅKREVD
+       * - Bruker MÅ svare på om de er registrert som arbeidssøker
+       * - Verdien sendes med i submit-data
+       *
+       * KORRIGERING (meldekortType = undefined eller annet):
+       * - Feltet er SKJULT (fordi det allerede er registrert i original meldekort)
+       * - Verdien sendes IKKE med i submit-data (undefined)
+       * - Fokus er kun på å korrigere aktiviteter/meldedato
+       *
+       * Denne logikken må testes grundig fordi den påvirker validering og submission.
+       */
       it("should send registrertArbeidssoker when meldekortType is true", () => {
         const { result } = renderHook(() =>
           useMeldekortSkjema({
             ...getDefaultProps(),
-            meldekortType: "Ordinaert", // Fyll-ut scenario
+            meldekortType: "Ordinaert", // Fyll-ut scenario: feltet skal vises og sendes
           }),
         );
 
-        // Set påkrevde felter FØRST
+        // Fyll ut påkrevde felter
         act(() => {
           result.current.handlers.handleArbeidssokerChange(true);
           result.current.handlers.handleBegrunnelseChange("Test begrunnelse");
