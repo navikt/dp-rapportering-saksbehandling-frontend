@@ -1,8 +1,22 @@
-import type { DATA_TYPE, ENHET, OPPRINNELSE } from "./constants";
+import type {
+  BEHANDLET_HENTELSE_TYPE,
+  DATA_TYPE,
+  ENHET,
+  FORMAL,
+  OPPLYSNINGSKILDE_TYPE,
+  OPPRINNELSE,
+} from "./constants";
 
 type TOpprinnelse = (typeof OPPRINNELSE)[keyof typeof OPPRINNELSE];
 
 type TEnhet = (typeof ENHET)[keyof typeof ENHET];
+
+type TOpplysningskildeType = (typeof OPPLYSNINGSKILDE_TYPE)[keyof typeof OPPLYSNINGSKILDE_TYPE];
+
+type TFormal = (typeof FORMAL)[keyof typeof FORMAL];
+
+type TBehandletHendelseType =
+  (typeof BEHANDLET_HENTELSE_TYPE)[keyof typeof BEHANDLET_HENTELSE_TYPE];
 
 interface ITekstVerdi {
   verdi: string;
@@ -47,14 +61,22 @@ interface IPeriodeVerdi {
   datatype: typeof DATA_TYPE.PERIODE;
 }
 
+interface IBarnVerdi {
+  fødselsdato: string;
+  fornavnOgMellomnavn?: string;
+  etternavn?: string;
+  statsborgerskap?: string;
+  kvalifiserer: boolean;
+}
+
 interface IBarneliste {
   søknadBarnId: string;
-  verdi: string | unknown[];
+  verdi: IBarnVerdi[];
   datatype: typeof DATA_TYPE.BARN;
 }
 
-interface IBehandlingsresultatPeriodeKilde {
-  type: string;
+interface IOpplysningskilde {
+  type: TOpplysningskildeType;
   registrert: string;
   meldingId?: string;
   ident?: string;
@@ -64,7 +86,7 @@ interface IBehandlingsresultatPeriodeKilde {
   };
 }
 
-interface IBehandlingsresultatPeriodeUtledetAv {
+interface IUtledetAv {
   regel: {
     navn: string;
   };
@@ -72,113 +94,30 @@ interface IBehandlingsresultatPeriodeUtledetAv {
   versjon: string;
 }
 
-interface IBehandlingsresultatPeriode {
+interface IPeriode<VerdiType> {
   id: string;
   opprettet: string;
   status: TOpprinnelse;
   opprinnelse?: TOpprinnelse;
   gyldigFraOgMed?: string;
   gyldigTilOgMed?: string;
-  kilde?: IBehandlingsresultatPeriodeKilde;
-  utledetAv?: IBehandlingsresultatPeriodeUtledetAv;
+  kilde?: IOpplysningskilde;
+  utledetAv?: IUtledetAv;
+  verdi: VerdiType;
 }
 
-interface IBehandlingsresultatPeriodeTekstVerdi extends IBehandlingsresultatPeriode {
-  verdi: ITekstVerdi;
-}
-
-interface IBehandlingsresultatPeriodeDatoVerdi extends IBehandlingsresultatPeriode {
-  verdi: IDatoVerdi;
-}
-
-interface IBehandlingsresultatPeriodeHeltallVerdi extends IBehandlingsresultatPeriode {
-  verdi: IHeltallVerdi;
-}
-
-interface IBehandlingsresultatPeriodeDesimalVerdi extends IBehandlingsresultatPeriode {
-  verdi: IDesimalVerdi;
-}
-
-interface IBehandlingsresultatPeriodePenger extends IBehandlingsresultatPeriode {
-  verdi: IPengeVerdi;
-}
-
-interface IBehandlingsresultatPeriodeUlidVerdi extends IBehandlingsresultatPeriode {
-  verdi: IUlidVerdi;
-}
-
-interface IBehandlingsresultatPeriodeBoolskVerdi extends IBehandlingsresultatPeriode {
-  verdi: IBoolskVerdi;
-}
-
-interface IBehandlingsresultatPeriodePeriodeVerdi extends IBehandlingsresultatPeriode {
-  verdi: IPeriodeVerdi;
-}
-
-interface IBehandlingsresultatPeriodeBarneliste extends IBehandlingsresultatPeriode {
-  verdi: IBarneliste;
-}
-
-interface IBehandlingsresultatOpplysning {
+interface IOpplysning<DataType, VerdiType> {
   opplysningTypeId: string;
   navn: string;
   synlig?: boolean;
   redigerbar?: boolean;
   redigertAvSaksbehandler?: boolean;
-  formål: "Register" | "Bruker" | "Regel" | "Legacy";
+  formål: TFormal;
+  datatype: DataType;
+  perioder: IPeriode<VerdiType>[];
 }
 
-interface IBehandlingsresultatOpplysningTekst extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.TEKST;
-  perioder: IBehandlingsresultatPeriodeTekstVerdi[];
-}
-
-interface IBehandlingsresultatOpplysningDato extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.DATO;
-  perioder: IBehandlingsresultatPeriodeDatoVerdi[];
-}
-
-interface IBehandlingsresultatOpplysningHeltall extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.HELTALL;
-  perioder: IBehandlingsresultatPeriodeHeltallVerdi[];
-}
-
-interface IBehandlingsresultatOpplysningDesimal extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.DESIMALTALL;
-  perioder: IBehandlingsresultatPeriodeDesimalVerdi[];
-}
-
-interface IBehandlingsresultatOpplysningPenger extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.PENGER;
-  perioder: IBehandlingsresultatPeriodePenger[];
-}
-
-interface IBehandlingsresultatOpplysningUlid extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.ULID;
-  perioder: IBehandlingsresultatPeriodeUlidVerdi[];
-}
-
-interface IBehandlingsresultatOpplysningBoolsk extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.BOOLSK;
-  perioder: IBehandlingsresultatPeriodeBoolskVerdi[];
-}
-
-interface IBehandlingsresultatOpplysningPeriode extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.PERIODE;
-  perioder: IBehandlingsresultatPeriodePeriodeVerdi[];
-}
-
-interface IBehandlingsresultatOpplysningBarn extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.BARN;
-  perioder: IBehandlingsresultatPeriodeBarneliste[];
-}
-
-interface IBehandlingsresultatOpplysningInntekt extends IBehandlingsresultatOpplysning {
-  datatype: typeof DATA_TYPE.INNTEKT;
-  perioder: IBehandlingsresultatPeriodeTekstVerdi[];
-}
-
-interface IBehandlingsresultatRettighetsperiode {
+interface IRettighetsperiode {
   fraOgMed: string;
   tilOgMed?: string;
   harRett: boolean;
@@ -190,28 +129,29 @@ export interface IBehandlingsresultat {
   behandletHendelse: {
     datatype: string;
     id: string;
-    type: string;
+    type: TBehandletHendelseType;
     skjedde: string;
   };
   basertPå?: string;
   automatisk: boolean;
   ident: string;
-  rettighetsperioder: IBehandlingsresultatRettighetsperiode[];
-  kreverTotrinnskontroll: boolean;
-  tilstand: string;
-  avklaringer: unknown[];
-  vilkår: unknown[];
+  rettighetsperioder: IRettighetsperiode[];
+  kreverTotrinnskontroll?: boolean;
+  tilstand?: string;
+  avklaringer?: unknown[];
+  vilkår?: unknown[];
   opplysninger: Array<
-    | IBehandlingsresultatOpplysningTekst
-    | IBehandlingsresultatOpplysningDato
-    | IBehandlingsresultatOpplysningHeltall
-    | IBehandlingsresultatOpplysningDesimal
-    | IBehandlingsresultatOpplysningPenger
-    | IBehandlingsresultatOpplysningUlid
-    | IBehandlingsresultatOpplysningBoolsk
-    | IBehandlingsresultatOpplysningPeriode
-    | IBehandlingsresultatOpplysningBarn
-    | IBehandlingsresultatOpplysningInntekt
+    | IOpplysning<typeof DATA_TYPE.TEKST, ITekstVerdi>
+    | IOpplysning<typeof DATA_TYPE.DATO, IDatoVerdi>
+    | IOpplysning<typeof DATA_TYPE.HELTALL, IHeltallVerdi>
+    | IOpplysning<typeof DATA_TYPE.DESIMALTALL, IDesimalVerdi>
+    | IOpplysning<typeof DATA_TYPE.PENGER, IPengeVerdi>
+    | IOpplysning<typeof DATA_TYPE.ULID, IUlidVerdi>
+    | IOpplysning<typeof DATA_TYPE.BOOLSK, IBoolskVerdi>
+    | IOpplysning<typeof DATA_TYPE.PERIODE, IPeriodeVerdi>
+    | IOpplysning<typeof DATA_TYPE.BARN, IBarneliste>
+    | IOpplysning<typeof DATA_TYPE.INNTEKT, ITekstVerdi>
   >;
-  fastsettelser: unknown[];
+
+  fastsettelser?: unknown[];
 }
