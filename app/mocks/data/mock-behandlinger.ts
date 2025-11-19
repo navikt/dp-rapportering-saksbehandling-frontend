@@ -1,8 +1,56 @@
-import type { IBehandlingsresultat } from "~/utils/behandlingsresultat.types";
-import { OPPRINNELSE } from "~/utils/constants";
+import { addDays } from "date-fns";
+import { uuidv7 } from "uuidv7";
 
-export const mockBehandlinger: IBehandlingsresultat[] = [
-  {
+import type {
+  IBehandlingsresultat,
+  IPengeVerdi,
+  IPeriode,
+} from "~/utils/behandlingsresultat.types";
+import { OPPRINNELSE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { erMeldekortSendtForSent, sorterMeldekort } from "~/utils/rapporteringsperiode.utils";
+import type { IPerson, IRapporteringsperiode } from "~/utils/types";
+export function mockBehandling(
+  person: IPerson,
+  rapporteringsperioder: IRapporteringsperiode[],
+): IBehandlingsresultat {
+  const sorterteMeldekort = rapporteringsperioder.sort(sorterMeldekort);
+  const sisteInnsendteMeldekort = sorterteMeldekort.find(
+    (meldekort) => meldekort.status === RAPPORTERINGSPERIODE_STATUS.Innsendt,
+  );
+  const dagsats = 1119;
+
+  const pengerSomSkalUtbetales = rapporteringsperioder
+    .sort(sorterMeldekort)
+    .filter(
+      (meldekort) =>
+        meldekort.status === RAPPORTERINGSPERIODE_STATUS.Innsendt &&
+        meldekort.id !== sisteInnsendteMeldekort?.id &&
+        !erMeldekortSendtForSent(meldekort) &&
+        !meldekort.originalMeldekortId &&
+        meldekort.meldedato,
+    )
+    .map((meldekort, index): IPeriode<IPengeVerdi> => {
+      const status = index > 0 ? OPPRINNELSE.ARVET : OPPRINNELSE.NY;
+
+      return {
+        id: uuidv7(),
+        opprettet: addDays(new Date(meldekort.meldedato!), 3).toISOString(),
+        status,
+        opprinnelse: status,
+        gyldigFraOgMed: meldekort.periode.fraOgMed,
+        gyldigTilOgMed: meldekort.periode.tilOgMed,
+        verdi: {
+          verdi: Math.min(
+            meldekort.dager.filter((dag) => dag.aktiviteter.length === 0).length * dagsats,
+            dagsats * 10,
+          ),
+          datatype: "penger",
+        },
+      };
+    })
+    .reverse();
+
+  return {
     behandlingId: "019a91d7-550c-706a-b76d-d0c591621201",
     behandletHendelse: {
       datatype: "String",
@@ -12,7 +60,7 @@ export const mockBehandlinger: IBehandlingsresultat[] = [
     },
     basertPå: "019a91d6-6a70-7262-b7d5-0d36c3a8ee67",
     automatisk: false,
-    ident: "15870599010",
+    ident: person.ident ?? "15870599010",
     rettighetsperioder: [
       {
         fraOgMed: "2025-06-02",
@@ -9526,44 +9574,7 @@ export const mockBehandlinger: IBehandlingsresultat[] = [
         opplysningTypeId: "01994cfd-9a27-762e-81fa-61f550467c95",
         navn: "Penger som skal utbetales for perioden",
         datatype: "penger",
-        perioder: [
-          {
-            id: "019a91d2-c0fc-7a74-ba2d-4d0e5d3ea2ba",
-            opprettet: "2025-11-17T13:38:19.644379",
-            status: "Arvet",
-            opprinnelse: "Arvet",
-            gyldigFraOgMed: "2025-06-02",
-            gyldigTilOgMed: "2025-06-15",
-            verdi: {
-              verdi: 7833,
-              datatype: "penger",
-            },
-          },
-          {
-            id: "019a91d6-6a7a-712e-ad47-9e7a862099c7",
-            opprettet: "2025-11-17T13:42:19.642311",
-            status: "Arvet",
-            opprinnelse: "Arvet",
-            gyldigFraOgMed: "2025-06-16",
-            gyldigTilOgMed: "2025-06-29",
-            verdi: {
-              verdi: 11190,
-              datatype: "penger",
-            },
-          },
-          {
-            id: "019a91d7-5514-7dd6-9c14-969e1b6cceee",
-            opprettet: "2025-11-17T13:43:19.70093",
-            status: "Ny",
-            opprinnelse: "Ny",
-            gyldigFraOgMed: "2025-06-30",
-            gyldigTilOgMed: "2025-07-13",
-            verdi: {
-              verdi: 11190,
-              datatype: "penger",
-            },
-          },
-        ],
+        perioder: pengerSomSkalUtbetales,
         synlig: true,
         redigerbar: false,
         redigertAvSaksbehandler: false,
@@ -11808,5 +11819,12 @@ export const mockBehandlinger: IBehandlingsresultat[] = [
         formål: "Regel",
       },
     ],
-  },
-];
+  };
+}
+
+export function hentBehandlingsresultat(
+  person: IPerson,
+  rapporteringsperioder: IRapporteringsperiode[],
+) {
+  return [mockBehandling(person, rapporteringsperioder)];
+}

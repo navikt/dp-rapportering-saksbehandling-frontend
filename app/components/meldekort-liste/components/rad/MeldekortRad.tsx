@@ -6,10 +6,8 @@ import { useSearchParams } from "react-router";
 import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
-import type {
-  IPengeVerdi,
-  IPeriode as IBehandlingsresultatPeriode,
-} from "~/utils/behandlingsresultat.types";
+import type { IBehandlingsresultatPeriodeMedMeta } from "~/utils/behandlinger.utils";
+import type { IPengeVerdi } from "~/utils/behandlingsresultat.types";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
@@ -39,7 +37,7 @@ interface Props {
   togglePlacement?: "left" | "right";
   variant?: ABTestVariant;
   allePerioder?: IRapporteringsperiode[];
-  behandlinger?: IBehandlingsresultatPeriode<IPengeVerdi>[];
+  behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
 }
 
 export function MeldekortRad({

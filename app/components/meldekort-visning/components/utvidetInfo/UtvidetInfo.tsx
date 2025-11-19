@@ -3,10 +3,8 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
-import type {
-  IPengeVerdi,
-  IPeriode as IBehandlingsresultatPeriode,
-} from "~/utils/behandlingsresultat.types";
+import type { IBehandlingsresultatPeriodeMedMeta } from "~/utils/behandlinger.utils";
+import type { IPengeVerdi } from "~/utils/behandlingsresultat.types";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -24,10 +22,12 @@ interface IProps {
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
-  behandlinger?: IBehandlingsresultatPeriode<IPengeVerdi>[];
+  behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
 }
 
 const MAX_LINES = 4;
+
+const NOK = new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK" });
 
 const TruncatedText = ({ text }: { text: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -162,8 +162,15 @@ export function UtvidetInfo({
           )}
 
           {behandlinger && behandlinger.length > 0 && (
-            <DetailRow label="Utbetalte beløp:">
-              {behandlinger.map((behandling) => behandling.verdi.verdi).join(", ")}
+            <DetailRow label="Brutto utbetaling:">
+              <>
+                {behandlinger.map((behandling) => (
+                  <>
+                    {/* TODO: Lenke til `https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/${behandling.oppgaveId}/dagpenger-rett/${behandling.behandlingsId}/_person/regelsett/${behandling.regelsettId}/opplysning/${behandling.id}` */}
+                    {NOK.format(behandling.verdi.verdi)}
+                  </>
+                ))}
+              </>
             </DetailRow>
           )}
 

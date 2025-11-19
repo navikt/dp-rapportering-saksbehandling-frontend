@@ -1,10 +1,17 @@
-import type { IBehandlingsresultat, IPengeVerdi } from "./behandlingsresultat.types";
+import type { IBehandlingsresultat, IOpplysning, IPengeVerdi } from "./behandlingsresultat.types";
 import type { IPeriode as IBehandlingsresultatPeriode } from "./behandlingsresultat.types";
-import { RAPPORTERINGSPERIODE_STATUS } from "./constants";
+import { DATA_TYPE, RAPPORTERINGSPERIODE_STATUS } from "./constants";
 import type { IPeriode, IRapporteringsperiode } from "./types";
 
+export interface IBehandlingsresultatPeriodeMedMeta<T> extends IBehandlingsresultatPeriode<T> {
+  oppgaveId: string;
+  behandlingsId: string;
+  regelsettId: string;
+  opplysningsId: string;
+}
+
 export interface IBehandlingerPerPeriode {
-  [periodeId: string]: IBehandlingsresultatPeriode<IPengeVerdi>[];
+  [periodeId: string]: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
 }
 
 const pengerSomSkalUtbetalesOpplysningsId = "01994cfd-9a27-762e-81fa-61f550467c95";
@@ -37,16 +44,26 @@ export function finnBehandlingerForPerioder(
   perioder: IRapporteringsperiode[],
   behandlinger: IBehandlingsresultat[],
 ): IBehandlingerPerPeriode {
+  // https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/:oppgaveId/dagpenger-rett/:behandlingsId/_person/regelsett/:regelsettId/opplysning/:opplysningsId
   const pengerSomSkalUtbetalesOpplysninger = behandlinger
-    .map(
-      (behandling) =>
-        behandling.opplysninger
-          .filter(
-            (opplysning) => opplysning.opplysningTypeId === pengerSomSkalUtbetalesOpplysningsId,
-          )
-          .map((opplysning) => opplysning.perioder)
-          .flat() as unknown as IBehandlingsresultatPeriode<IPengeVerdi>[],
-    )
+    .map((behandling) => {
+      return (
+        behandling.opplysninger.filter(
+          (opplysning) => opplysning.opplysningTypeId === pengerSomSkalUtbetalesOpplysningsId,
+        ) as IOpplysning<typeof DATA_TYPE.PENGER, IPengeVerdi>[]
+      )
+        .map((opplysning) =>
+          // TODO: Vi må finne oppgaveId og regelsettId
+          opplysning.perioder.map((periode) => ({
+            ...periode,
+            oppgaveId: "1",
+            behandlingsId: behandling.behandlingId,
+            regelsettsId: "1",
+            opplysningsId: opplysning.opplysningTypeId,
+          })),
+        )
+        .flat();
+    })
     .flat();
 
   const perioderSomOverlapper = perioder.map((periode) => {
