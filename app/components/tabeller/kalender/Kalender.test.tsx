@@ -136,8 +136,11 @@ describe("Kalender", () => {
   });
 
   it("skal returnere null hvis periode mangler", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { container } = render(<Kalender periode={null as any} />);
+    // Test at komponenten håndterer null/undefined periode gracefully
+    // Vi bruker undefined i stedet for null siden TypeScript ikke tillater null
+    const { container } = render(
+      <Kalender periode={undefined as unknown as IRapporteringsperiode} />,
+    );
 
     expect(container.firstChild).toBeNull();
   });

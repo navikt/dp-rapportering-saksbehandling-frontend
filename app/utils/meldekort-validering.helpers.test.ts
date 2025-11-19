@@ -58,7 +58,15 @@ describe("meldekort-validering.helpers", () => {
   });
 
   describe("harAktivitetEndringer", () => {
+    /**
+     * Denne funksjonen brukes til å detektere om bruker har gjort endringer i aktiviteter
+     * under korrigering. Dette er viktig fordi:
+     * 1. Vi må kreve begrunnelse hvis noe er endret
+     * 2. Vi må kunne advare bruker om usaved changes
+     * 3. Vi må validere at minst én endring er gjort ved korrigering
+     */
     it("skal returnere false når ingen aktiviteter har endret seg", () => {
+      // Test at identiske aktiviteter ikke detekteres som endring
       const opprinneligeDager: IRapporteringsperiodeDag[] = [
         {
           ...baseDag,
@@ -511,11 +519,21 @@ describe("meldekort-validering.helpers", () => {
     });
 
     describe("Korrigering validering", () => {
+      /**
+       * Korrigering har strengere valideringsregler enn vanlig utfylling:
+       * 1. Begrunnelse er ALLTID påkrevd (for audit trail)
+       * 2. Det må være minst én faktisk endring (meldedato ELLER aktiviteter)
+       * 3. Hvis ingen endring er gjort, skal det vises feilmelding
+       *
+       * Dette sikrer at saksbehandler ikke kan sende inn "tomme" korrigeringer
+       * og at alle korrigeringer har dokumentert hvorfor de ble gjort.
+       */
       it("skal kreve begrunnelse ved korrigering", () => {
+        // Begrunnelse er alltid påkrevd ved korrigering, uavhengig av hva som endres
         const skjemaData: ISkjemaData = {
-          meldedato: new Date(2024, 0, 20),
+          meldedato: new Date(2024, 0, 20), // Meldedato er endret (fra 15. til 20. januar)
           registrertArbeidssoker: true,
-          begrunnelse: "",
+          begrunnelse: "", // Tom begrunnelse skal gi feil
           dager: [{ ...baseDag, dato: "2024-01-01", aktiviteter: [] }],
         };
 
@@ -523,7 +541,7 @@ describe("meldekort-validering.helpers", () => {
           isKorrigering: true,
           showArbeidssokerField: false,
           originalData: {
-            meldedato: "2024-01-15",
+            meldedato: "2024-01-15", // Original meldedato
             dager: [{ ...baseDag, dato: "2024-01-01", aktiviteter: [] }],
           },
         };
@@ -533,24 +551,26 @@ describe("meldekort-validering.helpers", () => {
       });
 
       it("skal kreve endringer (meldedato eller aktivitet) ved korrigering", () => {
+        // Hvis ingenting er endret, skal det være valideringsfeil
+        // Dette forhindrer at saksbehandler sender inn "tomme" korrigeringer
         const skjemaData: ISkjemaData = {
-          meldedato: new Date(2024, 0, 15),
+          meldedato: new Date(2024, 0, 15), // Samme dato som original
           registrertArbeidssoker: true,
-          begrunnelse: "Korrigering",
-          dager: [{ ...baseDag, dato: "2024-01-01", aktiviteter: [] }],
+          begrunnelse: "Korrigering", // Begrunnelse er OK
+          dager: [{ ...baseDag, dato: "2024-01-01", aktiviteter: [] }], // Ingen aktiviteter endret
         };
 
         const kontekst: IValideringsKontekst = {
           isKorrigering: true,
           showArbeidssokerField: false,
           originalData: {
-            meldedato: "2024-01-15",
-            dager: [{ ...baseDag, dato: "2024-01-01", aktiviteter: [] }],
+            meldedato: "2024-01-15", // Samme som ny meldedato
+            dager: [{ ...baseDag, dato: "2024-01-01", aktiviteter: [] }], // Identisk med nye dager
           },
         };
 
         const feil = validerMeldekortSkjema(skjemaData, kontekst);
-        expect(feil.aktiviteter).toBe(true); // Ingen endringer
+        expect(feil.aktiviteter).toBe(true); // Skal feile fordi ingen endringer er gjort
       });
 
       it("skal godkjenne korrigering med endret meldedato", () => {
