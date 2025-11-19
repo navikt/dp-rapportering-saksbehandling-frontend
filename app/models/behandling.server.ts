@@ -1,13 +1,16 @@
 import { uuidv7 } from "uuidv7";
 
 import { DP_BEHANDLING_AUDIENCE } from "~/utils/auth.utils.server";
+import type { IBehandlingsresultat } from "~/utils/behandlingsresultat.types";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
-import type { IBehandling } from "~/utils/types";
 
 import { logger } from "./logger.server";
 
-export async function hentBehandlinger(request: Request, fnr: string): Promise<IBehandling[]> {
+export async function hentBehandlinger(
+  request: Request,
+  fnr: string,
+): Promise<IBehandlingsresultat[]> {
   try {
     const url = `${getEnv("DP_BEHANDLING_URL")}/behandlinger/${fnr}`;
 

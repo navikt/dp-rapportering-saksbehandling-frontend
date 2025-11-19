@@ -5,6 +5,7 @@ import invariant from "tiny-invariant";
 import Personlinje from "~/components/personlinje/Personlinje";
 import { VariantSwitcher } from "~/components/variant-switcher/VariantSwitcher";
 import { hentBehandlinger } from "~/models/behandling.server";
+import { logger } from "~/models/logger.server";
 import { hentPerson } from "~/models/person.server";
 import {
   hentArbeidssokerperioder,
@@ -12,8 +13,9 @@ import {
 } from "~/models/rapporteringsperiode.server";
 import styles from "~/styles/route-styles/root.module.css";
 import { isDemoToolsEnabled } from "~/utils/ab-test.server";
+import type { IBehandlingsresultat } from "~/utils/behandlingsresultat.types";
 import { getEnv } from "~/utils/env.utils";
-import type { IBehandling, IPerson } from "~/utils/types";
+import type { IPerson } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId";
 
@@ -33,10 +35,14 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     // Prøv å hente perioder og arbeidssokerperioder
     const perioder = await hentRapporteringsperioder(request, params.personId);
     const arbeidssokerperioder = await hentArbeidssokerperioder(request, params.personId);
-    let behandlinger: IBehandling[] = [];
+    let behandlinger: IBehandlingsresultat[] = [];
 
     if (getEnv("USE_MSW")) {
-      behandlinger = await hentBehandlinger(request, person.ident);
+      try {
+        behandlinger = await hentBehandlinger(request, person.ident);
+      } catch (error) {
+        logger.error("Feil ved henting av behandlinger i MSW-miljø", error);
+      }
     }
 
     return { person, perioder, arbeidssokerperioder, showDemoTools, behandlinger };

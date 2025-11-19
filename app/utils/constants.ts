@@ -62,6 +62,31 @@ export const QUERY_PARAMS = {
   OPPDATERT: "oppdatert",
 } as const;
 
+export const DATA_TYPE = {
+  DATO: "dato",
+  DESIMALTALL: "desimaltall",
+  HELTALL: "heltall",
+  BOOLSK: "boolsk",
+  ULID: "ulid",
+  PENGER: "penger",
+  INNTEKT: "inntekt",
+  TEKST: "tekst",
+  BARN: "barn",
+  PERIODE: "periode",
+} as const;
+
+export const OPPRINNELSE = { NY: "Ny", ARVET: "Arvet" } as const;
+
+export const ENHET = {
+  timer: "timer",
+  prosent: "prosent",
+  G: "G",
+  dager: "dager",
+  uker: "uker",
+  måneder: "måneder",
+  år: "år",
+} as const;
+
 // Legacy-eksport for bakoverkompatibilitet - bruker lange labels
 export const aktivitetsTyper = [
   {

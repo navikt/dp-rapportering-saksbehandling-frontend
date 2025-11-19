@@ -1,6 +1,7 @@
-import type { IBehandling } from "~/utils/types";
+import type { IBehandlingsresultat } from "~/utils/behandlingsresultat.types";
+import { OPPRINNELSE } from "~/utils/constants";
 
-export const mockBehandlinger: IBehandling[] = [
+export const mockBehandlinger: IBehandlingsresultat[] = [
   {
     behandlingId: "019a91d7-550c-706a-b76d-d0c591621201",
     behandletHendelse: {
@@ -822,7 +823,7 @@ export const mockBehandlinger: IBehandling[] = [
           {
             id: "019a91d7-550c-706a-b76d-d0c5916211fd",
             opprettet: "2025-11-17T13:43:19.692213",
-            status: "Ny",
+            status: OPPRINNELSE.NY,
             opprinnelse: "Ny",
             gyldigFraOgMed: "2025-11-17",
             gyldigTilOgMed: "2025-11-17",

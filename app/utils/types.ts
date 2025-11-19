@@ -3,6 +3,7 @@ import type { SetupWorker } from "msw/browser";
 import type {
   AKTIVITET_TYPE,
   ANSVARLIG_SYSTEM,
+  DATA_TYPE,
   KJONN,
   MELDEKORT_TYPE,
   OPPRETTET_AV,
@@ -69,6 +70,8 @@ export type TMeldekortType = (typeof MELDEKORT_TYPE)[keyof typeof MELDEKORT_TYPE
 
 export type TArbeidssokerperiodeStatus =
   (typeof ARBEIDSSOKERPERIODE_STATUS)[keyof typeof ARBEIDSSOKERPERIODE_STATUS];
+
+export type TDataType = (typeof DATA_TYPE)[keyof typeof DATA_TYPE];
 
 export interface IArbeidssokerperiode {
   periodeId: string; // UUID
@@ -183,10 +186,6 @@ export interface IPerson {
   ansvarligSystem: TAnsvarligSystem;
   fodselsdato?: string;
   kjonn?: TKjonn;
-}
-
-export interface IBehandling {
-  [key: string]: unknown;
 }
 
 export const boolskeVerdier = ["true", "false"] as const;
