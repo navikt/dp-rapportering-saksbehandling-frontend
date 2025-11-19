@@ -6,6 +6,10 @@ import { useSearchParams } from "react-router";
 import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
+import type {
+  IPengeVerdi,
+  IPeriode as IBehandlingsresultatPeriode,
+} from "~/utils/behandlingsresultat.types";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { formatterDato, ukenummer } from "~/utils/dato.utils";
 import { erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
@@ -35,6 +39,7 @@ interface Props {
   togglePlacement?: "left" | "right";
   variant?: ABTestVariant;
   allePerioder?: IRapporteringsperiode[];
+  behandlinger?: IBehandlingsresultatPeriode<IPengeVerdi>[];
 }
 
 export function MeldekortRad({
@@ -44,6 +49,7 @@ export function MeldekortRad({
   togglePlacement = "left",
   variant = null,
   allePerioder = [],
+  behandlinger,
 }: Props) {
   const [searchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -151,6 +157,7 @@ export function MeldekortRad({
               personId={personId}
               ansvarligSystem={ansvarligSystem}
               variant={variant}
+              behandlinger={behandlinger}
             />
           </article>
         )

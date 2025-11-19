@@ -2,6 +2,7 @@ import { Table } from "@navikt/ds-react";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { getTogglePlacement } from "~/utils/ab-test.utils";
+import type { IBehandlingerPerPeriode } from "~/utils/behandlinger.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { MeldekortRad } from "./components/rad/MeldekortRad";
@@ -12,9 +13,16 @@ interface IProps {
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
+  behandlinger: IBehandlingerPerPeriode | undefined;
 }
 
-export function MeldekortListe({ perioder, personId, ansvarligSystem, variant }: IProps) {
+export function MeldekortListe({
+  perioder,
+  personId,
+  ansvarligSystem,
+  variant,
+  behandlinger,
+}: IProps) {
   // Bestem toggle placement basert på variant (bruker helper-funksjon)
   // null (ikke-demo miljø), Variant A og Variant C: toggle left (original)
   // Variant B: toggle right
@@ -67,6 +75,7 @@ export function MeldekortListe({ perioder, personId, ansvarligSystem, variant }:
                 togglePlacement={togglePlacement}
                 variant={variant}
                 allePerioder={perioder}
+                behandlinger={behandlinger ? behandlinger[periode.id] : undefined}
               />
             );
           })}

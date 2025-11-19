@@ -1,10 +1,10 @@
-import type { IBehandlingsresultat, IOpplysning, IPengeVerdi } from "./behandlingsresultat.types";
+import type { IBehandlingsresultat, IPengeVerdi } from "./behandlingsresultat.types";
 import type { IPeriode as IBehandlingsresultatPeriode } from "./behandlingsresultat.types";
 import { RAPPORTERINGSPERIODE_STATUS } from "./constants";
 import type { IPeriode, IRapporteringsperiode } from "./types";
 
 export interface IBehandlingerPerPeriode {
-  [periodeId: string]: IOpplysning<"penger", IPengeVerdi>[];
+  [periodeId: string]: IBehandlingsresultatPeriode<IPengeVerdi>[];
 }
 
 const pengerSomSkalUtbetalesOpplysningsId = "01994cfd-9a27-762e-81fa-61f550467c95";

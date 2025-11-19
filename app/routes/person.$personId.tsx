@@ -44,7 +44,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       try {
         const behandlinger = await hentBehandlinger(request, person.ident);
         behandlingerPerPeriode = finnBehandlingerForPerioder(perioder, behandlinger);
-        console.log(behandlingerPerPeriode);
       } catch (error) {
         logger.error("Feil ved henting av behandlinger i MSW-miljø", error);
       }

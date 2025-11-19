@@ -3,6 +3,10 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
+import type {
+  IPengeVerdi,
+  IPeriode as IBehandlingsresultatPeriode,
+} from "~/utils/behandlingsresultat.types";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -20,6 +24,7 @@ interface IProps {
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
+  behandlinger?: IBehandlingsresultatPeriode<IPengeVerdi>[];
 }
 
 const MAX_LINES = 4;
@@ -97,7 +102,13 @@ const DetailRow = ({
   </Table.Row>
 );
 
-export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null }: IProps) {
+export function UtvidetInfo({
+  periode,
+  personId,
+  ansvarligSystem,
+  variant = null,
+  behandlinger,
+}: IProps) {
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = erMeldekortKorrigert(periode);
   const kanEndres = kanMeldekortEndres(periode, ansvarligSystem);
@@ -147,6 +158,12 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null
           {periode.begrunnelse && (
             <DetailRow label="Begrunnelse:" alignTop>
               <TruncatedText text={periode.begrunnelse} />
+            </DetailRow>
+          )}
+
+          {behandlinger && behandlinger.length > 0 && (
+            <DetailRow label="Utbetalte beløp:">
+              {behandlinger.map((behandling) => behandling.verdi.verdi).join(", ")}
             </DetailRow>
           )}
 
