@@ -11824,8 +11824,7 @@ export function hentBehandlingsresultat(
   rapporteringsperioder: IRapporteringsperiode[],
   arbeidssokerperioder: IArbeidssokerperiode[],
 ) {
-  console.log(arbeidssokerperioder);
-  // TODO: Det bør være et behandlingsresultat per arbeidssøkerperiode
+  // TODO: Det blir overlappende behandlingsresultat rett rundt avslutningen av en arbeidssøkerperiode.
   const meldekortPerArbeidssokerperiode = arbeidssokerperioder.map((arbeidssokerperiode) =>
     rapporteringsperioder.filter((meldekort) =>
       overlapper(
