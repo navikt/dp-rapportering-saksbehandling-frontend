@@ -13,7 +13,10 @@ import {
 } from "~/models/rapporteringsperiode.server";
 import styles from "~/styles/route-styles/root.module.css";
 import { isDemoToolsEnabled } from "~/utils/ab-test.server";
-import type { IBehandlingsresultat } from "~/utils/behandlingsresultat.types";
+import {
+  finnBehandlingerForPerioder,
+  type IBehandlingerPerPeriode,
+} from "~/utils/behandlinger.utils";
 import { getEnv } from "~/utils/env.utils";
 import type { IPerson } from "~/utils/types";
 
@@ -35,17 +38,19 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     // Prøv å hente perioder og arbeidssokerperioder
     const perioder = await hentRapporteringsperioder(request, params.personId);
     const arbeidssokerperioder = await hentArbeidssokerperioder(request, params.personId);
-    let behandlinger: IBehandlingsresultat[] = [];
+    let behandlingerPerPeriode: IBehandlingerPerPeriode = {};
 
     if (getEnv("USE_MSW")) {
       try {
-        behandlinger = await hentBehandlinger(request, person.ident);
+        const behandlinger = await hentBehandlinger(request, person.ident);
+        behandlingerPerPeriode = finnBehandlingerForPerioder(perioder, behandlinger);
+        console.log(behandlingerPerPeriode);
       } catch (error) {
         logger.error("Feil ved henting av behandlinger i MSW-miljø", error);
       }
     }
 
-    return { person, perioder, arbeidssokerperioder, showDemoTools, behandlinger };
+    return { person, perioder, arbeidssokerperioder, showDemoTools, behandlingerPerPeriode };
   } catch (error) {
     // Hvis henting av perioder feiler, legg til person-data i error response
     // slik at ErrorBoundary kan vise Personlinje

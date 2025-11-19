@@ -40,7 +40,7 @@ interface IDesimalVerdi {
   enhet?: TEnhet;
 }
 
-interface IPengeVerdi {
+export interface IPengeVerdi {
   verdi: number;
   datatype: typeof DATA_TYPE.PENGER;
 }
@@ -94,7 +94,7 @@ interface IUtledetAv {
   versjon: string;
 }
 
-interface IPeriode<VerdiType> {
+export interface IPeriode<VerdiType> {
   id: string;
   opprettet: string;
   status: TOpprinnelse;
@@ -106,7 +106,7 @@ interface IPeriode<VerdiType> {
   verdi: VerdiType;
 }
 
-interface IOpplysning<DataType, VerdiType> {
+export interface IOpplysning<DataType, VerdiType> {
   opplysningTypeId: string;
   navn: string;
   synlig?: boolean;
