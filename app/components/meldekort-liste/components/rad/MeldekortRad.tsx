@@ -20,7 +20,6 @@ import {
   SCROLL_DELAY_MS,
 } from "./MeldekortRad.constants";
 import {
-  erPeriodeEtterregistrert,
   erPeriodeKorrigert,
   erPeriodeOpprettet,
   getStatusConfig,
@@ -52,7 +51,6 @@ export function MeldekortRad({
   // States
   const erOpprettet = erPeriodeOpprettet(periode);
   const erKorrigert = erPeriodeKorrigert(periode);
-  const erEtterregistrert = erPeriodeEtterregistrert(periode);
   const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })}`;
 
   // Sjekk om denne perioden har en korrigering
@@ -168,11 +166,6 @@ export function MeldekortRad({
           <Tag variant={statusConfig.variant} size="small">
             {statusConfig.text}
           </Tag>
-          {erEtterregistrert && (
-            <Tag variant="info" size="small">
-              Etterregistrert
-            </Tag>
-          )}
           {erKorrigert && (
             <Tag variant="info" size="small">
               Korrigering
