@@ -22,7 +22,7 @@
     "@navikt/aksel-icons": "^7.33.3",
     "@navikt/ds-css": "^7.33.3",
     "@navikt/ds-react": "^7.33.3",
-    "@navikt/oasis": "^4.1.0",
+    "@navikt/oasis": "^4.1.1",
     "@react-router/fs-routes": "^7.9.6",
     "@react-router/node": "^7.9.6",
     "@react-router/serve": "^7.9.6",
