@@ -1,18 +1,11 @@
-import type { IBehandlingsresultat, IOpplysning, IPengeVerdi } from "./behandlingsresultat.types";
-import type { IPeriode } from "./behandlingsresultat.types";
+import type {
+  IBehandlingerPerPeriode,
+  IBehandlingsresultat,
+  IOpplysning,
+  IPengeVerdi,
+} from "./behandlingsresultat.types";
 import { DATA_TYPE, RAPPORTERINGSPERIODE_STATUS } from "./constants";
 import type { IRapporteringsperiode } from "./types";
-
-export interface IBehandlingsresultatPeriodeMedMeta<T> extends IPeriode<T> {
-  oppgaveId: string;
-  behandlingsId: string;
-  regelsettId: string;
-  opplysningsId: string;
-}
-
-export interface IBehandlingerPerPeriode {
-  [periodeId: string]: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
-}
 
 const pengerSomSkalUtbetalesOpplysningsId = "01994cfd-9a27-762e-81fa-61f550467c95";
 
@@ -42,7 +35,7 @@ export function finnBehandlingerForPerioder(
   perioder: IRapporteringsperiode[],
   behandlinger: IBehandlingsresultat[],
 ): IBehandlingerPerPeriode {
-  // https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/:oppgaveId/dagpenger-rett/:behandlingsId/_person/regelsett/:regelsettId/opplysning/:opplysningsId
+  // https://saksbehandling-dagpenger.ansatt.dev.nav.no/dagpenger-rett/:behandlingId/
   const pengerSomSkalUtbetalesOpplysninger = behandlinger
     .map((behandling) => {
       return (
@@ -54,10 +47,7 @@ export function finnBehandlingerForPerioder(
           // TODO: Vi må finne oppgaveId og regelsettId
           opplysning.perioder.map((periode) => ({
             ...periode,
-            oppgaveId: "1",
-            behandlingsId: behandling.behandlingId,
-            regelsettsId: "1",
-            opplysningsId: opplysning.opplysningTypeId,
+            behandlingId: behandling.behandlingId,
           })),
         )
         .flat();

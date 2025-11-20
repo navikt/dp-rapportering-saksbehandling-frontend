@@ -2,8 +2,10 @@ import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
-import type { IBehandlingsresultatPeriodeMedMeta } from "~/utils/behandlinger.utils";
-import type { IPengeVerdi } from "~/utils/behandlingsresultat.types";
+import type {
+  IBehandlingsresultatPeriodeMedMeta,
+  IPengeVerdi,
+} from "~/utils/behandlingsresultat.types";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 

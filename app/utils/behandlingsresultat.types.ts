@@ -155,3 +155,11 @@ export interface IBehandlingsresultat {
 
   fastsettelser?: unknown[];
 }
+
+export interface IBehandlingsresultatPeriodeMedMeta<T> extends IPeriode<T> {
+  behandlingId: string;
+}
+
+export interface IBehandlingerPerPeriode {
+  [periodeId: string]: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
+}

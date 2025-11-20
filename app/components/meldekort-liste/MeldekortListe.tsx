@@ -2,7 +2,7 @@ import { Table } from "@navikt/ds-react";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { getTogglePlacement } from "~/utils/ab-test.utils";
-import type { IBehandlingerPerPeriode } from "~/utils/behandlinger.utils";
+import type { IBehandlingerPerPeriode } from "~/utils/behandlingsresultat.types";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { MeldekortRad } from "./components/rad/MeldekortRad";
@@ -13,7 +13,7 @@ interface IProps {
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
-  behandlinger: IBehandlingerPerPeriode | undefined;
+  behandlinger?: IBehandlingerPerPeriode;
 }
 
 export function MeldekortListe({

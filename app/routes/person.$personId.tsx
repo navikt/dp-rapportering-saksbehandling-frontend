@@ -13,10 +13,8 @@ import {
 } from "~/models/rapporteringsperiode.server";
 import styles from "~/styles/route-styles/root.module.css";
 import { isDemoToolsEnabled } from "~/utils/ab-test.server";
-import {
-  finnBehandlingerForPerioder,
-  type IBehandlingerPerPeriode,
-} from "~/utils/behandlinger.utils";
+import { finnBehandlingerForPerioder } from "~/utils/behandlinger.utils";
+import type { IBehandlingerPerPeriode } from "~/utils/behandlingsresultat.types";
 import { getEnv } from "~/utils/env.utils";
 import type { IPerson } from "~/utils/types";
 
