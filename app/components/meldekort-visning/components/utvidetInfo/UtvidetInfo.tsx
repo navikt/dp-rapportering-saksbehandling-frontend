@@ -1,6 +1,7 @@
 import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
 import { useLayoutEffect, useRef, useState } from "react";
 
+import { erPeriodeEtterregistrert } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import type {
@@ -111,6 +112,7 @@ export function UtvidetInfo({
   variant = null,
   behandlinger,
 }: IProps) {
+  const erEtterregistrert = erPeriodeEtterregistrert(periode);
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = erMeldekortKorrigert(periode);
   const kanEndres = kanMeldekortEndres(periode, ansvarligSystem);
@@ -189,6 +191,13 @@ export function UtvidetInfo({
         <Alert variant="warning" size="small">
           Dette meldekortet er sendt inn {antallDagerForSent} {pluraliserDager(antallDagerForSent)}{" "}
           etter fristen
+        </Alert>
+      )}
+
+      {erEtterregistrert && (
+        <Alert variant="info" size="small">
+          Dette meldekortet er etterregistrert, og har derfor ikke spørsmål om
+          arbeidssøkerregistrering.
         </Alert>
       )}
 
