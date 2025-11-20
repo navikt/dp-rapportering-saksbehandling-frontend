@@ -9,6 +9,8 @@ import type { IRapporteringsperiode } from "./types";
 
 const pengerSomSkalUtbetalesOpplysningsId = "01994cfd-9a27-762e-81fa-61f550467c95";
 
+// Når du sjekker en opplysning fra et behandlingsresultat må det alltid være b,
+// for de kan ha åpen start eller slutt
 export function overlapper(
   a: { fraOgMed: string; tilOgMed: string },
   b: { fraOgMed?: string; tilOgMed?: string },
@@ -17,12 +19,12 @@ export function overlapper(
     return a.fraOgMed <= b.tilOgMed && a.tilOgMed >= b.fraOgMed;
   }
 
-  // Åpen slutt (gyldigTilOgMed mangler)
+  // Åpen slutt (b.tilOgMed mangler)
   if (b.fraOgMed && !b.tilOgMed) {
     return a.tilOgMed >= b.fraOgMed;
   }
 
-  // Åpen start (gyldigFraOgMed mangler)
+  // Åpen start (b.fraOgMed mangler)
   if (!b.fraOgMed && b.tilOgMed) {
     return a.fraOgMed <= b.tilOgMed;
   }
@@ -44,7 +46,6 @@ export function finnBehandlingerForPerioder(
         ) as IOpplysning<typeof DATA_TYPE.PENGER, IPengeVerdi>[]
       )
         .map((opplysning) =>
-          // TODO: Vi må finne oppgaveId og regelsettId
           opplysning.perioder.map((periode) => ({
             ...periode,
             behandlingId: behandling.behandlingId,
