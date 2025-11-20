@@ -228,7 +228,8 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           `[mock meldekortregister]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
         );
 
-        return HttpResponse.json(null, { status: 200 });
+        // Backend returnerer meldekortId for konsistens med korrigerPeriode
+        return HttpResponse.json({ id: rapporteringsperiodeId }, { status: 200 });
       },
     ),
 

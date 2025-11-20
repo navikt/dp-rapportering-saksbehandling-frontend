@@ -138,29 +138,6 @@ export async function httpRequest<T>(
     await handleErrorResponse(response, context, metadata);
   }
 
+  // Response er OK (200-299), parse JSON
   return response.json();
-}
-
-/**
- * Gjør en HTTP-forespørsel og returnerer raw Response-objekt
- * Kaster feil hvis responsen ikke er OK (status 200-299)
- * Bruk denne når du trenger manuell parsing av responsen
- *
- * @example
- * const response = await httpRequestRaw(url, { method: "POST", headers, body }, "Oppdatering")
- * const data = await response.json()
- */
-export async function httpRequestRaw(
-  url: string,
-  options: SafeFetchOptions,
-  context: string,
-  metadata?: Record<string, unknown>,
-): Promise<Response> {
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    await handleErrorResponse(response, context, metadata);
-  }
-
-  return response;
 }
