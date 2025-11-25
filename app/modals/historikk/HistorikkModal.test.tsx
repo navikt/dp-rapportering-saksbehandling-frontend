@@ -268,4 +268,75 @@ describe("HistorikkModal", () => {
     const yearLabels = screen.getAllByText(/^\d{4}$/);
     expect(yearLabels).toHaveLength(4);
   });
+
+  describe("Alertmeldinger", () => {
+    it("skal vise alertmelding når det ikke finnes meldekort", () => {
+      const hendelserUtenMeldekort: IHendelse[] = [
+        {
+          dato: new Date("2024-01-10T00:00:00"),
+          innsendtDato: "10.01.2024",
+          time: "--:--",
+          event: "Registrert som arbeidssøker",
+          kategori: "System",
+        },
+      ];
+
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={hendelserUtenMeldekort} />,
+      );
+
+      expect(
+        screen.getByText("Fant ingen meldekort knyttet til denne personen"),
+      ).toBeInTheDocument();
+    });
+
+    it("skal vise alertmelding når det ikke finnes arbeidssøkerstatus", () => {
+      const hendelserUtenArbeidssoker: IHendelse[] = [
+        {
+          dato: new Date("2024-01-15T10:30:00"),
+          innsendtDato: "15.01.2024",
+          time: "10:30",
+          event: "Meldekort uke 2 og 3, 2024",
+          kategori: "Meldekort",
+          type: "Elektronisk",
+        },
+      ];
+
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={hendelserUtenArbeidssoker} />,
+      );
+
+      expect(
+        screen.getByText("Fant ingen arbeidssøkerstatus knyttet til denne personen"),
+      ).toBeInTheDocument();
+    });
+
+    it("skal vise kombinert alertmelding når det ikke finnes verken meldekort eller arbeidssøkerstatus", () => {
+      renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[]} />);
+
+      expect(
+        screen.getByText(
+          "Fant hverken meldekort eller arbeidssøkerstatus knyttet til denne personen",
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it("skal ikke vise alertmelding når det finnes både meldekort og arbeidssøkerstatus", () => {
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />,
+      );
+
+      expect(
+        screen.queryByText("Fant ingen meldekort knyttet til denne personen"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Fant ingen arbeidssøkerstatus knyttet til denne personen"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(
+          "Fant hverken meldekort eller arbeidssøkerstatus knyttet til denne personen",
+        ),
+      ).not.toBeInTheDocument();
+    });
+  });
 });
