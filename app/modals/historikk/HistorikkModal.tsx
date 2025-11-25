@@ -1,5 +1,5 @@
 import { CheckmarkIcon, XMarkIcon } from "@navikt/aksel-icons";
-import { BodyShort, Heading, Label, Modal, Process, Tag, Theme } from "@navikt/ds-react";
+import { Alert, BodyShort, Heading, Label, Modal, Process, Tag, Theme } from "@navikt/ds-react";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import { groupByYear, sortYearsDescending } from "~/utils/dato.utils";
@@ -50,6 +50,18 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
   const hendelserEtterAar = groupByYear(hendelser, (hendelse) => hendelse.dato);
   const sortedYears = sortYearsDescending(hendelserEtterAar);
 
+  const harMeldekort = hendelser.some((hendelse) => hendelse.kategori === "Meldekort");
+  const harArbeidssokerperioder = hendelser.some((hendelse) => hendelse.kategori === "System");
+
+  const harFeil = !harMeldekort || !harArbeidssokerperioder;
+
+  const feilMelding =
+    !harMeldekort && !harArbeidssokerperioder
+      ? "Fant hverken meldekort eller arbeidssøkerstatus knyttet til denne personen"
+      : !harMeldekort
+        ? "Fant ingen meldekort knyttet til denne personen"
+        : "Fant ingen arbeidssøkerstatus knyttet til denne personen";
+
   return (
     <Modal
       open={open}
@@ -66,6 +78,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
         </Modal.Header>
         <Modal.Body>
           <div className={styles.modalContent}>
+            {harFeil && <Alert variant="error">{feilMelding}</Alert>}
             {sortedYears.map((year) => (
               <div key={year} className={styles.yearList}>
                 <div className={styles.listTitle}>
