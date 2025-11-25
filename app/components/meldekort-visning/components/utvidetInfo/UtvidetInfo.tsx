@@ -129,6 +129,10 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null
     <div className={styles.root}>
       <Table size="small" className={styles.detaljer}>
         <caption className="sr-only">Detaljert informasjon om meldekortet</caption>
+        <colgroup>
+          <col style={{ width: "50%" }} />
+          <col style={{ width: "50%" }} />
+        </colgroup>
         <Table.Body>
           {periode.meldedato && (
             <DetailRow label="Meldedato:">{formatDato(periode.meldedato)}</DetailRow>

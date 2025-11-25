@@ -6,31 +6,28 @@
 }
 
 /* Overstyr NAVs Table-styling */
-@layer overrides {
-  .detaljer :global(.navds-table__body .navds-table__row) {
-    border-bottom: 2px solid var(--ax-neutral-100) !important;
-  }
+.detaljer :global(.navds-table__body .navds-table__row) {
+  border-bottom: 2px solid var(--ax-neutral-100) !important;
+}
 
-  .detaljer :global(.navds-table__header-cell) {
-    width: 40% !important;
-    border-bottom: 2px solid var(--ax-neutral-100) !important;
-  }
+.detaljer :global(.navds-table__header-cell) {
+  border-bottom: 2px solid var(--ax-neutral-100) !important;
+}
 
-  .detaljer :global(.navds-table__data-cell) {
-    border-bottom: 2px solid var(--ax-neutral-100) !important;
-  }
+.detaljer :global(.navds-table__data-cell) {
+  border-bottom: 2px solid var(--ax-neutral-100) !important;
+}
 
-  /* For rader med lang tekst (som begrunnelse) */
-  .alignTop :global(.navds-table__header-cell),
-  .alignTop :global(.navds-table__data-cell) {
-    vertical-align: top !important;
-  }
+/* For rader med lang tekst (som begrunnelse) */
+.alignTop :global(.navds-table__header-cell),
+.alignTop :global(.navds-table__data-cell) {
+  vertical-align: top !important;
+}
 
-  /* Fjern hover-effekt */
-  .detaljer :global(.navds-table__row:hover),
-  .detaljer :global(.navds-table__row--shade-on-hover:hover) {
-    background-color: transparent !important;
-  }
+/* Fjern hover-effekt */
+.detaljer :global(.navds-table__row:hover),
+.detaljer :global(.navds-table__row--shade-on-hover:hover) {
+  background-color: transparent !important;
 }
 
 .visMerLink {
