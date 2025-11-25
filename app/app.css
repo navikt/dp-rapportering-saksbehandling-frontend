@@ -1,16 +1,62 @@
+@layer base, overrides;
+
 html,
 body {
-  min-height: 100%;
   margin: 0;
-  scrollbar-gutter: stable;
 }
 
-main {
-  min-height: calc(100vh - 48px);
-}
+/**
+ * Tema CSS-strategi for å forhindre feil tema ved lasting (FOUC):
+ *
+ * 1. Sett standard bakgrunner basert på systempreferanse (før React laster)
+ * 2. Overstyr med eksplisitt data-theme attributt når satt
+ * 3. Skjul body til data-theme er satt (forhindrer flash under hydration)
+ * 4. Vis body når data-theme eksisterer (satt av SSR eller inline script)
+ *
+ * data-theme attributtet settes av:
+ * - SSR: root.tsx loader leser fra cookie og setter på <html>
+ * - Inline script: Setter fra localStorage/systempreferanse før React hydrerer
+ * - React: SaksbehandlerContext setTema oppdaterer attributt når bruker bytter
+ */
 
+/* Sett bakgrunn og farger basert på brukerpreferanse før React laster */
 html {
-  background-color: var(--a-surface-subtle);
+  background-color: #ecedef; /* lys standard */
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: #07090d; /* mørk standard */
+  }
+}
+
+/* Overstyr med eksplisitt tema når satt */
+html[data-theme="dark"] {
+  background-color: #07090d !important;
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  background-color: #ecedef !important;
+  color-scheme: light;
+}
+
+body {
+  background-color: inherit;
+  /* Forhindre flash ved å skjule til tema er lastet */
+  visibility: hidden;
+}
+
+/* Vis body når React har hydratert og tema er klart */
+html[data-theme] body {
+  visibility: visible;
+}
+
+.main-container {
+  min-height: 100vh;
+  background-color: var(--ax-bg-sunken);
+  display: flex;
+  flex-direction: column;
 }
 
 h1,
@@ -23,21 +69,26 @@ p {
 
 /* Ekstern flate kompakt tekst - unngår Personlinje */
 .ekstern-flate p {
-    font-size: 0.75rem !important;
+  font-size: 0.75rem !important;
 }
-
-/**/
 
 /* Overskriver Aksel */
-.navds-table__row:has(+ .navds-table__row--selected)
-  :is(.navds-table__header-cell, .navds-table__data-cell) {
-  border-left-color: transparent !important;
-}
+@layer overrides {
+  .navds-table__row:has(+ .navds-table__row--selected)
+    :is(.navds-table__header-cell, .navds-table__data-cell) {
+    border-left-color: transparent !important;
+  }
 
-.navds-table__row--selected :is(.navds-table__header-cell, .navds-table__data-cell) {
-  border-left-color: transparent !important;
-}
+  .navds-table__row--selected :is(.navds-table__header-cell, .navds-table__data-cell) {
+    border-left-color: transparent !important;
+  }
 
-.navds-accordion--small .navds-accordion__header {
-  padding: var(--a-spacing-4) var(--a-spacing-3) !important;
+  .navds-accordion--small .navds-accordion__header {
+    padding: var(--ax-space-16) var(--ax-space-12) !important;
+  }
+
+  /* Fix modal body background in dark mode */
+  .aksel-modal__body {
+    background-color: var(--ax-bg-default) !important;
+  }
 }

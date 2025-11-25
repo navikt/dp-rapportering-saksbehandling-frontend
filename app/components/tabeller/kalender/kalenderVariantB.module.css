@@ -13,15 +13,15 @@
 }
 
 .kalender-tabell-b th {
-  font-weight: var(--a-font-weight-light);
-  font-size: var(--a-font-size-small);
+  font-weight: var(--ax-font-weight-light);
+  font-size: var(--ax-font-size-small);
   text-align: center;
   white-space: nowrap;
 }
 
 .uke-caption {
-  font-weight: var(--a-font-weight-semibold);
-  font-size: var(--a-font-size-medium);
+  font-weight: var(--ax-font-weight-bold);
+  font-size: var(--ax-font-size-medium);
   text-align: left;
   caption-side: top;
 }

@@ -23,7 +23,7 @@ export default function Rapportering() {
       style={{ maxWidth: "800px", margin: "0 auto" }}
     >
       <VStack gap="space-48">
-        <GuidePanel>
+        <GuidePanel style={{ margin: "auto" }}>
           <Heading level="1" size="small" spacing>
             Hei!
           </Heading>

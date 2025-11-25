@@ -1,5 +1,5 @@
 .fyllUtContainer {
-  padding: var(--a-spacing-4) var(--a-spacing-2);
+  padding: var(--ax-space-16) var(--ax-space-8);
 }
 
 .skjema {
@@ -7,9 +7,9 @@
   flex-direction: column;
   max-width: 1250px;
   margin: 0 auto;
-  background-color: white;
-  padding: var(--a-space-16);
-  gap: var(--a-space-24);
+  background-color: var(--ax-bg-default);
+  padding: var(--ax-space-16);
+  gap: var(--ax-space-24);
 }
 
 .skjema-variant-c {
@@ -25,13 +25,13 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--a-space-24);
+  gap: var(--ax-space-24);
 }
 
 .detaljer {
   display: flex;
   flex-direction: row;
-  gap: var(--a-space-24);
+  gap: var(--ax-space-24);
 }
 
 .begrunnelse {
@@ -41,6 +41,6 @@
 
 .handlinger {
   display: flex;
-  gap: var(--a-space-16);
+  gap: var(--ax-space-16);
   justify-content: flex-end;
 }

@@ -2,7 +2,14 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
+
 import { HistorikkModal, type IHendelse } from "./HistorikkModal";
+
+// Helper function to render with required providers
+function renderWithProviders(ui: React.ReactElement) {
+  return render(<SaksbehandlerProvider>{ui}</SaksbehandlerProvider>);
+}
 
 describe("HistorikkModal", () => {
   const mockHendelser: IHendelse[] = [
@@ -40,14 +47,16 @@ describe("HistorikkModal", () => {
   ];
 
   it("skal rendre modal når open er true", () => {
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
 
     expect(screen.getByRole("dialog", { name: "Historikk" })).toBeInTheDocument();
     expect(screen.getByText("Historikk")).toBeInTheDocument();
   });
 
   it("skal ikke rendre modal når open er false", () => {
-    render(<HistorikkModal open={false} onClose={vi.fn()} hendelser={mockHendelser} />);
+    renderWithProviders(
+      <HistorikkModal open={false} onClose={vi.fn()} hendelser={mockHendelser} />,
+    );
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
@@ -56,7 +65,9 @@ describe("HistorikkModal", () => {
     const user = userEvent.setup();
     const onCloseMock = vi.fn();
 
-    render(<HistorikkModal open={true} onClose={onCloseMock} hendelser={mockHendelser} />);
+    renderWithProviders(
+      <HistorikkModal open={true} onClose={onCloseMock} hendelser={mockHendelser} />,
+    );
 
     const closeButton = screen.getByRole("button", { name: /lukk/i });
     await user.click(closeButton);
@@ -65,14 +76,14 @@ describe("HistorikkModal", () => {
   });
 
   it("skal gruppere hendelser etter år", () => {
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
 
     expect(screen.getByText("2024")).toBeInTheDocument();
     expect(screen.getByText("2023")).toBeInTheDocument();
   });
 
   it("skal vise år i synkende rekkefølge", () => {
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
 
     const yearLabels = screen.getAllByText(/^\d{4}$/);
     expect(yearLabels).toHaveLength(2);
@@ -81,21 +92,21 @@ describe("HistorikkModal", () => {
   });
 
   it("skal vise alle hendelser for 2024", () => {
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
 
     expect(screen.getByText("Meldekort uke 2 og 3, 2024")).toBeInTheDocument();
     expect(screen.getByText("Meldekort uke 24 og 25, 2024")).toBeInTheDocument();
   });
 
   it("skal vise alle hendelser for 2023", () => {
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
 
     expect(screen.getByText("Registrert som arbeidssøker")).toBeInTheDocument();
     expect(screen.getByText("Meldekort uke 48 og 49, 2023")).toBeInTheDocument();
   });
 
   it("skal håndtere tom hendelsesliste", () => {
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[]} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[]} />);
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.queryByText(/^\d{4}$/)).not.toBeInTheDocument();
@@ -126,7 +137,7 @@ describe("HistorikkModal", () => {
       },
     ];
 
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={hendelser2024} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={hendelser2024} />);
 
     const listItems = screen.getAllByRole("listitem");
 
@@ -163,7 +174,9 @@ describe("HistorikkModal", () => {
       },
     ];
 
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={blandedHendelser} />);
+    renderWithProviders(
+      <HistorikkModal open={true} onClose={vi.fn()} hendelser={blandedHendelser} />,
+    );
 
     expect(screen.getByText("Meldekort uke 2 og 3, 2024")).toBeInTheDocument();
     expect(screen.getByText("Registrert som arbeidssøker")).toBeInTheDocument();
@@ -171,14 +184,14 @@ describe("HistorikkModal", () => {
   });
 
   it("skal rendre år-liste med ordered list element", () => {
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
 
     const orderedLists = screen.getAllByRole("list");
     expect(orderedLists.length).toBeGreaterThan(0);
   });
 
   it("skal ha korrekt aria-labelledby på modal", () => {
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
 
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveAttribute("aria-labelledby", "historikk-heading");
@@ -202,7 +215,9 @@ describe("HistorikkModal", () => {
       },
     ];
 
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={enkelÅrHendelser} />);
+    renderWithProviders(
+      <HistorikkModal open={true} onClose={vi.fn()} hendelser={enkelÅrHendelser} />,
+    );
 
     const yearLabels = screen.getAllByText(/^\d{4}$/);
     expect(yearLabels).toHaveLength(1);
@@ -241,7 +256,9 @@ describe("HistorikkModal", () => {
       },
     ];
 
-    render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={flerårigHendelser} />);
+    renderWithProviders(
+      <HistorikkModal open={true} onClose={vi.fn()} hendelser={flerårigHendelser} />,
+    );
 
     expect(screen.getByText("2024")).toBeInTheDocument();
     expect(screen.getByText("2023")).toBeInTheDocument();

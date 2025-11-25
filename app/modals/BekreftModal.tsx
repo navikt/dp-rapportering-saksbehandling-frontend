@@ -1,4 +1,6 @@
-import { Button, Modal } from "@navikt/ds-react";
+import { Button, Modal, Theme } from "@navikt/ds-react";
+
+import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 
 interface IProps {
   open: boolean;
@@ -23,6 +25,8 @@ export function BekreftModal({
   onBekreft,
   onAvbryt,
 }: IProps) {
+  const { tema } = useSaksbehandler();
+
   if (!type) return null;
 
   function handleBekreft() {
@@ -38,16 +42,23 @@ export function BekreftModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} header={{ heading: tittel }} portal>
-      <Modal.Body>{tekst}</Modal.Body>
-      <Modal.Footer>
-        <Button variant="primary" onClick={handleBekreft} size="small">
-          {bekreftTekst}
-        </Button>
-        <Button variant="secondary" onClick={handleAvbryt} size="small">
-          {avbrytTekst}
-        </Button>
-      </Modal.Footer>
+    <Modal open={open} onClose={onClose} portal aria-label={tittel}>
+      <Theme theme={tema}>
+        <Modal.Header>
+          <h2>{tittel}</h2>
+        </Modal.Header>
+        <Modal.Body style={{ backgroundColor: tema === "dark" ? "#333" : "#fff" }}>
+          {tekst}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleBekreft} size="small">
+            {bekreftTekst}
+          </Button>
+          <Button variant="secondary" onClick={handleAvbryt} size="small">
+            {avbrytTekst}
+          </Button>
+        </Modal.Footer>
+      </Theme>
     </Modal>
   );
 }

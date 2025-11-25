@@ -1,21 +1,17 @@
 /* === Aktiviteter Farger === */
 
-:root {
-  --aktivitet-utdanning-purple: #d2a8dc;
-}
-
 .arbeid {
-  background-color: var(--a-blue-200);
+  background-color: var(--ax-bg-accent-moderate-pressed);
 }
 
 .syk {
-  background-color: var(--a-orange-200);
+  background-color: var(--ax-bg-warning-moderate-hover);
 }
 
 .fravaer {
-  background-color: var(--a-green-200);
+  background-color: var(--ax-bg-success-moderate-pressed);
 }
 
 .utdanning {
-  background-color: var(--aktivitet-utdanning-purple);
+  background-color: var(--ax-bg-meta-purple-moderate-pressed);
 }

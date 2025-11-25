@@ -1,5 +1,5 @@
-import { LeaveIcon } from "@navikt/aksel-icons";
-import { Dropdown, InternalHeader, Spacer, Switch } from "@navikt/ds-react";
+import { LeaveIcon, MoonIcon, SunIcon } from "@navikt/aksel-icons";
+import { Button, Dropdown, InternalHeader, Spacer, Switch } from "@navikt/ds-react";
 import { useState } from "react";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
@@ -13,7 +13,12 @@ interface HeaderProps {
 
 const Header = ({ saksbehandler }: HeaderProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { skjulSensitiveOpplysninger, setSkjulSensitiveOpplysninger } = useSaksbehandler();
+  const { skjulSensitiveOpplysninger, setSkjulSensitiveOpplysninger, tema, setTema } =
+    useSaksbehandler();
+
+  const toggleTheme = () => {
+    setTema(tema === "dark" ? "light" : "dark");
+  };
 
   return (
     <>
@@ -54,6 +59,18 @@ const Header = ({ saksbehandler }: HeaderProps) => {
             </Dropdown.Menu.List>
           </Dropdown.Menu>
         </Dropdown>
+        <Button
+          variant="tertiary-neutral"
+          size="medium"
+          onClick={toggleTheme}
+          aria-label={
+            tema === "dark"
+              ? "Mørkt tema aktivert. Klikk for å bytte til lyst tema"
+              : "Lyst tema aktivert. Klikk for å bytte til mørkt tema"
+          }
+          aria-pressed={tema === "dark"}
+          icon={tema === "dark" ? <MoonIcon aria-hidden /> : <SunIcon aria-hidden />}
+        />
       </InternalHeader>
     </>
   );

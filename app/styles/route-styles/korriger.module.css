@@ -2,26 +2,26 @@
 .korrigering-container {
   display: flex;
   flex-direction: column;
-  row-gap: var(--a-spacing-2);
-  padding: var(--a-spacing-4);
+  row-gap: var(--ax-space-8);
+  padding: var(--ax-space-16);
   max-width: 1250px;
   margin: 0 auto;
-  padding-bottom: var(--a-spacing-8);
+  padding-bottom: var(--ax-space-32);
 }
 
 .hvit-container {
   display: flex;
   flex-direction: column;
-  background-color: white;
-  padding: var(--a-space-16);
-  gap: var(--a-space-24);
+  background-color: var(--ax-bg-default);
+  padding: var(--ax-space-16);
+  gap: var(--ax-space-24);
 }
 
 .meldekort {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--a-space-12);
+  gap: var(--ax-space-12);
   align-self: stretch;
 }
 
@@ -29,7 +29,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--a-space-16);
+  gap: var(--ax-space-16);
   align-self: stretch;
 }
 
@@ -52,14 +52,14 @@
 .kalender-og-begrunnelse-wrapper {
   width: 100%;
   border-radius: 0.625rem;
-  border: 2px solid var(--a-surface-action-subtle);
-  padding: var(--a-space-16);
+  border: 2px solid var(--ax-border-accent-subtleA);
+  padding: var(--ax-space-16);
 }
 
 .skjema {
   display: flex;
   flex-direction: column;
-  gap: var(--a-space-24);
+  gap: var(--ax-space-24);
 }
 
 .fieldset {
@@ -71,13 +71,13 @@
 .annen-info {
   display: flex;
   flex-direction: row;
-  gap: var(--a-space-24);
+  gap: var(--ax-space-24);
   max-width: 60%;
 }
 
 .knapper {
   display: flex;
-  gap: var(--a-space-16);
+  gap: var(--ax-space-16);
   justify-content: flex-end;
 }
 

@@ -1,7 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
+
 import { EVENT_TYPES, HistorikkModal, type IHendelse } from "./HistorikkModal";
+
+// Helper function to render with required providers
+function renderWithProviders(ui: React.ReactElement) {
+  return render(<SaksbehandlerProvider>{ui}</SaksbehandlerProvider>);
+}
 
 describe("HistorikkModal - Hendelsesvisning", () => {
   const baseMockHendelse: IHendelse = {
@@ -15,7 +22,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
 
   describe("Meldekort-hendelser", () => {
     it("skal vise meldekort-hendelse med korrekt informasjon", () => {
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[baseMockHendelse]} />);
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={[baseMockHendelse]} />,
+      );
 
       expect(screen.getByText("Meldekort uke 2 og 3, 2024")).toBeInTheDocument();
       expect(screen.getByText("Innsendt: 15.01.2024, kl. 10:30")).toBeInTheDocument();
@@ -28,7 +37,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         hendelseType: "Korrigert",
       };
 
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[korrigertHendelse]} />);
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={[korrigertHendelse]} />,
+      );
 
       expect(screen.getByText("Korrigert")).toBeInTheDocument();
     });
@@ -39,7 +50,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         erSendtForSent: true,
       };
 
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[forsinketHendelse]} />);
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={[forsinketHendelse]} />,
+      );
 
       expect(screen.getByText("Innsendt etter fristen")).toBeInTheDocument();
       expect(screen.getByText(/Frist:/)).toBeInTheDocument();
@@ -56,7 +69,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         kategori: "System",
       };
 
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[systemHendelse]} />);
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={[systemHendelse]} />,
+      );
 
       expect(screen.getByText("Annen hendelse")).toBeInTheDocument();
       expect(screen.getByText("15.01.2024, kl. --:--")).toBeInTheDocument();
@@ -73,7 +88,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         kategori: "System",
       };
 
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[registrertHendelse]} />);
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={[registrertHendelse]} />,
+      );
 
       expect(screen.getByText(EVENT_TYPES.REGISTERED)).toBeInTheDocument();
       expect(screen.getByText("15.01.2024, kl. --:--")).toBeInTheDocument();
@@ -90,7 +107,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         kategori: "System",
       };
 
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[avregistrertHendelse]} />);
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={[avregistrertHendelse]} />,
+      );
 
       expect(screen.getByText(EVENT_TYPES.UNREGISTERED)).toBeInTheDocument();
       expect(screen.getByText("15.03.2024, kl. --:--")).toBeInTheDocument();
@@ -104,7 +123,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         type: undefined,
       };
 
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[hendelseUtenType]} />);
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={[hendelseUtenType]} />,
+      );
 
       expect(screen.getByText("Meldekort uke 2 og 3, 2024")).toBeInTheDocument();
       expect(screen.queryByText("Elektronisk")).not.toBeInTheDocument();
@@ -117,7 +138,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         innsendtDato: "31.12.2023",
       };
 
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={[hendelseMedAnnenDato]} />);
+      renderWithProviders(
+        <HistorikkModal open={true} onClose={vi.fn()} hendelser={[hendelseMedAnnenDato]} />,
+      );
 
       expect(screen.getByText(/31.12.2023/)).toBeInTheDocument();
     });
@@ -133,7 +156,7 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         },
       ];
 
-      render(<HistorikkModal open={true} onClose={vi.fn()} hendelser={hendelser} />);
+      renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={hendelser} />);
 
       expect(screen.getByText("Meldekort uke 2 og 3, 2024")).toBeInTheDocument();
       expect(screen.getByText("Meldekort uke 6 og 7, 2024")).toBeInTheDocument();

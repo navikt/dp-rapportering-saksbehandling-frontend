@@ -44,35 +44,56 @@
 /* === NavDS Overrides === */
 
 /* Overstyrer padding inline på innholdet */
-:global(.navds-table__expanded-row-content--gutter-left),
-:global(.navds-table__expanded-row-content--gutter-right) {
+:global(.aksel-table__expanded-row-content--gutter-left),
+:global(.aksel-table__expanded-row-content--gutter-right) {
   padding-inline: var(--__ac-table-expanded-row-pi);
 }
 
 /* Expanded rows - light blue background */
-:global(.navds-table__expandable-row--open),
-:global(.navds-table__expandable-row--open td),
-:global(.navds-table__expandable-row--open th),
-:global(.navds-table__expanded-row),
-:global(.navds-table .navds-table__expandable-row--open),
-:global(.navds-table__body .navds-table__expandable-row--open),
-:global(.navds-table .navds-table__expandable-row--open td),
-:global(.navds-table .navds-table__expandable-row--open th),
-:global(.navds-table__body .navds-table__expandable-row--open td),
-:global(.navds-table__body .navds-table__expandable-row--open th),
+:global(.aksel-table__expandable-row--open),
+:global(.aksel-table__expandable-row--open td),
+:global(.aksel-table__expandable-row--open th),
+:global(.aksel-table__expanded-row),
+:global(.aksel-table__expanded-row-cell),
+:global(.aksel-table .aksel-table__expandable-row--open),
+:global(.aksel-table__body .aksel-table__expandable-row--open),
+:global(.aksel-table .aksel-table__expandable-row--open td),
+:global(.aksel-table .aksel-table__expandable-row--open th),
+:global(.aksel-table__body .aksel-table__expandable-row--open td),
+:global(.aksel-table__body .aksel-table__expandable-row--open th),
 .periodeListe__row--selected {
-  background-color: var(--a-surface-action-subtle) !important;
+  background-color: var(--ax-bg-accent-soft) !important;
   transition: background-color 0.2s ease-out;
 }
 
 /* Mykere animasjon på innholdet når rad åpnes */
-:global(.navds-table__expanded-row-content) {
+:global(.aksel-table__expanded-row-content) {
   transition: all 0.5s ease-in-out;
 }
 
 /* Fade in animasjon for expanded row content */
-:global(.navds-table__expandable-row--open) :global(.navds-table__expanded-row-content) {
+:global(.aksel-table__expandable-row--open) :global(.aksel-table__expanded-row-content) {
   animation: expandFadeIn 0.6s ease-out;
+}
+
+/* Override hover/selected states for expanded rows */
+:global(.aksel-table__expandable-row--open:hover),
+:global(.aksel-table__row--shade-on-hover.aksel-table__expandable-row--open):hover,
+:global(.aksel-table__row--shade-on-hover).periodeListe__row:hover,
+:global(.aksel-table__expandable-row--open[aria-selected="true"]),
+:global(.aksel-table__expandable-row--open.aksel-table__row--selected) {
+  background-color: var(--ax-bg-accent-soft) !important;
+}
+
+/* Collapsed rows - transparent background */
+:global(.aksel-table__expandable-row:not(.aksel-table__row--expanded)) td {
+  background-color: transparent;
+  transition: background-color 0.2s ease-out;
+}
+
+/* Disabled rows - no hover effects */
+:global(.aksel-table__row--shade-on-hover).periodeListe__row--disabled:hover {
+  background-color: transparent !important;
 }
 
 @keyframes expandFadeIn {
@@ -86,21 +107,6 @@
   }
 }
 
-/* Override hover/selected states for expanded rows */
-:global(.navds-table__expandable-row--open:hover),
-:global(.navds-table__row--shade-on-hover.navds-table__expandable-row--open):hover,
-:global(.navds-table__row--shade-on-hover).periodeListe__row:hover,
-:global(.navds-table__expandable-row--open[aria-selected="true"]),
-:global(.navds-table__expandable-row--open.navds-table__row--selected) {
-  background-color: var(--a-surface-action-subtle) !important;
-}
-
-/* Collapsed rows - transparent background */
-:global(.navds-table__expandable-row:not(.navds-table__row--expanded)) td {
-  background-color: transparent;
-  transition: background-color 0.2s ease-out;
-}
-
 /* === Disabled rad styling === */
 .periodeListe__row--disabled {
   cursor: default !important;
@@ -111,16 +117,11 @@
   cursor: default !important;
 }
 
-/* Disabled rows - no hover effects */
-:global(.navds-table__row--shade-on-hover).periodeListe__row--disabled:hover {
-  background-color: transparent !important;
-}
-
 /* === Status === */
 
 .statusContainer {
   display: flex;
-  gap: var(--a-space-6);
+  gap: var(--ax-space-6);
   flex-wrap: wrap;
 }
 
@@ -147,25 +148,25 @@
 
 @keyframes highlightBlinkAndFade {
   0% {
-    background-color: var(--a-blue-100);
+    background-color: var(--ax-accent-100);
   }
   10% {
     background-color: transparent;
   }
   20% {
-    background-color: var(--a-blue-100);
+    background-color: var(--ax-accent-100);
   }
   30% {
     background-color: transparent;
   }
   40% {
-    background-color: var(--a-blue-100);
+    background-color: var(--ax-accent-100);
   }
   50% {
-    background-color: var(--a-blue-100);
+    background-color: var(--ax-accent-100);
   }
   75% {
-    background-color: var(--a-surface-action-subtle);
+    background-color: var(--ax-bg-accent-soft);
   }
   100% {
     background-color: transparent;
@@ -180,10 +181,10 @@
 
   @keyframes highlightSimple {
     0% {
-      background-color: var(--a-blue-100);
+      background-color: var(--ax-accent-100);
     }
     50% {
-      background-color: var(--a-blue-100);
+      background-color: var(--ax-accent-100);
     }
     100% {
       background-color: transparent;

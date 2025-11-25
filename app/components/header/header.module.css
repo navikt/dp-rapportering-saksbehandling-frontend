@@ -7,30 +7,30 @@
 .skipLink {
   position: absolute;
   top: -9999px;
-  left: var(--a-spacing-4);
+  left: var(--ax-space-16);
   z-index: 9999;
-  padding: var(--a-spacing-2) var(--a-spacing-4);
-  background-color: var(--a-blue-600);
-  color: var(--a-text-on-action);
+  padding: var(--ax-space-8) var(--ax-space-16);
+  background-color: var(--ax-accent-600);
+  color: var(--ax-text-neutral-contrast);
   text-decoration: none;
-  border-radius: var(--a-border-radius-medium);
-  font-size: var(--a-font-size-small);
-  font-weight: var(--a-font-weight-medium);
-  border: 2px solid var(--a-border-focus);
+  border-radius: var(--ax-border-radius-medium);
+  font-size: var(--ax-font-size-small);
+  font-weight: var(--ax-font-weight-medium);
+  border: 2px solid var(--ax-border-focus);
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .skipLink:focus {
   position: fixed;
-  top: var(--a-spacing-4);
-  left: var(--a-spacing-4);
+  top: var(--ax-space-16);
+  left: var(--ax-space-16);
   outline: none;
-  box-shadow: var(--a-shadow-large);
+  box-shadow: var(--ax-shadow-large);
 }
 
 .skipLink:hover {
-  background-color: var(--a-blue-700);
+  background-color: var(--ax-accent-700);
 }
 
 .dropdownMenu {
