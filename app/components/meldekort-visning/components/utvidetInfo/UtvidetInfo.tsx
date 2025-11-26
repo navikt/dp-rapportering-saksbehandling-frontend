@@ -1,10 +1,14 @@
 import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
 import { useLayoutEffect, useRef, useState } from "react";
 
-import { erPeriodeEtterregistrert } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
+import {
+  erPeriodeEtterregistrert,
+  erPeriodeOpprettetAvArena,
+} from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
+import { skalViseArbeidssokerSporsmal } from "~/utils/meldekort-validering.helpers";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
@@ -100,13 +104,22 @@ const DetailRow = ({
 
 export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null }: IProps) {
   const erEtterregistrert = erPeriodeEtterregistrert(periode);
+  const erFraArena = erPeriodeOpprettetAvArena(periode);
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = erMeldekortKorrigert(periode);
+  // Kan kun korrigeres hvis ansvarligSystem er DP (ikke hvis det er Arena)
   const kanEndres = kanMeldekortEndres(periode, ansvarligSystem);
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const antallDagerForSent = dagerForSent(periode);
   const erSaksbehandler = erKildeSaksbehandler(periode);
   const useVariantLabels = variant === "B" || variant === "C";
+
+  // Bruk samme logikk som i skjemaet for å bestemme om arbeidssøkerspørsmål skal vises
+  const skalViseArbeidssoker = skalViseArbeidssokerSporsmal(
+    periode.type,
+    true, // erSaksbehandlerFlate
+    periode.opprettetAv,
+  );
 
   const korrigerUrl = buildVariantURL(
     `/person/${personId}/periode/${periode.id}/korriger`,
@@ -157,7 +170,8 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null
           )}
 
           {periode.registrertArbeidssoker !== null &&
-            periode.registrertArbeidssoker !== undefined && (
+            periode.registrertArbeidssoker !== undefined &&
+            skalViseArbeidssoker && (
               <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
                 {erArbeidssoker ? "Ja" : "Nei"}
               </DetailRow>
@@ -169,6 +183,13 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null
         <Alert variant="warning" size="small">
           Dette meldekortet er sendt inn {antallDagerForSent} {pluraliserDager(antallDagerForSent)}{" "}
           etter fristen
+        </Alert>
+      )}
+
+      {erFraArena && (
+        <Alert variant="info" size="small">
+          Dette meldekortet er fra Arena og vi viser derfor ikke svar på spørsmålet om
+          arbeidssøkerregistrering.
         </Alert>
       )}
 

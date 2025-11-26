@@ -1,8 +1,8 @@
 import type { RefObject } from "react";
 
-import { MELDEKORT_TYPE } from "./constants";
+import { MELDEKORT_TYPE, OPPRETTET_AV } from "./constants";
 import { erAlleArbeidsaktiviteterGyldige, type IKorrigertDag } from "./korrigering.utils";
-import type { IAktivitet, IRapporteringsperiodeDag } from "./types";
+import type { IAktivitet, IRapporteringsperiodeDag, TOpprettetAv } from "./types";
 
 /**
  * Resultat fra validering av meldekortskjema
@@ -45,18 +45,28 @@ export interface ISkjemaData {
  *
  * @param meldekortType - Type meldekort fra IRapporteringsperiode.type
  * @param erSaksbehandlerFlate - Om dette er saksbehandlerflaten
+ * @param opprettetAv - Hvem som opprettet meldekortet (Arena eller Dagpenger)
  * @returns true hvis spørsmålet skal vises
  */
 export function skalViseArbeidssokerSporsmal(
   meldekortType: string | undefined,
   erSaksbehandlerFlate: boolean,
+  opprettetAv?: TOpprettetAv,
 ): boolean {
   if (!erSaksbehandlerFlate) {
     return true;
   }
 
-  // Skjul spørsmålet for etterregistrerte meldekort i saksbehandlerflaten
-  return meldekortType !== MELDEKORT_TYPE.ETTERREGISTRERT;
+  // Skjul spørsmålet for etterregistrerte meldekort og Arena-meldekort i saksbehandlerflaten
+  if (meldekortType === MELDEKORT_TYPE.ETTERREGISTRERT) {
+    return false;
+  }
+
+  if (opprettetAv === OPPRETTET_AV.Arena) {
+    return false;
+  }
+
+  return true;
 }
 
 /**

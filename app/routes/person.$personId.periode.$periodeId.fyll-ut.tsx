@@ -1,4 +1,5 @@
 import {
+  Alert,
   BodyLong,
   Button,
   DatePicker,
@@ -24,6 +25,7 @@ import { getABTestVariant } from "~/utils/ab-test.server";
 import {
   MELDEKORT_TYPE,
   MODAL_ACTION_TYPE,
+  OPPRETTET_AV,
   QUERY_PARAMS,
   RAPPORTERINGSPERIODE_STATUS,
   ROLLE,
@@ -57,6 +59,7 @@ export default function FyllUtPeriode() {
   const { showSuccess, showError } = useToast();
 
   const isMountedRef = useRef(true);
+  const erFraArena = periode.opprettetAv === OPPRETTET_AV.Arena;
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -143,7 +146,6 @@ export default function FyllUtPeriode() {
     setKorrigerteDager: setDager,
     onSubmit: handleSubmit,
     onCancel: handleCancel,
-    meldekortType: periode.type,
   });
 
   const { fraOgMed, tilOgMed } = periode.periode;
@@ -224,6 +226,12 @@ export default function FyllUtPeriode() {
                   </Radio>
                   <Radio value="false">Nei</Radio>
                 </RadioGroup>
+              )}
+              {erFraArena && (
+                <Alert variant="info" size="small">
+                  Dette meldekortet er fra Arena og vi viser derfor ikke svar på spørsmålet om
+                  arbeidssøkerregistrering.
+                </Alert>
               )}
               <Textarea
                 resize
