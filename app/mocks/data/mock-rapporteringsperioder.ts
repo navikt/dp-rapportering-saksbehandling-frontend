@@ -4,6 +4,7 @@ import { uuidv7 } from "uuidv7";
 import {
   AKTIVITET_TYPE,
   MELDEKORT_TYPE,
+  OPPRETTET_AV,
   RAPPORTERINGSPERIODE_STATUS,
   ROLLE,
 } from "~/utils/constants";
@@ -368,7 +369,128 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
   ],
 
+  [ScenarioType.ARENA_MELDEKORT]: [
+    // Meldekort til utfylling opprettet av Arena
+    {
+      periode: {
+        opprettetAv: OPPRETTET_AV.Arena,
+        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+        kanSendes: true,
+        kanEndres: true,
+      },
+      ukerFraIDag: 0,
+    },
+    // Innsendt meldekort opprettet av Arena
+    {
+      periode: {
+        opprettetAv: OPPRETTET_AV.Arena,
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 2,
+      aktiviteter: [
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
+        null,
+        null,
+      ],
+    },
+    // Etterregistrert meldekort opprettet av Arena
+    {
+      periode: {
+        opprettetAv: OPPRETTET_AV.Arena,
+        type: MELDEKORT_TYPE.ETTERREGISTRERT,
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 4,
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ],
+    },
+  ],
+
   [ScenarioType.FULL_DEMO]: [
+    // Arena meldekort innsendt med aktiviteter
+    {
+      periode: {
+        opprettetAv: OPPRETTET_AV.Arena,
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 2,
+      aktiviteter: [
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
+        null,
+        null,
+      ],
+    },
+    // Arena meldekort innsendt (etterregistrert)
+    {
+      periode: {
+        opprettetAv: OPPRETTET_AV.Arena,
+        type: MELDEKORT_TYPE.ETTERREGISTRERT,
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 4,
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ],
+    },
     {
       periode: {
         type: MELDEKORT_TYPE.ETTERREGISTRERT,

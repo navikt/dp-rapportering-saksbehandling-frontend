@@ -1,7 +1,8 @@
 import "./app.css";
-import "@navikt/ds-css";
 
+import darksideCss from "@navikt/ds-css/darkside?url";
 import { BodyShort, Box, Heading, Page } from "@navikt/ds-react";
+import * as React from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -53,8 +54,21 @@ export async function loader({ request }: Route.LoaderArgs) {
     }
   }
 
+  /**
+   * Les tema fra cookie for SSR.
+   * Dette gjør at serveren kan rendre med riktig tema umiddelbart,
+   * og forhindrer feil tema ved sidelasting/navigering.
+   *
+   * Cookie settes av:
+   * - Inline script i <head> (førstegangsbesøkende)
+   * - setTema funksjon i SaksbehandlerContext (når bruker bytter tema)
+   */
+  const cookieHeader = request.headers.get("Cookie");
+  const tema = cookieHeader?.match(/tema=([^;]+)/)?.[1] || null;
+
   return {
     saksbehandler,
+    tema,
     env: {
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
@@ -87,6 +101,10 @@ export function meta() {
 
 export const links: Route.LinksFunction = () => [
   {
+    rel: "stylesheet",
+    href: darksideCss,
+  },
+  {
     rel: "icon",
     type: "image/png",
     sizes: "32x32",
@@ -109,16 +127,55 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const loaderData = useLoaderData<typeof loader>();
   const env = loaderData?.env ?? {};
   const saksbehandler = loaderData?.saksbehandler;
+  const serverTema = loaderData?.tema;
 
   return (
-    <html lang="nb">
+    <html lang="nb" suppressHydrationWarning data-theme={serverTema || undefined}>
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        {/*
+          Blokkerende script for å forhindre feil tema ved lasting (FOUC).
+          Kjører før React hydrerer for å sette tema umiddelbart.
+
+          For førstegangsbesøkende (ingen cookie):
+          1. Les tema fra localStorage (hvis tilgjengelig)
+          2. Fallback til systempreferanse (prefers-color-scheme)
+          3. Sett data-theme attributt på <html> (CSS bruker dette for styling)
+          4. Sett cookie for neste SSR
+
+          For "gamle" besøkende:
+          - Server har allerede satt data-theme via SSR (lest fra cookie)
+          - Dette scriptet gjør ingenting (currentTheme eksisterer allerede)
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  // Sjekk om server allerede har satt tema via cookie
+                  var currentTheme = document.documentElement.getAttribute('data-theme');
+                  if (!currentTheme) {
+                    // Ingen server tema, les fra localStorage
+                    var tema = localStorage.getItem('tema');
+                    if (!tema) {
+                      tema = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    }
+                    document.documentElement.setAttribute('data-theme', tema);
+                    // Sett cookie for neste SSR
+                    document.cookie = 'tema=' + tema + '; path=/; max-age=31536000; SameSite=Lax';
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         <Meta />
         <Links />
       </head>
       <body>
         <EnvProvider env={env}>
-          <SaksbehandlerProvider>
+          <SaksbehandlerProvider serverTema={serverTema}>
             <NavigationWarningProvider>
               <ToastProvider>
                 {saksbehandler && <Header saksbehandler={saksbehandler} />}
@@ -195,7 +252,9 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
               </BodyShort>
             )}
             {stack && (
-              <pre style={{ marginTop: "2rem", padding: "1rem", background: "#f5f5f5" }}>
+              <pre
+                style={{ marginTop: "2rem", padding: "1rem", background: "var(--ax-bg-sunken)" }}
+              >
                 <code>{stack}</code>
               </pre>
             )}

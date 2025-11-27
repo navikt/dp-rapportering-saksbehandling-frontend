@@ -1,5 +1,5 @@
 import { FigureOutwardFillIcon, SilhouetteFillIcon } from "@navikt/aksel-icons";
-import { BodyShort, Button, CopyButton, Skeleton } from "@navikt/ds-react";
+import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useMemo, useState } from "react";
 
@@ -30,7 +30,7 @@ interface IProps {
 export default function Personlinje({ person, perioder = [], arbeidssokerperioder = [] }: IProps) {
   const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
   const [modalOpen, setModalOpen] = useState(false);
-  const { skjulSensitiveOpplysninger, isReady } = useSaksbehandler();
+  const { skjulSensitiveOpplysninger } = useSaksbehandler();
 
   const events = useMemo(() => {
     return [
@@ -58,32 +58,24 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
               )}
             </span>
           )}
-          {!isReady ? (
-            <Skeleton variant="text" width="150px" />
-          ) : (
-            <BodyShort size="small">
-              {skjulSensitiveOpplysninger ? (
-                <span className={styles.sensitiv}>{maskerVerdi(fulltNavn)}</span>
-              ) : (
-                <strong>{fulltNavn}</strong>
-              )}
-            </BodyShort>
-          )}
+          <BodyShort size="small">
+            {skjulSensitiveOpplysninger ? (
+              <span className={styles.sensitiv}>{maskerVerdi(fulltNavn)}</span>
+            ) : (
+              <strong>{fulltNavn}</strong>
+            )}
+          </BodyShort>
         </div>
 
-        {!isReady ? (
-          <Skeleton variant="text" width="200px" />
-        ) : (
-          <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-            Fødselsnummer:{" "}
-            {skjulSensitiveOpplysninger ? (
-              <span className={styles.sensitiv}>{maskerVerdi(person.ident)}</span>
-            ) : (
-              <strong>{person.ident}</strong>
-            )}{" "}
-            <CopyButton copyText={person.ident} size="xsmall" />
-          </BodyShort>
-        )}
+        <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+          Fødselsnummer:{" "}
+          {skjulSensitiveOpplysninger ? (
+            <span className={styles.sensitiv}>{maskerVerdi(person.ident)}</span>
+          ) : (
+            <strong>{person.ident}</strong>
+          )}{" "}
+          <CopyButton copyText={person.ident} size="xsmall" />
+        </BodyShort>
 
         {person.fodselsdato && (
           <BodyShort size="small" textColor="subtle" className={styles.infoElement}>

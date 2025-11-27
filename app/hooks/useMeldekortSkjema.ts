@@ -16,7 +16,12 @@ import {
   skalViseArbeidssokerSporsmal,
   validerMeldekortSkjema,
 } from "~/utils/meldekort-validering.helpers";
-import type { IPeriode, IRapporteringsperiodeDag, TMeldekortType } from "~/utils/types";
+import type {
+  IPeriode,
+  IRapporteringsperiodeDag,
+  TMeldekortType,
+  TOpprettetAv,
+} from "~/utils/types";
 
 export interface IMeldekortSkjemaSubmitData {
   meldedato: Date | undefined;
@@ -62,6 +67,8 @@ interface UseMeldekortSkjemaOptions {
   isKorrigering?: boolean;
   /** Type meldekort fra backend (brukes for å sjekke om arbeidssøker-spørsmål skal vises) */
   meldekortType?: TMeldekortType;
+  /** Hvem som opprettet meldekortet (Arena eller Dagpenger) */
+  opprettetAv?: TOpprettetAv;
   /** Originale data for sammenligning ved korrigering */
   originalData?: {
     meldedato: string | null;
@@ -79,13 +86,18 @@ export function useMeldekortSkjema({
   initialBegrunnelse = "",
   isKorrigering = false,
   meldekortType,
+  opprettetAv,
   originalData,
 }: UseMeldekortSkjemaOptions) {
   // Saksbehandlerflaten er alltid true i denne konteksten
   const erSaksbehandlerFlate = true;
 
   // Bestem om arbeidssøker-feltet skal vises
-  const visArbeidsokerSpm = skalViseArbeidssokerSporsmal(meldekortType, erSaksbehandlerFlate);
+  const visArbeidsokerSpm = skalViseArbeidssokerSporsmal(
+    meldekortType,
+    erSaksbehandlerFlate,
+    opprettetAv,
+  );
 
   // Bygg valideringskontekst
   const valideringsKontekst: IValideringsKontekst = {

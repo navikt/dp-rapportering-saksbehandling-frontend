@@ -1,4 +1,4 @@
-import { MELDEKORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 // Re-eksporter fra constants fil for bakoverkompatibilitet
@@ -55,4 +55,11 @@ export function erPeriodeEtterregistrert(periode: IRapporteringsperiode): boolea
 export function skalViseInnsendtInfo(periode: IRapporteringsperiode): boolean {
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
   return erInnsendt && !!periode.innsendtTidspunkt && !!periode.meldedato;
+}
+
+/**
+ * Sjekker om meldekortet er opprettet av Arena
+ */
+export function erPeriodeOpprettetAvArena(periode: IRapporteringsperiode): boolean {
+  return periode.opprettetAv === OPPRETTET_AV.Arena;
 }

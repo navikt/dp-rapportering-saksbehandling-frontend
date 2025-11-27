@@ -160,7 +160,9 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             )}
 
             {stack && (
-              <pre style={{ marginTop: "2rem", padding: "1rem", background: "#f5f5f5" }}>
+              <pre
+                style={{ marginTop: "2rem", padding: "1rem", background: "var(--ax-bg-sunken)" }}
+              >
                 <code>{stack}</code>
               </pre>
             )}

@@ -1,4 +1,5 @@
 import {
+  Alert,
   BodyLong,
   Button,
   DatePicker,
@@ -24,6 +25,7 @@ import { getABTestVariant } from "~/utils/ab-test.server";
 import {
   MELDEKORT_TYPE,
   MODAL_ACTION_TYPE,
+  OPPRETTET_AV,
   QUERY_PARAMS,
   RAPPORTERINGSPERIODE_STATUS,
   ROLLE,
@@ -57,6 +59,8 @@ export default function FyllUtPeriode() {
   const { showSuccess, showError } = useToast();
 
   const isMountedRef = useRef(true);
+  const erFraArena = periode.opprettetAv === OPPRETTET_AV.Arena;
+  const erEtterregistrert = periode.type === MELDEKORT_TYPE.ETTERREGISTRERT;
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -97,10 +101,9 @@ export default function FyllUtPeriode() {
 
   const handleSubmit = () => {
     // For etterregistrerte meldekort, sett alltid registrertArbeidssoker til true
-    const registrertArbeidssoker =
-      periode.type === MELDEKORT_TYPE.ETTERREGISTRERT
-        ? true
-        : (skjema.state.registrertArbeidssoker ?? false);
+    const registrertArbeidssoker = erEtterregistrert
+      ? true
+      : (skjema.state.registrertArbeidssoker ?? false);
 
     const oppdatertPeriode: ISendInnMeldekort = {
       ident: periode.ident,
@@ -144,6 +147,7 @@ export default function FyllUtPeriode() {
     onSubmit: handleSubmit,
     onCancel: handleCancel,
     meldekortType: periode.type,
+    opprettetAv: periode.opprettetAv,
   });
 
   const { fraOgMed, tilOgMed } = periode.periode;
@@ -173,6 +177,19 @@ export default function FyllUtPeriode() {
             Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
           </BodyLong>
         </div>
+
+        {erFraArena && (
+          <Alert variant="info" size="small">
+            Dette meldekortet er fra Arena og har derfor ikke svar på spørsmål om
+            arbeidssøkerregistrering.
+          </Alert>
+        )}
+
+        {erEtterregistrert && (
+          <Alert variant="info" size="small">
+            Dette meldekortet er av typen Etterregistrert
+          </Alert>
+        )}
 
         <fetcher.Form
           method="post"
@@ -209,6 +226,7 @@ export default function FyllUtPeriode() {
               </DatePicker>
               {skjema.state.showArbeidssokerField && (
                 <RadioGroup
+                  readOnly={erEtterregistrert}
                   size="small"
                   legend="Registrert som arbeidssøker de neste 14 dagene?"
                   error={

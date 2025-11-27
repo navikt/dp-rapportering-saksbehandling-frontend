@@ -1,16 +1,16 @@
-.personlinje-container {
+.personlinjeContainer {
   display: flex;
   align-items: center;
-  padding: var(--a-spacing-4);
-  background-color: var(--a-white);
-  box-shadow: var(--a-shadow-xsmall);
+  padding: var(--ax-space-12) var(--ax-space-24);
+  background-color: var(--ax-bg-default);
+  box-shadow: var(--ax-shadow-dialog);
   position: sticky;
   top: 4rem;
   z-index: 1000;
 }
 
 .sensitiv {
-  color: var(--a-gray-500);
+  color: var(--ax-neutral-500);
   font-size: 1.2em;
   letter-spacing: 0.1em;
   user-select: none;
@@ -21,29 +21,29 @@
 
 .personlinje {
   display: flex;
-  gap: 2rem;
+  gap: var(--ax-space-24);
   align-items: center;
 }
 
-.historikk-knapp {
+.historikkKnapp {
   margin-left: auto;
 }
 
-.info-element {
+.infoElement {
   display: flex;
   align-items: center;
-  gap: var(--a-spacing-1);
+  gap: var(--ax-space-8);
   white-space: nowrap;
 }
 
-.navn-container {
+.navnContainer {
   display: flex;
   align-items: center;
-  gap: var(--a-spacing-2);
+  gap: var(--ax-space-8);
 }
 
-.icon-container {
-  border-radius: var(--a-border-radius-full);
+.iconContainer {
+  border-radius: var(--ax-border-radius-full);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,10 +51,10 @@
   height: 26px;
 }
 
-.icon-container-mann {
-  background-color: var(--a-blue-400);
+.iconContainerMann {
+  background-color: var(--ax-bg-accent-strong);
 }
 
-.icon-container-kvinne {
-  background-color: var(--a-red-400);
+.iconContainerKvinne {
+  background-color: var(--ax-danger-400);
 }

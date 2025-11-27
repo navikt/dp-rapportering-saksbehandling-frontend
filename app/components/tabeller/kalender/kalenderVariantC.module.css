@@ -6,29 +6,29 @@
 }
 
 .kalender-tabell-c th {
-  font-weight: var(--a-font-weight-light);
-  font-size: var(--a-font-size-small);
+  font-weight: var(--ax-font-weight-light);
+  font-size: var(--ax-font-size-small);
   text-align: center;
   white-space: nowrap;
 }
 
 .mellomrom {
-  height: var(--a-space-12);
+  height: var(--ax-space-12);
   padding: 0;
 }
 
 .uke-label {
   vertical-align: middle;
-  font-weight: var(--a-font-weight-semibold);
-  font-size: var(--a-font-size-small);
+  font-weight: var(--ax-font-weight-bold);
+  font-size: var(--ax-font-size-small);
   text-align: left;
-  padding-right: var(--a-space-4);
+  padding-right: var(--ax-space-4);
 }
 
 .uke-header {
-  font-weight: var(--a-font-weight-semibold);
-  font-size: var(--a-font-size-small);
+  font-weight: var(--ax-font-weight-bold);
+  font-size: var(--ax-font-size-small);
   text-align: left;
-  padding-right: var(--a-space-4);
+  padding-right: var(--ax-space-4);
   vertical-align: bottom;
 }

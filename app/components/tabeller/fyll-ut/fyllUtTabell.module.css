@@ -6,7 +6,7 @@
 .ukeContainer {
   display: flex;
   flex-direction: row;
-  gap: var(--a-space-4);
+  gap: var(--ax-space-4);
   align-items: flex-start;
 }
 
@@ -26,29 +26,29 @@
 .legend {
   display: flex;
   flex-direction: column;
-  gap: var(--a-space-4);
+  gap: var(--ax-space-4);
   padding: 0;
 }
 
 .tabellHeader {
   display: flex;
   flex-direction: column;
-  gap: var(--a-space-4);
+  gap: var(--ax-space-4);
 }
 
 .ukeHeader {
-  font-weight: var(--a-font-weight-semibold);
-  font-size: var(--a-font-size-small);
+  font-weight: var(--ax-font-weight-bold);
+  font-size: var(--ax-font-size-small);
   text-align: left;
-  padding-right: var(--a-space-4);
+  padding-right: var(--ax-space-4);
   vertical-align: bottom;
 }
 
 .ukeLabel {
-  font-weight: var(--a-font-weight-semibold);
-  font-size: var(--a-font-size-small);
+  font-weight: var(--ax-font-weight-bold);
+  font-size: var(--ax-font-size-small);
   text-align: left;
-  padding-right: var(--a-space-4);
+  padding-right: var(--ax-space-4);
   vertical-align: middle;
 }
 
@@ -60,15 +60,17 @@
   text-align: left;
 }
 
-.fyllUtTabell :global(.navds-body-short) {
-  font-size: var(--a-font-size-small) !important;
-  line-height: var(--a-line-height-small) !important;
+@layer overrides {
+  .fyllUtTabell :global(.navds-body-short) {
+    font-size: var(--ax-font-size-small) !important;
+    line-height: var(--ax-font-line-height-medium) !important;
+  }
 }
 
 .label {
   text-align: left;
-  font-size: var(--a-font-size-small) !important;
-  line-height: var(--a-line-height-small) !important;
+  font-size: var(--ax-font-size-small) !important;
+  line-height: var(--ax-font-line-height-medium) !important;
 }
 
 .fyllUtTabell td {
@@ -85,42 +87,42 @@
 
 .aktivitet {
   text-align: left;
-  padding: var(--a-space-4) var(--a-space-12);
+  padding: var(--ax-space-4) var(--ax-space-12);
   border-radius: 999px;
-  font-size: var(--a-font-size-small) !important;
-  line-height: var(--a-line-height-small) !important;
+  font-size: var(--ax-font-size-small) !important;
+  line-height: var(--ax-font-line-height-medium) !important;
 }
 
 .aktivitetArbeid {
-  background: #99c3ff;
+  background: var(--ax-bg-accent-moderate-pressed);
 }
 
 .aktivitetSyk {
-  background: #ffd399;
+  background: var(--ax-bg-warning-moderate-hover);
 }
 
 .aktivitetFravaer {
-  background: #a8dcb1;
+  background: var(--ax-bg-success-moderate-pressed);
 }
 
 .aktivitetUtdanning {
-  background: #d2a8dc;
+  background: var(--ax-bg-meta-purple-moderate-pressed);
 }
 
 .trHoverArbeid:hover {
-  background-color: rgba(153, 195, 255, 0.15); /* 50% opacity */
+  background-color: var(--ax-bg-accent-softA);
 }
 
 .trHoverSyk:hover {
-  background-color: rgba(255, 211, 153, 0.15);
+  background-color: var(--ax-bg-warning-softA);
 }
 
 .trHoverFravaer:hover {
-  background-color: rgba(168, 220, 177, 0.15);
+  background-color: var(--ax-bg-success-softA);
 }
 
 .trHoverUtdanning:hover {
-  background-color: rgba(210, 168, 220, 0.15);
+  background-color: var(--ax-bg-meta-purple-softA);
 }
 
 .gap {
@@ -163,14 +165,14 @@
   white-space: nowrap;
   text-align: right !important;
   font-variant-numeric: tabular-nums;
-  font-size: var(--a-font-size-small) !important;
-  line-height: var(--a-line-height-small) !important;
+  font-size: var(--ax-font-size-small) !important;
+  line-height: var(--ax-font-line-height-medium) !important;
 }
 
 .oppsummeringEnhet {
   width: 40px;
   white-space: nowrap;
   text-align: left !important;
-  font-size: var(--a-font-size-small) !important;
-  line-height: var(--a-line-height-small) !important;
+  font-size: var(--ax-font-size-small) !important;
+  line-height: var(--ax-font-line-height-medium) !important;
 }

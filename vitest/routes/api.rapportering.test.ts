@@ -6,7 +6,7 @@ import type { IKorrigerMeldekort, ISendInnMeldekort } from "~/utils/types";
 
 // Mock dependencies
 vi.mock("~/models/rapporteringsperiode.server", () => ({
-  oppdaterPeriode: vi.fn().mockResolvedValue(undefined),
+  oppdaterPeriode: vi.fn().mockResolvedValue("oppdatert-meldekort-id-456"),
   korrigerPeriode: vi.fn().mockResolvedValue("ny-meldekort-id-123"),
 }));
 

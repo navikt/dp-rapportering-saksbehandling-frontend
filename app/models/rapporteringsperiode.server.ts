@@ -93,6 +93,7 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
 
 /**
  * Oppdaterer et meldekort for en person
+ * Backend returnerer { id: "meldekort-id" }
  */
 export async function oppdaterPeriode({
   periode,
@@ -102,7 +103,7 @@ export async function oppdaterPeriode({
   periode: ISendInnMeldekort;
   personId: string;
   request: Request;
-}) {
+}): Promise<string | null> {
   const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}`;
 
   // Legg til demo params fra original request (for testing/demo-miljø)
@@ -112,7 +113,7 @@ export async function oppdaterPeriode({
     url.searchParams.set(key, value);
   });
 
-  await httpRequest(
+  const responseData = await httpRequest<{ id?: string }>(
     url.toString(),
     {
       method: "POST",
@@ -122,6 +123,8 @@ export async function oppdaterPeriode({
     "Oppdatering av rapporteringsperiode",
     { personId, periodeId: periode.id },
   );
+
+  return responseData?.id || null;
 }
 
 /**

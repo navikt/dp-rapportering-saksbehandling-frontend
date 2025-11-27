@@ -1,14 +1,14 @@
 .kalenderOgSammenlagt {
   display: flex;
   flex-direction: column;
-  gap: var(--a-space-20);
+  gap: var(--ax-space-24);
   flex: 1;
 }
 
 .sammenlagt {
   display: flex;
   flex-direction: column;
-  gap: var(--a-space-8);
+  gap: var(--ax-space-8);
 }
 
 .aktivitetListe {
@@ -16,7 +16,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--a-spacing-1);
+  gap: var(--ax-space-4);
   list-style: none;
 }
 
@@ -25,10 +25,11 @@
   justify-content: space-between;
   align-items: center;
   border-radius: 80px;
-  padding: var(--a-space-2) var(--a-space-12);
+  padding: var(--ax-space-2) var(--ax-space-12);
   line-height: normal;
 }
 
 .ingenAktiviteter {
-  color: var(--a-text-subtle);
+  color: var(--ax-text-neutral-subtle);
+  text-align: center;
 }

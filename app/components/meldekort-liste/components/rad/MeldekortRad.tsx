@@ -26,6 +26,7 @@ import {
 import {
   erPeriodeKorrigert,
   erPeriodeOpprettet,
+  erPeriodeOpprettetAvArena,
   getStatusConfig,
   skalViseInnsendtInfo,
 } from "./MeldekortRad.helpers";
@@ -57,6 +58,7 @@ export function MeldekortRad({
   // States
   const erOpprettet = erPeriodeOpprettet(periode);
   const erKorrigert = erPeriodeKorrigert(periode);
+  const erFraArena = erPeriodeOpprettetAvArena(periode);
   const periodeDatoTekst = `${formatterDato({ dato: periode.periode.fraOgMed })} - ${formatterDato({ dato: periode.periode.tilOgMed })}`;
 
   // Sjekk om denne perioden har en korrigering
@@ -182,6 +184,12 @@ export function MeldekortRad({
           {!erKorrigert && harKorrigering && useVariantLabels && (
             <Tag variant="warning" size="small">
               Korrigert
+            </Tag>
+          )}
+
+          {erFraArena && (
+            <Tag variant="info" size="small">
+              Arena
             </Tag>
           )}
         </div>

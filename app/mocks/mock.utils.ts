@@ -93,7 +93,7 @@ export function lagRapporteringsperiode(
     kanSendesFra: "",
     sisteFristForTrekk: "",
     originalMeldekortId: null,
-    opprettetAv: OPPRETTET_AV.Arena,
+    opprettetAv: OPPRETTET_AV.Dagpenger,
     kilde: props.kilde ?? null,
     innsendtTidspunkt: null,
     meldedato: null,

@@ -61,39 +61,39 @@
 }
 
 .ingenAktivitet {
-  background-color: #f7f8f9;
+  background-color: var(--ax-bg-neutral-soft);
 }
 
 /* 20% opacity versjoner for dag-containeren */
 .dag.arbeidBg {
-  background-color: rgba(153, 195, 255, 0.2);
+  background-color: var(--ax-bg-accent-softA);
 }
 
 .dag.sykBg {
-  background-color: rgba(255, 211, 153, 0.2);
+  background-color: var(--ax-bg-warning-softA);
 }
 
 .dag.fravaerBg {
-  background-color: rgba(168, 220, 177, 0.2);
+  background-color: var(--ax-bg-success-softA);
 }
 
 .dag.utdanningBg {
-  background-color: rgba(210, 168, 220, 0.2);
+  background-color: var(--ax-bg-meta-purple-softA);
 }
 
 /* Prikkefarger for pseudo-elementer - påfør kun bakgrunn til ::before */
 .flereAktiviteter.arbeidDot::before {
-  background-color: var(--a-blue-200);
+  background-color: var(--ax-bg-accent-moderate-pressed);
 }
 
 .flereAktiviteter.sykDot::before {
-  background-color: var(--a-orange-200);
+  background-color: var(--ax-bg-warning-moderate-hover);
 }
 
 .flereAktiviteter.fravaerDot::before {
-  background-color: var(--a-green-200);
+  background-color: var(--ax-bg-success-moderate-pressed);
 }
 
 .flereAktiviteter.utdanningDot::before {
-  background-color: var(--aktivitet-utdanning-purple);
+  background-color: var(--ax-bg-meta-purple-moderate-pressed);
 }
