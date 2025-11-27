@@ -157,7 +157,7 @@ export const FORMAL = {
   LEGACY: "Legacy",
 };
 
-export const BEHANDLET_HENTELSE_TYPE = {
+export const BEHANDLET_HENDELSE_TYPE = {
   SOKNAD: "Søknad",
   MELDEKORT: "Meldekort",
   MANUELL: "Manuell",

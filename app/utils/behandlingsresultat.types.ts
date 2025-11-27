@@ -1,5 +1,5 @@
 import type {
-  BEHANDLET_HENTELSE_TYPE,
+  BEHANDLET_HENDELSE_TYPE,
   DATA_TYPE,
   ENHET,
   FORMAL,
@@ -16,7 +16,7 @@ type TOpplysningskildeType = (typeof OPPLYSNINGSKILDE_TYPE)[keyof typeof OPPLYSN
 type TFormal = (typeof FORMAL)[keyof typeof FORMAL];
 
 type TBehandletHendelseType =
-  (typeof BEHANDLET_HENTELSE_TYPE)[keyof typeof BEHANDLET_HENTELSE_TYPE];
+  (typeof BEHANDLET_HENDELSE_TYPE)[keyof typeof BEHANDLET_HENDELSE_TYPE];
 
 interface ITekstVerdi {
   verdi: string;

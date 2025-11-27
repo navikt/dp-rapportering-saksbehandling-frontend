@@ -188,7 +188,7 @@ export function UtvidetInfo({
                 {behandlinger.map((behandling) => (
                   <span key={behandling.id}>
                     {/* TODO: Lenke til `https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/${behandling.oppgaveId}/dagpenger-rett/${behandling.behandlingsId}/_person/regelsett/${behandling.regelsettId}/opplysning/${behandling.id}` */}
-                    {NOK.format(behandling.verdi.verdi)}
+                    {NOK.format(behandling.verdi.verdi)}{" "}
                   </span>
                 ))}
               </>
