@@ -60,6 +60,7 @@ export default function FyllUtPeriode() {
 
   const isMountedRef = useRef(true);
   const erFraArena = periode.opprettetAv === OPPRETTET_AV.Arena;
+  const erEtterregistrert = periode.type === MELDEKORT_TYPE.ETTERREGISTRERT;
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -100,10 +101,9 @@ export default function FyllUtPeriode() {
 
   const handleSubmit = () => {
     // For etterregistrerte meldekort, sett alltid registrertArbeidssoker til true
-    const registrertArbeidssoker =
-      periode.type === MELDEKORT_TYPE.ETTERREGISTRERT
-        ? true
-        : (skjema.state.registrertArbeidssoker ?? false);
+    const registrertArbeidssoker = erEtterregistrert
+      ? true
+      : (skjema.state.registrertArbeidssoker ?? false);
 
     const oppdatertPeriode: ISendInnMeldekort = {
       ident: periode.ident,
@@ -178,6 +178,19 @@ export default function FyllUtPeriode() {
           </BodyLong>
         </div>
 
+        {erFraArena && (
+          <Alert variant="info" size="small">
+            Dette meldekortet er fra Arena og har derfor ikke svar på spørsmål om
+            arbeidssøkerregistrering.
+          </Alert>
+        )}
+
+        {erEtterregistrert && (
+          <Alert variant="info" size="small">
+            Dette meldekortet er av typen Etterregistrert
+          </Alert>
+        )}
+
         <fetcher.Form
           method="post"
           action="/api/rapportering"
@@ -213,6 +226,7 @@ export default function FyllUtPeriode() {
               </DatePicker>
               {skjema.state.showArbeidssokerField && (
                 <RadioGroup
+                  readOnly={erEtterregistrert}
                   size="small"
                   legend="Registrert som arbeidssøker de neste 14 dagene?"
                   error={
@@ -228,12 +242,6 @@ export default function FyllUtPeriode() {
                   </Radio>
                   <Radio value="false">Nei</Radio>
                 </RadioGroup>
-              )}
-              {erFraArena && (
-                <Alert variant="info" size="small">
-                  Dette meldekortet er fra Arena og vi viser derfor ikke svar på spørsmålet om
-                  arbeidssøkerregistrering.
-                </Alert>
               )}
               <Textarea
                 resize
