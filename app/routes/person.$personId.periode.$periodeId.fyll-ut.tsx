@@ -146,6 +146,8 @@ export default function FyllUtPeriode() {
     setKorrigerteDager: setDager,
     onSubmit: handleSubmit,
     onCancel: handleCancel,
+    meldekortType: periode.type,
+    opprettetAv: periode.opprettetAv,
   });
 
   const { fraOgMed, tilOgMed } = periode.periode;
