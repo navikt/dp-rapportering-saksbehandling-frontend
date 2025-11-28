@@ -41,7 +41,7 @@ export function MeldekortListe({
       : ["5%", "10%", "20%", "18%", "18%", "14%", "15%"];
 
   return (
-    <div className={styles.periodeListe}>
+    <div className={`${styles.periodeListe} ${variant === "B" ? styles.variantB : ""}`}>
       <Table>
         <colgroup>
           {KOLONNE_BREDDER.map((bredde, index) => (

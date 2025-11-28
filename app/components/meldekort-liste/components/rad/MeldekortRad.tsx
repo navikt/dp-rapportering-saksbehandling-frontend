@@ -166,9 +166,9 @@ export function MeldekortRad({
       expandOnRowClick={!erOpprettet}
       expansionDisabled={erOpprettet}
     >
-      <Table.DataCell scope="row" {...cellProps}>
+      <Table.HeaderCell scope="row" {...cellProps}>
         {ukenummer(periode)}
-      </Table.DataCell>
+      </Table.HeaderCell>
       <Table.DataCell {...cellProps}>{periodeDatoTekst}</Table.DataCell>
       <Table.DataCell {...cellProps}>
         <div className={styles.statusContainer}>

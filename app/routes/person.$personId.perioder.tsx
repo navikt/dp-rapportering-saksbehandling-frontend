@@ -106,7 +106,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
 
   return (
     <div className={styles.perioderContainer}>
-      <section>
+      <section aria-label="Meldekort gruppert etter år">
         {/* Screen reader announcement for oppdaterte meldekort */}
         {announceUpdate && (
           <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">

@@ -19,9 +19,9 @@
     "@grafana/faro-web-tracing": "^1.19.0",
     "msw": "^2.12.3",
     "@msw/data": "^1.1.2",
-    "@navikt/aksel-icons": "^7.34.0",
-    "@navikt/ds-css": "^7.34.0",
-    "@navikt/ds-react": "^7.34.0",
+    "@navikt/aksel-icons": "^7.35.0",
+    "@navikt/ds-css": "^7.35.0",
+    "@navikt/ds-react": "^7.35.0",
     "@navikt/oasis": "^4.1.1",
     "@react-router/fs-routes": "^7.9.6",
     "@react-router/node": "^7.9.6",
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@playwright/test": "^1.56.1",
+    "@playwright/test": "^1.57.0",
     "@react-router/dev": "^7.9.6",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -65,12 +65,12 @@
     "jiti": "^2.6.1",
     "jsdom": "^27.2.0",
     "lint-staged": "^16.2.7",
-    "playwright": "^1.56.1",
+    "playwright": "^1.57.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.47.0",
+    "typescript-eslint": "^8.48.0",
     "vite": "^7.2.4",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.0.13"
+    "vitest": "^4.0.14"
   },
   "engines": {
     "node": ">=22"

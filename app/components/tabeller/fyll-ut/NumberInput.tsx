@@ -132,7 +132,7 @@ export function NumberInput({
               className={styles.button}
               onClick={handleIncrement}
               disabled={isAtMax}
-              aria-label={`Øk ${label}`}
+              aria-label="Øk"
               aria-controls={id}
             >
               <ChevronUpIcon aria-hidden="true" />
@@ -142,7 +142,7 @@ export function NumberInput({
               className={styles.button}
               onClick={handleDecrement}
               disabled={isAtMin}
-              aria-label={`Reduser ${label}`}
+              aria-label="Reduser"
               aria-controls={id}
             >
               <ChevronDownIcon aria-hidden="true" />
