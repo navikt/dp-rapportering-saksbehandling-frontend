@@ -1,6 +1,13 @@
 .fyllUtTabell {
   width: 100%;
   max-width: 75rem;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.fyllUtTabell td,
+.fyllUtTabell th {
+  border: none;
 }
 
 .ukeContainer {
@@ -24,9 +31,6 @@
 }
 
 .legend {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ax-space-4);
   padding: 0;
 }
 
@@ -110,19 +114,19 @@
 }
 
 .trHoverArbeid:hover {
-  background-color: var(--ax-bg-accent-softA);
+  background-color: var(--ax-bg-accent-soft);
 }
 
 .trHoverSyk:hover {
-  background-color: var(--ax-bg-warning-softA);
+  background-color: var(--ax-bg-warning-soft);
 }
 
 .trHoverFravaer:hover {
-  background-color: var(--ax-bg-success-softA);
+  background-color: var(--ax-bg-success-soft);
 }
 
 .trHoverUtdanning:hover {
-  background-color: var(--ax-bg-meta-purple-softA);
+  background-color: var(--ax-bg-meta-purple-soft);
 }
 
 .gap {
@@ -175,4 +179,20 @@
   text-align: left !important;
   font-size: var(--ax-font-size-small) !important;
   line-height: var(--ax-font-line-height-medium) !important;
+}
+
+
+.trHoverSyk :global(.aksel-checkbox__box[data-checked="true"]) {
+  background-color: var(--ax-bg-warning-moderate-hover) !important;
+  border-color: var(--ax-bg-warning-moderate-hover) !important;
+}
+
+.trHoverFravaer :global(.aksel-checkbox__box[data-checked="true"]) {
+  background-color: var(--ax-bg-success-moderate-pressed) !important;
+  border-color: var(--ax-bg-success-moderate-pressed) !important;
+}
+
+.trHoverUtdanning :global(.aksel-checkbox__box[data-checked="true"]) {
+  background-color: var(--ax-bg-meta-purple-moderate-pressed) !important;
+  border-color: var(--ax-bg-meta-purple-moderate-pressed) !important;
 }

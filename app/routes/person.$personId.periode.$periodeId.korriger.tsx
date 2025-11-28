@@ -12,10 +12,7 @@ import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
-import stylesOriginal from "~/styles/route-styles/korriger.module.css";
-import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
-import stylesVariantC from "~/styles/route-styles/korrigerVariantC.module.css";
-import { getABTestVariant } from "~/utils/ab-test.server";
+import styles from "~/styles/route-styles/korriger.module.css";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, formatterDatoUTC, ukenummer } from "~/utils/dato.utils";
@@ -35,18 +32,15 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   const periode = await hentPeriode<IRapporteringsperiode>(request, personId, params.periodeId);
   const saksbehandler = await hentSaksbehandler(request);
-  const variant = getABTestVariant(request);
 
-  return { periode, saksbehandler, personId, variant };
+  return { periode, saksbehandler, personId };
 }
 
 export default function Periode() {
-  const { periode, saksbehandler, personId, variant } = useLoaderData<typeof loader>();
+  const { periode, saksbehandler, personId } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
-  const styles =
-    variant === "C" ? stylesVariantC : variant === "B" ? stylesVariantB : stylesOriginal;
 
   const isMountedRef = useRef(true);
 
@@ -179,7 +173,7 @@ export default function Periode() {
           </div>
           <div className={styles.kalenderOgBegrunnelseWrapper}>
             <div className={styles.kalenderContainer}>
-              <Kalender periode={periode} variant={variant} />
+              <Kalender periode={periode} variant="horizontal" />
             </div>
 
             {periode.begrunnelse && (
@@ -223,7 +217,6 @@ export default function Periode() {
               dager={korrigerteDager}
               setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
               periode={periode.periode}
-              variant={variant}
             />
           </div>
           <div className={styles.annenInfo}>

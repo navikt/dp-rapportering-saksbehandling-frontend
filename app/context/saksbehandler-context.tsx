@@ -104,7 +104,7 @@ export function SaksbehandlerProvider({ children, serverTema }: SaksbehandlerPro
   return (
     <SaksbehandlerContext.Provider value={contextValue}>
       {/* Bruker tema fra server eller klient */}
-      <Theme theme={tema} className="main-container">
+      <Theme theme={tema} className="main-container" hasBackground>
         {children}
       </Theme>
     </SaksbehandlerContext.Provider>

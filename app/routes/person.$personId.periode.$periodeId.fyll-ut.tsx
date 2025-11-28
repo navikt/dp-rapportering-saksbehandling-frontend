@@ -21,7 +21,6 @@ import { BekreftModal } from "~/modals/BekreftModal";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import styles from "~/styles/route-styles/fyllUt.module.css";
-import { getABTestVariant } from "~/utils/ab-test.server";
 import {
   MELDEKORT_TYPE,
   MODAL_ACTION_TYPE,
@@ -47,14 +46,13 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   const periode = await hentPeriode(request, params.personId, params.periodeId);
   const saksbehandler = await hentSaksbehandler(request);
-  const variant = getABTestVariant(request);
 
-  return { periode, saksbehandler, personId, variant };
+  return { periode, saksbehandler, personId };
 }
 
 export default function FyllUtPeriode() {
   const navigate = useNavigate();
-  const { periode, saksbehandler, personId, variant } = useLoaderData<typeof loader>();
+  const { periode, saksbehandler, personId } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const { showSuccess, showError } = useToast();
 
@@ -154,8 +152,6 @@ export default function FyllUtPeriode() {
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
-  const skjemaClass = variant === "C" ? `${styles.skjema} ${styles.skjemaVariantC}` : styles.skjema;
-
   return (
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllUtContainer}>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
@@ -168,7 +164,7 @@ export default function FyllUtPeriode() {
           "Meldekort sendt inn. Går tilbake til periodeoversikten..."}
       </div>
 
-      <div className={skjemaClass}>
+      <div className={styles.skjema}>
         <div className={styles.title}>
           <Heading level="1" size="medium" id="fyll-ut-heading">
             Fyll ut meldekort
@@ -204,7 +200,6 @@ export default function FyllUtPeriode() {
                 dager={dager}
                 setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
                 periode={periode.periode}
-                variant={variant}
               />
             </div>
             <fieldset className={classNames(styles.detaljer, styles.fieldset)}>

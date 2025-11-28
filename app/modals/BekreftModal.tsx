@@ -43,7 +43,7 @@ export function BekreftModal({
 
   return (
     <Modal open={open} onClose={onClose} portal aria-label={tittel}>
-      <Theme theme={tema}>
+      <Theme theme={tema} hasBackground>
         <Modal.Header>
           <h2>{tittel}</h2>
         </Modal.Header>

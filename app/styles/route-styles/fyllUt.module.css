@@ -12,10 +12,6 @@
   gap: var(--ax-space-24);
 }
 
-.skjema-variant-c {
-  max-width: 800px;
-}
-
 .fieldset {
   border: none;
   padding: 0;

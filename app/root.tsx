@@ -17,7 +17,6 @@ import { uuidv7 } from "uuidv7";
 
 import type { Route } from "./+types/root";
 import Header from "./components/header/Header";
-import { VariantSwitcher } from "./components/variant-switcher/VariantSwitcher";
 import { EnvProvider } from "./context/env-context";
 import { NavigationWarningProvider } from "./context/navigation-warning-context";
 import { SaksbehandlerProvider } from "./context/saksbehandler-context";
@@ -227,20 +226,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     stack = error.stack;
   }
 
-  // Sjekk om vi er i demo-miljø (MSW aktivert)
-  // getEnv bruker import.meta.env som fallback, så det fungerer selv utenfor EnvProvider
-  const isDemoMode = getEnv("USE_MSW") === "true";
-
   return (
     <>
       <Page.Block as="main" width="xl" gutters id="main-content">
         <Box paddingBlock="20 16" data-aksel-template="404-v2">
           <div>
-            {isDemoMode && (
-              <div style={{ position: "fixed", top: "5rem", right: "1rem", zIndex: 1000 }}>
-                <VariantSwitcher />
-              </div>
-            )}
             <Heading level="1" size="large" spacing>
               {title}
             </Heading>

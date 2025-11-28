@@ -68,11 +68,6 @@ export function VariantSwitcher() {
                 <ActionMenu.Item onSelect={() => handleParamChange("variant", "B")}>
                   Variant B {currentVariant === "B" && "✓"}
                 </ActionMenu.Item>
-                {isKorrigerPage && (
-                  <ActionMenu.Item onSelect={() => handleParamChange("variant", "C")}>
-                    Variant C {currentVariant === "C" && "✓"}
-                  </ActionMenu.Item>
-                )}
               </ActionMenu.Group>
 
               <ActionMenu.Divider />
@@ -96,22 +91,6 @@ export function VariantSwitcher() {
 
           {isActionPage && (
             <>
-              <ActionMenu.Group label="Variant:">
-                <ActionMenu.Item onSelect={() => handleParamChange("variant", "none")}>
-                  Variant A {!currentVariant && "✓"}
-                </ActionMenu.Item>
-                <ActionMenu.Item onSelect={() => handleParamChange("variant", "B")}>
-                  Variant B {currentVariant === "B" && "✓"}
-                </ActionMenu.Item>
-                {isKorrigerPage && (
-                  <ActionMenu.Item onSelect={() => handleParamChange("variant", "C")}>
-                    Variant C {currentVariant === "C" && "✓"}
-                  </ActionMenu.Item>
-                )}
-              </ActionMenu.Group>
-
-              <ActionMenu.Divider />
-
               <ActionMenu.Group label="Simuler feil ved innsending:">
                 <ActionMenu.Item onSelect={() => handleParamChange("action", "none")}>
                   Ingen feil {!currentAction && "✓"}

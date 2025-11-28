@@ -6,8 +6,8 @@ import {
   erPeriodeOpprettetAvArena,
 } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
-import { buildVariantURL } from "~/utils/ab-test.utils";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
+import { buildURLWithDemoParams } from "~/utils/demo-params.utils";
 import { skalViseArbeidssokerSporsmal } from "~/utils/meldekort-validering.helpers";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -112,7 +112,7 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const antallDagerForSent = dagerForSent(periode);
   const erSaksbehandler = erKildeSaksbehandler(periode);
-  const useVariantLabels = variant === "B" || variant === "C";
+  const useVariantLabels = variant === "B";
 
   // Bruk samme logikk som i skjemaet for å bestemme om arbeidssøkerspørsmål skal vises
   const skalViseArbeidssoker = skalViseArbeidssokerSporsmal(
@@ -121,10 +121,7 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null
     periode.opprettetAv,
   );
 
-  const korrigerUrl = buildVariantURL(
-    `/person/${personId}/periode/${periode.id}/korriger`,
-    variant ?? null,
-  );
+  const korrigerUrl = buildURLWithDemoParams(`/person/${personId}/periode/${periode.id}/korriger`);
 
   const formatDato = (dato: string) =>
     formatterDato({
