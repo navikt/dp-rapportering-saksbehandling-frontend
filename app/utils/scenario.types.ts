@@ -6,6 +6,7 @@ export enum ScenarioType {
   IKKE_SENDT_INN = "ikke_sendt_inn",
   FLERE_BEREGNEDE = "flere_beregnede",
   FULL_DEMO = "FULL_DEMO",
+  ARENA_MELDEKORT = "ARENA_MELDEKORT",
 }
 
 export interface IScenario {
@@ -37,5 +38,9 @@ export const SCENARIOS: IScenario[] = [
   {
     type: ScenarioType.FLERE_BEREGNEDE,
     tittel: "Alle meldekortene er beregnet",
+  },
+  {
+    type: ScenarioType.ARENA_MELDEKORT,
+    tittel: "Meldekort migrert fra Arena",
   },
 ];
