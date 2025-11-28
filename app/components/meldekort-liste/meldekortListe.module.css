@@ -9,3 +9,14 @@
   table-layout: fixed;
   width: 100%;
 }
+
+/* === Variant-specific styling === */
+/* For variant A (and default): Normal font-weight for row header cells */
+.periodeListe:not(.variantB) :global(.aksel-table__header-cell[scope="row"]) {
+  font-weight: normal;
+}
+
+/* Variant B keeps the default bold font-weight from Aksel */
+.variantB {
+  /* No override needed - Aksel's default bold is preserved */
+}

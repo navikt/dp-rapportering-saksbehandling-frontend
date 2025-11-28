@@ -111,7 +111,9 @@ export function Kalender({ periode, variant = null, hideWeekLabels = false }: IP
   if (variant === "C") {
     return (
       <table className={stylesVariantC.kalenderTabellC}>
-        <caption className="sr-only">Oversikt over rapporterte dager for perioden</caption>
+        <caption className="sr-only">
+          Oversikt over rapporterte dager for uke {forsteUkenummer} og {andreUkenummer}
+        </caption>
         <thead>
           <tr>
             <th scope="col" className="sr-only">
@@ -145,7 +147,9 @@ export function Kalender({ periode, variant = null, hideWeekLabels = false }: IP
   // Original/Variant A: Default stacked layout
   return (
     <table className={stylesOriginal.kalenderTabell}>
-      <caption className="sr-only">Oversikt over rapporterte dager for perioden</caption>
+      <caption className="sr-only">
+        Oversikt over rapporterte dager for uke {forsteUkenummer} og {andreUkenummer}
+      </caption>
       <thead>
         <tr>
           {!hideWeekLabels && (

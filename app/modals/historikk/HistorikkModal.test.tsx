@@ -197,6 +197,18 @@ describe("HistorikkModal", () => {
     expect(dialog).toHaveAttribute("aria-labelledby", "historikk-heading");
   });
 
+  it("skal ha aria-label på Process komponent med riktig årstall", () => {
+    renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
+
+    const lists = screen.getAllByRole("list");
+    // Finn listene som har aria-label (Process komponenter)
+    const processLists = lists.filter((list) => list.hasAttribute("aria-label"));
+
+    expect(processLists.length).toBeGreaterThan(0);
+    expect(processLists[0]).toHaveAttribute("aria-label", "Meldekort for 2024");
+    expect(processLists[1]).toHaveAttribute("aria-label", "Meldekort for 2023");
+  });
+
   it("skal håndtere hendelser som kun er i ett år", () => {
     const enkelÅrHendelser: IHendelse[] = [
       {

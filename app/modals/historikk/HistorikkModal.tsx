@@ -72,7 +72,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
     >
       <Theme theme={tema}>
         <Modal.Header>
-          <Heading level="2" size="small" id="historikk-heading">
+          <Heading level="1" size="small" id="historikk-heading">
             Historikk
           </Heading>
         </Modal.Header>
@@ -82,9 +82,9 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
             {sortedYears.map((year) => (
               <div key={year} className={styles.yearList}>
                 <div className={styles.listTitle}>
-                  <Label>{year}</Label>
+                  <Label as="h2">{year}</Label>
                 </div>
-                <Process>
+                <Process aria-label={`Meldekort for ${year}`}>
                   {hendelserEtterAar[year].map((hendelse, id) => {
                     const visningDatoTekst =
                       hendelse.kategori === "Meldekort"
@@ -93,6 +93,12 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
 
                     const bullet = getBullet(hendelse.event);
 
+                    // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
+                    const srEventText =
+                      hendelse.kategori === "Meldekort"
+                        ? hendelse.event.replace("Meldekort ", "")
+                        : hendelse.event;
+
                     return (
                       <Process.Event
                         key={`${hendelse.innsendtDato}-${id}`}
@@ -100,6 +106,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
                         timestamp={visningDatoTekst}
                         status="completed"
                         bullet={bullet}
+                        aria-label={srEventText}
                       >
                         {hendelse.type && <BodyShort size="small">{hendelse.type}</BodyShort>}
                         {hendelse.erSendtForSent && (
