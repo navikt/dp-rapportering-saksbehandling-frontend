@@ -233,7 +233,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
   return (
     <>
-      <Page.Block as="main" width="xl" gutters id="main-content">
+      <Page.Block as="main" width="xl" gutters id="main-content" tabIndex={-1}>
         <Box paddingBlock="20 16" data-aksel-template="404-v2">
           <div>
             {isDemoMode && (

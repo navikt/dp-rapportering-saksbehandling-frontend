@@ -18,6 +18,7 @@ export default function Rapportering() {
     <Box
       as="main"
       id="main-content"
+      tabIndex={-1}
       paddingBlock="10"
       paddingInline="4"
       style={{ maxWidth: "800px", margin: "0 auto" }}

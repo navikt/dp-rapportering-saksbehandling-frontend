@@ -492,12 +492,12 @@ describe("MeldekortRad", () => {
       expect(srOnlyElements.length).toBeGreaterThan(0);
     });
 
-    it("skal ha scope='row' på første datacell", () => {
+    it("skal ha scope='row' på første celle (th)", () => {
       const { container } = renderInTable(
         <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
       );
 
-      const firstCell = container.querySelector('td[scope="row"]');
+      const firstCell = container.querySelector('th[scope="row"]');
       expect(firstCell).toBeInTheDocument();
     });
   });

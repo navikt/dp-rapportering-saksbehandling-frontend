@@ -71,7 +71,7 @@ function DagCell({
     return (
       <td>
         <NumberInput
-          label={`Timer jobb ${formatterDag(dag.dato)}`}
+          label="Timer"
           value={aktiv?.timer ?? ""}
           onChange={(value) => {
             let updated;
@@ -114,7 +114,7 @@ function DagCell({
             endreDag(updated, dag, setKorrigerteDager);
           }}
         >
-          {`${label}, ${formatterDag(dag.dato)}`}
+          {label}
         </Checkbox>
       </div>
     </td>
@@ -268,7 +268,6 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode, variant = nul
         </legend>
       )}
       <table className={styles.fyllUtTabell}>
-        <caption className="sr-only">Før opp aktiviteter</caption>
         <thead>
           <tr>
             <th scope="col" className="sr-only">
