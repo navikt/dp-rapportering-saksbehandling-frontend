@@ -39,9 +39,21 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     // slik at ErrorBoundary kan vise Personlinje
     if (error instanceof Response) {
       const originalData = await error.json();
+
+      // Logg hele error details server-side for debugging
+      console.error("Error loading rapporteringsperioder:", {
+        status: error.status,
+        statusText: error.statusText,
+        personId: params.personId,
+        errorData: originalData,
+      });
+
+      // Send kun sanitert error data til klient
       throw new Response(
         JSON.stringify({
-          ...originalData,
+          message: originalData.message || originalData.error,
+          detail: originalData.detail || originalData.details,
+          errorId: originalData.errorId || originalData.correlationId,
           personContext: { person, showDemoTools },
         }),
         {
@@ -51,6 +63,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
         },
       );
     }
+
+    // logg uventede feil server-side
+    console.error("Unexpected error in person loader:", error);
     throw error;
   }
 }
@@ -86,7 +101,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let description: string = "Vi beklager, men noe gikk galt.";
   let detail: string | undefined = undefined;
   let errorId: string | undefined = undefined;
-  let stack: string | undefined = undefined;
   let personContext: { person: IPerson; showDemoTools: boolean } | undefined = undefined;
 
   if (isRouteErrorResponse(error)) {
@@ -111,9 +125,16 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
     // Hent person context fra error data hvis tilgjengelig
     personContext = errorData.personContext;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    description = error.message;
-    stack = error.stack;
+  } else if (error && error instanceof Error) {
+    // Log hele error details på server-side (inkludert stack trace)
+    console.error("Error in ErrorBoundary:", {
+      message: error.message,
+      stack: error.stack,
+      error,
+    });
+
+    // Vis kun en generisk melding til klienten
+    description = import.meta.env.DEV ? error.message : description;
   }
 
   const isDemoMode = getEnv("USE_MSW") === "true";
@@ -143,14 +164,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
               <BodyShort size="small">
                 Om du trenger hjelp kan du oppgi feil-ID: {errorId}
               </BodyShort>
-            )}
-
-            {stack && (
-              <pre
-                style={{ marginTop: "2rem", padding: "1rem", background: "var(--ax-bg-sunken)" }}
-              >
-                <code>{stack}</code>
-              </pre>
             )}
           </div>
         </div>
