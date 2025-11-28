@@ -4,6 +4,7 @@ import invariant from "tiny-invariant";
 
 import Personlinje from "~/components/personlinje/Personlinje";
 import { VariantSwitcher } from "~/components/variant-switcher/VariantSwitcher";
+import { logger } from "~/models/logger.server";
 import { hentPerson } from "~/models/person.server";
 import {
   hentArbeidssokerperioder,
@@ -41,7 +42,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       const originalData = await error.json();
 
       // Logg hele error details server-side for debugging
-      console.error("Error loading rapporteringsperioder:", {
+      logger.error("Error loading rapporteringsperioder:", {
         status: error.status,
         statusText: error.statusText,
         personId: params.personId,
@@ -65,7 +66,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     }
 
     // logg uventede feil server-side
-    console.error("Unexpected error in person loader:", error);
+    logger.error("Unexpected error in person loader:", error);
     throw error;
   }
 }
@@ -127,7 +128,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     personContext = errorData.personContext;
   } else if (error && error instanceof Error) {
     // Log hele error details på server-side (inkludert stack trace)
-    console.error("Error in ErrorBoundary:", {
+    logger.error("Error in ErrorBoundary:", {
       message: error.message,
       stack: error.stack,
       error,
