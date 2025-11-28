@@ -83,7 +83,7 @@ export default function Rapportering() {
           arbeidssokerperioder={arbeidssokerperioder}
         />
       </aside>
-      <main id="main-content" className={styles.mainContent}>
+      <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         {showDemoTools && (
           <div className={styles.variantSwitcherContainer}>
             <VariantSwitcher />
@@ -127,13 +127,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     // Hent person context fra error data hvis tilgjengelig
     personContext = errorData.personContext;
   } else if (error && error instanceof Error) {
-    // Log hele error details på server-side (inkludert stack trace)
-    logger.error("Error in ErrorBoundary:", {
-      message: error.message,
-      stack: error.stack,
-      error,
-    });
-
+    // Errors are already logged server-side in the loader before being thrown
     // Vis kun en generisk melding til klienten
     description = import.meta.env.DEV ? error.message : description;
   }
@@ -148,7 +142,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
           <Personlinje person={personContext.person} perioder={[]} arbeidssokerperioder={[]} />
         </aside>
       )}
-      <main id="main-content" className={styles.mainContent}>
+      <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         {showDemoTools && (
           <div className={styles.variantSwitcherContainer}>
             <VariantSwitcher />
