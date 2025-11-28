@@ -70,7 +70,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
       closeOnBackdropClick
       portal
     >
-      <Theme theme={tema}>
+      <Theme theme={tema} hasBackground>
         <Modal.Header>
           <Heading level="2" size="small" id="historikk-heading">
             Historikk

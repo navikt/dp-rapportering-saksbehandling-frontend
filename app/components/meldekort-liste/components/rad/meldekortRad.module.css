@@ -148,25 +148,25 @@
 
 @keyframes highlightBlinkAndFade {
   0% {
-    background-color: var(--ax-accent-100);
+    background-color: var(--ax-accent-200);
   }
   10% {
     background-color: transparent;
   }
   20% {
-    background-color: var(--ax-accent-100);
+    background-color: var(--ax-accent-200);
   }
   30% {
     background-color: transparent;
   }
   40% {
-    background-color: var(--ax-accent-100);
+    background-color: var(--ax-accent-200);
   }
   50% {
-    background-color: var(--ax-accent-100);
+    background-color: var(--ax-accent-200);
   }
   75% {
-    background-color: var(--ax-bg-accent-soft);
+    background-color: var(--ax-accent-100);
   }
   100% {
     background-color: transparent;
@@ -181,10 +181,10 @@
 
   @keyframes highlightSimple {
     0% {
-      background-color: var(--ax-accent-100);
+      background-color: var(--ax-accent-200);
     }
     50% {
-      background-color: var(--ax-accent-100);
+      background-color: var(--ax-accent-200);
     }
     100% {
       background-color: transparent;

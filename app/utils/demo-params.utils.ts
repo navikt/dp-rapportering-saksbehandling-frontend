@@ -1,15 +1,11 @@
 /**
  * Utilities for håndtering av demo/dev query parameters
- * Brukes for å propagere params som variant osv
  */
-
-import type { ABTestVariant } from "./ab-test.utils";
 
 /**
  * Query parameters som skal propageres automatisk i demo/dev miljø
  */
 export const DEMO_PARAMS = {
-  VARIANT: "variant",
   STATUS: "status",
   ACTION: "action",
 } as const;
@@ -109,25 +105,6 @@ export function buildURLWithDemoParams(
   }
 
   return url.pathname + url.search;
-}
-
-/**
- * Type-safe getter for variant
- */
-export function getVariant(url: string | URL | Request): ABTestVariant {
-  const urlObj =
-    typeof url === "string"
-      ? new URL(url, "http://dummy")
-      : url instanceof Request
-        ? new URL(url.url)
-        : url;
-  const variant = urlObj.searchParams.get(DEMO_PARAMS.VARIANT);
-
-  if (variant === "A" || variant === "B" || variant === "C") {
-    return variant;
-  }
-
-  return null;
 }
 
 /**

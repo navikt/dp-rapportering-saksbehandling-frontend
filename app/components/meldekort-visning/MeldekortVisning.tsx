@@ -1,8 +1,8 @@
 import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
-import { buildVariantURL } from "~/utils/ab-test.utils";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import { buildURLWithDemoParams } from "~/utils/demo-params.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { KalenderOgAktiviteter } from "./components/kalenderOgAktiviteter/kalenderOgAktiviteter";
@@ -28,10 +28,7 @@ export function MeldekortVisning({ perioder, personId, ansvarligSystem, variant 
     const erTilUtfylling = erPeriodeTilUtfylling(periode);
     const kanSendes = kanMeldekortSendes(periode, ansvarligSystem);
 
-    const fyllUtUrl = buildVariantURL(
-      `/person/${personId}/periode/${periode.id}/fyll-ut`,
-      variant ?? null,
-    );
+    const fyllUtUrl = buildURLWithDemoParams(`/person/${personId}/periode/${periode.id}/fyll-ut`);
 
     return (
       <section

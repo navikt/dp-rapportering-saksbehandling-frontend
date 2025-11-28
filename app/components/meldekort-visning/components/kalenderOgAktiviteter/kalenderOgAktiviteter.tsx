@@ -23,7 +23,7 @@ export function KalenderOgAktiviteter({ periode, variant }: IProps) {
 
   return (
     <div className={styles.kalenderOgSammenlagt}>
-      <Kalender periode={periode} variant={null} hideWeekLabels={true} />
+      <Kalender periode={periode} hideWeekLabels={true} variant="vertical" />
       {visSammenlagt ? (
         <div className={styles.sammenlagt} id={`sammenlagt-${periode.id}`}>
           <Heading level="4" size="xsmall">

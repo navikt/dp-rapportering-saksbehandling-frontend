@@ -60,8 +60,8 @@ export function MeldekortRad({
     (p) => p.originalMeldekortId === periode.id && p.id !== periode.id,
   );
 
-  // Variant B og C: Endre tekster for korrigering
-  const useVariantLabels = variant === "B" || variant === "C";
+  // Variant B: Endre tekster for korrigering
+  const useVariantLabels = variant === "B";
 
   // Visningsverdier
   const statusConfig = getStatusConfig(periode);
