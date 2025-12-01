@@ -2,6 +2,10 @@ import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
 
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
+import type {
+  IBehandlingsresultatPeriodeMedMeta,
+  IPengeVerdi,
+} from "~/utils/behandlingsresultat.types";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
@@ -15,9 +19,16 @@ interface IProps {
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
+  behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
 }
 
-export function MeldekortVisning({ perioder, personId, ansvarligSystem, variant }: IProps) {
+export function MeldekortVisning({
+  perioder,
+  personId,
+  ansvarligSystem,
+  variant,
+  behandlinger,
+}: IProps) {
   return perioder.map((periode) => {
     const { fraOgMed, tilOgMed } = periode.periode;
     const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
@@ -71,6 +82,7 @@ export function MeldekortVisning({ perioder, personId, ansvarligSystem, variant 
                 personId={personId}
                 ansvarligSystem={ansvarligSystem}
                 variant={variant}
+                behandlinger={behandlinger}
               />
             </div>
           </>

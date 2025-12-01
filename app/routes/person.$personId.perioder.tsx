@@ -129,6 +129,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
                   personId={params.personId}
                   ansvarligSystem={person.ansvarligSystem}
                   variant={variant}
+                  behandlinger={data?.behandlingerPerPeriode}
                 />
               </Accordion.Content>
             </Accordion.Item>

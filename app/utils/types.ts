@@ -3,6 +3,7 @@ import type { SetupWorker } from "msw/browser";
 import type {
   AKTIVITET_TYPE,
   ANSVARLIG_SYSTEM,
+  DATA_TYPE,
   KJONN,
   MELDEKORT_TYPE,
   OPPRETTET_AV,
@@ -69,6 +70,8 @@ export type TMeldekortType = (typeof MELDEKORT_TYPE)[keyof typeof MELDEKORT_TYPE
 
 export type TArbeidssokerperiodeStatus =
   (typeof ARBEIDSSOKERPERIODE_STATUS)[keyof typeof ARBEIDSSOKERPERIODE_STATUS];
+
+export type TDataType = (typeof DATA_TYPE)[keyof typeof DATA_TYPE];
 
 export interface IArbeidssokerperiode {
   periodeId: string; // UUID
@@ -194,6 +197,7 @@ export interface IEnv {
   DP_MELDEKORTREGISTER_TOKEN?: string;
   DP_PERSONREGISTER_URL: string;
   DP_PERSONREGISTER_TOKEN?: string;
+  DP_BEHANDLING_URL: string;
   MICROSOFT_TOKEN?: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;

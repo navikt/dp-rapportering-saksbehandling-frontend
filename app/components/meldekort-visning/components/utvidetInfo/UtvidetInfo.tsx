@@ -7,6 +7,10 @@ import {
 } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
+import type {
+  IBehandlingsresultatPeriodeMedMeta,
+  IPengeVerdi,
+} from "~/utils/behandlingsresultat.types";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
 import { skalViseArbeidssokerSporsmal } from "~/utils/meldekort-validering.helpers";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
@@ -25,9 +29,12 @@ interface IProps {
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
+  behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
 }
 
 const MAX_LINES = 4;
+
+const NOK = new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK" });
 
 const TruncatedText = ({ text }: { text: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -102,7 +109,13 @@ const DetailRow = ({
   </Table.Row>
 );
 
-export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null }: IProps) {
+export function UtvidetInfo({
+  periode,
+  personId,
+  ansvarligSystem,
+  variant = null,
+  behandlinger,
+}: IProps) {
   const erEtterregistrert = erPeriodeEtterregistrert(periode);
   const erFraArena = erPeriodeOpprettetAvArena(periode);
   const erArbeidssoker = periode.registrertArbeidssoker;
@@ -166,6 +179,19 @@ export function UtvidetInfo({ periode, personId, ansvarligSystem, variant = null
           {periode.begrunnelse && (
             <DetailRow label="Begrunnelse:" alignTop>
               <TruncatedText text={periode.begrunnelse} />
+            </DetailRow>
+          )}
+
+          {behandlinger && behandlinger.length > 0 && (
+            <DetailRow label="Brutto utbetaling:">
+              <>
+                {behandlinger.map((behandling) => (
+                  <span key={behandling.id}>
+                    {/* TODO: Lenke til `https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/${behandling.oppgaveId}/dagpenger-rett/${behandling.behandlingsId}/_person/regelsett/${behandling.regelsettId}/opplysning/${behandling.id}` */}
+                    {NOK.format(behandling.verdi.verdi)}{" "}
+                  </span>
+                ))}
+              </>
             </DetailRow>
           )}
 

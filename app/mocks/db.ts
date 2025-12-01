@@ -1,5 +1,6 @@
 import { uuidv7 } from "uuidv7";
 
+import type { IBehandlingsresultat } from "~/utils/behandlingsresultat.types";
 import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type {
   IArbeidssokerperiode,
@@ -123,6 +124,10 @@ function hentArbeidssokerperioder(db: Database) {
   }) as IArbeidssokerperiode[];
 }
 
+function hentBehandlingsresultat(db: Database) {
+  return db.behandlingsresultat.findMany() as IBehandlingsresultat[];
+}
+
 export function withDb(db: Database) {
   return {
     hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
@@ -135,5 +140,6 @@ export function withDb(db: Database) {
       oppdaterPeriode(db, periodeId, oppdateringer),
     periodeKanIkkeLengerSendes: (periodeId: string) => periodeKanIkkeLengerSendes(db, periodeId),
     hentArbeidssokerperioder: () => hentArbeidssokerperioder(db),
+    hentBehandlingsresultat: () => hentBehandlingsresultat(db),
   };
 }

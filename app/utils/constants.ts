@@ -118,3 +118,47 @@ export const DEFAULT_PERSON: IPerson = {
   kjonn: KJONN.UKJENT,
   ident: "",
 };
+
+// Behandlingsresultat https://dp-behandling.intern.dev.nav.no/openapi
+export const DATA_TYPE = {
+  DATO: "dato",
+  DESIMALTALL: "desimaltall",
+  HELTALL: "heltall",
+  BOOLSK: "boolsk",
+  ULID: "ulid",
+  PENGER: "penger",
+  INNTEKT: "inntekt",
+  TEKST: "tekst",
+  BARN: "barn",
+  PERIODE: "periode",
+} as const;
+
+export const OPPRINNELSE = { NY: "Ny", ARVET: "Arvet" } as const;
+
+export const ENHET = {
+  TIMER: "timer",
+  PROSENT: "prosent",
+  G: "G",
+  DAGER: "dager",
+  UKER: "uker",
+  MÅNEDER: "måneder",
+  AAR: "år",
+} as const;
+
+export const OPPLYSNINGSKILDE_TYPE = {
+  SAKSBEHANDLER: "Saksbehandler",
+  SYSTEM: "System",
+};
+
+export const FORMAL = {
+  REGISTER: "Register",
+  BRUKER: "Bruker",
+  REGEL: "Regel",
+  LEGACY: "Legacy",
+};
+
+export const BEHANDLET_HENDELSE_TYPE = {
+  SOKNAD: "Søknad",
+  MELDEKORT: "Meldekort",
+  MANUELL: "Manuell",
+};

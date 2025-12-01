@@ -5,6 +5,7 @@ import { ScenarioType } from "~/utils/scenario.types";
 import type { IPerson, ISaksbehandler } from "~/utils/types";
 
 import { hentArbeidssokerperioder } from "./data/mock-arbeidssokerperioder";
+import { hentBehandlingsresultat } from "./data/mock-behandlinger";
 import { mockPersons } from "./data/mock-persons";
 import { hentRapporteringsperioderForScenario } from "./data/mock-rapporteringsperioder";
 import { mockSaksbehandler } from "./data/mock-saksbehandler";
@@ -50,10 +51,21 @@ class SessionRecord {
         );
 
         const arbeidssokerperioder = hentArbeidssokerperioder(periods, createdPerson);
+
         await Promise.all(
           arbeidssokerperioder.map((arbeidssokerperiode) =>
             db.arbeidssokerperioder.create(arbeidssokerperiode),
           ),
+        );
+
+        const behandlingsresultat = hentBehandlingsresultat(
+          createdPerson,
+          periods,
+          arbeidssokerperioder,
+        );
+
+        await Promise.all(
+          behandlingsresultat.map((behandling) => db.behandlingsresultat.create(behandling)),
         );
       }
     }
@@ -135,6 +147,9 @@ class SessionRecord {
           sluttDato: z.string().nullable(),
           status: z.enum(["Startet", "Avsluttet"]),
         }),
+      }),
+      behandlingsresultat: new Collection({
+        schema: z.any(),
       }),
     };
   }
