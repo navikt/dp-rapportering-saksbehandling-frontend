@@ -67,12 +67,6 @@ p {
   margin: 0;
 }
 
-/* Skip-link fokus styling */
-#main-content:focus {
-  outline: 3px solid var(--ax-border-focus);
-  outline-offset: 2px;
-}
-
 /* Ekstern flate kompakt tekst - unngår Personlinje */
 .ekstern-flate p {
   font-size: 0.75rem !important;
