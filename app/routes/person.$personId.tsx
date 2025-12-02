@@ -15,7 +15,7 @@ import styles from "~/styles/route-styles/root.module.css";
 import { isDemoToolsEnabled } from "~/utils/ab-test.server";
 import { finnBehandlingerForPerioder } from "~/utils/behandlinger.utils";
 import type { IBehandlingerPerPeriode } from "~/utils/behandlingsresultat.types";
-import { getEnv } from "~/utils/env.utils";
+import { getEnv, usesMsw } from "~/utils/env.utils";
 import type { IPerson } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId";
@@ -38,7 +38,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     const arbeidssokerperioder = await hentArbeidssokerperioder(request, params.personId);
     let behandlingerPerPeriode: IBehandlingerPerPeriode = {};
 
-    if (getEnv("USE_MSW")) {
+    if (usesMsw) {
       try {
         const behandlinger = await hentBehandlinger(request, person.ident);
         behandlingerPerPeriode = finnBehandlingerForPerioder(perioder, behandlinger);
