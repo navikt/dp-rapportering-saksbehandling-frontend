@@ -197,16 +197,28 @@ describe("HistorikkModal", () => {
     expect(dialog).toHaveAttribute("aria-labelledby", "historikk-heading");
   });
 
-  it("skal ha aria-label på Process komponent med riktig årstall", () => {
+  it("skal ha aria-label på Process komponent med riktig årstall", async () => {
+    const user = userEvent.setup();
     renderWithProviders(<HistorikkModal open={true} onClose={vi.fn()} hendelser={mockHendelser} />);
 
+    // Første accordion er defaultOpen, så 2024 Process er synlig
     const lists = screen.getAllByRole("list");
-    // Finn listene som har aria-label (Process komponenter)
     const processLists = lists.filter((list) => list.hasAttribute("aria-label"));
 
     expect(processLists.length).toBeGreaterThan(0);
     expect(processLists[0]).toHaveAttribute("aria-label", "Meldekort for 2024");
-    expect(processLists[1]).toHaveAttribute("aria-label", "Meldekort for 2023");
+
+    // Åpne 2023 accordion for å se den Process-komponenten
+    const accordion2023 = screen.getByRole("button", { name: "2023" });
+    await user.click(accordion2023);
+
+    // Nå skal vi finne begge Process-komponentene
+    const allLists = screen.getAllByRole("list");
+    const allProcessLists = allLists.filter((list) => list.hasAttribute("aria-label"));
+
+    expect(allProcessLists.length).toBe(2);
+    expect(allProcessLists[0]).toHaveAttribute("aria-label", "Meldekort for 2024");
+    expect(allProcessLists[1]).toHaveAttribute("aria-label", "Meldekort for 2023");
   });
 
   it("skal håndtere hendelser som kun er i ett år", () => {

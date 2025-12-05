@@ -1,5 +1,5 @@
 import { CheckmarkIcon, XMarkIcon } from "@navikt/aksel-icons";
-import { Alert, BodyShort, Heading, Label, Modal, Process, Tag, Theme } from "@navikt/ds-react";
+import { Accordion, Alert, BodyShort, Heading, Modal, Process, Tag, Theme } from "@navikt/ds-react";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import { groupByYear, sortYearsDescending } from "~/utils/dato.utils";
@@ -79,55 +79,59 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
         <Modal.Body>
           <div className={styles.modalContent}>
             {harFeil && <Alert variant="error">{feilMelding}</Alert>}
-            {sortedYears.map((year) => (
-              <div key={year} className={styles.yearList}>
-                <div className={styles.listTitle}>
-                  <Label as="h2">{year}</Label>
-                </div>
-                <Process aria-label={`Meldekort for ${year}`}>
-                  {hendelserEtterAar[year].map((hendelse, id) => {
-                    const visningDatoTekst =
-                      hendelse.kategori === "Meldekort"
-                        ? `Innsendt: ${hendelse.innsendtDato}, kl. ${hendelse.time}`
-                        : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
+            <Accordion>
+              {sortedYears.map((year, index) => (
+                <Accordion.Item key={year} defaultOpen={index === 0}>
+                  <Accordion.Header>{year}</Accordion.Header>
+                  <Accordion.Content>
+                    <Process aria-label={`Meldekort for ${year}`}>
+                      {hendelserEtterAar[year].map((hendelse, id) => {
+                        const visningDatoTekst =
+                          hendelse.kategori === "Meldekort"
+                            ? `Innsendt: ${hendelse.innsendtDato}, kl. ${hendelse.time}`
+                            : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
 
-                    const bullet = getBullet(hendelse.event);
+                        const bullet = getBullet(hendelse.event);
 
-                    // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
-                    const srEventText =
-                      hendelse.kategori === "Meldekort"
-                        ? hendelse.event.replace("Meldekort ", "")
-                        : hendelse.event;
+                        // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
+                        const srEventText =
+                          hendelse.kategori === "Meldekort"
+                            ? hendelse.event.replace("Meldekort ", "")
+                            : hendelse.event;
 
-                    return (
-                      <Process.Event
-                        key={`${hendelse.innsendtDato}-${id}`}
-                        title={hendelse.event}
-                        timestamp={visningDatoTekst}
-                        status="completed"
-                        bullet={bullet}
-                        aria-label={srEventText}
-                      >
-                        {hendelse.type && <BodyShort size="small">{hendelse.type}</BodyShort>}
-                        {hendelse.erSendtForSent && (
-                          <>
-                            <BodyShort size="small">Frist: {hendelse.sisteFristForTrekk}</BodyShort>
-                            <Tag variant="error" size="xsmall">
-                              Innsendt etter fristen
-                            </Tag>
-                          </>
-                        )}
-                        {hendelse.hendelseType === "Korrigert" && (
-                          <Tag variant="warning" size="small">
-                            Korrigert
-                          </Tag>
-                        )}
-                      </Process.Event>
-                    );
-                  })}
-                </Process>
-              </div>
-            ))}
+                        return (
+                          <Process.Event
+                            key={`${hendelse.innsendtDato}-${id}`}
+                            title={hendelse.event}
+                            timestamp={visningDatoTekst}
+                            status="completed"
+                            bullet={bullet}
+                            aria-label={srEventText}
+                          >
+                            {hendelse.type && <BodyShort size="small">{hendelse.type}</BodyShort>}
+                            {hendelse.erSendtForSent && (
+                              <>
+                                <BodyShort size="small">
+                                  Frist: {hendelse.sisteFristForTrekk}
+                                </BodyShort>
+                                <Tag variant="error" size="xsmall">
+                                  Innsendt etter fristen
+                                </Tag>
+                              </>
+                            )}
+                            {hendelse.hendelseType === "Korrigert" && (
+                              <Tag variant="warning" size="small">
+                                Korrigert
+                              </Tag>
+                            )}
+                          </Process.Event>
+                        );
+                      })}
+                    </Process>
+                  </Accordion.Content>
+                </Accordion.Item>
+              ))}
+            </Accordion>
           </div>
         </Modal.Body>
       </Theme>
