@@ -79,7 +79,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
         <Modal.Body>
           <div className={styles.modalContent}>
             {harFeil && <Alert variant="error">{feilMelding}</Alert>}
-            <Accordion>
+            <Accordion indent={false}>
               {sortedYears.map((year, index) => (
                 <Accordion.Item key={year} defaultOpen={index === 0}>
                   <Accordion.Header>{year}</Accordion.Header>
