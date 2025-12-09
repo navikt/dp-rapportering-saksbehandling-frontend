@@ -117,7 +117,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
               {announceUpdate}
             </div>
           )}
-          <Accordion size="small">
+          <Accordion size="small" indent={false}>
             {years.map((year) => (
               <Accordion.Item
                 key={year}
