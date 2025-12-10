@@ -69,8 +69,8 @@ export function MeldekortRad({
   );
   const harKorrigering = periodeHarKorrigering(periode, allePerioder);
 
-  // Variant B og C: Endre tekster for korrigering
-  const useVariantLabels = variant === "B" || variant === "C";
+  // Variant B: Endre tekster for korrigering
+  const useVariantLabels = variant === "B";
 
   // Visningsverdier
   const statusConfig = getStatusConfig(periode);
@@ -88,53 +88,67 @@ export function MeldekortRad({
     }
   }, [searchParams, periode.id]);
 
-  // Auto-åpne, scroll og highlight når meldekort matcher URL
+  // Auto-åpne, scroll og highlight når meldekort matcher URL (kun ved første lasting)
   useEffect(() => {
     const rapporteringsId = searchParams.get(QUERY_PARAMS.RAPPORTERINGSID);
     const meldekortId = searchParams.get(QUERY_PARAMS.MELDEKORT_ID);
     const shouldAutoOpen = rapporteringsId === periode.id || meldekortId === periode.id;
 
-    if (shouldAutoOpen && rowRef.current && !hasAutoOpenedRef.current) {
-      hasAutoOpenedRef.current = true;
-      const timers: NodeJS.Timeout[] = [];
+    // Kun kjør auto-open logikk hvis vi ikke allerede har åpnet denne raden
+    if (!shouldAutoOpen || hasAutoOpenedRef.current) {
+      return;
+    }
 
-      // Åpne raden
-      setIsOpen(true);
+    // Marker at vi har auto-åpnet denne raden
+    hasAutoOpenedRef.current = true;
 
-      // Smooth scroll til meldekortet
-      const scrollTimer = setTimeout(() => {
+    // Åpne raden umiddelbart
+    setIsOpen(true);
+
+    // Hvis rowRef ikke er tilgjengelig ennå, bare åpne raden (uten scroll/fokus)
+    if (!rowRef.current) {
+      return;
+    }
+
+    const timers: NodeJS.Timeout[] = [];
+
+    // Smooth scroll til meldekortet
+    const scrollTimer = setTimeout(() => {
+      if (rowRef.current) {
         const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        rowRef.current?.scrollIntoView({
+        rowRef.current.scrollIntoView({
           behavior: prefersReducedMotion ? "auto" : "smooth",
           block: "center",
         });
-      }, SCROLL_DELAY_MS);
-      timers.push(scrollTimer);
+      }
+    }, SCROLL_DELAY_MS);
+    timers.push(scrollTimer);
 
-      // Fokuser på toggle-knappen (uten å scrolle igjen)
-      const focusTimer = setTimeout(() => {
-        const toggleButton = rowRef.current?.querySelector(
+    // Fokuser på toggle-knappen (uten å scrolle igjen)
+    const focusTimer = setTimeout(() => {
+      if (rowRef.current) {
+        const toggleButton = rowRef.current.querySelector(
           "button[aria-expanded]",
         ) as HTMLButtonElement;
         toggleButton?.focus({ preventScroll: true });
-      }, SCROLL_DELAY_MS + 200);
-      timers.push(focusTimer);
+      }
+    }, SCROLL_DELAY_MS + 200);
+    timers.push(focusTimer);
 
-      // Vis highlight
-      const highlightTimer = setTimeout(() => {
-        setIsHighlighted(true);
-      }, HIGHLIGHT_DELAY_MS);
-      timers.push(highlightTimer);
+    // Vis highlight
+    const highlightTimer = setTimeout(() => {
+      setIsHighlighted(true);
+    }, HIGHLIGHT_DELAY_MS);
+    timers.push(highlightTimer);
 
-      // Fjern highlight
-      const removeHighlightTimer = setTimeout(() => {
-        setIsHighlighted(false);
-      }, REMOVE_HIGHLIGHT_DELAY_MS);
-      timers.push(removeHighlightTimer);
+    // Fjern highlight
+    const removeHighlightTimer = setTimeout(() => {
+      setIsHighlighted(false);
+    }, REMOVE_HIGHLIGHT_DELAY_MS);
+    timers.push(removeHighlightTimer);
 
-      return () => timers.forEach((timer) => clearTimeout(timer));
-    }
-  }, [searchParams, periode.id]);
+    return () => timers.forEach((timer) => clearTimeout(timer));
+  }, []); // Kun kjør denne effekten én gang ved mount
 
   const radKlasse = classNames({
     [styles["periodeListe__row"]]: true,
@@ -219,15 +233,18 @@ export function MeldekortRad({
       </Table.DataCell>
       <Table.DataCell {...cellProps}>
         <ul className={styles.aktiviteter}>
-          {aktiviteter.map((type) => (
-            <li
-              key={type}
-              className={`${styles.aktivitet} ${aktivitetStyles[aktivitetMapping[type].color]}`}
-            >
-              <span aria-hidden="true">{aktivitetMapping[type].label}</span>
-              <span className="sr-only">{aktivitetMapping[type].aria}</span>
-            </li>
-          ))}
+          {aktiviteter.map((type) => {
+            const colorClass =
+              variant === "B"
+                ? aktivitetMapping[type].color
+                : `${aktivitetMapping[type].color}VariantA`;
+            return (
+              <li key={type} className={`${styles.aktivitet} ${aktivitetStyles[colorClass]}`}>
+                <span aria-hidden="true">{aktivitetMapping[type].label}</span>
+                <span className="sr-only">{aktivitetMapping[type].aria}</span>
+              </li>
+            );
+          })}
         </ul>
       </Table.DataCell>
       <Table.DataCell {...cellProps}>

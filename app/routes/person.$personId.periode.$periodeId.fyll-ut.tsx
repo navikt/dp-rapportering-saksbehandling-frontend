@@ -154,7 +154,7 @@ export default function FyllUtPeriode() {
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
-  const skjemaClass = variant === "C" ? `${styles.skjema} ${styles.skjemaVariantC}` : styles.skjema;
+  const skjemaClass = styles.skjema;
 
   return (
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllUtContainer}>

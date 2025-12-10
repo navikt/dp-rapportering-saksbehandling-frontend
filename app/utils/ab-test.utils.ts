@@ -3,7 +3,7 @@
  * Disse funksjonene kan brukes både på server og klient
  */
 
-export type ABTestVariant = "A" | "B" | "C" | null;
+export type ABTestVariant = "A" | "B" | null;
 export type TogglePlacement = "left" | "right";
 
 /**

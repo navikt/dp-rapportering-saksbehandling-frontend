@@ -438,8 +438,10 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
 
   [ScenarioType.FULL_DEMO]: [
     // Arena meldekort innsendt med aktiviteter
+    // Hardkodet ID for demo-miljø slik at URL-er kan deles
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000001",
         opprettetAv: OPPRETTET_AV.Arena,
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,

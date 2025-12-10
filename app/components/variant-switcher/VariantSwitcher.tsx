@@ -68,11 +68,6 @@ export function VariantSwitcher() {
                 <ActionMenu.Item onSelect={() => handleParamChange("variant", "B")}>
                   Variant B {currentVariant === "B" && "✓"}
                 </ActionMenu.Item>
-                {isKorrigerPage && (
-                  <ActionMenu.Item onSelect={() => handleParamChange("variant", "C")}>
-                    Variant C {currentVariant === "C" && "✓"}
-                  </ActionMenu.Item>
-                )}
               </ActionMenu.Group>
 
               <ActionMenu.Divider />
@@ -103,11 +98,6 @@ export function VariantSwitcher() {
                 <ActionMenu.Item onSelect={() => handleParamChange("variant", "B")}>
                   Variant B {currentVariant === "B" && "✓"}
                 </ActionMenu.Item>
-                {isKorrigerPage && (
-                  <ActionMenu.Item onSelect={() => handleParamChange("variant", "C")}>
-                    Variant C {currentVariant === "C" && "✓"}
-                  </ActionMenu.Item>
-                )}
               </ActionMenu.Group>
 
               <ActionMenu.Divider />

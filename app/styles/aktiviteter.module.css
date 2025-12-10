@@ -1,5 +1,39 @@
 /* === Aktiviteter Farger === */
 
+/* Variant A - Gamle farger for light mode, Aksel for dark mode */
+.arbeidVariantA {
+  background-color: #99c3ff;
+}
+
+.sykVariantA {
+  background-color: #ffd399;
+}
+
+.fravaerVariantA {
+  background-color: #a8dcb1;
+}
+
+.utdanningVariantA {
+  background-color: #d2a8dc;
+}
+
+[data-theme="dark"] .arbeidVariantA {
+  background-color: var(--ax-bg-accent-moderate-pressed);
+}
+
+[data-theme="dark"] .sykVariantA {
+  background-color: var(--ax-bg-warning-moderate-hover);
+}
+
+[data-theme="dark"] .fravaerVariantA {
+  background-color: var(--ax-bg-success-moderate-pressed);
+}
+
+[data-theme="dark"] .utdanningVariantA {
+  background-color: var(--ax-bg-meta-purple-moderate-pressed);
+}
+
+/* Standard farger (Aksel) */
 .arbeid {
   background-color: var(--ax-bg-accent-moderate-pressed);
 }
