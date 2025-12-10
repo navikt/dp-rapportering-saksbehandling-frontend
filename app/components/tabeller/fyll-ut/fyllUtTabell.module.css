@@ -126,19 +126,19 @@
 }
 
 .trHoverArbeid:hover {
-  background-color: rgba(153, 195, 255, 0.2);
+  background-color: rgba(153, 195, 255, 0.3);
 }
 
 .trHoverSyk:hover {
-  background-color: rgba(255, 211, 153, 0.2);
+  background-color: rgba(255, 211, 153, 0.3);
 }
 
 .trHoverFravaer:hover {
-  background-color: rgba(168, 220, 177, 0.2);
+  background-color: rgba(168, 220, 177, 0.3);
 }
 
 .trHoverUtdanning:hover {
-  background-color: rgba(210, 168, 220, 0.2);
+  background-color: rgba(210, 168, 220, 0.3);
 }
 
 [data-theme="dark"] .trHoverArbeid:hover {
