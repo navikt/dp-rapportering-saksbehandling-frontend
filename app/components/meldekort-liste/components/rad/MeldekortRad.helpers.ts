@@ -6,7 +6,7 @@ export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
 
 export interface StatusConfig {
   text: string;
-  variant: "success" | "info";
+  variant: "success" | "neutral" | "info";
 }
 
 /**
@@ -24,7 +24,7 @@ export function getStatusConfig(periode: IRapporteringsperiode): StatusConfig {
     return { text: "Klar til utfylling", variant: "info" };
   }
 
-  return { text: "Meldekort opprettet", variant: "info" };
+  return { text: "Meldekort opprettet", variant: "neutral" };
 }
 
 /**
@@ -62,4 +62,25 @@ export function skalViseInnsendtInfo(periode: IRapporteringsperiode): boolean {
  */
 export function erPeriodeOpprettetAvArena(periode: IRapporteringsperiode): boolean {
   return periode.opprettetAv === OPPRETTET_AV.Arena;
+}
+
+/**
+ * Sjekker om perioden har en korrigering (et annet meldekort som korrigerer denne perioden)
+ */
+export function periodeHarKorrigering(
+  periode: IRapporteringsperiode,
+  allePerioder: IRapporteringsperiode[],
+): boolean {
+  return allePerioder.some((p) => p.originalMeldekortId === periode.id && p.id !== periode.id);
+}
+
+/**
+ * Formaterer periode-datoer til en lesbar streng
+ */
+export function formaterPeriodeDatoer(
+  fraOgMed: string,
+  tilOgMed: string,
+  formatterDato: (params: { dato: string }) => string,
+): string {
+  return `${formatterDato({ dato: fraOgMed })} - ${formatterDato({ dato: tilOgMed })}`;
 }

@@ -6,8 +6,10 @@ import type { IRapporteringsperiode } from "~/utils/types";
 import {
   erPeriodeKorrigert,
   erPeriodeOpprettet,
+  formaterPeriodeDatoer,
   getStatusConfig,
   HIGHLIGHT_DURATION_MS,
+  periodeHarKorrigering,
   skalViseInnsendtInfo,
 } from "./MeldekortRad.helpers";
 
@@ -81,7 +83,7 @@ describe("MeldekortRad.helpers", () => {
 
       expect(result).toEqual({
         text: "Meldekort opprettet",
-        variant: "info",
+        variant: "neutral",
       });
     });
   });
@@ -202,6 +204,120 @@ describe("MeldekortRad.helpers", () => {
       };
 
       expect(skalViseInnsendtInfo(periode)).toBe(false);
+    });
+  });
+
+  describe("periodeHarKorrigering", () => {
+    it("skal returnere true når en annen periode har denne perioden som originalMeldekortId", () => {
+      const periode: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "original-123",
+      };
+
+      const korrigeringsPeriode: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "korrigering-456",
+        originalMeldekortId: "original-123",
+      };
+
+      const allePerioder = [periode, korrigeringsPeriode];
+
+      expect(periodeHarKorrigering(periode, allePerioder)).toBe(true);
+    });
+
+    it("skal returnere false når ingen andre perioder refererer til denne perioden", () => {
+      const periode: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "original-123",
+      };
+
+      const annenPeriode: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "annen-456",
+        originalMeldekortId: null,
+      };
+
+      const allePerioder = [periode, annenPeriode];
+
+      expect(periodeHarKorrigering(periode, allePerioder)).toBe(false);
+    });
+
+    it("skal returnere false når perioden selv er en korrigering", () => {
+      const originalPeriode: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "original-123",
+      };
+
+      const korrigeringsPeriode: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "korrigering-456",
+        originalMeldekortId: "original-123",
+      };
+
+      const allePerioder = [originalPeriode, korrigeringsPeriode];
+
+      expect(periodeHarKorrigering(korrigeringsPeriode, allePerioder)).toBe(false);
+    });
+
+    it("skal returnere false når allePerioder er tom array", () => {
+      const periode: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "original-123",
+      };
+
+      expect(periodeHarKorrigering(periode, [])).toBe(false);
+    });
+
+    it("skal håndtere multiple korrigeringer og kun returnere true hvis noen refererer til perioden", () => {
+      const periode: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "original-123",
+      };
+
+      const korrigering1: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "korrigering-1",
+        originalMeldekortId: "original-123",
+      };
+
+      const korrigering2: IRapporteringsperiode = {
+        ...basePeriode,
+        id: "korrigering-2",
+        originalMeldekortId: "korrigering-1",
+      };
+
+      const allePerioder = [periode, korrigering1, korrigering2];
+
+      expect(periodeHarKorrigering(periode, allePerioder)).toBe(true);
+    });
+  });
+
+  describe("formaterPeriodeDatoer", () => {
+    const mockFormatterDato = ({ dato }: { dato: string }) => {
+      // Enkel mock som returnerer datoen i et standardformat
+      return new Date(dato).toLocaleDateString("nb-NO");
+    };
+
+    it("skal formatere periode-datoer med bindestrek i mellom", () => {
+      const result = formaterPeriodeDatoer("2024-01-01", "2024-01-14", mockFormatterDato);
+
+      expect(result).toBe("1.1.2024 - 14.1.2024");
+    });
+
+    it("skal håndtere ulike datoformater", () => {
+      const result = formaterPeriodeDatoer("2024-12-16", "2024-12-29", mockFormatterDato);
+
+      expect(result).toBe("16.12.2024 - 29.12.2024");
+    });
+
+    it("skal bruke den gitte formatterDato funksjonen", () => {
+      const customFormatter = ({ dato }: { dato: string }) => {
+        return dato; // Returnerer raw dato
+      };
+
+      const result = formaterPeriodeDatoer("2024-01-01", "2024-01-14", customFormatter);
+
+      expect(result).toBe("2024-01-01 - 2024-01-14");
     });
   });
 });

@@ -60,6 +60,7 @@ export const QUERY_PARAMS = {
   AAR: "aar",
   RAPPORTERINGSID: "rapporteringsid",
   OPPDATERT: "oppdatert",
+  MELDEKORT_ID: "meldekortId",
 } as const;
 
 // Legacy-eksport for bakoverkompatibilitet - bruker lange labels
