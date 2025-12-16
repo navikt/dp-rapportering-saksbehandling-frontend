@@ -21,7 +21,6 @@ import {
 } from "./FyllUtTabell.helpers";
 import stylesOriginal from "./fyllUtTabell.module.css";
 import stylesVariantB from "./fyllUtTabellVariantB.module.css";
-import stylesVariantC from "./fyllUtTabellVariantC.module.css";
 import { NumberInput } from "./NumberInput";
 
 interface IProps {
@@ -125,139 +124,10 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode, variant = nul
   const [uke1, uke2] = hentUkerFraPeriode(periode);
   const uke1Dager = dager.slice(0, 7);
   const uke2Dager = dager.slice(7, 14);
-  const useVariantLabels = variant === "B" || variant === "C";
+  const useVariantLabels = variant === "B";
 
   // Select styles based on variant
-  let styles = stylesOriginal;
-  if (variant === "B") {
-    styles = stylesVariantB;
-  } else if (variant === "C") {
-    styles = stylesVariantC;
-  }
-
-  // Variant C: One week at a time, vertical layout
-  if (variant === "C") {
-    return (
-      <fieldset className={styles.fieldset}>
-        {useVariantLabels ? (
-          <legend className={styles.legend}>
-            <Label size="small">Før opp aktiviteter</Label>
-          </legend>
-        ) : (
-          <legend className="sr-only">Før opp aktiviteter</legend>
-        )}
-        {/* Uke 1 */}
-        <div className={styles.ukeContainer}>
-          <div className={styles.ukeCaption}>
-            <Label size="small">Uke {uke1}</Label>
-          </div>
-          <table className={styles.fyllUtTabell}>
-            <caption className="sr-only">Uke {uke1}</caption>
-            <thead>
-              <tr>
-                <th scope="col" className="sr-only">
-                  Aktivitet
-                </th>
-                {uke1Dager.map((dag) => (
-                  <DagHeader key={`header-${dag.dato}`} dag={dag} styles={styles} />
-                ))}
-                <th scope="col" colSpan={3} className="sr-only">
-                  Sum
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {aktiviteter.map(({ type, label }) => {
-                const hoverClass = styles[lagAktivitetKlassenavn(type, "trHover")];
-                const aktivitetClass = styles[lagAktivitetKlassenavn(type, "aktivitet")];
-                const antallDager = beregnTotaltAntallDager(uke1Dager, type);
-
-                return (
-                  <tr key={type} className={hoverClass}>
-                    <th scope="row">
-                      <div className={classNames(styles.aktivitet, aktivitetClass)}>{label}</div>
-                    </th>
-                    {uke1Dager.map((dag) => (
-                      <DagCell
-                        key={dag.dato}
-                        dag={dag}
-                        type={type}
-                        label={label}
-                        setKorrigerteDager={setKorrigerteDager}
-                        styles={styles}
-                      />
-                    ))}
-                    <td aria-hidden="true">=</td>
-                    <td className={styles.oppsummeringTall}>
-                      {formaterTotalBeløp(uke1Dager, type)}
-                    </td>
-                    <td className={styles.oppsummeringEnhet}>
-                      {pluraliserEnhet(antallDager, type)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Uke 2 */}
-        <div className={styles.ukeContainer}>
-          <div className={styles.ukeCaption}>
-            <Label size="small">Uke {uke2}</Label>
-          </div>
-          <table className={styles.fyllUtTabell}>
-            <caption className="sr-only">Uke {uke2}</caption>
-            <thead>
-              <tr>
-                <th scope="col" className="sr-only">
-                  Aktivitet
-                </th>
-                {uke2Dager.map((dag) => (
-                  <DagHeader key={`header-${dag.dato}`} dag={dag} styles={styles} />
-                ))}
-                <th scope="col" colSpan={3} className="sr-only">
-                  Sum
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {aktiviteter.map(({ type, label }) => {
-                const hoverClass = styles[lagAktivitetKlassenavn(type, "trHover")];
-                const aktivitetClass = styles[lagAktivitetKlassenavn(type, "aktivitet")];
-                const antallDager = beregnTotaltAntallDager(uke2Dager, type);
-
-                return (
-                  <tr key={type} className={hoverClass}>
-                    <th scope="row">
-                      <div className={classNames(styles.aktivitet, aktivitetClass)}>{label}</div>
-                    </th>
-                    {uke2Dager.map((dag) => (
-                      <DagCell
-                        key={dag.dato}
-                        dag={dag}
-                        type={type}
-                        label={label}
-                        setKorrigerteDager={setKorrigerteDager}
-                        styles={styles}
-                      />
-                    ))}
-                    <td aria-hidden="true">=</td>
-                    <td className={styles.oppsummeringTall}>
-                      {formaterTotalBeløp(uke2Dager, type)}
-                    </td>
-                    <td className={styles.oppsummeringEnhet}>
-                      {pluraliserEnhet(antallDager, type)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </fieldset>
-    );
-  }
+  const styles = variant === "B" ? stylesVariantB : stylesOriginal;
 
   // Original and Variant B: Both weeks side by side (horizontal layout)
   return (

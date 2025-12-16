@@ -20,7 +20,7 @@ export function getABTestVariant(request: Request): ABTestVariant {
   const variant = url.searchParams.get("variant");
 
   // Valider at det er en gyldig variant
-  if (variant === "A" || variant === "B" || variant === "C") {
+  if (variant === "A" || variant === "B") {
     return variant;
   }
 

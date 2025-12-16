@@ -1,3 +1,4 @@
+import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { getActivityClasses, getActivityDotColor } from "~/utils/aktivitet.utils";
 import { AKTIVITET_LABELS_KORT, AKTIVITET_TYPE } from "~/utils/constants";
 import { formatterDag, konverterFraISO8601Varighet } from "~/utils/dato.utils";
@@ -7,6 +8,7 @@ import styles from "./dag.module.css";
 
 interface DagProps {
   dag: IRapporteringsperiodeDag;
+  variant?: ABTestVariant;
 }
 
 const getAktivitetBeskrivelse = (type: TAktivitetType, timer?: string): string => {
@@ -20,10 +22,10 @@ const getAktivitetBeskrivelse = (type: TAktivitetType, timer?: string): string =
   return beskrivelse;
 };
 
-export function Dag({ dag }: DagProps) {
+export function Dag({ dag, variant }: DagProps) {
   const harFlereAktiviteter = dag.aktiviteter && dag.aktiviteter.length > 1;
   const harAktiviteter = dag.aktiviteter && dag.aktiviteter.length > 0;
-  const { datoColor, bgColor } = getActivityClasses(dag.aktiviteter);
+  const { datoColor, bgColor } = getActivityClasses(dag.aktiviteter, variant);
 
   // Sorter aktiviteter i visningsrekkefølge: Arbeid, Syk, Fravaer, Utdanning
   const sorterteAktiviteter = harAktiviteter
@@ -56,7 +58,7 @@ export function Dag({ dag }: DagProps) {
                 <span
                   key={index}
                   aria-hidden="true"
-                  className={`${styles.aktivitet} ${harFlereAktiviteter ? styles.flereAktiviteter : ""} ${harFlereAktiviteter ? getActivityDotColor(aktivitet.type) : ""}`}
+                  className={`${styles.aktivitet} ${harFlereAktiviteter ? styles.flereAktiviteter : ""} ${harFlereAktiviteter ? getActivityDotColor(aktivitet.type, variant) : ""}`}
                 >
                   {getAktivitetBeskrivelse(
                     aktivitet.type as TAktivitetType,

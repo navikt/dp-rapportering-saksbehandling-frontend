@@ -123,7 +123,7 @@ export function getVariant(url: string | URL | Request): ABTestVariant {
         : url;
   const variant = urlObj.searchParams.get(DEMO_PARAMS.VARIANT);
 
-  if (variant === "A" || variant === "B" || variant === "C") {
+  if (variant === "A" || variant === "B") {
     return variant;
   }
 

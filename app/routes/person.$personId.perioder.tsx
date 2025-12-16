@@ -1,4 +1,4 @@
-import { Accordion } from "@navikt/ds-react";
+import { Accordion, Heading } from "@navikt/ds-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 
@@ -105,37 +105,42 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
   };
 
   return (
-    <div className={styles.perioderContainer}>
-      <section aria-label="Meldekort gruppert etter år">
-        {/* Screen reader announcement for oppdaterte meldekort */}
-        {announceUpdate && (
-          <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
-            {announceUpdate}
-          </div>
-        )}
-        <Accordion size="small">
-          {years.map((year) => (
-            <Accordion.Item
-              key={year}
-              defaultOpen={year === years[0]}
-              open={valgteAar.includes(year)}
-            >
-              <Accordion.Header onClick={() => toggleAr(year)}>
-                Meldekort for {year}
-              </Accordion.Header>
-              <Accordion.Content className={styles.accordionContent}>
-                <MeldekortListe
-                  perioder={groupedPeriods[year]}
-                  personId={params.personId}
-                  ansvarligSystem={person.ansvarligSystem}
-                  variant={variant}
-                  behandlinger={data?.behandlingerPerPeriode}
-                />
-              </Accordion.Content>
-            </Accordion.Item>
-          ))}
-        </Accordion>
-      </section>
+    <div className={styles.perioderPageContainer}>
+      <Heading level="1" size="large" spacing>
+        Meldekort for {person.fornavn} {person.etternavn}
+      </Heading>
+      <div className={styles.perioderContainer}>
+        <section aria-label="Meldekort gruppert etter år">
+          {/* Screen reader announcement for oppdaterte meldekort */}
+          {announceUpdate && (
+            <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
+              {announceUpdate}
+            </div>
+          )}
+          <Accordion size="small" indent={false}>
+            {years.map((year) => (
+              <Accordion.Item
+                key={year}
+                defaultOpen={year === years[0]}
+                open={valgteAar.includes(year)}
+              >
+                <Accordion.Header onClick={() => toggleAr(year)}>
+                  Meldekort for {year}
+                </Accordion.Header>
+                <Accordion.Content className={styles.accordionContent}>
+                  <MeldekortListe
+                    perioder={groupedPeriods[year]}
+                    personId={params.personId}
+                    ansvarligSystem={person.ansvarligSystem}
+                    variant={variant}
+                    behandlinger={data?.behandlingerPerPeriode}
+                  />
+                </Accordion.Content>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </section>
+      </div>
     </div>
   );
 }

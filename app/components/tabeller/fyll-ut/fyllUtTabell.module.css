@@ -94,34 +94,66 @@
 }
 
 .aktivitetArbeid {
-  background: var(--ax-bg-accent-moderate-pressed);
+  background: #99c3ff;
 }
 
 .aktivitetSyk {
-  background: var(--ax-bg-warning-moderate-hover);
+  background: #ffd399;
 }
 
 .aktivitetFravaer {
-  background: var(--ax-bg-success-moderate-pressed);
+  background: #a8dcb1;
 }
 
 .aktivitetUtdanning {
+  background: #d2a8dc;
+}
+
+[data-theme="dark"] .aktivitetArbeid {
+  background: var(--ax-bg-accent-moderate-pressed);
+}
+
+[data-theme="dark"] .aktivitetSyk {
+  background: var(--ax-bg-warning-moderate-hover);
+}
+
+[data-theme="dark"] .aktivitetFravaer {
+  background: var(--ax-bg-success-moderate-pressed);
+}
+
+[data-theme="dark"] .aktivitetUtdanning {
   background: var(--ax-bg-meta-purple-moderate-pressed);
 }
 
 .trHoverArbeid:hover {
-  background-color: var(--ax-bg-accent-softA);
+  background-color: rgba(153, 195, 255, 0.3);
 }
 
 .trHoverSyk:hover {
-  background-color: var(--ax-bg-warning-softA);
+  background-color: rgba(255, 211, 153, 0.3);
 }
 
 .trHoverFravaer:hover {
-  background-color: var(--ax-bg-success-softA);
+  background-color: rgba(168, 220, 177, 0.3);
 }
 
 .trHoverUtdanning:hover {
+  background-color: rgba(210, 168, 220, 0.3);
+}
+
+[data-theme="dark"] .trHoverArbeid:hover {
+  background-color: var(--ax-bg-accent-softA);
+}
+
+[data-theme="dark"] .trHoverSyk:hover {
+  background-color: var(--ax-bg-warning-softA);
+}
+
+[data-theme="dark"] .trHoverFravaer:hover {
+  background-color: var(--ax-bg-success-softA);
+}
+
+[data-theme="dark"] .trHoverUtdanning:hover {
   background-color: var(--ax-bg-meta-purple-softA);
 }
 

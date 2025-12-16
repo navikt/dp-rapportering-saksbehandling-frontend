@@ -127,7 +127,7 @@ export function UtvidetInfo({
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const antallDagerForSent = dagerForSent(periode);
   const erSaksbehandler = erKildeSaksbehandler(periode);
-  const useVariantLabels = variant === "B" || variant === "C";
+  const useVariantLabels = variant === "B";
 
   // Bruk samme logikk som i skjemaet for å bestemme om arbeidssøkerspørsmål skal vises
   const skalViseArbeidssoker = skalViseArbeidssokerSporsmal(

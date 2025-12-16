@@ -81,6 +81,40 @@
   background-color: var(--ax-bg-meta-purple-softA);
 }
 
+/* Variant A - Gamle farger (20% opacity for bakgrunn) i light mode */
+.dag.arbeidBgVariantA {
+  background-color: rgba(153, 195, 255, 0.2);
+}
+
+.dag.sykBgVariantA {
+  background-color: rgba(255, 211, 153, 0.2);
+}
+
+.dag.fravaerBgVariantA {
+  background-color: rgba(168, 220, 177, 0.2);
+}
+
+.dag.utdanningBgVariantA {
+  background-color: rgba(210, 168, 220, 0.2);
+}
+
+/* Variant A - Aksel farger i dark mode */
+[data-theme="dark"] .dag.arbeidBgVariantA {
+  background-color: var(--ax-bg-accent-softA);
+}
+
+[data-theme="dark"] .dag.sykBgVariantA {
+  background-color: var(--ax-bg-warning-softA);
+}
+
+[data-theme="dark"] .dag.fravaerBgVariantA {
+  background-color: var(--ax-bg-success-softA);
+}
+
+[data-theme="dark"] .dag.utdanningBgVariantA {
+  background-color: var(--ax-bg-meta-purple-softA);
+}
+
 /* Prikkefarger for pseudo-elementer - påfør kun bakgrunn til ::before */
 .flereAktiviteter.arbeidDot::before {
   background-color: var(--ax-bg-accent-moderate-pressed);
@@ -95,5 +129,39 @@
 }
 
 .flereAktiviteter.utdanningDot::before {
+  background-color: var(--ax-bg-meta-purple-moderate-pressed);
+}
+
+/* Variant A - Gamle farger for prikker i light mode */
+.flereAktiviteter.arbeidDotVariantA::before {
+  background-color: #99c3ff;
+}
+
+.flereAktiviteter.sykDotVariantA::before {
+  background-color: #ffd399;
+}
+
+.flereAktiviteter.fravaerDotVariantA::before {
+  background-color: #a8dcb1;
+}
+
+.flereAktiviteter.utdanningDotVariantA::before {
+  background-color: #d2a8dc;
+}
+
+/* Variant A - Aksel farger for prikker i dark mode */
+[data-theme="dark"] .flereAktiviteter.arbeidDotVariantA::before {
+  background-color: var(--ax-bg-accent-moderate-pressed);
+}
+
+[data-theme="dark"] .flereAktiviteter.sykDotVariantA::before {
+  background-color: var(--ax-bg-warning-moderate-hover);
+}
+
+[data-theme="dark"] .flereAktiviteter.fravaerDotVariantA::before {
+  background-color: var(--ax-bg-success-moderate-pressed);
+}
+
+[data-theme="dark"] .flereAktiviteter.utdanningDotVariantA::before {
   background-color: var(--ax-bg-meta-purple-moderate-pressed);
 }

@@ -5,6 +5,7 @@
   align-items: flex-start;
   gap: var(--ax-space-32);
   align-self: stretch;
+  min-height: 200px;
 }
 
 .year-list {

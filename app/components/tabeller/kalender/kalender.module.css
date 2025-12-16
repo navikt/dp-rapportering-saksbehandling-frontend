@@ -1,7 +1,10 @@
 /* Original/Standard variant - stacked weeks */
+
 .kalender-tabell {
   border-collapse: separate;
   width: 100%;
+  flex: 1;
+  min-width: 0;
 }
 
 .kalender-tabell th {

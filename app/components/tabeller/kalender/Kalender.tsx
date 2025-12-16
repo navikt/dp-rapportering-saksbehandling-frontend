@@ -7,38 +7,45 @@ import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/ty
 import { Dag } from "./components/Dag";
 import stylesOriginal from "./kalender.module.css";
 import stylesVariantB from "./kalenderVariantB.module.css";
-import stylesVariantC from "./kalenderVariantC.module.css";
 
 interface IProps {
   periode: IRapporteringsperiode;
   variant?: ABTestVariant;
   hideWeekLabels?: boolean;
+  layout?: "horizontal" | "vertical";
 }
 
 function UkeRad({
   dager,
   ukenummer,
   hideWeekLabel = false,
+  variant,
 }: {
   dager: IRapporteringsperiodeDag[];
   ukenummer: string;
   hideWeekLabel?: boolean;
+  variant?: ABTestVariant;
 }) {
   return (
     <tr>
       {!hideWeekLabel && (
-        <th scope="row" className={stylesVariantC.ukeLabel}>
+        <th scope="row">
           <Label size="small">Uke {ukenummer}</Label>
         </th>
       )}
       {dager.map((dag) => (
-        <Dag key={dag.dato} dag={dag} />
+        <Dag key={dag.dato} dag={dag} variant={variant} />
       ))}
     </tr>
   );
 }
 
-export function Kalender({ periode, variant = null, hideWeekLabels = false }: IProps) {
+export function Kalender({
+  periode,
+  variant = null,
+  hideWeekLabels = false,
+  layout = "vertical",
+}: IProps) {
   if (!periode) return null;
 
   const forsteUke = periode.dager.slice(0, 7);
@@ -46,8 +53,8 @@ export function Kalender({ periode, variant = null, hideWeekLabels = false }: IP
   const ukedager = getWeekDays();
   const [forsteUkenummer, andreUkenummer] = ukenummer(periode).split("-");
 
-  // Variant B: Weeks side by side (horizontal layout)
-  if (variant === "B") {
+  // Horizontal layout: Weeks side by side (for korriger)
+  if (layout === "horizontal") {
     return (
       <div className={stylesVariantB.kalenderVariantB}>
         <table className={stylesVariantB.kalenderTabellB}>
@@ -71,7 +78,7 @@ export function Kalender({ periode, variant = null, hideWeekLabels = false }: IP
           <tbody>
             <tr>
               {forsteUke.map((dag) => (
-                <Dag key={dag.dato} dag={dag} />
+                <Dag key={dag.dato} dag={dag} variant={variant} />
               ))}
             </tr>
           </tbody>
@@ -98,7 +105,7 @@ export function Kalender({ periode, variant = null, hideWeekLabels = false }: IP
           <tbody>
             <tr>
               {andreUke.map((dag) => (
-                <Dag key={dag.dato} dag={dag} />
+                <Dag key={dag.dato} dag={dag} variant={variant} />
               ))}
             </tr>
           </tbody>
@@ -107,44 +114,7 @@ export function Kalender({ periode, variant = null, hideWeekLabels = false }: IP
     );
   }
 
-  // Variant C: Weeks stacked with visible week labels
-  if (variant === "C") {
-    return (
-      <table className={stylesVariantC.kalenderTabellC}>
-        <caption className="sr-only">
-          Oversikt over rapporterte dager for uke {forsteUkenummer} og {andreUkenummer}
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col" className="sr-only">
-              Uke
-            </th>
-            {ukedager.map((ukedag, index) => (
-              <th key={`${periode.id}-${index}`} scope="col">
-                <Label size="small" as="span">
-                  <span aria-hidden="true">{ukedag.kort}</span>
-                  <span className="sr-only">{ukedag.lang}</span>
-                </Label>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} hideWeekLabel={hideWeekLabels} />
-          <tr>
-            <td
-              colSpan={hideWeekLabels ? 7 : 8}
-              className={stylesVariantC.mellomrom}
-              aria-hidden="true"
-            />
-          </tr>
-          <UkeRad dager={andreUke} ukenummer={andreUkenummer} hideWeekLabel={hideWeekLabels} />
-        </tbody>
-      </table>
-    );
-  }
-
-  // Original/Variant A: Default stacked layout
+  // Vertical layout: Weeks stacked (for meldekortvisning - default)
   return (
     <table className={stylesOriginal.kalenderTabell}>
       <caption className="sr-only">
@@ -168,11 +138,21 @@ export function Kalender({ periode, variant = null, hideWeekLabels = false }: IP
         </tr>
       </thead>
       <tbody>
-        <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} hideWeekLabel={hideWeekLabels} />
+        <UkeRad
+          dager={forsteUke}
+          ukenummer={forsteUkenummer}
+          hideWeekLabel={hideWeekLabels}
+          variant={variant}
+        />
         <tr>
           <td colSpan={7} className={stylesOriginal.mellomrom} aria-hidden="true" />
         </tr>
-        <UkeRad dager={andreUke} ukenummer={andreUkenummer} hideWeekLabel={hideWeekLabels} />
+        <UkeRad
+          dager={andreUke}
+          ukenummer={andreUkenummer}
+          hideWeekLabel={hideWeekLabels}
+          variant={variant}
+        />
       </tbody>
     </table>
   );

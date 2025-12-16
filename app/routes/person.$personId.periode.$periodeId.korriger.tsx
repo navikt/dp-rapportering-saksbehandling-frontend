@@ -14,7 +14,6 @@ import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import stylesOriginal from "~/styles/route-styles/korriger.module.css";
 import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
-import stylesVariantC from "~/styles/route-styles/korrigerVariantC.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
@@ -45,8 +44,7 @@ export default function Periode() {
   const fetcher = useFetcher();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
-  const styles =
-    variant === "C" ? stylesVariantC : variant === "B" ? stylesVariantB : stylesOriginal;
+  const styles = variant === "B" ? stylesVariantB : stylesOriginal;
 
   const isMountedRef = useRef(true);
 
@@ -179,7 +177,7 @@ export default function Periode() {
           </div>
           <div className={styles.kalenderOgBegrunnelseWrapper}>
             <div className={styles.kalenderContainer}>
-              <Kalender periode={periode} variant={variant} />
+              <Kalender periode={periode} variant={variant} layout="horizontal" />
             </div>
 
             {periode.begrunnelse && (
