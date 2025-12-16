@@ -1,3 +1,7 @@
+import type {
+  IBehandlingsresultatPeriodeMedMeta,
+  IPengeVerdi,
+} from "~/utils/behandlingsresultat.types";
 import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
@@ -12,9 +16,16 @@ export interface StatusConfig {
 /**
  * Bestemmer statuskonfigurasjonen basert på periodens tilstand
  */
-export function getStatusConfig(periode: IRapporteringsperiode): StatusConfig {
+export function getStatusConfig(
+  periode: IRapporteringsperiode,
+  behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[],
+): StatusConfig {
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
   const kanSendes = periode.kanSendes;
+
+  if (behandlinger?.length) {
+    return { text: "Beregning utført", variant: "success" };
+  }
 
   if (erInnsendt) {
     return { text: "Innsendt", variant: "success" };

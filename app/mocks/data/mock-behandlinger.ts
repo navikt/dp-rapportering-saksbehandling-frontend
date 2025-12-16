@@ -26,6 +26,17 @@ export function mockBehandling(
         !meldekort.originalMeldekortId &&
         meldekort.meldedato,
     )
+    .reduce(
+      (meldekortUtenDuplikatePerioder: IRapporteringsperiode[], meldekort) =>
+        meldekortUtenDuplikatePerioder.find(
+          (m) =>
+            m.periode.fraOgMed === meldekort.periode.fraOgMed &&
+            m.periode.tilOgMed === meldekort.periode.tilOgMed,
+        )
+          ? meldekortUtenDuplikatePerioder
+          : [...meldekortUtenDuplikatePerioder, meldekort],
+      [],
+    )
     .map((meldekort, index): IPeriode<IPengeVerdi> => {
       const status = index > 0 ? OPPRINNELSE.ARVET : OPPRINNELSE.NY;
 
@@ -38,7 +49,9 @@ export function mockBehandling(
         gyldigTilOgMed: meldekort.periode.tilOgMed,
         verdi: {
           verdi: Math.min(
-            meldekort.dager.filter((dag) => dag.aktiviteter.length === 0).length * dagsats,
+            [...meldekort.dager.slice(0, 5), ...meldekort.dager.slice(8)].filter(
+              (dag) => dag.aktiviteter.length === 0,
+            ).length * dagsats,
             dagsats * 10,
           ),
           datatype: "penger",
@@ -11824,17 +11837,35 @@ export function hentBehandlingsresultat(
   rapporteringsperioder: IRapporteringsperiode[],
   arbeidssokerperioder: IArbeidssokerperiode[],
 ) {
-  // TODO: Det blir overlappende behandlingsresultat rett rundt avslutningen av en arbeidssøkerperiode.
-  const meldekortPerArbeidssokerperiode = arbeidssokerperioder.map((arbeidssokerperiode) =>
-    rapporteringsperioder.filter((meldekort) =>
-      overlapper(
-        { ...meldekort.periode },
-        {
-          fraOgMed: arbeidssokerperiode.startDato,
-          tilOgMed: arbeidssokerperiode.sluttDato || undefined,
-        },
+  const meldekortPerArbeidssokerperiode = arbeidssokerperioder
+    .map((arbeidssokerperiode) =>
+      rapporteringsperioder.filter((meldekort) =>
+        overlapper(
+          { ...meldekort.periode },
+          {
+            fraOgMed: arbeidssokerperiode.startDato,
+            tilOgMed: arbeidssokerperiode.sluttDato || undefined,
+          },
+        ),
       ),
-    ),
-  );
+    )
+    // Fjerner meldekort som allerede er tatt med i en tidligere arbeidssøkerperiode
+    .reduce((acc: IRapporteringsperiode[][], curr: IRapporteringsperiode[]) => {
+      const duplicates = curr.filter((meldekort) =>
+        acc
+          .flat()
+          .some(
+            (m) =>
+              m.periode.fraOgMed === meldekort.periode.fraOgMed &&
+              m.periode.tilOgMed === meldekort.periode.tilOgMed,
+          ),
+      );
+
+      return [
+        ...acc,
+        curr.filter((meldekort) => !duplicates.map((d) => d.id).includes(meldekort.id)),
+      ];
+    }, []);
+
   return meldekortPerArbeidssokerperiode.map((meldekort) => mockBehandling(person, meldekort));
 }
