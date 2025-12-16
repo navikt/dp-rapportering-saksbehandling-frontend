@@ -15,7 +15,7 @@
     "test:playwright": "playwright test --trace on"
   },
   "dependencies": {
-    "@grafana/faro-web-sdk": "^1.19.0",
+    "@grafana/faro-web-sdk": "^2.0.2",
     "@grafana/faro-web-tracing": "^1.19.0",
     "msw": "^2.12.4",
     "@msw/data": "^1.1.2",
