@@ -33,7 +33,7 @@ import {
 } from "./MeldekortRad.helpers";
 import styles from "./meldekortRad.module.css";
 
-interface Props {
+interface IProps {
   periode: IRapporteringsperiode;
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
@@ -51,7 +51,7 @@ export function MeldekortRad({
   variant = null,
   allePerioder = [],
   behandlinger,
-}: Props) {
+}: IProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [isOpen, setIsOpen] = useState<boolean | undefined>(undefined);
@@ -73,7 +73,7 @@ export function MeldekortRad({
   const useVariantLabels = variant === "B";
 
   // Visningsverdier
-  const statusConfig = getStatusConfig(periode);
+  const statusConfig = getStatusConfig(periode, behandlinger);
   const skalViseInnsendt = skalViseInnsendtInfo(periode);
   const erSendtForSent = skalViseInnsendt && erMeldekortSendtForSent(periode);
   const aktiviteter = sorterAktiviteter(unikeAktiviteter(periode));

@@ -1,6 +1,7 @@
 import type {
   IBehandlingerPerPeriode,
   IBehandlingsresultat,
+  IBehandlingsresultatPeriodeMedMeta,
   IOpplysning,
   IPengeVerdi,
 } from "./behandlingsresultat.types";
@@ -31,6 +32,20 @@ export function overlapper(
 
   // Fullt åpent intervall → overlapper alltid
   return true;
+}
+
+export function erMeldekortInnenforBehandlingsperiode(
+  meldekort: IRapporteringsperiode,
+  behandling: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>,
+): boolean {
+  if (!behandling.gyldigFraOgMed || !behandling.gyldigTilOgMed) {
+    return false;
+  }
+
+  return (
+    meldekort.periode.fraOgMed <= behandling.gyldigFraOgMed &&
+    meldekort.periode.tilOgMed >= behandling.gyldigTilOgMed
+  );
 }
 
 export function finnBehandlingerForPerioder(

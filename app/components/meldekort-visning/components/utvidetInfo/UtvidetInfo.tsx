@@ -1,4 +1,5 @@
 import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
+import { format } from "date-fns";
 import { useLayoutEffect, useRef, useState } from "react";
 
 import {
@@ -7,6 +8,7 @@ import {
 } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
+import { erMeldekortInnenforBehandlingsperiode } from "~/utils/behandlinger.utils";
 import type {
   IBehandlingsresultatPeriodeMedMeta,
   IPengeVerdi,
@@ -182,25 +184,38 @@ export function UtvidetInfo({
             </DetailRow>
           )}
 
-          {behandlinger && behandlinger.length > 0 && (
-            <DetailRow label="Brutto utbetaling:">
-              <>
-                {behandlinger.map((behandling) => (
-                  <span key={behandling.id}>
-                    {/* TODO: Lenke til `https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/${behandling.oppgaveId}/dagpenger-rett/${behandling.behandlingsId}/_person/regelsett/${behandling.regelsettId}/opplysning/${behandling.id}` */}
-                    {NOK.format(behandling.verdi.verdi)}{" "}
-                  </span>
-                ))}
-              </>
-            </DetailRow>
-          )}
-
           {periode.registrertArbeidssoker !== null &&
             periode.registrertArbeidssoker !== undefined &&
             skalViseArbeidssoker && (
               <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
                 {erArbeidssoker ? "Ja" : "Nei"}
               </DetailRow>
+            )}
+
+          {behandlinger?.length === 1 &&
+            erMeldekortInnenforBehandlingsperiode(periode, behandlinger[0]) && (
+              <>
+                <DetailRow label="Beregnet bruttobeløp:">
+                  <>
+                    {behandlinger.map((behandling) => (
+                      <span key={behandling.id}>
+                        {/* TODO: Lenke til `https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/${behandling.oppgaveId}/dagpenger-rett/${behandling.behandlingsId}/_person/regelsett/${behandling.regelsettId}/opplysning/${behandling.id}` */}
+                        {NOK.format(behandling.verdi.verdi)}{" "}
+                      </span>
+                    ))}
+                  </>
+                </DetailRow>
+                <DetailRow label="Perioden beregningen gjelder for:">
+                  {behandlinger.map((behandling) => (
+                    <span key={behandling.id}>
+                      {behandling.gyldigFraOgMed &&
+                        `${format(new Date(behandling.gyldigFraOgMed), "dd.MM.yyyy")} - `}
+                      {behandling.gyldigTilOgMed &&
+                        `${format(new Date(behandling.gyldigTilOgMed), "dd.MM.yyyy")} `}
+                    </span>
+                  ))}
+                </DetailRow>
+              </>
             )}
         </Table.Body>
       </Table>
@@ -229,6 +244,16 @@ export function UtvidetInfo({
       {useVariantLabels && !kanEndres && (
         <Alert variant="info" size="small">
           Dette meldekortet har en korrigering og kan derfor ikke endres igjen.
+        </Alert>
+      )}
+
+      {((behandlinger && behandlinger.length > 1) ||
+        (behandlinger &&
+          behandlinger.length > 0 &&
+          !erMeldekortInnenforBehandlingsperiode(periode, behandlinger[0]))) && (
+        <Alert variant="warning" size="small">
+          Brutto beregnet beløp for dette meldekortet samsvarer ikke med meldekortperioden. Du kan
+          se beregningen for meldekortet i DP-sak.
         </Alert>
       )}
 
