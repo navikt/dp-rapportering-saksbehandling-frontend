@@ -8,7 +8,7 @@ import {
 } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
-import { erInnenforBehandlingsperiode } from "~/utils/behandlinger.utils";
+import { erMeldekortInnenforBehandlingsperiode } from "~/utils/behandlinger.utils";
 import type {
   IBehandlingsresultatPeriodeMedMeta,
   IPengeVerdi,
@@ -192,30 +192,31 @@ export function UtvidetInfo({
               </DetailRow>
             )}
 
-          {behandlinger?.length === 1 && erInnenforBehandlingsperiode(periode, behandlinger[0]) && (
-            <>
-              <DetailRow label="Beregnet bruttobeløp:">
-                <>
+          {behandlinger?.length === 1 &&
+            erMeldekortInnenforBehandlingsperiode(periode, behandlinger[0]) && (
+              <>
+                <DetailRow label="Beregnet bruttobeløp:">
+                  <>
+                    {behandlinger.map((behandling) => (
+                      <span key={behandling.id}>
+                        {/* TODO: Lenke til `https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/${behandling.oppgaveId}/dagpenger-rett/${behandling.behandlingsId}/_person/regelsett/${behandling.regelsettId}/opplysning/${behandling.id}` */}
+                        {NOK.format(behandling.verdi.verdi)}{" "}
+                      </span>
+                    ))}
+                  </>
+                </DetailRow>
+                <DetailRow label="Perioden beregningen gjelder for:">
                   {behandlinger.map((behandling) => (
                     <span key={behandling.id}>
-                      {/* TODO: Lenke til `https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/${behandling.oppgaveId}/dagpenger-rett/${behandling.behandlingsId}/_person/regelsett/${behandling.regelsettId}/opplysning/${behandling.id}` */}
-                      {NOK.format(behandling.verdi.verdi)}{" "}
+                      {behandling.gyldigFraOgMed &&
+                        `${format(new Date(behandling.gyldigFraOgMed), "dd.MM.yyyy")} - `}
+                      {behandling.gyldigTilOgMed &&
+                        `${format(new Date(behandling.gyldigTilOgMed), "dd.MM.yyyy")} `}
                     </span>
                   ))}
-                </>
-              </DetailRow>
-              <DetailRow label="Perioden beregningen gjelder for:">
-                {behandlinger.map((behandling) => (
-                  <span key={behandling.id}>
-                    {behandling.gyldigFraOgMed &&
-                      `${format(new Date(behandling.gyldigFraOgMed), "dd.MM.yyyy")} - `}
-                    {behandling.gyldigTilOgMed &&
-                      `${format(new Date(behandling.gyldigTilOgMed), "dd.MM.yyyy")} `}
-                  </span>
-                ))}
-              </DetailRow>
-            </>
-          )}
+                </DetailRow>
+              </>
+            )}
         </Table.Body>
       </Table>
 
@@ -249,7 +250,7 @@ export function UtvidetInfo({
       {((behandlinger && behandlinger.length > 1) ||
         (behandlinger &&
           behandlinger.length > 0 &&
-          !erInnenforBehandlingsperiode(periode, behandlinger[0]))) && (
+          !erMeldekortInnenforBehandlingsperiode(periode, behandlinger[0]))) && (
         <Alert variant="warning" size="small">
           Brutto beregnet beløp for dette meldekortet samsvarer ikke med meldekortperioden. Du kan
           se beregningen for meldekortet i DP-sak.

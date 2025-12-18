@@ -34,7 +34,7 @@ export function overlapper(
   return true;
 }
 
-export function erInnenforBehandlingsperiode(
+export function erMeldekortInnenforBehandlingsperiode(
   meldekort: IRapporteringsperiode,
   behandling: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>,
 ): boolean {
