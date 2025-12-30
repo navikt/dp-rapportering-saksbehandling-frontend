@@ -33,8 +33,6 @@ spec:
     {{#each ingresses as |url|}}
     - {{url}}
     {{/each}}
-  secureLogs:
-    enabled: true
   env:
     - name: SELF_URL
       value: "{{ingress}}"
