@@ -10,9 +10,9 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "64M"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
 spec:
-  {{ #if ttl}}
+  {{#if ttl}}
   ttl: {{ ttl }}
-  {{/if }}
+  {{/if}}
   image: "{{image}}"
   port: 3000
   liveness:
