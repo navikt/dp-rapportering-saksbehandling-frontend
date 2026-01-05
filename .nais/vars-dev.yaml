@@ -3,6 +3,7 @@ ingresses:
   - https://rapportering-dagpenger.ansatt.dev.nav.no
   - https://rapportering-dagpenger.intern.dev.nav.no
 
+ttl: 168h
   
 replicas:
   min: 2
