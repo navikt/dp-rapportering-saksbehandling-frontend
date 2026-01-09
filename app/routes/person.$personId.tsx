@@ -16,6 +16,7 @@ import { isDemoToolsEnabled } from "~/utils/ab-test.server";
 import { finnBehandlingerForPerioder } from "~/utils/behandlinger.utils";
 import type { IBehandlingerPerPeriode } from "~/utils/behandlingsresultat.types";
 import { getEnv, usesMsw } from "~/utils/env.utils";
+import { maskerPerson, skalSkjuleSensitiveOpplysninger } from "~/utils/maskering.server";
 import type { IPerson } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId";
@@ -29,8 +30,16 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   const showDemoTools = isDemoToolsEnabled();
 
+  // Sjekk om sensitive opplysninger skal skjules
+  const skjulSensitiv = skalSkjuleSensitiveOpplysninger(request);
+
   // Hent person først - denne trenger vi alltid for ErrorBoundary
-  const person = await hentPerson(request, params.personId);
+  let person = await hentPerson(request, params.personId);
+
+  // Masker sensitive data server-side hvis nødvendig
+  if (skjulSensitiv) {
+    person = maskerPerson(person);
+  }
 
   try {
     // Prøv å hente perioder og arbeidssokerperioder
@@ -63,6 +72,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       });
 
       // Send kun sanitert error data til klient
+      // Person er allerede maskert hvis nødvendig, så bruk den maskerte versjonen
       throw new Response(
         JSON.stringify({
           message: originalData.message || originalData.error,
