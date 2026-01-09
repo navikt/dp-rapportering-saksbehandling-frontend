@@ -24,7 +24,7 @@ export function getStatusConfig(
   const kanSendes = periode.kanSendes;
 
   if (behandlinger?.length) {
-    return { text: "Beregning utført", variant: "success" };
+    return { text: "Beregnet", variant: "success" };
   }
 
   if (erInnsendt) {
