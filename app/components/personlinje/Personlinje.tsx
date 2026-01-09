@@ -3,8 +3,6 @@ import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useMemo, useState } from "react";
 
-import { useSaksbehandler } from "~/hooks/useSaksbehandler";
-import { maskerVerdi } from "~/utils/skjul-sensitiv-opplysning";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import {
@@ -30,7 +28,9 @@ interface IProps {
 export default function Personlinje({ person, perioder = [], arbeidssokerperioder = [] }: IProps) {
   const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
   const [modalOpen, setModalOpen] = useState(false);
-  const { skjulSensitiveOpplysninger } = useSaksbehandler();
+
+  // Sjekk om data er maskert (kommer fra server-side maskering)
+  const erMaskert = fulltNavn.includes("•") || person.ident.includes("•");
 
   const events = useMemo(() => {
     return [
@@ -59,22 +59,14 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
             </span>
           )}
           <BodyShort size="small">
-            {skjulSensitiveOpplysninger ? (
-              <span className={styles.sensitiv}>{maskerVerdi(fulltNavn)}</span>
-            ) : (
-              <strong>{fulltNavn}</strong>
-            )}
+            <strong className={erMaskert ? styles.sensitiv : undefined}>{fulltNavn}</strong>
           </BodyShort>
         </div>
 
         <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
           Fødselsnummer:{" "}
-          {skjulSensitiveOpplysninger ? (
-            <span className={styles.sensitiv}>{maskerVerdi(person.ident)}</span>
-          ) : (
-            <strong>{person.ident}</strong>
-          )}{" "}
-          <CopyButton copyText={person.ident} size="xsmall" />
+          <strong className={erMaskert ? styles.sensitiv : undefined}>{person.ident}</strong>{" "}
+          {!erMaskert && <CopyButton copyText={person.ident} size="xsmall" />}
         </BodyShort>
 
         {person.fodselsdato && (
