@@ -7,6 +7,8 @@ replicas:
 use_msw: true
 is_localhost: false
 
+ttl: 168h
+
 faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
 runtime_environment: "demo"
 

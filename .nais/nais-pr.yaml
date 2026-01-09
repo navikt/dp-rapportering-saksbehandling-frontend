@@ -31,8 +31,6 @@ spec:
       memory: 256Mi
   ingresses:
     - https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.ekstern.dev.nav.no
-  secureLogs:
-    enabled: true
   env:
     - name: BASE_PATH
       value: ""
