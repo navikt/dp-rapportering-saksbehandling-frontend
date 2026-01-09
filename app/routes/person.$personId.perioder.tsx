@@ -4,12 +4,14 @@ import { useRouteLoaderData, useSearchParams } from "react-router";
 
 import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
 import { groupPeriodsByYear } from "~/components/meldekort-liste/utils";
+import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import type { loader as personLoader } from "~/routes/person.$personId";
 import styles from "~/styles/route-styles/perioder.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DEFAULT_PERSON } from "~/utils/constants";
 import { sortYearsDescending, ukenummer } from "~/utils/dato.utils";
+import { maskerVerdi } from "~/utils/skjul-sensitiv-opplysning";
 
 import type { Route } from "./+types/person.$personId.perioder";
 
@@ -24,6 +26,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
   const perioder = data?.perioder ?? [];
   const person = data?.person ?? DEFAULT_PERSON;
   const { variant } = loaderData;
+  const { skjulSensitiveOpplysninger } = useSaksbehandler();
   const [searchParams, setSearchParams] = useSearchParams();
   const [announceUpdate, setAnnounceUpdate] = useState("");
 
@@ -104,10 +107,12 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
     );
   };
 
+  const fulltNavn = `${person.fornavn} ${person.etternavn}`;
+
   return (
     <div className={styles.perioderPageContainer}>
       <Heading level="1" size="large" spacing>
-        Meldekort for {person.fornavn} {person.etternavn}
+        Meldekort for {skjulSensitiveOpplysninger ? maskerVerdi(fulltNavn) : fulltNavn}
       </Heading>
       <div className={styles.perioderContainer}>
         <section aria-label="Meldekort gruppert etter år">
