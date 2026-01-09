@@ -60,13 +60,18 @@ export function SaksbehandlerProvider({ children, serverTema }: SaksbehandlerPro
   useLayoutEffect(() => {
     const storedSensitiv = localStorage.getItem("skjul-sensitive-opplysninger");
     if (storedSensitiv !== null) {
-      setSkjulSensitiveOpplysninger(JSON.parse(storedSensitiv));
+      const verdi = JSON.parse(storedSensitiv);
+      setSkjulSensitiveOpplysninger(verdi);
+      // Synkroniser med cookie for server-side maskering
+      document.cookie = `skjul-sensitive-opplysninger=${JSON.stringify(verdi)}; path=/; max-age=31536000; SameSite=Lax`;
     }
   }, []);
 
   const handleSetSkjulSensitiveOpplysninger = useCallback((verdi: boolean) => {
     setSkjulSensitiveOpplysninger(verdi);
     localStorage.setItem("skjul-sensitive-opplysninger", JSON.stringify(verdi));
+    // Sett også cookie slik at serveren kan lese verdien for server-side maskering
+    document.cookie = `skjul-sensitive-opplysninger=${JSON.stringify(verdi)}; path=/; max-age=31536000; SameSite=Lax`;
   }, []);
 
   /**

@@ -104,10 +104,12 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
     );
   };
 
+  const fulltNavn = `${person.fornavn} ${person.etternavn}`;
+
   return (
     <div className={styles.perioderPageContainer}>
       <Heading level="1" size="large" spacing>
-        Meldekort for {person.fornavn} {person.etternavn}
+        Meldekort for {fulltNavn}
       </Heading>
       <div className={styles.perioderContainer}>
         <section aria-label="Meldekort gruppert etter år">

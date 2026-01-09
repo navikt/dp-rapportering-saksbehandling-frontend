@@ -1,6 +1,7 @@
 import { LeaveIcon, MoonIcon, SunIcon } from "@navikt/aksel-icons";
 import { Button, Dropdown, InternalHeader, Spacer, Switch } from "@navikt/ds-react";
 import { useState } from "react";
+import { useRevalidator } from "react-router";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import type { ISaksbehandler } from "~/utils/types";
@@ -15,9 +16,16 @@ const Header = ({ saksbehandler }: HeaderProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { skjulSensitiveOpplysninger, setSkjulSensitiveOpplysninger, tema, setTema } =
     useSaksbehandler();
+  const revalidator = useRevalidator();
 
   const toggleTheme = () => {
     setTema(tema === "dark" ? "light" : "dark");
+  };
+
+  const handleSkjulSensitiveOpplysningerChange = (checked: boolean) => {
+    setSkjulSensitiveOpplysninger(checked);
+    // Revalider data fra serveren for å få nye maskerte/umaskerte data
+    revalidator.revalidate();
   };
 
   return (
@@ -45,7 +53,7 @@ const Header = ({ saksbehandler }: HeaderProps) => {
                 <Switch
                   checked={skjulSensitiveOpplysninger}
                   size="small"
-                  onChange={(e) => setSkjulSensitiveOpplysninger(e.target.checked)}
+                  onChange={(e) => handleSkjulSensitiveOpplysningerChange(e.target.checked)}
                   description="Anbefales for økt sikkerhet"
                 >
                   Skjul sensitive opplysninger
