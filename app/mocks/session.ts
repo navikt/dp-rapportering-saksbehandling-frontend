@@ -50,7 +50,7 @@ class SessionRecord {
           }),
         );
 
-        const arbeidssokerperioder = hentArbeidssokerperioder(periods, createdPerson);
+        const arbeidssokerperioder = hentArbeidssokerperioder(periods, createdPerson, true);
 
         await Promise.all(
           arbeidssokerperioder.map((arbeidssokerperiode) =>
