@@ -115,7 +115,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       },
       ukerFraIDag: UKER_FRA_AARSSKIFTE.uke02_03, // Uke 02-03 (beregning feilet)
       aktiviteter: [
-        [{ type: AKTIVITET_TYPE.Utdanning }], // Mandag
+        null, // Mandag
         null,
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }], // Torsdag
@@ -443,12 +443,13 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       periode: {
         id: "019a6dee-0000-7000-a000-000000000001",
         opprettetAv: OPPRETTET_AV.Arena,
+        type: MELDEKORT_TYPE.ETTERREGISTRERT,
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
         kanEndres: true,
       },
-      ukerFraIDag: 2,
+      ukerFraIDag: 54,
       aktiviteter: [
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: konverterTilISO8601Varighet("7.5") }],
@@ -470,130 +471,33 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     {
       periode: {
         opprettetAv: OPPRETTET_AV.Arena,
-        type: MELDEKORT_TYPE.ETTERREGISTRERT,
-        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-        kanSendes: false,
-        kanEndres: true,
-      },
-      ukerFraIDag: 4,
-      aktiviteter: [
-        null,
-        null,
-        [{ type: AKTIVITET_TYPE.Syk }],
-        [{ type: AKTIVITET_TYPE.Syk }],
-        [{ type: AKTIVITET_TYPE.Syk }],
-        [{ type: AKTIVITET_TYPE.Syk }],
-        [{ type: AKTIVITET_TYPE.Syk }],
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-      ],
-    },
-    {
-      periode: {
-        type: MELDEKORT_TYPE.ETTERREGISTRERT,
-        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-      },
-      ukerFraIDag: 60,
-    },
-    // 1. Ferdig beregnet
-    {
-      periode: {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
         kanEndres: true,
       },
-      aktiviteter: lagArbeidUker("4"),
-      ukerFraIDag: 58,
-    },
-    // 2. Ferdig beregnet
-    {
-      periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-        registrertArbeidssoker: true,
-        kanSendes: false,
-        kanEndres: true,
-      },
-      aktiviteter: [
-        null,
-        null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
-        null,
-        null,
-        null,
-        null,
-      ],
-      ukerFraIDag: 56,
-    },
-    // 3. Ferdig beregnet, Arbeid 4 timer hver onsdag
-    {
-      periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-        registrertArbeidssoker: true,
-        kanSendes: false,
-        kanEndres: true,
-      },
-      aktiviteter: [
-        null,
-        null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
-        null,
-        null,
-        null,
-        null,
-      ],
-      innsendtTidspunktRelativTilPeriodeSlutt: 6,
-      ukerFraIDag: 54,
-    },
-    // 4. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
-    {
-      periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-        registrertArbeidssoker: true,
-        kanSendes: false,
-        kanEndres: true,
-      },
-      aktiviteter: [
-        null, // mandag uke 1
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // tirsdag uke 1
-        [{ type: AKTIVITET_TYPE.Utdanning }], // onsdag uke 1
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // torsdag uke 1
-        null, // fredag uke 1
-        null,
-        null, // helg
-        null, // mandag uke 2
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // tirsdag uke 2
-        [{ type: AKTIVITET_TYPE.Utdanning }], // onsdag uke 2
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // torsdag uke 2
-        [{ type: AKTIVITET_TYPE.Syk }], // fredag uke 2
-        null,
-        null, // helg
-      ],
-      innsendtTidspunktRelativTilPeriodeSlutt: 9, // 1 dag etter sisteFrist
       ukerFraIDag: 52,
+      aktiviteter: [
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Syk }],
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ],
     },
     // 5. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
+        opprettetAv: OPPRETTET_AV.Arena,
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -602,7 +506,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       aktiviteter: [
         null, // mandag uke 1
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // tirsdag uke 1
-        [{ type: AKTIVITET_TYPE.Utdanning }], // onsdag uke 1
+        null, // onsdag uke 1
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }], // torsdag uke 1
         null, // fredag uke 1
         null,
@@ -621,6 +525,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 6. Ferdig beregnet, Syk torsdag uke 22, Sendt inn en dag etter fristen
     {
       periode: {
+        opprettetAv: OPPRETTET_AV.Arena,
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -698,18 +603,18 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanEndres: true,
       },
       aktiviteter: [
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
         null,
         null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
-        null,
-        null,
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
         null,
         null,
       ],
@@ -724,18 +629,18 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanEndres: true,
       },
       aktiviteter: [
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
         null,
         null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT4H" }],
-        null,
-        null,
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
         null,
         null,
       ],
@@ -750,6 +655,22 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanEndres: true,
         begrunnelse: "Bruker var ikke i stand til å sende meldekort",
       },
+      aktiviteter: [
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        null,
+        null,
+      ],
       ukerFraIDag: 40,
       meldedatoRelativTilPeriodeSlutt: 0,
       innsendtTidspunktRelativTilPeriodeSlutt: 10,
@@ -764,19 +685,19 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanEndres: true,
       },
       aktiviteter: [
-        null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }, { type: AKTIVITET_TYPE.Syk }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
         [{ type: AKTIVITET_TYPE.Utdanning }],
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
         null,
-        null,
-        null,
-        null,
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
+        [{ type: AKTIVITET_TYPE.Utdanning }],
         [{ type: AKTIVITET_TYPE.Utdanning }],
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Syk }],
-        null,
         null,
       ],
       ukerFraIDag: 38,
@@ -792,14 +713,14 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       aktiviteter: [
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Utdanning }],
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        null,
-        null,
-        null,
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Utdanning }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
         [{ type: AKTIVITET_TYPE.Syk }],
         null,
@@ -826,6 +747,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanEndres: true,
       },
       ukerFraIDag: 32,
+      innsendtTidspunktRelativTilPeriodeSlutt: 12,
     },
     // 16. Korrigering Innsendt, Glemt å føre aktiviteter, Saksbehandler
     {
@@ -951,7 +873,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanSendes: false,
         kanEndres: true,
       },
-      innsendtTidspunktRelativTilPeriodeSlutt: 9,
+      innsendtTidspunktRelativTilPeriodeSlutt: 10,
       ukerFraIDag: 20,
     },
     // 23. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
@@ -965,14 +887,14 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       aktiviteter: [
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Utdanning }],
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        null,
-        null,
-        null,
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Utdanning }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
         [{ type: AKTIVITET_TYPE.Syk }],
         null,
@@ -991,14 +913,14 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       aktiviteter: [
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Utdanning }],
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        null,
-        null,
-        null,
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Utdanning }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
         [{ type: AKTIVITET_TYPE.Syk }],
         null,
@@ -1017,14 +939,14 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       aktiviteter: [
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Utdanning }],
-        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        null,
-        null,
-        null,
         null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
-        [{ type: AKTIVITET_TYPE.Utdanning }],
+        null,
+        null,
+        null,
+        null,
+        [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
+        null,
         [{ type: AKTIVITET_TYPE.Arbeid, timer: "PT2H" }],
         [{ type: AKTIVITET_TYPE.Syk }],
         null,
@@ -1098,16 +1020,6 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       },
       ukerFraIDag: 4,
     },
-    // 31.
-    {
-      periode: {
-        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
-        registrertArbeidssoker: true,
-        kanSendes: false,
-        kanEndres: true,
-      },
-      ukerFraIDag: 2,
-    },
     // 32. Nyeste innsendte meldekort
     {
       periode: {
@@ -1115,7 +1027,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanSendes: true,
         kanEndres: false,
       },
-      ukerFraIDag: 0,
+      ukerFraIDag: 2,
     },
 
     // 33. Opprettet meldekort
@@ -1125,7 +1037,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
         kanSendes: false,
         kanEndres: false, // Kan ikke endres fordi den ikke er innsendt ennå
       },
-      ukerFraIDag: -2,
+      ukerFraIDag: 0,
     },
   ],
 };
