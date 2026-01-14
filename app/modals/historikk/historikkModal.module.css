@@ -1,3 +1,7 @@
+.modal {
+  height: 75%;
+}
+
 .modal-content {
   display: flex;
   padding: 0.5rem 1rem 1rem 1rem;
@@ -9,7 +13,6 @@
 }
 
 .year-list {
-  display: flex;
   flex-direction: column;
   gap: var(--ax-space-16);
   min-width: 336px;

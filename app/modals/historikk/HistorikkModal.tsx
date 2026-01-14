@@ -69,6 +69,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
       aria-labelledby="historikk-heading"
       closeOnBackdropClick
       portal
+      className={styles.modal}
     >
       <Theme theme={tema}>
         <Modal.Header>
@@ -79,7 +80,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
         <Modal.Body>
           <div className={styles.modalContent}>
             {harFeil && <Alert variant="error">{feilMelding}</Alert>}
-            <Accordion indent={false}>
+            <Accordion indent={false} className={styles.yearList}>
               {sortedYears.map((year, index) => (
                 <Accordion.Item key={year} defaultOpen={index === 0}>
                   <Accordion.Header>{year}</Accordion.Header>
