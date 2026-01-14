@@ -234,10 +234,7 @@ export function MeldekortRad({
       <Table.DataCell {...cellProps}>
         <ul className={styles.aktiviteter}>
           {aktiviteter.map((type) => {
-            const colorClass =
-              variant === "B"
-                ? aktivitetMapping[type].color
-                : `${aktivitetMapping[type].color}VariantA`;
+            const colorClass = aktivitetMapping[type].color;
             return (
               <li key={type} className={`${styles.aktivitet} ${aktivitetStyles[colorClass]}`}>
                 <span aria-hidden="true">{aktivitetMapping[type].label}</span>
