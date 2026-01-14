@@ -7,6 +7,7 @@ import { lagArbeidssokerperiode } from "../mock.utils";
 export function hentArbeidssokerperioder(
   perioder: IRapporteringsperiode[],
   person?: IPerson,
+  kunEnArbeidssokerperiode = false,
 ): IArbeidssokerperiode[] {
   const sortedPerioder = [...perioder].sort((a, b) =>
     a.periode.fraOgMed > b.periode.fraOgMed ? 1 : -1,
@@ -15,6 +16,17 @@ export function hentArbeidssokerperioder(
 
   if (!periode1StartDato) {
     return [];
+  }
+
+  if (kunEnArbeidssokerperiode) {
+    return [
+      lagArbeidssokerperiode(
+        {
+          startDato: new Date(periode1StartDato).toISOString(),
+        },
+        person,
+      ),
+    ];
   }
 
   const meldekortInnsendtForSent = sortedPerioder.filter(
