@@ -124,7 +124,7 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode, variant = nul
   const [uke1, uke2] = hentUkerFraPeriode(periode);
   const uke1Dager = dager.slice(0, 7);
   const uke2Dager = dager.slice(7, 14);
-  const useVariantLabels = variant === "B";
+  // const useVariantLabels = variant === "B";
 
   // Select styles based on variant
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
@@ -132,11 +132,14 @@ export function FyllUtTabell({ dager, setKorrigerteDager, periode, variant = nul
   // Original and Variant B: Both weeks side by side (horizontal layout)
   return (
     <fieldset className={styles.fieldset}>
-      {useVariantLabels && (
+      {/* {useVariantLabels && (
         <legend className={styles.legend}>
           <Label size="small">Før opp aktiviteter</Label>
         </legend>
-      )}
+      )} */}
+      <legend className="sr-only">
+        <Label size="small">Før opp aktiviteter</Label>
+      </legend>
       <table className={styles.fyllUtTabell}>
         <thead>
           <tr>
