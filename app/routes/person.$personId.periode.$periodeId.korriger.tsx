@@ -222,6 +222,7 @@ export default function Periode() {
               setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
               periode={periode.periode}
               variant={variant}
+              isKorrigering={true}
             />
           </div>
           <div className={styles.annenInfo}>
