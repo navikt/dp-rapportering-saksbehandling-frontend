@@ -8,7 +8,7 @@ export { buildVariantURL, getTogglePlacement } from "./ab-test.utils";
  * Kun aktivt i demo-miljø.
  *
  * @param request - Request objektet fra loader
- * @returns Variant A, B, C eller null hvis ingen variant spesifisert
+ * @returns Variant A, B eller null hvis ingen variant spesifisert
  */
 export function getABTestVariant(request: Request): ABTestVariant {
   // Kun aktiv i demo-miljø
@@ -24,7 +24,9 @@ export function getABTestVariant(request: Request): ABTestVariant {
     return variant;
   }
 
-  return null; // Returner null hvis ingen variant spesifisert (ikke default til A)
+  // Returner null hvis ingen variant spesifisert
+  // NB: Variant A kan være både "A" eller null
+  return null;
 }
 
 /**

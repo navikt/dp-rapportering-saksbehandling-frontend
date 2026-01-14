@@ -17,6 +17,9 @@ export function VariantSwitcher() {
   const currentStatus = (searchParams.get("status") as DemoStatus) || null;
   const currentAction = (searchParams.get("action") as DemoAction) || null;
 
+  // Variant A er når variant er "A" eller null
+  const isVariantA = currentVariant === "A" || currentVariant === null;
+
   // Sjekk hvilke sider vi er på for betinget visning av parametere
   const isKorrigerPage = location.pathname.includes("/korriger");
   const isFyllUtPage = location.pathname.includes("/fyll-ut");
@@ -35,7 +38,7 @@ export function VariantSwitcher() {
     }
 
     // For status og action params: full page reload for å trigge loader på nytt
-    // For variant: klient-side navigasjon er OK
+    // For variant: klient-side navigasjon er ok
     if (param === "status" || param === "action") {
       // Hvis vi fjerner en feilsimulering mens vi er på error boundary,
       // må vi først oppdatere URL og deretter reloade
@@ -62,8 +65,8 @@ export function VariantSwitcher() {
           {!isActionPage && (
             <>
               <ActionMenu.Group label="Variant:">
-                <ActionMenu.Item onSelect={() => handleParamChange("variant", "none")}>
-                  Variant A {!currentVariant && "✓"}
+                <ActionMenu.Item onSelect={() => handleParamChange("variant", "A")}>
+                  Variant A {isVariantA && "✓"}
                 </ActionMenu.Item>
                 <ActionMenu.Item onSelect={() => handleParamChange("variant", "B")}>
                   Variant B {currentVariant === "B" && "✓"}
@@ -92,8 +95,8 @@ export function VariantSwitcher() {
           {isActionPage && (
             <>
               <ActionMenu.Group label="Variant:">
-                <ActionMenu.Item onSelect={() => handleParamChange("variant", "none")}>
-                  Variant A {!currentVariant && "✓"}
+                <ActionMenu.Item onSelect={() => handleParamChange("variant", "A")}>
+                  Variant A {isVariantA && "✓"}
                 </ActionMenu.Item>
                 <ActionMenu.Item onSelect={() => handleParamChange("variant", "B")}>
                   Variant B {currentVariant === "B" && "✓"}
