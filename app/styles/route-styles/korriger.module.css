@@ -1,4 +1,4 @@
-/* Original/Standard variant for korriger page */
+/* Original/Standard variant for korrigerside */
 .korrigering-container {
   display: flex;
   flex-direction: column;
@@ -7,6 +7,12 @@
   max-width: 1250px;
   margin: 0 auto;
   padding-bottom: var(--ax-space-32);
+}
+
+.max-width-900 {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
 }
 
 .hvit-container {

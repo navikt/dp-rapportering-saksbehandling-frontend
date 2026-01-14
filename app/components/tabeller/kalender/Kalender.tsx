@@ -53,7 +53,53 @@ export function Kalender({
   const ukedager = getWeekDays();
   const [forsteUkenummer, andreUkenummer] = ukenummer(periode).split("-");
 
-  // Horizontal layout: Weeks side by side (for korriger)
+  // Variant A (null eller eksplisitt "A"): alltid vertikal layout (ukene stablet)
+  const isVariantA = variant === "A" || variant === null;
+  if (isVariantA) {
+    return (
+      <table className={stylesOriginal.kalenderTabell}>
+        <caption className="sr-only">
+          Oversikt over rapporterte dager for uke {forsteUkenummer} og {andreUkenummer}
+        </caption>
+        <thead>
+          <tr>
+            {!hideWeekLabels && (
+              <th scope="col" className="sr-only">
+                Ukedag
+              </th>
+            )}
+            {ukedager.map((ukedag, index) => (
+              <th key={`${periode.id}-${index}`} scope="col">
+                <Label size="small" as="span">
+                  <span aria-hidden="true">{ukedag.kort}</span>
+                  <span className="sr-only">{ukedag.lang}</span>
+                </Label>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <UkeRad
+            dager={forsteUke}
+            ukenummer={forsteUkenummer}
+            hideWeekLabel={hideWeekLabels}
+            variant={variant}
+          />
+          <tr>
+            <td colSpan={7} className={stylesOriginal.mellomrom} aria-hidden="true" />
+          </tr>
+          <UkeRad
+            dager={andreUke}
+            ukenummer={andreUkenummer}
+            hideWeekLabel={hideWeekLabels}
+            variant={variant}
+          />
+        </tbody>
+      </table>
+    );
+  }
+
+  // Horisontal layout: ukene side ved side (for korriger med Variant B eller original)
   if (layout === "horizontal") {
     return (
       <div className={stylesVariantB.kalenderVariantB}>
@@ -114,7 +160,7 @@ export function Kalender({
     );
   }
 
-  // Vertical layout: Weeks stacked (for meldekortvisning - default)
+  // Vertikal layout: ukene stablet (for meldekortvisning - default)
   return (
     <table className={stylesOriginal.kalenderTabell}>
       <caption className="sr-only">
