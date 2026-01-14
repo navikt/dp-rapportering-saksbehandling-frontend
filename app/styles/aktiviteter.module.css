@@ -1,51 +1,51 @@
 /* === Aktiviteter Farger === */
 
 /* Variant A - Gamle farger for light mode, Aksel for dark mode */
-.arbeidVariantA {
+.arbeid {
   background-color: #99c3ff;
 }
 
-.sykVariantA {
+.syk {
   background-color: #ffd399;
 }
 
-.fravaerVariantA {
+.fravaer {
   background-color: #a8dcb1;
 }
 
-.utdanningVariantA {
+.utdanning {
   background-color: #d2a8dc;
 }
-
-[data-theme="dark"] .arbeidVariantA {
+/* Dark mode for Variant A */
+[data-theme="dark"] .arbeid {
   background-color: var(--ax-bg-accent-moderate-pressed);
 }
 
-[data-theme="dark"] .sykVariantA {
+[data-theme="dark"] .syk {
   background-color: var(--ax-bg-warning-moderate-hover);
 }
 
-[data-theme="dark"] .fravaerVariantA {
+[data-theme="dark"] .fravaer {
   background-color: var(--ax-bg-success-moderate-pressed);
 }
 
-[data-theme="dark"] .utdanningVariantA {
+[data-theme="dark"] .utdanning {
   background-color: var(--ax-bg-meta-purple-moderate-pressed);
 }
 
-/* Standard farger (Aksel) */
-.arbeid {
+/* Standard farger (Aksel)
+.arbeidAksel {
   background-color: var(--ax-bg-accent-moderate-pressed);
 }
 
-.syk {
+.sykAksel {
   background-color: var(--ax-bg-warning-moderate-hover);
 }
 
-.fravaer {
+.fravaerAksel {
   background-color: var(--ax-bg-success-moderate-pressed);
 }
 
-.utdanning {
+.utdanningAksel {
   background-color: var(--ax-bg-meta-purple-moderate-pressed);
-}
+} */
