@@ -28,6 +28,7 @@ interface IProps {
   setKorrigerteDager: SetKorrigerteDager;
   periode: IPeriode;
   variant?: ABTestVariant;
+  isKorrigering?: boolean;
 }
 
 const aktiviteter = [
@@ -120,23 +121,165 @@ function DagCell({
   );
 }
 
-export function FyllUtTabell({ dager, setKorrigerteDager, periode, variant = null }: IProps) {
+export function FyllUtTabell({
+  dager,
+  setKorrigerteDager,
+  periode,
+  variant = null,
+  isKorrigering = false,
+}: IProps) {
   const [uke1, uke2] = hentUkerFraPeriode(periode);
   const uke1Dager = dager.slice(0, 7);
   const uke2Dager = dager.slice(7, 14);
-  // const useVariantLabels = variant === "B";
 
-  // Select styles based on variant
+  // Velg styles basert på variant
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
 
-  // Original and Variant B: Both weeks side by side (horizontal layout)
-  return (
-    <fieldset className={styles.fieldset}>
-      {/* {useVariantLabels && (
-        <legend className={styles.legend}>
+  // Variant A på korrigersiden vises vertikalt (ukene under hverandre)
+  // Variant A er når variant er "A" eller null
+  const isVariantA = variant === "A" || variant === null;
+  const showVerticalLayout = isKorrigering && isVariantA;
+
+  if (showVerticalLayout) {
+    return (
+      <fieldset className={styles.fieldset}>
+        <legend className="sr-only">
           <Label size="small">Før opp aktiviteter</Label>
         </legend>
-      )} */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          {/* Uke 1 */}
+          <table className={styles.fyllUtTabell}>
+            <thead>
+              <tr>
+                <th scope="col" className="sr-only">
+                  Aktivitet
+                </th>
+                <th className={styles.gap} aria-hidden="true"></th>
+                <th colSpan={7} className={styles.label} scope="colgroup">
+                  <BodyShort weight="semibold">Uke {uke1}</BodyShort>
+                </th>
+                <th colSpan={2} scope="col" className="sr-only">
+                  Oppsummering
+                </th>
+              </tr>
+              <tr>
+                <th scope="col" className="sr-only">
+                  Aktivitet
+                </th>
+                <th className={styles.gap} aria-hidden="true"></th>
+                {uke1Dager.map((dag) => (
+                  <DagHeader key={`header-${dag.dato}`} dag={dag} styles={styles} />
+                ))}
+                <th scope="col" colSpan={2} className="sr-only">
+                  Sum
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {aktiviteter.map(({ type, label }) => {
+                const hoverClass = styles[lagAktivitetKlassenavn(type, "trHover")];
+                const aktivitetClass = styles[lagAktivitetKlassenavn(type, "aktivitet")];
+                const antallDager = beregnTotaltAntallDager(uke1Dager, type);
+
+                return (
+                  <tr key={type} className={hoverClass}>
+                    <th scope="row">
+                      <div className={classNames(styles.aktivitet, aktivitetClass)}>{label}</div>
+                    </th>
+                    <td className={styles.gap} aria-hidden="true"></td>
+                    {uke1Dager.map((dag) => (
+                      <DagCell
+                        key={dag.dato}
+                        dag={dag}
+                        type={type}
+                        label={label}
+                        setKorrigerteDager={setKorrigerteDager}
+                        styles={styles}
+                      />
+                    ))}
+                    <td aria-hidden="true">=</td>
+                    <td className={styles.oppsummeringTall}>
+                      {formaterTotalBeløp(uke1Dager, type)}
+                    </td>
+                    <td className={styles.oppsummeringEnhet}>
+                      {pluraliserEnhet(antallDager, type)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          {/* Uke 2 */}
+          <table className={styles.fyllUtTabell}>
+            <thead>
+              <tr>
+                <th scope="col" className="sr-only">
+                  Aktivitet
+                </th>
+                <th className={styles.gap} aria-hidden="true"></th>
+                <th colSpan={7} className={styles.label} scope="colgroup">
+                  <BodyShort weight="semibold">Uke {uke2}</BodyShort>
+                </th>
+                <th colSpan={2} scope="col" className="sr-only">
+                  Oppsummering
+                </th>
+              </tr>
+              <tr>
+                <th scope="col" className="sr-only">
+                  Aktivitet
+                </th>
+                <th className={styles.gap} aria-hidden="true"></th>
+                {uke2Dager.map((dag) => (
+                  <DagHeader key={`header-${dag.dato}`} dag={dag} styles={styles} />
+                ))}
+                <th scope="col" colSpan={2} className="sr-only">
+                  Sum
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {aktiviteter.map(({ type, label }) => {
+                const hoverClass = styles[lagAktivitetKlassenavn(type, "trHover")];
+                const aktivitetClass = styles[lagAktivitetKlassenavn(type, "aktivitet")];
+                const antallDager = beregnTotaltAntallDager(uke2Dager, type);
+
+                return (
+                  <tr key={type} className={hoverClass}>
+                    <th scope="row">
+                      <div className={classNames(styles.aktivitet, aktivitetClass)}>{label}</div>
+                    </th>
+                    <td className={styles.gap} aria-hidden="true"></td>
+                    {uke2Dager.map((dag) => (
+                      <DagCell
+                        key={dag.dato}
+                        dag={dag}
+                        type={type}
+                        label={label}
+                        setKorrigerteDager={setKorrigerteDager}
+                        styles={styles}
+                      />
+                    ))}
+                    <td aria-hidden="true">=</td>
+                    <td className={styles.oppsummeringTall}>
+                      {formaterTotalBeløp(uke2Dager, type)}
+                    </td>
+                    <td className={styles.oppsummeringEnhet}>
+                      {pluraliserEnhet(antallDager, type)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+    );
+  }
+
+  // Horisontal layout: begge ukene side ved side
+  return (
+    <fieldset className={styles.fieldset}>
       <legend className="sr-only">
         <Label size="small">Før opp aktiviteter</Label>
       </legend>
