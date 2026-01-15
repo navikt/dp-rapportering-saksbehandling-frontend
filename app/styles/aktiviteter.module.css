@@ -1,6 +1,5 @@
 /* === Aktiviteter Farger === */
 
-/* Variant A - Gamle farger for light mode, Aksel for dark mode */
 .arbeid {
   background-color: #99c3ff;
 }
@@ -16,36 +15,3 @@
 .utdanning {
   background-color: #d2a8dc;
 }
-/* Dark mode for Variant A */
-[data-theme="dark"] .arbeid {
-  background-color: var(--ax-bg-accent-moderate-pressed);
-}
-
-[data-theme="dark"] .syk {
-  background-color: var(--ax-bg-warning-moderate-hover);
-}
-
-[data-theme="dark"] .fravaer {
-  background-color: var(--ax-bg-success-moderate-pressed);
-}
-
-[data-theme="dark"] .utdanning {
-  background-color: var(--ax-bg-meta-purple-moderate-pressed);
-}
-
-/* Standard farger (Aksel)
-.arbeidAksel {
-  background-color: var(--ax-bg-accent-moderate-pressed);
-}
-
-.sykAksel {
-  background-color: var(--ax-bg-warning-moderate-hover);
-}
-
-.fravaerAksel {
-  background-color: var(--ax-bg-success-moderate-pressed);
-}
-
-.utdanningAksel {
-  background-color: var(--ax-bg-meta-purple-moderate-pressed);
-} */
