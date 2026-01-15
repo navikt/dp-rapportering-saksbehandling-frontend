@@ -97,7 +97,7 @@ const DetailRow = ({
   children: React.ReactNode;
   alignTop?: boolean;
 }) => (
-  <Table.Row className={alignTop ? styles.alignTop : undefined}>
+  <Table.Row className={alignTop ? styles.alignTop : undefined} shadeOnHover={false}>
     <Table.HeaderCell scope="row">
       <BodyLong size="small" className={styles.label}>
         {label}
