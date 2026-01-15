@@ -204,6 +204,8 @@ export interface IEnv {
   NODE_ENV?: "development" | "test" | "production";
   FARO_URL: string;
   RUNTIME_ENVIRONMENT: "development" | "demo" | "production";
+  SANITY_DATASETT: string;
+  SANITY_TOKEN?: string;
 }
 
 export interface ISaksbehandler {
