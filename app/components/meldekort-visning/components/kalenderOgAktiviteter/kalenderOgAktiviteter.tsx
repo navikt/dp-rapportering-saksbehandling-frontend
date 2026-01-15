@@ -33,12 +33,11 @@ export function KalenderOgAktiviteter({ periode, variant }: IProps) {
             {aktivitetsTyper.map(({ type, label, erDager, klasse }) => {
               const total = beregnTotalt(periode, type);
               const enhet = erDager ? "dager" : "timer";
-              const colorClass = variant === "B" ? klasse : `${klasse}VariantA`;
 
               return (
                 <li
                   key={type}
-                  className={`${styles.aktivitet} ${aktivitetStyles[colorClass]}`}
+                  className={`${styles.aktivitet} ${aktivitetStyles[klasse]}`}
                   aria-label={`${label}: ${total} ${enhet}`}
                 >
                   <BodyLong aria-hidden="true" size="small">

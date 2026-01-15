@@ -19,12 +19,10 @@ function UkeRad({
   dager,
   ukenummer,
   hideWeekLabel = false,
-  variant,
 }: {
   dager: IRapporteringsperiodeDag[];
   ukenummer: string;
   hideWeekLabel?: boolean;
-  variant?: ABTestVariant;
 }) {
   return (
     <tr>
@@ -34,7 +32,7 @@ function UkeRad({
         </th>
       )}
       {dager.map((dag) => (
-        <Dag key={dag.dato} dag={dag} variant={variant} />
+        <Dag key={dag.dato} dag={dag} />
       ))}
     </tr>
   );
@@ -79,21 +77,11 @@ export function Kalender({
           </tr>
         </thead>
         <tbody>
-          <UkeRad
-            dager={forsteUke}
-            ukenummer={forsteUkenummer}
-            hideWeekLabel={hideWeekLabels}
-            variant={variant}
-          />
+          <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} hideWeekLabel={hideWeekLabels} />
           <tr>
             <td colSpan={7} className={stylesOriginal.mellomrom} aria-hidden="true" />
           </tr>
-          <UkeRad
-            dager={andreUke}
-            ukenummer={andreUkenummer}
-            hideWeekLabel={hideWeekLabels}
-            variant={variant}
-          />
+          <UkeRad dager={andreUke} ukenummer={andreUkenummer} hideWeekLabel={hideWeekLabels} />
         </tbody>
       </table>
     );
@@ -124,7 +112,7 @@ export function Kalender({
           <tbody>
             <tr>
               {forsteUke.map((dag) => (
-                <Dag key={dag.dato} dag={dag} variant={variant} />
+                <Dag key={dag.dato} dag={dag} />
               ))}
             </tr>
           </tbody>
@@ -151,7 +139,7 @@ export function Kalender({
           <tbody>
             <tr>
               {andreUke.map((dag) => (
-                <Dag key={dag.dato} dag={dag} variant={variant} />
+                <Dag key={dag.dato} dag={dag} />
               ))}
             </tr>
           </tbody>
@@ -184,21 +172,11 @@ export function Kalender({
         </tr>
       </thead>
       <tbody>
-        <UkeRad
-          dager={forsteUke}
-          ukenummer={forsteUkenummer}
-          hideWeekLabel={hideWeekLabels}
-          variant={variant}
-        />
+        <UkeRad dager={forsteUke} ukenummer={forsteUkenummer} hideWeekLabel={hideWeekLabels} />
         <tr>
           <td colSpan={7} className={stylesOriginal.mellomrom} aria-hidden="true" />
         </tr>
-        <UkeRad
-          dager={andreUke}
-          ukenummer={andreUkenummer}
-          hideWeekLabel={hideWeekLabels}
-          variant={variant}
-        />
+        <UkeRad dager={andreUke} ukenummer={andreUkenummer} hideWeekLabel={hideWeekLabels} />
       </tbody>
     </table>
   );
