@@ -17,6 +17,7 @@
   "dependencies": {
     "@grafana/faro-web-sdk": "^2.1.0",
     "@grafana/faro-web-tracing": "^2.1.0",
+    "msw": "^2.12.7",
     "@msw/data": "^1.1.2",
     "@navikt/aksel-icons": "^7.36.0",
     "@navikt/ds-css": "^7.36.0",
@@ -29,7 +30,6 @@
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
     "isbot": "^5.1.32",
-    "msw": "^2.12.7",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-router": "^7.12.0",
