@@ -39,7 +39,7 @@ export async function loader() {
 Sanity bruker GROQ (Graph-Relational Object Queries) for spørringer:
 
 ```typescript
-// TODO: Dette er hentet fra hvordan dp-rapportering-frontend gjør det - oppdarer så fort vi har lagt til egne spørringer.
+// TODO: Dette er hentet fra hvordan dp-rapportering-frontend gjør det - oppdaterer så fort vi har lagt til egne spørringer.
 
 // Hent enkeltdokument
 const dokument = await sanityClient.fetch(
