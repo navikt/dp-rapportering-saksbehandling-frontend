@@ -28,6 +28,7 @@
   padding: 0.5rem;
   justify-content: center;
   align-items: center;
+  color: inherit;
 }
 
 .aktiviteterWrapper {
@@ -49,6 +50,7 @@
   align-items: center;
   justify-content: center;
   background-color: transparent;
+  color: inherit;
 }
 
 .flereAktiviteter::before {
@@ -64,7 +66,7 @@
   background-color: var(--ax-bg-neutral-soft);
 }
 
-/* 20% opacity versjoner for dag-containeren */
+/* Bakgrunner for dag-containeren - Light mode med gamle farger */
 .dag.arbeidBg {
   background-color: rgba(153, 195, 255, 0.2);
 }
@@ -81,7 +83,24 @@
   background-color: rgba(210, 168, 220, 0.2);
 }
 
-/* Prikkefarger for pseudo-elementer - påfør kun bakgrunn til ::before */
+/* Dark mode - Aksel softA farger for subtil dag-bakgrunn */
+[data-theme="dark"] .dag.arbeidBg {
+  background-color: var(--ax-bg-accent-softA);
+}
+
+[data-theme="dark"] .dag.sykBg {
+  background-color: var(--ax-bg-warning-softA);
+}
+
+[data-theme="dark"] .dag.fravaerBg {
+  background-color: var(--ax-bg-success-softA);
+}
+
+[data-theme="dark"] .dag.utdanningBg {
+  background-color: var(--ax-bg-meta-purple-softA);
+}
+
+/* Prikkefarger for pseudo-elementer - Light mode med gamle farger */
 .flereAktiviteter.arbeidDot::before {
   background-color: #99c3ff;
 }
@@ -96,4 +115,21 @@
 
 .flereAktiviteter.utdanningDot::before {
   background-color: #d2a8dc;
+}
+
+/* Dark mode - Aksel tag-farger */
+[data-theme="dark"] .flereAktiviteter.arbeidDot::before {
+  background-color: var(--ax-tag-info-bg);
+}
+
+[data-theme="dark"] .flereAktiviteter.sykDot::before {
+  background-color: var(--ax-tag-warning-bg);
+}
+
+[data-theme="dark"] .flereAktiviteter.fravaerDot::before {
+  background-color: var(--ax-tag-success-bg);
+}
+
+[data-theme="dark"] .flereAktiviteter.utdanningDot::before {
+  background-color: var(--ax-tag-alt1-bg);
 }

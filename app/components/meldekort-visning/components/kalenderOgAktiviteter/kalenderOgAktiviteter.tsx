@@ -18,13 +18,10 @@ export function KalenderOgAktiviteter({ periode, variant }: IProps) {
   // Sjekk om alle aktiviteter er 0
   const harAktiviteter = aktivitetsTyper.some(({ type }) => beregnTotalt(periode, type) > 0);
 
-  // For Variant B: skjul "Sammenlagt for perioden" hvis alle aktiviteter er 0
-  const visSammenlagt = variant !== "B" || harAktiviteter;
-
   return (
     <div className={styles.kalenderOgSammenlagt}>
       <Kalender periode={periode} variant={variant} hideWeekLabels={true} />
-      {visSammenlagt ? (
+      {harAktiviteter ? (
         <div className={styles.sammenlagt} id={`sammenlagt-${periode.id}`}>
           <Heading level="4" size="xsmall">
             Sammenlagt for perioden
