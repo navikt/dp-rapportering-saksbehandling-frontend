@@ -1,5 +1,6 @@
 /* === Aktiviteter Farger === */
 
+/* Light mode - Gamle farger */
 .arbeid {
   background-color: #99c3ff;
 }
@@ -14,4 +15,21 @@
 
 .utdanning {
   background-color: #d2a8dc;
+}
+
+/* Dark mode - Aksel farger */
+[data-theme="dark"] .arbeid {
+  background-color: var(--ax-bg-accent-moderate-pressed);
+}
+
+[data-theme="dark"] .syk {
+  background-color: var(--ax-bg-warning-moderate-hover);
+}
+
+[data-theme="dark"] .fravaer {
+  background-color: var(--ax-bg-success-moderate-pressed);
+}
+
+[data-theme="dark"] .utdanning {
+  background-color: var(--ax-bg-meta-purple-moderate-pressed);
 }
