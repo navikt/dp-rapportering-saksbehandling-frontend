@@ -12,6 +12,7 @@ is_localhost: false
 faro_url: "https://telemetry.ekstern.nav.no/collect"
 
 runtime_environment: "production"
+sanity_datasett: "development"
 
 azure:
   tenant: nav.no
