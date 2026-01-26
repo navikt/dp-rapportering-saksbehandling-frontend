@@ -19,7 +19,7 @@
     "@grafana/faro-web-tracing": "^2.2.0",
     "msw": "^2.12.7",
     "@msw/data": "^1.1.2",
-    "@navikt/aksel-icons": "^7.40.0",
+    "@navikt/aksel-icons": "^8.0.0",
     "@navikt/ds-css": "^7.40.0",
     "@navikt/ds-react": "^7.40.0",
     "@navikt/oasis": "^4.1.1",
