@@ -20,6 +20,7 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
 - **Framework**: React Router v7 (framework mode)
 - **Frontend**: React 19 med TypeScript
 - **Styling**: NAV Aksel designsystem (@navikt/ds-react)
+- **CMS**: Sanity (innholdshåndtering)
 - **Mocking**: MSW (Mock Service Worker) for utvikling
 - **Testing**: Vitest + Testing Library (enhetstester) og Playwright (e2e-tester)
 - **Deployment**: NAIS på Google Cloud Platform
@@ -59,7 +60,10 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
    ```
    VITE_IS_LOCALHOST="true"
    VITE_USE_MSW="true"
+   SANITY_DATASETT="production"
    ```
+
+   > **Sanity CMS**: Brukes for å hente redaksjonsinnhold. Se [app/utils/SANITY_README.md](app/utils/SANITY_README.md) for mer info.
 
 4. **Start utviklingsserveren**
    ```bash

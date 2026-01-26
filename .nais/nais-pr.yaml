@@ -48,6 +48,8 @@ spec:
       value: https://telemetry.ekstern.dev.nav.no/collect
     - name: RUNTIME_ENVIRONMENT
       value: pr-preview
+    - name: SANITY_DATASETT
+      value: "production"  
   accessPolicy:
     outbound:
       external:

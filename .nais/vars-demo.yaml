@@ -11,6 +11,7 @@ ttl: 168h
 
 faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
 runtime_environment: "demo"
+sanity_datasett: "development"
 
 azure:
   tenant: trygdeetaten.no

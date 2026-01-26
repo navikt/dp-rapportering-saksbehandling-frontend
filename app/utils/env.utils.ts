@@ -36,6 +36,7 @@ export function getEnv<T>(key: keyof IEnv): T {
     DP_BEHANDLING_URL: "https://dp-behandling.intern.dev.nav.no",
     FARO_URL: "http://localhost:12347/collect",
     RUNTIME_ENVIRONMENT: "production",
+    SANITY_DATASETT: "production",
   };
 
   const value = (env[key] || env[`VITE_${key}`] || defaultEnv[key] || "") as unknown as T;
