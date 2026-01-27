@@ -2,6 +2,24 @@
 
 Dette prosjektet bruker Sanity CMS for å hente tekstinnhold.
 
+## Mappestruktur
+
+```
+app/sanity/
+├── client.ts                    # Sanity client konfigurasjon
+├── utils.ts                     # Utility-funksjoner (sanityDataMangler)
+├── components/                  # Gjenbrukbare komponenter
+│   └── SanityDevWarning.tsx     # Dev-warning for manglende data
+├── sider/                       # Queries og types for sider
+│   └── forside/
+│       ├── queries.ts
+│       └── types.ts
+├── modaler/                     # Queries og types for modaler
+└── fellesKomponenter/           # Queries og types for felles komponenter
+```
+
+Strukturen speiler `dp-sanity-cms-v3/schema/meldekort/saksbehandlerflate/`
+
 ## Konfigurasjon
 
 ### Miljøvariabler
@@ -24,13 +42,13 @@ SANITY_TOKEN=""  # Valgfri - kun nødvendig for private datasett
 ### Hente data fra Sanity
 
 ```typescript
-import { sanityClient } from "~/utils/sanity.client.server";
+import { sanityClient } from "~/sanity/client";
+import { forsideQuery } from "~/sanity/sider/forside/queries";
+import type { IMeldekortForside } from "~/sanity/sider/forside/types";
 
-// Eksempel: Hent alle rapporteringstekster på norsk
 export async function loader() {
-  const tekster = await sanityClient.fetch('*[_type == "rapporteringAppText" && language == "nb"]');
-
-  return { tekster };
+  const forsideData = await sanityClient.fetch<IMeldekortForside>(forsideQuery);
+  return { forside: forsideData };
 }
 ```
 
@@ -64,12 +82,12 @@ const medRef = await sanityClient.fetch(`
 
 ## Testing
 
-Tester finnes i `sanity.client.server.test.ts`.
+Tester finnes i `client.test.ts`.
 
 Kjør tester:
 
 ```bash
-npm test -- sanity.client.server.test.ts
+npm test -- client.test.ts
 ```
 
 ### Manuell testing
@@ -78,7 +96,7 @@ Du kan teste Sanity-tilkoblingen ved å lage en enkel loader:
 
 ```typescript
 // app/routes/test-sanity.tsx
-import { sanityClient } from "~/utils/sanity.client.server";
+import { sanityClient } from "~/sanity/client";
 
 export async function loader() {
   const data = await sanityClient.fetch('*[0..9]');
@@ -103,7 +121,7 @@ Deretter besøk `http://localhost:5173/test-sanity`
 
 ### "Invalid projectId"
 
-Sjekk at `projectId` i `sanity.client.server.ts` stemmer med Sanity-prosjektet ditt.
+Sjekk at `projectId` i `client.ts` stemmer med Sanity-prosjektet ditt.
 
 ### "Dataset not found"
 

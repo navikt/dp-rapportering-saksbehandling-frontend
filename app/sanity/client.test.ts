@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { sanityClient } from "./sanity.client.server";
+import { sanityClient } from "./client";
 
 describe("sanityClient", () => {
   it("skal være konfigurert med riktig projectId", () => {

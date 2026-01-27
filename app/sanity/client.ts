@@ -1,6 +1,6 @@
 import { createClient } from "@sanity/client";
 
-import { getEnv } from "./env.utils";
+import { getEnv } from "~/utils/env.utils";
 
 export const sanityClient = createClient({
   dataset: getEnv("SANITY_DATASETT"),
