@@ -1,6 +1,6 @@
 import groq from "groq";
 
-export const personlineQuery = groq`*[_type == "meldekortPersonlinje"][0]{
+export const personlinjeQuery = groq`*[_type == "meldekortPersonlinje"][0]{
   sectionAriaLabel,
   birthNumberLabel,
   ageLabel,

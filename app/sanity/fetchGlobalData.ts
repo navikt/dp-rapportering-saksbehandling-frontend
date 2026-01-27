@@ -3,7 +3,7 @@ import { logger } from "~/models/logger.server";
 import { sanityClient } from "./client";
 import { headerQuery } from "./fellesKomponenter/header/queries";
 import type { IMeldekortHeader } from "./fellesKomponenter/header/types";
-import { personlineQuery } from "./fellesKomponenter/personlinje/queries";
+import { personlinjeQuery } from "./fellesKomponenter/personlinje/queries";
 import type { IMeldekortPersonlinje } from "./fellesKomponenter/personlinje/types";
 
 export interface GlobalSanityData {
@@ -19,7 +19,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
   try {
     const [header, personlinje] = await Promise.all([
       sanityClient.fetch<IMeldekortHeader>(headerQuery),
-      sanityClient.fetch<IMeldekortPersonlinje>(personlineQuery),
+      sanityClient.fetch<IMeldekortPersonlinje>(personlinjeQuery),
     ]);
 
     return { header, personlinje };

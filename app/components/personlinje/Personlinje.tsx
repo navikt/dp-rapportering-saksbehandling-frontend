@@ -3,6 +3,7 @@ import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useMemo, useState } from "react";
 
+import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import {
@@ -19,18 +20,35 @@ import {
 } from "./Personlinje.helpers";
 import styles from "./personlinje.module.css";
 
+const defaultPersonlinjeData: IMeldekortPersonlinje = {
+  sectionAriaLabel: "Informasjon om valgt person",
+  birthNumberLabel: "Fødselsnummer",
+  ageLabel: "Alder",
+  genderLabel: "Kjønn",
+  citizenshipLabel: "Statsborgerskap",
+  historyButton: "Historikk",
+};
+
 interface IProps {
   person: IPerson;
   perioder?: IRapporteringsperiode[];
   arbeidssokerperioder?: IArbeidssokerperiode[];
+  personlinjeData?: IMeldekortPersonlinje | null;
 }
 
-export default function Personlinje({ person, perioder = [], arbeidssokerperioder = [] }: IProps) {
+export default function Personlinje({
+  person,
+  perioder = [],
+  arbeidssokerperioder = [],
+  personlinjeData,
+}: IProps) {
   const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
   const [modalOpen, setModalOpen] = useState(false);
 
   // Sjekk om data er maskert (kommer fra server-side maskering)
   const erMaskert = fulltNavn.includes("•") || person.ident.includes("•");
+
+  const texts = { ...defaultPersonlinjeData, ...(personlinjeData ?? {}) };
 
   const events = useMemo(() => {
     return [
@@ -64,30 +82,30 @@ export default function Personlinje({ person, perioder = [], arbeidssokerperiode
         </div>
 
         <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-          Fødselsnummer:{" "}
+          {texts.birthNumberLabel}{" "}
           <strong className={erMaskert ? styles.sensitiv : undefined}>{person.ident}</strong>{" "}
           {!erMaskert && <CopyButton copyText={person.ident} size="xsmall" />}
         </BodyShort>
 
         {person.fodselsdato && (
           <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-            Alder: <b>{beregnAlder(person.fodselsdato)}</b>
+            {texts.ageLabel} <b>{beregnAlder(person.fodselsdato)}</b>
           </BodyShort>
         )}
 
         {person.kjonn && (
           <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-            Kjønn: <b>{person.kjonn}</b>
+            {texts.genderLabel} <b>{person.kjonn}</b>
           </BodyShort>
         )}
 
         <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-          Statsborgerskap: <strong>{person.statsborgerskap}</strong>
+          {texts.citizenshipLabel} <strong>{person.statsborgerskap}</strong>
         </BodyShort>
       </div>
       <div className={styles.historikkKnapp}>
         <Button variant="secondary-neutral" size="xsmall" onClick={() => setModalOpen(true)}>
-          Historikk
+          {texts.historyButton}
         </Button>
       </div>
 
