@@ -44,7 +44,7 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
     revalidator.revalidate();
   };
 
-  const texts = { ...defaultHeaderData, ...headerData };
+  const texts = { ...defaultHeaderData, ...(headerData ?? {}) };
   const userButtonAriaLabel = texts.userButtonAriaLabel.replace(
     "{{name}}",
     saksbehandler.givenName,

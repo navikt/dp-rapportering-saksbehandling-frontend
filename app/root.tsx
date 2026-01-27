@@ -75,7 +75,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   try {
     headerData = await sanityClient.fetch<IMeldekortHeader>(headerQuery);
   } catch (error) {
-    logger.error("Kunne ikke hente header-data fra Sanity:", error);
+    logger.error("Kunne ikke hente header-data fra Sanity:", { error });
   }
 
   return {
