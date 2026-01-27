@@ -22,10 +22,10 @@ import styles from "./personlinje.module.css";
 
 const defaultPersonlinjeData: IMeldekortPersonlinje = {
   sectionAriaLabel: "Informasjon om valgt person",
-  birthNumberLabel: "Fødselsnummer",
-  ageLabel: "Alder",
-  genderLabel: "Kjønn",
-  citizenshipLabel: "Statsborgerskap",
+  birthNumberLabel: "Fødselsnummer:",
+  ageLabel: "Alder:",
+  genderLabel: "Kjønn:",
+  citizenshipLabel: "Statsborgerskap:",
   historyButton: "Historikk",
 };
 
