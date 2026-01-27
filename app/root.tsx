@@ -23,11 +23,8 @@ import { NavigationWarningProvider } from "./context/navigation-warning-context"
 import { SaksbehandlerProvider } from "./context/saksbehandler-context";
 import { ToastProvider } from "./context/toast-context";
 import { getSessionId } from "./mocks/session";
-import { logger } from "./models/logger.server";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
-import { sanityClient } from "./sanity/client";
-import { headerQuery } from "./sanity/fellesKomponenter/header/queries";
-import type { IMeldekortHeader } from "./sanity/fellesKomponenter/header/types";
+import { fetchGlobalSanityData } from "./sanity/fetchGlobalData";
 import { getEnv, isLocalOrDemo } from "./utils/env.utils";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -70,18 +67,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeader = request.headers.get("Cookie");
   const tema = cookieHeader?.match(/tema=([^;]+)/)?.[1] || null;
 
-  let headerData: IMeldekortHeader | null = null;
-
-  try {
-    headerData = await sanityClient.fetch<IMeldekortHeader>(headerQuery);
-  } catch (error) {
-    logger.error("Kunne ikke hente header-data fra Sanity:", { error });
-  }
+  const sanityData = await fetchGlobalSanityData();
 
   return {
     saksbehandler,
     tema,
-    header: headerData,
+    sanity: sanityData,
     env: {
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
@@ -141,7 +132,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const env = loaderData?.env ?? {};
   const saksbehandler = loaderData?.saksbehandler;
   const serverTema = loaderData?.tema;
-  const headerData = loaderData?.header;
+  const sanityData = loaderData?.sanity;
 
   return (
     <html lang="nb" suppressHydrationWarning data-theme={serverTema || undefined}>
@@ -192,7 +183,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <SaksbehandlerProvider serverTema={serverTema}>
             <NavigationWarningProvider>
               <ToastProvider>
-                {saksbehandler && <Header saksbehandler={saksbehandler} headerData={headerData} />}
+                {saksbehandler && (
+                  <Header saksbehandler={saksbehandler} headerData={sanityData?.header} />
+                )}
                 {children}
                 <ScrollRestoration />
                 <Scripts />
