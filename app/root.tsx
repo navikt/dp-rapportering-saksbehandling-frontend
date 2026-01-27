@@ -24,6 +24,7 @@ import { SaksbehandlerProvider } from "./context/saksbehandler-context";
 import { ToastProvider } from "./context/toast-context";
 import { getSessionId } from "./mocks/session";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
+import { fetchGlobalSanityData } from "./sanity/fetchGlobalData";
 import { getEnv, isLocalOrDemo } from "./utils/env.utils";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -66,9 +67,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeader = request.headers.get("Cookie");
   const tema = cookieHeader?.match(/tema=([^;]+)/)?.[1] || null;
 
+  const sanityData = await fetchGlobalSanityData();
+
   return {
     saksbehandler,
     tema,
+    sanity: sanityData,
     env: {
       IS_LOCALHOST: getEnv("IS_LOCALHOST"),
       USE_MSW: getEnv("USE_MSW"),
@@ -128,6 +132,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const env = loaderData?.env ?? {};
   const saksbehandler = loaderData?.saksbehandler;
   const serverTema = loaderData?.tema;
+  const sanityData = loaderData?.sanity;
 
   return (
     <html lang="nb" suppressHydrationWarning data-theme={serverTema || undefined}>
@@ -178,7 +183,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <SaksbehandlerProvider serverTema={serverTema}>
             <NavigationWarningProvider>
               <ToastProvider>
-                {saksbehandler && <Header saksbehandler={saksbehandler} />}
+                {saksbehandler && (
+                  <Header saksbehandler={saksbehandler} headerData={sanityData?.header} />
+                )}
                 {children}
                 <ScrollRestoration />
                 <Scripts />

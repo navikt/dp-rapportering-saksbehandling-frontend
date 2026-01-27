@@ -1,5 +1,11 @@
 import { BodyShort, Heading } from "@navikt/ds-react";
-import { isRouteErrorResponse, Outlet, redirect, useLoaderData } from "react-router";
+import {
+  isRouteErrorResponse,
+  Outlet,
+  redirect,
+  useLoaderData,
+  useRouteLoaderData,
+} from "react-router";
 import invariant from "tiny-invariant";
 
 import Personlinje from "~/components/personlinje/Personlinje";
@@ -96,6 +102,8 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export default function Rapportering() {
   const { person, perioder, arbeidssokerperioder, showDemoTools } = useLoaderData<typeof loader>();
+  const rootData = useRouteLoaderData("root");
+  const personlinjeData = rootData?.sanity?.personlinje;
 
   return (
     <>
@@ -104,6 +112,7 @@ export default function Rapportering() {
           person={person}
           perioder={perioder}
           arbeidssokerperioder={arbeidssokerperioder}
+          personlinjeData={personlinjeData}
         />
       </aside>
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
@@ -121,6 +130,9 @@ export default function Rapportering() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  const rootData = useRouteLoaderData("root");
+  const personlinjeData = rootData?.sanity?.personlinje;
+
   let title: string = "Det har skjedd en feil";
   let description: string = "Vi beklager, men noe gikk galt.";
   let detail: string | undefined = undefined;
@@ -162,7 +174,12 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     <>
       {personContext?.person && (
         <aside aria-label="Informasjon om valgt person" className={styles.personInformasjon}>
-          <Personlinje person={personContext.person} perioder={[]} arbeidssokerperioder={[]} />
+          <Personlinje
+            person={personContext.person}
+            perioder={[]}
+            arbeidssokerperioder={[]}
+            personlinjeData={personlinjeData}
+          />
         </aside>
       )}
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
