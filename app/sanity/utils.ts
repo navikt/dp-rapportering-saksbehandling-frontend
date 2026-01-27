@@ -12,6 +12,11 @@ export function sanityDataMangler<T extends Record<string, unknown>>(
 
   return requiredFields.some((field) => {
     const value = data[field];
-    return value === null || value === undefined || value === "";
+    return (
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      (Array.isArray(value) && value.length === 0)
+    );
   });
 }

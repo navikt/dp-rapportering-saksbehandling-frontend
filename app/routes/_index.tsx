@@ -3,6 +3,7 @@ import { PortableText } from "@portabletext/react";
 import { useLoaderData } from "react-router";
 
 import { mockPersons } from "~/mocks/data/mock-persons";
+import { logger } from "~/models/logger.server";
 import { sanityClient } from "~/sanity/client";
 import { SanityDevWarning } from "~/sanity/components/SanityDevWarning";
 import { forsideQuery } from "~/sanity/sider/forside/queries";
@@ -16,7 +17,7 @@ export async function loader() {
   try {
     forsideData = await sanityClient.fetch<IMeldekortForside>(forsideQuery);
   } catch (error) {
-    console.error("Kunne ikke hente forsidedata fra Sanity:", error);
+    logger.error("Kunne ikke hente forsidedata fra Sanity:", { error });
   }
 
   if (usesMsw) {
