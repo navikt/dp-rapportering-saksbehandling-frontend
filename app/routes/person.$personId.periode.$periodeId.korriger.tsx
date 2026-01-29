@@ -10,8 +10,12 @@ import { Kalender } from "~/components/tabeller/kalender/Kalender";
 import { useToast } from "~/context/toast-context";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
+import { logger } from "~/models/logger.server";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
+import { sanityClient } from "~/sanity/client";
+import { korrigerQuery } from "~/sanity/fellesKomponenter/korriger/queries";
+import type { IMeldekortKorriger } from "~/sanity/fellesKomponenter/korriger/types";
 import stylesOriginal from "~/styles/route-styles/korriger.module.css";
 import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
@@ -28,6 +32,38 @@ import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "../+types/root";
 
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_TEKSTER = {
+  overskrift: "Korriger meldekort",
+  underoverskrift: "Uke {{uker}} | {{periode}}",
+  gjeldendeMeldekort: {
+    overskrift: "Korrigering av følgende meldekort",
+    innsendtDato: "Meldekortet ble innsendt {{dato}}",
+    begrunnelseOverskrift: {
+      korrigering: "Begrunnelse for korrigering",
+      manuellInnsending: "Begrunnelse for innsending",
+    },
+  },
+  korrigeringsskjema: {
+    overskrift: "Registrer ny korrigering",
+    skjermleserHint:
+      "Gjør endringer i aktiviteter eller meldedato. Arbeid kan ikke kombineres med annet fravær enn «tiltak, kurs eller utdanning» på samme dag.",
+    datovelgerLabel: "Meldedato",
+    begrunnelseLabel: "Begrunnelse for korrigering",
+    begrunnelseFeilmelding: "Begrunnelse må fylles ut",
+  },
+  knapper: {
+    avbryt: "Avbryt korrigering",
+    fullfoer: "Fullfør korrigering",
+  },
+  skjermleserStatus: {
+    senderInn: "Sender inn korrigering...",
+    behandler: "Behandler korrigering...",
+    feilet: "Korrigering feilet",
+    suksess: "Korrigering sendt inn. Går tilbake til periodeoversikten...",
+  },
+};
+
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
   const personId = params.personId;
@@ -36,15 +72,33 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const saksbehandler = await hentSaksbehandler(request);
   const variant = getABTestVariant(request);
 
-  return { periode, saksbehandler, personId, variant };
+  let korrigerData: IMeldekortKorriger | null = null;
+  try {
+    korrigerData = await sanityClient.fetch<IMeldekortKorriger>(korrigerQuery);
+  } catch (error) {
+    logger.error("Kunne ikke hente korriger-data fra Sanity:", { error });
+  }
+
+  return { periode, saksbehandler, personId, variant, korrigerData };
 }
 
 export default function Periode() {
-  const { periode, saksbehandler, personId, variant } = useLoaderData<typeof loader>();
+  const { periode, saksbehandler, personId, variant, korrigerData } =
+    useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
+
+  // Hent tekster fra Sanity med fallback
+  const tekster = {
+    overskrift: korrigerData?.overskrift ?? DEFAULT_TEKSTER.overskrift,
+    underoverskrift: korrigerData?.underoverskrift ?? DEFAULT_TEKSTER.underoverskrift,
+    gjeldendeMeldekort: korrigerData?.gjeldendeMeldekort ?? DEFAULT_TEKSTER.gjeldendeMeldekort,
+    korrigeringsskjema: korrigerData?.korrigeringsskjema ?? DEFAULT_TEKSTER.korrigeringsskjema,
+    knapper: korrigerData?.knapper ?? DEFAULT_TEKSTER.knapper,
+    skjermleserStatus: korrigerData?.skjermleserStatus ?? DEFAULT_TEKSTER.skjermleserStatus,
+  };
 
   const isMountedRef = useRef(true);
 
@@ -141,38 +195,48 @@ export default function Periode() {
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
   const erKorrigering = !!periode.originalMeldekortId;
+  const uker = ukenummer(periode);
+  const periode_tekst = `${formattertFraOgMed} - ${formattertTilOgMed}`;
+
+  // Template-replacement for underoverskrift
+  const underoverskrift = tekster.underoverskrift
+    .replace("{{uker}}", String(uker))
+    .replace("{{periode}}", periode_tekst);
 
   return (
     <div className={styles.korrigeringContainer}>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
-        {fetcher.state === "submitting" && "Sender inn korrigering..."}
-        {fetcher.state === "loading" && "Behandler korrigering..."}
-        {fetcher.state === "idle" && fetcher.data && fetcher.data.error && "Korrigering feilet"}
+        {fetcher.state === "submitting" && tekster.skjermleserStatus.senderInn}
+        {fetcher.state === "loading" && tekster.skjermleserStatus.behandler}
+        {fetcher.state === "idle" &&
+          fetcher.data &&
+          fetcher.data.error &&
+          tekster.skjermleserStatus.feilet}
         {fetcher.state === "idle" &&
           fetcher.data &&
           !fetcher.data.error &&
-          "Korrigering sendt inn. Går tilbake til periodeoversikten..."}
+          tekster.skjermleserStatus.suksess}
       </div>
       <div className={styles.hvitContainer}>
         <div className={styles.maxWidth900}>
           <Heading level="1" size="medium">
-            Korriger meldekort
+            {tekster.overskrift}
           </Heading>
-          <BodyLong size="small">
-            Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-          </BodyLong>
+          <BodyLong size="small">{underoverskrift}</BodyLong>
         </div>
 
         <div className={`${styles.meldekortSeksjon} ${styles.maxWidth900}`}>
           <div className={styles.header}>
             <Heading level="2" size="small">
-              Korrigering av følgende meldekort
+              {tekster.gjeldendeMeldekort.overskrift}
             </Heading>
             <BodyLong size="small">
-              Meldekortet ble innsendt{" "}
-              {periode.innsendtTidspunkt
-                ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
-                : "Ukjent tidspunkt"}
+              {tekster.gjeldendeMeldekort.innsendtDato.replace(
+                "{{dato}}",
+                periode.innsendtTidspunkt
+                  ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
+                  : "Ukjent tidspunkt",
+              )}
             </BodyLong>
           </div>
           <div className={styles.kalenderOgBegrunnelseWrapper}>
@@ -183,7 +247,9 @@ export default function Periode() {
             {periode.begrunnelse && (
               <div className={styles.begrunnelseSeksjon}>
                 <Heading level="3" size="xsmall">
-                  Begrunnelse for {erKorrigering ? "korrigering" : "innsending"}
+                  {erKorrigering
+                    ? tekster.gjeldendeMeldekort.begrunnelseOverskrift.korrigering
+                    : tekster.gjeldendeMeldekort.begrunnelseOverskrift.manuellInnsending}
                 </Heading>
                 <BodyShort size="small" className={styles.kompaktTekst}>
                   {periode.begrunnelse}
@@ -204,16 +270,15 @@ export default function Periode() {
         noValidate
       >
         <div className="sr-only" aria-live="polite">
-          For å sende inn korrigering må du fylle ut begrunnelse og gjøre minst én endring
+          {tekster.korrigeringsskjema.skjermleserHint}
         </div>
         <div className={`${styles.skjema} ${styles.maxWidth900}`}>
           <div>
             <Heading level="2" size="small">
-              Registrer ny korrigering
+              {tekster.korrigeringsskjema.overskrift}
             </Heading>
             <BodyShort size="small" className="sr-only">
-              Gjør endringer i aktiviteter eller meldedato. Arbeid kan ikke kombineres med annet
-              fravær enn «tiltak, kurs eller utdanning» på samme dag.
+              {tekster.korrigeringsskjema.skjermleserHint}
             </BodyShort>
           </div>
           <div ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
@@ -229,7 +294,7 @@ export default function Periode() {
             <DatePicker {...skjema.datepicker.datepickerProps}>
               <DatePicker.Input
                 {...skjema.datepicker.inputProps}
-                label="Meldedato"
+                label={tekster.korrigeringsskjema.datovelgerLabel}
                 placeholder="dd.mm.åååå"
                 size="small"
                 onBlur={skjema.handlers.handleMeldedatoBlur}
@@ -238,14 +303,16 @@ export default function Periode() {
             <Textarea
               resize
               ref={skjema.refs.begrunnelseRef}
-              label="Begrunnelse for korrigering"
+              label={tekster.korrigeringsskjema.begrunnelseLabel}
               name="begrunnelse"
               size="small"
               value={skjema.state.begrunnelse}
               onChange={(e) => skjema.handlers.handleBegrunnelseChange(e.target.value)}
               onBlur={skjema.handlers.handleBegrunnelseBlur}
               error={
-                skjema.state.visValideringsfeil.begrunnelse ? "Begrunnelse må fylles ut" : undefined
+                skjema.state.visValideringsfeil.begrunnelse
+                  ? tekster.korrigeringsskjema.begrunnelseFeilmelding
+                  : undefined
               }
               className={styles.begrunnelse}
             />
@@ -263,7 +330,7 @@ export default function Periode() {
               size="small"
               disabled={fetcher.state === "submitting"}
             >
-              Avbryt korrigering
+              {tekster.knapper.avbryt}
             </Button>
             <Button
               type="submit"
@@ -271,7 +338,7 @@ export default function Periode() {
               size="small"
               loading={fetcher.state === "submitting"}
             >
-              Fullfør korrigering
+              {tekster.knapper.fullfoer}
             </Button>
           </div>
         </div>
