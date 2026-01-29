@@ -21,7 +21,7 @@ import {
 import styles from "./personlinje.module.css";
 
 const defaultPersonlinjeData: IMeldekortPersonlinje = {
-  sectionAriaLabel: "Informasjon om valgt person",
+  sectionAriaLabel: "Informasjon om bruker",
   birthNumberLabel: "Fødselsnummer",
   ageLabel: "Alder",
   genderLabel: "Kjønn",
@@ -58,7 +58,7 @@ export default function Personlinje({
   }, [perioder, arbeidssokerperioder]);
 
   return (
-    <div className={styles.personlinjeContainer}>
+    <section className={styles.personlinjeContainer} aria-label={texts.sectionAriaLabel}>
       <div className={styles.personlinje}>
         <div className={styles.navnContainer}>
           {person.kjonn && (
@@ -110,6 +110,6 @@ export default function Personlinje({
       </div>
 
       <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} hendelser={events} />
-    </div>
+    </section>
   );
 }
