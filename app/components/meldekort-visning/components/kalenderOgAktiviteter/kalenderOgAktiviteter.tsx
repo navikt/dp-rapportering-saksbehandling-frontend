@@ -9,12 +9,25 @@ import { Kalender } from "../../../tabeller/kalender/Kalender";
 import { beregnTotalt } from "./kalenderOgAktiviteter.helpers";
 import styles from "./kalenderOgAktiviteter.module.css";
 
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_TEKSTER = {
+  aktiviteterTittel: "Sammenlagt for perioden",
+  noActivitiesText: "Ingen aktiviteter er registrert for dette meldekortet",
+};
+
 interface IProps {
   periode: IRapporteringsperiode;
   variant?: ABTestVariant;
+  aktiviteterTittel?: string;
+  noActivitiesText?: string;
 }
 
-export function KalenderOgAktiviteter({ periode, variant }: IProps) {
+export function KalenderOgAktiviteter({
+  periode,
+  variant,
+  aktiviteterTittel = DEFAULT_TEKSTER.aktiviteterTittel,
+  noActivitiesText = DEFAULT_TEKSTER.noActivitiesText,
+}: IProps) {
   // Sjekk om alle aktiviteter er 0
   const harAktiviteter = aktivitetsTyper.some(({ type }) => beregnTotalt(periode, type) > 0);
 
@@ -24,7 +37,7 @@ export function KalenderOgAktiviteter({ periode, variant }: IProps) {
       {harAktiviteter ? (
         <div className={styles.sammenlagt} id={`sammenlagt-${periode.id}`}>
           <Heading level="4" size="xsmall">
-            Sammenlagt for perioden
+            {aktiviteterTittel}
           </Heading>
           <ul className={styles.aktivitetListe} aria-labelledby={`sammenlagt-${periode.id}`}>
             {aktivitetsTyper.map(({ type, label, erDager, klasse }) => {
@@ -49,9 +62,7 @@ export function KalenderOgAktiviteter({ periode, variant }: IProps) {
           </ul>
         </div>
       ) : (
-        <Detail className={styles.ingenAktiviteter}>
-          Ingen aktiviteter er registrert for dette meldekortet
-        </Detail>
+        <Detail className={styles.ingenAktiviteter}>{noActivitiesText}</Detail>
       )}
     </div>
   );

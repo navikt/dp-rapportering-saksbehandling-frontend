@@ -58,7 +58,7 @@ const DEFAULT_LABELS = {
 };
 
 const DEFAULT_VARSLER = {
-  forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} dager etter fristen",
+  forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen",
   fraArena:
     "Dette meldekortet er fra Arena og vi viser derfor ikke svar på spørsmålet om arbeidssøkerregistrering.",
   etterregistrert:
@@ -283,7 +283,7 @@ export function UtvidetInfo({
         <Alert variant="warning" size="small">
           {varsler.forSentInnsendt
             .replace("{{antall}}", String(antallDagerForSent))
-            .replace("dager", pluraliserDager(antallDagerForSent))}
+            .replace("{{dager}}", pluraliserDager(antallDagerForSent))}
         </Alert>
       )}
 

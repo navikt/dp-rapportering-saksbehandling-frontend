@@ -93,7 +93,12 @@ export function MeldekortVisning({
               </BodyLong>
             </div>
             <div className={styles.innhold}>
-              <KalenderOgAktiviteter periode={periode} variant={variant} />
+              <KalenderOgAktiviteter
+                periode={periode}
+                variant={variant}
+                aktiviteterTittel={hovedsideData?.utvidetVisning.aktiviteterTittel}
+                noActivitiesText={hovedsideData?.utvidetVisning.noActivitiesText}
+              />
               <UtvidetInfo
                 key={periode.id}
                 periode={periode}
