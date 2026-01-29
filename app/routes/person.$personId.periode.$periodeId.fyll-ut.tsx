@@ -87,7 +87,10 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   try {
     fyllUtData = await sanityClient.fetch<IMeldekortFyllUt>(fyllUtQuery);
   } catch (error) {
-    logger.error("Kunne ikke hente fyll-ut data fra Sanity:", { error });
+    logger.error(
+      `Kunne ikke hente fyll-ut data fra Sanity for person.${personId}.periode.${params.periodeId}.fyll-ut`,
+      { error },
+    );
   }
 
   return { periode, saksbehandler, personId, variant, fyllUtData };

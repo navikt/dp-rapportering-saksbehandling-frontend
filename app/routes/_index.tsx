@@ -17,7 +17,7 @@ export async function loader() {
   try {
     forsideData = await sanityClient.fetch<IMeldekortForside>(forsideQuery);
   } catch (error) {
-    logger.error("Kunne ikke hente forsidedata fra Sanity:", { error });
+    logger.error("Kunne ikke hente forsidedata fra Sanity for _index", { error });
   }
 
   if (usesMsw) {
