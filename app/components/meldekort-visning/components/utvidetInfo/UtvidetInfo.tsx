@@ -6,6 +6,7 @@ import {
   erPeriodeEtterregistrert,
   erPeriodeOpprettetAvArena,
 } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
+import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import { erMeldekortInnenforBehandlingsperiode } from "~/utils/behandlinger.utils";
@@ -32,13 +33,50 @@ interface IProps {
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
   behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
+  hovedsideData?: IMeldekortHovedside | null;
 }
 
 const MAX_LINES = 4;
 
 const NOK = new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK" });
 
-const TruncatedText = ({ text }: { text: string }) => {
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_LABELS = {
+  meldedato: "Meldedato:",
+  datoForInnsending: "Dato for innsending:",
+  datoForKorrigering: "Dato for korrigering:",
+  korrigertAv: "Korrigert av:",
+  innsendtAv: "Innsendt av:",
+  begrunnelse: {
+    label: "Begrunnelse:",
+    visMer: "Vis mer",
+    visMindre: "Vis mindre",
+  },
+  svarPaaArbeidssoekerregistrering: "Svar på spørsmål om arbeidssøkerregistrering:",
+  beregnetBruttobelop: "Beregnet bruttobeløp:",
+  periodenBeregningenGjelderFor: "Perioden beregningen gjelder for:",
+};
+
+const DEFAULT_VARSLER = {
+  forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen",
+  fraArena:
+    "Dette meldekortet er fra Arena og vi viser derfor ikke svar på spørsmålet om arbeidssøkerregistrering.",
+  etterregistrert:
+    "Dette meldekortet er etterregistrert, og har derfor ikke spørsmål om arbeidssøkerregistrering.",
+  kanIkkeEndres: "Dette meldekortet har en korrigering og kan derfor ikke endres igjen.",
+  belopSamsvarerIkke:
+    "Brutto beregnet beløp for dette meldekortet samsvarer ikke med meldekortperioden. Du kan se beregningen for meldekortet i DP-sak.",
+};
+
+const TruncatedText = ({
+  text,
+  visMer = "Vis mer",
+  visMindre = "Vis mindre",
+}: {
+  text: string;
+  visMer?: string;
+  visMindre?: string;
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
@@ -78,9 +116,8 @@ const TruncatedText = ({ text }: { text: string }) => {
             onClick={() => setIsExpanded(!isExpanded)}
             className={styles.visMerLink}
             aria-expanded={isExpanded}
-            aria-label={isExpanded ? "Vis mindre av begrunnelsen" : "Vis mer av begrunnelsen"}
           >
-            {isExpanded ? "Vis mindre" : "Vis mer"}
+            {isExpanded ? visMindre : visMer}
           </Link>
         </>
       )}
@@ -117,17 +154,25 @@ export function UtvidetInfo({
   ansvarligSystem,
   variant = null,
   behandlinger,
+  hovedsideData,
 }: IProps) {
+  // Periode states
   const erEtterregistrert = erPeriodeEtterregistrert(periode);
   const erFraArena = erPeriodeOpprettetAvArena(periode);
   const erArbeidssoker = periode.registrertArbeidssoker;
   const erKorrigert = erMeldekortKorrigert(periode);
-  // Kan kun korrigeres hvis ansvarligSystem er DP (ikke hvis det er Arena)
   const kanEndres = kanMeldekortEndres(periode, ansvarligSystem);
   const erSendtForSent = erMeldekortSendtForSent(periode);
   const antallDagerForSent = dagerForSent(periode);
   const erSaksbehandler = erKildeSaksbehandler(periode);
   const useVariantLabels = variant === "B";
+
+  // Hent tekster fra Sanity med fallback
+  const labels = hovedsideData?.utvidetVisning.infoLabels ?? DEFAULT_LABELS;
+  const tabellTittel =
+    hovedsideData?.utvidetVisning.tabellTittel ?? "Detaljert informasjon om meldekortet";
+  const varsler = hovedsideData?.varsler ?? DEFAULT_VARSLER;
+  const korrigerKnapp = hovedsideData?.knapper.korrigerMeldekort ?? "Korriger meldekort";
 
   // Bruk samme logikk som i skjemaet for å bestemme om arbeidssøkerspørsmål skal vises
   const skalViseArbeidssoker = skalViseArbeidssokerSporsmal(
@@ -153,128 +198,130 @@ export function UtvidetInfo({
       format: DatoFormat.DagMndAarLang,
     });
 
+  // Sjekk behandlingsinfo
+  const harBehandling =
+    behandlinger?.length === 1 && erMeldekortInnenforBehandlingsperiode(periode, behandlinger[0]);
+
+  const belopSamsvarerIkke =
+    (behandlinger && behandlinger.length > 1) ||
+    (behandlinger &&
+      behandlinger.length > 0 &&
+      !erMeldekortInnenforBehandlingsperiode(periode, behandlinger[0]));
+
   return (
     <div className={styles.root}>
+      {/* Informasjonstabell */}
       <Table size="small" className={styles.detaljer}>
-        <caption className="sr-only">Detaljert informasjon om meldekortet</caption>
+        <caption className="sr-only">{tabellTittel}</caption>
         <colgroup>
           <col style={{ width: "50%" }} />
           <col style={{ width: "50%" }} />
         </colgroup>
         <Table.Body>
+          {/* Dato og innsendings-info */}
           {periode.meldedato && (
-            <DetailRow label="Meldedato:">{formatDato(periode.meldedato)}</DetailRow>
+            <DetailRow label={labels.meldedato}>{formatDato(periode.meldedato)}</DetailRow>
           )}
 
           {periode.innsendtTidspunkt && (
-            <DetailRow label={`Dato for ${erKorrigert ? "korrigering" : "innsending"}:`}>
+            <DetailRow label={erKorrigert ? labels.datoForKorrigering : labels.datoForInnsending}>
               {formatDatoUTC(periode.innsendtTidspunkt)}
             </DetailRow>
           )}
 
           {(erKorrigert || erSaksbehandler) && (
-            <DetailRow label={`${erKorrigert ? "Korrigert" : "Innsendt"} av:`}>
+            <DetailRow label={erKorrigert ? labels.korrigertAv : labels.innsendtAv}>
               {erSaksbehandler ? periode.kilde?.ident : periode.kilde?.rolle}
             </DetailRow>
           )}
 
+          {/* Begrunnelse */}
           {periode.begrunnelse && (
-            <DetailRow label="Begrunnelse:" alignTop>
-              <TruncatedText text={periode.begrunnelse} />
+            <DetailRow label={labels.begrunnelse.label} alignTop>
+              <TruncatedText
+                text={periode.begrunnelse}
+                visMer={labels.begrunnelse.visMer}
+                visMindre={labels.begrunnelse.visMindre}
+              />
             </DetailRow>
           )}
 
+          {/* Arbeidssøker-spørsmål */}
           {periode.registrertArbeidssoker !== null &&
             periode.registrertArbeidssoker !== undefined &&
             skalViseArbeidssoker && (
-              <DetailRow label="Svar på spørsmål om arbeidssøkerregistrering:">
+              <DetailRow label={labels.svarPaaArbeidssoekerregistrering}>
                 {erArbeidssoker ? "Ja" : "Nei"}
               </DetailRow>
             )}
 
-          {behandlinger?.length === 1 &&
-            erMeldekortInnenforBehandlingsperiode(periode, behandlinger[0]) && (
-              <>
-                <DetailRow label="Beregnet bruttobeløp:">
-                  <>
-                    {behandlinger.map((behandling) => (
-                      <span key={behandling.id}>
-                        {/* TODO: Lenke til `https://saksbehandling-dagpenger.ansatt.nav.no/oppgave/${behandling.oppgaveId}/dagpenger-rett/${behandling.behandlingsId}/_person/regelsett/${behandling.regelsettId}/opplysning/${behandling.id}` */}
-                        {NOK.format(behandling.verdi.verdi)}{" "}
-                      </span>
-                    ))}
-                  </>
-                </DetailRow>
-                <DetailRow label="Perioden beregningen gjelder for:">
-                  {behandlinger.map((behandling) => (
-                    <span key={behandling.id}>
-                      {behandling.gyldigFraOgMed &&
-                        `${format(new Date(behandling.gyldigFraOgMed), "dd.MM.yyyy")} - `}
-                      {behandling.gyldigTilOgMed &&
-                        `${format(new Date(behandling.gyldigTilOgMed), "dd.MM.yyyy")} `}
-                    </span>
-                  ))}
-                </DetailRow>
-              </>
-            )}
+          {/* Behandlingsbeløp */}
+          {harBehandling && (
+            <>
+              <DetailRow label={labels.beregnetBruttobelop}>
+                {behandlinger!.map((behandling) => (
+                  <span key={behandling.id}>{NOK.format(behandling.verdi.verdi)} </span>
+                ))}
+              </DetailRow>
+              <DetailRow label={labels.periodenBeregningenGjelderFor}>
+                {behandlinger!.map((behandling) => (
+                  <span key={behandling.id}>
+                    {behandling.gyldigFraOgMed &&
+                      `${format(new Date(behandling.gyldigFraOgMed), "dd.MM.yyyy")} - `}
+                    {behandling.gyldigTilOgMed &&
+                      `${format(new Date(behandling.gyldigTilOgMed), "dd.MM.yyyy")} `}
+                  </span>
+                ))}
+              </DetailRow>
+            </>
+          )}
         </Table.Body>
       </Table>
 
+      {/* Varsler */}
       {erSendtForSent && (
         <Alert variant="warning" size="small">
-          Dette meldekortet er sendt inn {antallDagerForSent} {pluraliserDager(antallDagerForSent)}{" "}
-          etter fristen
+          {varsler.forSentInnsendt
+            .replace("{{antall}}", String(antallDagerForSent))
+            .replace("{{dager}}", pluraliserDager(antallDagerForSent))}
         </Alert>
       )}
 
       {erFraArena && (
         <Alert variant="info" size="small">
-          Dette meldekortet er fra Arena og vi viser derfor ikke svar på spørsmålet om
-          arbeidssøkerregistrering.
+          {varsler.fraArena}
         </Alert>
       )}
 
       {erEtterregistrert && (
         <Alert variant="info" size="small">
-          Dette meldekortet er etterregistrert, og har derfor ikke spørsmål om
-          arbeidssøkerregistrering.
+          {varsler.etterregistrert}
         </Alert>
       )}
 
       {useVariantLabels && !kanEndres && (
         <Alert variant="info" size="small">
-          Dette meldekortet har en korrigering og kan derfor ikke endres igjen.
+          {varsler.kanIkkeEndres}
         </Alert>
       )}
 
-      {((behandlinger && behandlinger.length > 1) ||
-        (behandlinger &&
-          behandlinger.length > 0 &&
-          !erMeldekortInnenforBehandlingsperiode(periode, behandlinger[0]))) && (
+      {belopSamsvarerIkke && (
         <Alert variant="warning" size="small">
-          Brutto beregnet beløp for dette meldekortet samsvarer ikke med meldekortperioden. Du kan
-          se beregningen for meldekortet i DP-sak.
+          {varsler.belopSamsvarerIkke}
         </Alert>
       )}
 
-      {useVariantLabels && (
+      {/* Korriger-knapp */}
+      {(useVariantLabels || kanEndres) && (
         <div>
           <Button
             as="a"
             href={korrigerUrl}
             className={styles.korrigerKnapp}
             size="small"
-            disabled={!kanEndres}
+            disabled={useVariantLabels && !kanEndres}
           >
-            Korriger meldekort
-          </Button>
-        </div>
-      )}
-
-      {!useVariantLabels && kanEndres && (
-        <div>
-          <Button as="a" href={korrigerUrl} className={styles.korrigerKnapp} size="small">
-            Korriger meldekort
+            {korrigerKnapp}
           </Button>
         </div>
       )}
