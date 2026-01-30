@@ -49,7 +49,7 @@ spec:
     - name: RUNTIME_ENVIRONMENT
       value: pr-preview
     - name: SANITY_DATASETT
-      value: "production"  
+      value: "production"
   accessPolicy:
     outbound:
       external:

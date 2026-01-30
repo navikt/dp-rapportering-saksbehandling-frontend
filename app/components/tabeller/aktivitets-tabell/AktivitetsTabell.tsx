@@ -18,10 +18,9 @@ import {
   beregnTotaltAntallDager,
   formaterTotalBeløp,
   lagAktivitetKlassenavn,
-  pluraliserEnhet,
-} from "./FyllUtTabell.helpers";
-import stylesOriginal from "./fyllUtTabell.module.css";
-import stylesVariantB from "./fyllUtTabellVariantB.module.css";
+} from "./AktivitetsTabell.helpers";
+import stylesOriginal from "./aktivitetsTabell.module.css";
+import stylesVariantB from "./aktivitetsTabellVariantB.module.css";
 import { NumberInput } from "./NumberInput";
 
 interface IProps {
@@ -115,7 +114,7 @@ function DagCell({
   );
 }
 
-export function FyllUtTabell({
+export function AktivitetsTabell({
   dager,
   setKorrigerteDager,
   periode,
@@ -129,6 +128,34 @@ export function FyllUtTabell({
 
   // Velg styles basert på variant
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
+
+  // Hent aktivitetstabell-tekster fra Sanity
+  const aktivitetstabellData = sanityData?.aktivitetstabell;
+  const DEFAULT_TEKSTER = {
+    fieldsetLegend: "{fieldsetLegend}",
+    aktiviteterCaption: "Aktivitet",
+    sumCaption: "Oppsummering",
+    weekCaption: "Uke {{ukenummer}}",
+  };
+
+  const fieldsetLegend = aktivitetstabellData?.fieldsetLegend ?? DEFAULT_TEKSTER.fieldsetLegend;
+  const aktiviteterCaption =
+    aktivitetstabellData?.aktiviteterCaption ?? DEFAULT_TEKSTER.aktiviteterCaption;
+  const sumCaption = aktivitetstabellData?.sumCaption ?? DEFAULT_TEKSTER.sumCaption;
+  const weekCaption = aktivitetstabellData?.weekCaption ?? DEFAULT_TEKSTER.weekCaption;
+
+  // Funksjon for å pluralisere enhet basert på Sanity-data
+  const pluraliser = (antall: number, type: TAktivitetType): string => {
+    if (type === AKTIVITET_TYPE.Arbeid) {
+      // For arbeid bruker vi alltid "timer" (plural)
+      return aktivitetstabellData?.enheter.hours.plural ?? "timer";
+    }
+    // For andre aktiviteter bruker vi dag/dager basert på antall
+    if (antall === 1) {
+      return aktivitetstabellData?.enheter.days.singular ?? "dag";
+    }
+    return aktivitetstabellData?.enheter.days.plural ?? "dager";
+  };
 
   // Bruk Sanity-data (lang versjon) hvis tilgjengelig, ellers fallback til constants
   const aktiviteter = [
@@ -160,7 +187,7 @@ export function FyllUtTabell({
     return (
       <fieldset className={styles.fieldset}>
         <legend className="sr-only">
-          <Label size="small">Før opp aktiviteter</Label>
+          <Label size="small">{fieldsetLegend}</Label>
         </legend>
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           {/* Uke 1 */}
@@ -168,19 +195,21 @@ export function FyllUtTabell({
             <thead>
               <tr>
                 <th scope="col" className="sr-only">
-                  Aktivitet
+                  {aktiviteterCaption}
                 </th>
                 <th className={styles.gap} aria-hidden="true"></th>
                 <th colSpan={7} className={styles.label} scope="colgroup">
-                  <BodyShort weight="semibold">Uke {uke1}</BodyShort>
+                  <BodyShort weight="semibold">
+                    {weekCaption.replace("{{ukenummer}}", String(uke1))}
+                  </BodyShort>
                 </th>
                 <th colSpan={2} scope="col" className="sr-only">
-                  Oppsummering
+                  {sumCaption}
                 </th>
               </tr>
               <tr>
                 <th scope="col" className="sr-only">
-                  Aktivitet
+                  {aktiviteterCaption}
                 </th>
                 <th className={styles.gap} aria-hidden="true"></th>
                 {uke1Dager.map((dag) => (
@@ -217,9 +246,7 @@ export function FyllUtTabell({
                     <td className={styles.oppsummeringTall}>
                       {formaterTotalBeløp(uke1Dager, type)}
                     </td>
-                    <td className={styles.oppsummeringEnhet}>
-                      {pluraliserEnhet(antallDager, type)}
-                    </td>
+                    <td className={styles.oppsummeringEnhet}>{pluraliser(antallDager, type)}</td>
                   </tr>
                 );
               })}
@@ -231,19 +258,21 @@ export function FyllUtTabell({
             <thead>
               <tr>
                 <th scope="col" className="sr-only">
-                  Aktivitet
+                  {aktiviteterCaption}
                 </th>
                 <th className={styles.gap} aria-hidden="true"></th>
                 <th colSpan={7} className={styles.label} scope="colgroup">
-                  <BodyShort weight="semibold">Uke {uke2}</BodyShort>
+                  <BodyShort weight="semibold">
+                    {weekCaption.replace("{{ukenummer}}", String(uke2))}
+                  </BodyShort>
                 </th>
                 <th colSpan={2} scope="col" className="sr-only">
-                  Oppsummering
+                  {sumCaption}
                 </th>
               </tr>
               <tr>
                 <th scope="col" className="sr-only">
-                  Aktivitet
+                  {aktiviteterCaption}
                 </th>
                 <th className={styles.gap} aria-hidden="true"></th>
                 {uke2Dager.map((dag) => (
@@ -280,9 +309,7 @@ export function FyllUtTabell({
                     <td className={styles.oppsummeringTall}>
                       {formaterTotalBeløp(uke2Dager, type)}
                     </td>
-                    <td className={styles.oppsummeringEnhet}>
-                      {pluraliserEnhet(antallDager, type)}
-                    </td>
+                    <td className={styles.oppsummeringEnhet}>{pluraliser(antallDager, type)}</td>
                   </tr>
                 );
               })}
@@ -297,7 +324,7 @@ export function FyllUtTabell({
   return (
     <fieldset className={styles.fieldset}>
       <legend className="sr-only">
-        <Label size="small">Før opp aktiviteter</Label>
+        <Label size="small">{fieldsetLegend}</Label>
       </legend>
       <table className={styles.fyllUtTabell}>
         <thead>
@@ -369,7 +396,7 @@ export function FyllUtTabell({
                 ))}
                 <td aria-hidden="true">=</td>
                 <td className={styles.oppsummeringTall}>{formaterTotalBeløp(dager, type)}</td>
-                <td className={styles.oppsummeringEnhet}>{pluraliserEnhet(antallDager, type)}</td>
+                <td className={styles.oppsummeringEnhet}>{pluraliser(antallDager, type)}</td>
               </tr>
             );
           })}

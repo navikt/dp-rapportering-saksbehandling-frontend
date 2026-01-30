@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { IMeldekortAktiviteter } from "./fellesKomponenter/aktiviteter/types";
+import type { IMeldekortAktivitetsTabell } from "./fellesKomponenter/aktivitetstabell/types";
 import type { IMeldekortBekreftModal } from "./fellesKomponenter/bekreft-modal/types";
 import type { IMeldekortHeader } from "./fellesKomponenter/header/types";
 import type { IMeldekortHistorikkModal } from "./fellesKomponenter/historikk-modal/types";
@@ -165,11 +166,33 @@ describe("fetchGlobalSanityData", () => {
     },
   };
 
+  const mockAktivitetstabellData: IMeldekortAktivitetsTabell = {
+    fieldsetLegend: "Før opp aktiviteter",
+    aktiviteterCaption: "Aktivitetstype",
+    sumCaption: "Sum",
+    weekCaption: "Uke {{ukenummer}}",
+    enheter: {
+      hours: {
+        singular: "time",
+        plural: "timer",
+      },
+      days: {
+        singular: "dag",
+        plural: "dager",
+      },
+    },
+    numberInput: {
+      adjustValueAriaLabel: "Juster verdi",
+      increaseAriaLabel: "Øk",
+      decreaseAriaLabel: "Reduser",
+    },
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("skal hente header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser, kalender og varsler data", async () => {
+  it("skal hente header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser, kalender, varsler og aktivitetstabell data", async () => {
     const { sanityClient } = await import("./client");
 
     vi.mocked(sanityClient.fetch)
@@ -180,7 +203,8 @@ describe("fetchGlobalSanityData", () => {
       .mockResolvedValueOnce(mockAktiviteterData as never)
       .mockResolvedValueOnce(mockStatuserData as never)
       .mockResolvedValueOnce(mockKalenderData as never)
-      .mockResolvedValueOnce(mockVarslerData as never);
+      .mockResolvedValueOnce(mockVarslerData as never)
+      .mockResolvedValueOnce(mockAktivitetstabellData as never);
 
     const result = await fetchGlobalSanityData();
 
@@ -193,8 +217,9 @@ describe("fetchGlobalSanityData", () => {
       statuser: mockStatuserData,
       kalender: mockKalenderData,
       varsler: mockVarslerData,
+      aktivitetstabell: mockAktivitetstabellData,
     });
-    expect(sanityClient.fetch).toHaveBeenCalledTimes(8);
+    expect(sanityClient.fetch).toHaveBeenCalledTimes(9);
   });
 
   it("skal returnere null-verdier ved feil", async () => {
@@ -214,6 +239,7 @@ describe("fetchGlobalSanityData", () => {
       statuser: null,
       kalender: null,
       varsler: null,
+      aktivitetstabell: null,
     });
     expect(logger.error).toHaveBeenCalledWith("Kunne ikke hente globale data fra Sanity:", {
       error: expect.any(Error),
@@ -238,6 +264,7 @@ describe("fetchGlobalSanityData", () => {
       statuser: null,
       kalender: null,
       varsler: null,
+      aktivitetstabell: null,
     });
   });
 
@@ -262,6 +289,7 @@ describe("fetchGlobalSanityData", () => {
       statuser: null,
       kalender: null,
       varsler: null,
+      aktivitetstabell: null,
     });
   });
 
@@ -276,7 +304,8 @@ describe("fetchGlobalSanityData", () => {
       .mockResolvedValueOnce(mockAktiviteterData as never)
       .mockResolvedValueOnce(mockStatuserData as never)
       .mockResolvedValueOnce(mockKalenderData as never)
-      .mockResolvedValueOnce(mockVarslerData as never);
+      .mockResolvedValueOnce(mockVarslerData as never)
+      .mockResolvedValueOnce(mockAktivitetstabellData as never);
 
     const result = await fetchGlobalSanityData();
 
@@ -288,6 +317,7 @@ describe("fetchGlobalSanityData", () => {
     expect(result).toHaveProperty("statuser");
     expect(result).toHaveProperty("kalender");
     expect(result).toHaveProperty("varsler");
+    expect(result).toHaveProperty("aktivitetstabell");
     expect(typeof result).toBe("object");
   });
 });

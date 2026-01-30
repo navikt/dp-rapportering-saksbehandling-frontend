@@ -1,5 +1,6 @@
 import { BodyLong, Detail, Heading } from "@navikt/ds-react";
 
+import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { aktivitetsTyper } from "~/utils/constants";
@@ -28,6 +29,9 @@ export function KalenderOgAktiviteter({
   aktiviteterTittel = DEFAULT_TEKSTER.aktiviteterTittel,
   noActivitiesText = DEFAULT_TEKSTER.noActivitiesText,
 }: IProps) {
+  const sanityData = useGlobalSanityData();
+  const aktivitetstabellData = sanityData?.aktivitetstabell;
+
   // Sjekk om alle aktiviteter er 0
   const harAktiviteter = aktivitetsTyper.some(({ type }) => beregnTotalt(periode, type) > 0);
 
@@ -42,7 +46,16 @@ export function KalenderOgAktiviteter({
           <ul className={styles.aktivitetListe} aria-labelledby={`sammenlagt-${periode.id}`}>
             {aktivitetsTyper.map(({ type, label, erDager, klasse }) => {
               const total = beregnTotalt(periode, type);
-              const enhet = erDager ? "dager" : "timer";
+
+              // Hent enhet fra Sanity med fallback
+              let enhet: string;
+              if (erDager) {
+                // For aktiviteter med dager, bruk plural alltid (siden total er alltid et tall)
+                enhet = aktivitetstabellData?.enheter.days.plural ?? "dager";
+              } else {
+                // For timer, bruk alltid plural
+                enhet = aktivitetstabellData?.enheter.hours.plural ?? "timer";
+              }
 
               return (
                 <li
