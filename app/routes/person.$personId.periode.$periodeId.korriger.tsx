@@ -2,7 +2,7 @@ import { Button, DatePicker, Textarea } from "@navikt/ds-react";
 import { BodyLong, BodyShort, Heading } from "@navikt/ds-react";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
-import { useFetcher, useLoaderData, useNavigate } from "react-router";
+import { useFetcher, useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
@@ -62,6 +62,20 @@ const DEFAULT_TEKSTER = {
     feilet: "Korrigering feilet",
     suksess: "Korrigering sendt inn. Går tilbake til periodeoversikten...",
   },
+  bekreftModal: {
+    avbrytKorrigering: {
+      overskrift: "Vil du avbryte korrigeringen?",
+      innhold: "Hvis du avbryter, vil ikke endringene du har gjort så langt korrigeres",
+      bekreftKnapp: "Ja, avbryt",
+      avbrytKnapp: "Nei, fortsett",
+    },
+    fullfoerKorrigering: {
+      overskrift: "Vil du fullføre korrigeringen?",
+      innhold: 'Ved å trykke "Ja" vil korrigeringen sendes inn.',
+      bekreftKnapp: "Ja, fullfør",
+      avbrytKnapp: "Nei, avbryt",
+    },
+  },
 };
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -88,6 +102,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 export default function Periode() {
   const { periode, saksbehandler, personId, variant, korrigerData } =
     useLoaderData<typeof loader>();
+  const rootData = useRouteLoaderData("root");
   const fetcher = useFetcher();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
@@ -101,6 +116,16 @@ export default function Periode() {
     korrigeringsskjema: korrigerData?.korrigeringsskjema ?? DEFAULT_TEKSTER.korrigeringsskjema,
     knapper: korrigerData?.knapper ?? DEFAULT_TEKSTER.knapper,
     skjermleserStatus: korrigerData?.skjermleserStatus ?? DEFAULT_TEKSTER.skjermleserStatus,
+  };
+
+  // Hent bekreftModal fra global data
+  const bekreftModalTekster = {
+    avbryt:
+      rootData?.sanityData?.bekreftModal?.avbrytKorrigering ??
+      DEFAULT_TEKSTER.bekreftModal.avbrytKorrigering,
+    fullfoer:
+      rootData?.sanityData?.bekreftModal?.fullfoerKorrigering ??
+      DEFAULT_TEKSTER.bekreftModal.fullfoerKorrigering,
   };
 
   const isMountedRef = useRef(true);
@@ -354,24 +379,23 @@ export default function Periode() {
           type={skjema.state.modalType}
           tittel={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? "Vil du avbryte korrigeringen?"
-              : "Vil du fullføre korrigeringen?"
+              ? bekreftModalTekster.avbryt.overskrift
+              : bekreftModalTekster.fullfoer.overskrift
           }
           tekst={
-            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? (
-              <>
-                Hvis du avbryter, vil <strong>ikke</strong> endringene du har gjort så langt
-                korrigeres
-              </>
-            ) : (
-              `Ved å trykke "Ja" vil korrigeringen sendes inn.`
-            )
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
+              ? bekreftModalTekster.avbryt.innhold
+              : bekreftModalTekster.fullfoer.innhold
           }
           bekreftTekst={
-            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, fullfør"
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
+              ? bekreftModalTekster.avbryt.bekreftKnapp
+              : bekreftModalTekster.fullfoer.bekreftKnapp
           }
           avbrytTekst={
-            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
+              ? bekreftModalTekster.avbryt.avbrytKnapp
+              : bekreftModalTekster.fullfoer.avbrytKnapp
           }
           onBekreft={skjema.handlers.handleBekreft}
         />

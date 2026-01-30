@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { IMeldekortBekreftModal } from "./fellesKomponenter/bekreft-modal/types";
 import type { IMeldekortHeader } from "./fellesKomponenter/header/types";
 import type { IMeldekortPersonlinje } from "./fellesKomponenter/personlinje/types";
 import { fetchGlobalSanityData } from "./fetchGlobalData";
@@ -42,24 +43,53 @@ describe("fetchGlobalSanityData", () => {
     historyButton: "Historikk",
   };
 
+  const mockBekreftModalData: IMeldekortBekreftModal = {
+    avbrytUtfylling: {
+      overskrift: "Vil du avbryte utfyllingen?",
+      innhold: "Hvis du avbryter, vil ikke det du har fylt ut så langt lagres",
+      bekreftKnapp: "Ja, avbryt",
+      avbrytKnapp: "Nei, fortsett",
+    },
+    fullfoerUtfylling: {
+      overskrift: "Vil du fullføre utfyllingen?",
+      innhold: 'Ved å trykke "Ja" vil utfyllingen sendes inn.',
+      bekreftKnapp: "Ja, send inn",
+      avbrytKnapp: "Nei, avbryt",
+    },
+    avbrytKorrigering: {
+      overskrift: "Vil du avbryte korrigeringen?",
+      innhold: "Hvis du avbryter, vil ikke endringene du har gjort så langt lagres",
+      bekreftKnapp: "Ja, avbryt",
+      avbrytKnapp: "Nei, fortsett",
+    },
+    fullfoerKorrigering: {
+      overskrift: "Vil du fullføre korrigeringen?",
+      innhold: 'Ved å trykke "Ja" vil korrigeringen sendes inn.',
+      bekreftKnapp: "Ja, fullfør",
+      avbrytKnapp: "Nei, avbryt",
+    },
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("skal hente header og personlinje data", async () => {
+  it("skal hente header, personlinje og bekreftModal data", async () => {
     const { sanityClient } = await import("./client");
 
     vi.mocked(sanityClient.fetch)
       .mockResolvedValueOnce(mockHeaderData as never)
-      .mockResolvedValueOnce(mockPersonlinjeData as never);
+      .mockResolvedValueOnce(mockPersonlinjeData as never)
+      .mockResolvedValueOnce(mockBekreftModalData as never);
 
     const result = await fetchGlobalSanityData();
 
     expect(result).toEqual({
       header: mockHeaderData,
       personlinje: mockPersonlinjeData,
+      bekreftModal: mockBekreftModalData,
     });
-    expect(sanityClient.fetch).toHaveBeenCalledTimes(2);
+    expect(sanityClient.fetch).toHaveBeenCalledTimes(3);
   });
 
   it("skal returnere null-verdier ved feil", async () => {
@@ -73,6 +103,7 @@ describe("fetchGlobalSanityData", () => {
     expect(result).toEqual({
       header: null,
       personlinje: null,
+      bekreftModal: null,
     });
     expect(logger.error).toHaveBeenCalledWith("Kunne ikke hente globale data fra Sanity:", {
       error: expect.any(Error),
@@ -91,6 +122,7 @@ describe("fetchGlobalSanityData", () => {
     expect(result).toEqual({
       header: null,
       personlinje: null,
+      bekreftModal: null,
     });
   });
 
@@ -109,6 +141,7 @@ describe("fetchGlobalSanityData", () => {
     expect(result).toEqual({
       header: null,
       personlinje: null,
+      bekreftModal: null,
     });
   });
 
@@ -117,12 +150,14 @@ describe("fetchGlobalSanityData", () => {
 
     vi.mocked(sanityClient.fetch)
       .mockResolvedValueOnce(mockHeaderData as never)
-      .mockResolvedValueOnce(mockPersonlinjeData as never);
+      .mockResolvedValueOnce(mockPersonlinjeData as never)
+      .mockResolvedValueOnce(mockBekreftModalData as never);
 
     const result = await fetchGlobalSanityData();
 
     expect(result).toHaveProperty("header");
     expect(result).toHaveProperty("personlinje");
+    expect(result).toHaveProperty("bekreftModal");
     expect(typeof result).toBe("object");
   });
 });

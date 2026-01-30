@@ -11,7 +11,7 @@ import {
 import classNames from "classnames";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
-import { useFetcher, useLoaderData, useNavigate } from "react-router";
+import { useFetcher, useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
@@ -72,6 +72,20 @@ const DEFAULT_TEKSTER = {
     avbryt: "Avbryt utfylling",
     sendInn: "Send inn meldekort",
   },
+  bekreftModal: {
+    avbrytUtfylling: {
+      overskrift: "Vil du avbryte utfyllingen?",
+      innhold: "Hvis du avbryter, vil ikke det du har fylt ut så langt lagres",
+      bekreftKnapp: "Ja, avbryt",
+      avbrytKnapp: "Nei, fortsett",
+    },
+    fullfoerUtfylling: {
+      overskrift: "Vil du fullføre utfyllingen?",
+      innhold: 'Ved å trykke "Ja" vil utfyllingen sendes inn.',
+      bekreftKnapp: "Ja, send inn",
+      avbrytKnapp: "Nei, avbryt",
+    },
+  },
 };
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -99,6 +113,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 export default function FyllUtPeriode() {
   const navigate = useNavigate();
   const { periode, saksbehandler, personId, variant, fyllUtData } = useLoaderData<typeof loader>();
+  const rootData = useRouteLoaderData("root");
   const fetcher = useFetcher();
   const { showSuccess, showError } = useToast();
 
@@ -108,6 +123,16 @@ export default function FyllUtPeriode() {
 
   // Hent tekster fra Sanity med fallback
   const tekster = fyllUtData ?? DEFAULT_TEKSTER;
+
+  // Hent bekreftModal fra global data
+  const bekreftModalTekster = {
+    avbryt:
+      rootData?.sanityData?.bekreftModal?.avbrytUtfylling ??
+      DEFAULT_TEKSTER.bekreftModal.avbrytUtfylling,
+    fullfoer:
+      rootData?.sanityData?.bekreftModal?.fullfoerUtfylling ??
+      DEFAULT_TEKSTER.bekreftModal.fullfoerUtfylling,
+  };
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -340,23 +365,23 @@ export default function FyllUtPeriode() {
           type={skjema.state.modalType}
           tittel={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? "Vil du avbryte utfyllingen?"
-              : "Vil du fullføre utfyllingen?"
+              ? bekreftModalTekster.avbryt.overskrift
+              : bekreftModalTekster.fullfoer.overskrift
           }
           tekst={
-            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? (
-              <>
-                Hvis du avbryter, vil <strong>ikke</strong> det du har fylt ut så langt lagres
-              </>
-            ) : (
-              `Ved å trykke "Ja" vil utfyllingen sendes inn.`
-            )
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
+              ? bekreftModalTekster.avbryt.innhold
+              : bekreftModalTekster.fullfoer.innhold
           }
           bekreftTekst={
-            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? "Ja, avbryt" : "Ja, send inn"
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
+              ? bekreftModalTekster.avbryt.bekreftKnapp
+              : bekreftModalTekster.fullfoer.bekreftKnapp
           }
           avbrytTekst={
-            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT ? "Nei, fortsett" : "Nei, avbryt"
+            skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
+              ? bekreftModalTekster.avbryt.avbrytKnapp
+              : bekreftModalTekster.fullfoer.avbrytKnapp
           }
           onBekreft={skjema.handlers.handleBekreft}
         />
