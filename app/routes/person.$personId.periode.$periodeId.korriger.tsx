@@ -76,7 +76,10 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   try {
     korrigerData = await sanityClient.fetch<IMeldekortKorriger>(korrigerQuery);
   } catch (error) {
-    logger.error("Kunne ikke hente korriger-data fra Sanity:", { error });
+    logger.error(
+      `Kunne ikke hente korriger-data fra Sanity for person.${personId}.periode.${params.periodeId}.korriger`,
+      { error },
+    );
   }
 
   return { periode, saksbehandler, personId, variant, korrigerData };
@@ -198,10 +201,20 @@ export default function Periode() {
   const uker = ukenummer(periode);
   const periode_tekst = `${formattertFraOgMed} - ${formattertTilOgMed}`;
 
-  // Template-replacement for underoverskrift
+  // Format innsendtTidspunkt for display
+  const formattertInnsendtTidspunkt = periode.innsendtTidspunkt
+    ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
+    : "Ukjent tidspunkt";
+
+  // Template-replacement for tekster
   const underoverskrift = tekster.underoverskrift
     .replace("{{uker}}", String(uker))
     .replace("{{periode}}", periode_tekst);
+
+  const innsendtDatoTekst = tekster.gjeldendeMeldekort.innsendtDato.replace(
+    "{{dato}}",
+    formattertInnsendtTidspunkt,
+  );
 
   return (
     <div className={styles.korrigeringContainer}>
@@ -230,14 +243,7 @@ export default function Periode() {
             <Heading level="2" size="small">
               {tekster.gjeldendeMeldekort.overskrift}
             </Heading>
-            <BodyLong size="small">
-              {tekster.gjeldendeMeldekort.innsendtDato.replace(
-                "{{dato}}",
-                periode.innsendtTidspunkt
-                  ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
-                  : "Ukjent tidspunkt",
-              )}
-            </BodyLong>
+            <BodyLong size="small">{innsendtDatoTekst}</BodyLong>
           </div>
           <div className={styles.kalenderOgBegrunnelseWrapper}>
             <div className={styles.kalenderContainer}>
