@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
+import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
 import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
@@ -55,6 +56,7 @@ export function MeldekortRad({
   behandlinger,
   hovedsideData,
 }: IProps) {
+  const sanityData = useGlobalSanityData();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [isOpen, setIsOpen] = useState<boolean | undefined>(undefined);
@@ -76,10 +78,20 @@ export function MeldekortRad({
   const useVariantLabels = variant === "B";
 
   // Visningsverdier
-  const statusConfig = getStatusConfig(periode, behandlinger);
+  const statusConfig = getStatusConfig(periode, behandlinger, sanityData?.statuser);
   const skalViseInnsendt = skalViseInnsendtInfo(periode);
   const erSendtForSent = skalViseInnsendt && erMeldekortSendtForSent(periode);
   const aktiviteter = sorterAktiviteter(unikeAktiviteter(periode));
+
+  // Hent status-tekster fra Sanity eller bruk default
+  const statusTekster = sanityData?.statuser ?? {
+    tilUtfylling: "Klar til utfylling",
+    innsendt: "Innsendt",
+    meldekortOpprettet: "Meldekort opprettet",
+    korrigering: "Korrigering",
+    korrigert: "Korrigert",
+    arena: "Arena",
+  };
 
   // Highlight-effekt når meldekort er oppdatert
   useEffect(() => {
@@ -218,19 +230,19 @@ export function MeldekortRad({
           </Tag>
           {erKorrigert && (
             <Tag variant="info" size="small">
-              Korrigering
+              {statusTekster.korrigering}
             </Tag>
           )}
 
           {!erKorrigert && harKorrigering && useVariantLabels && (
             <Tag variant="warning" size="small">
-              Korrigert
+              {statusTekster.korrigert}
             </Tag>
           )}
 
           {erFraArena && (
             <Tag variant="info" size="small">
-              Arena
+              {statusTekster.arena}
             </Tag>
           )}
         </div>

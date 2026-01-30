@@ -1,3 +1,4 @@
+import type { IMeldekortStatuser } from "~/sanity/fellesKomponenter/statuser/types";
 import type {
   IBehandlingsresultatPeriodeMedMeta,
   IPengeVerdi,
@@ -7,6 +8,16 @@ import type { IRapporteringsperiode } from "~/utils/types";
 
 // Re-eksporter fra constants fil for bakoverkompatibilitet
 export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
+
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_STATUSER = {
+  tilUtfylling: "Klar til utfylling",
+  innsendt: "Innsendt",
+  meldekortOpprettet: "Meldekort opprettet",
+  korrigering: "Korrigering",
+  korrigert: "Korrigert",
+  arena: "Arena",
+};
 
 export interface StatusConfig {
   text: string;
@@ -19,7 +30,9 @@ export interface StatusConfig {
 export function getStatusConfig(
   periode: IRapporteringsperiode,
   behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[],
+  statuser?: IMeldekortStatuser | null,
 ): StatusConfig {
+  const tekster = statuser ?? DEFAULT_STATUSER;
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
   const kanSendes = periode.kanSendes;
 
@@ -28,14 +41,14 @@ export function getStatusConfig(
   }
 
   if (erInnsendt) {
-    return { text: "Innsendt", variant: "success" };
+    return { text: tekster.innsendt, variant: "success" };
   }
 
   if (kanSendes) {
-    return { text: "Klar til utfylling", variant: "info" };
+    return { text: tekster.tilUtfylling, variant: "info" };
   }
 
-  return { text: "Meldekort opprettet", variant: "neutral" };
+  return { text: tekster.meldekortOpprettet, variant: "neutral" };
 }
 
 /**
