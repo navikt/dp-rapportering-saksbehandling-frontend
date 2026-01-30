@@ -2,6 +2,7 @@ import { BodyShort, Checkbox, Label } from "@navikt/ds-react";
 import classNames from "classnames";
 import { uuidv7 } from "uuidv7";
 
+import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { AKTIVITET_LABELS_LANG, AKTIVITET_TYPE } from "~/utils/constants";
 import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
@@ -30,13 +31,6 @@ interface IProps {
   variant?: ABTestVariant;
   isKorrigering?: boolean;
 }
-
-const aktiviteter = [
-  { type: AKTIVITET_TYPE.Arbeid, label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Arbeid] },
-  { type: AKTIVITET_TYPE.Syk, label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Syk] },
-  { type: AKTIVITET_TYPE.Fravaer, label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Fravaer] },
-  { type: AKTIVITET_TYPE.Utdanning, label: AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Utdanning] },
-];
 
 function DagHeader({ dag, styles }: { dag: IKorrigertDag; styles: CSSModuleClasses }) {
   return (
@@ -128,12 +122,34 @@ export function FyllUtTabell({
   variant = null,
   isKorrigering = false,
 }: IProps) {
+  const sanityData = useGlobalSanityData();
   const [uke1, uke2] = hentUkerFraPeriode(periode);
   const uke1Dager = dager.slice(0, 7);
   const uke2Dager = dager.slice(7, 14);
 
   // Velg styles basert på variant
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
+
+  // Bruk Sanity-data (lang versjon) hvis tilgjengelig, ellers fallback til constants
+  const aktiviteter = [
+    {
+      type: AKTIVITET_TYPE.Arbeid,
+      label: sanityData?.aktiviteter?.jobb.lang ?? AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Arbeid],
+    },
+    {
+      type: AKTIVITET_TYPE.Syk,
+      label: sanityData?.aktiviteter?.syk.lang ?? AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Syk],
+    },
+    {
+      type: AKTIVITET_TYPE.Fravaer,
+      label: sanityData?.aktiviteter?.ferie.lang ?? AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Fravaer],
+    },
+    {
+      type: AKTIVITET_TYPE.Utdanning,
+      label:
+        sanityData?.aktiviteter?.utdanning.lang ?? AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Utdanning],
+    },
+  ];
 
   // Variant A på korrigersiden vises vertikalt (ukene under hverandre)
   // Variant A er når variant er "A" eller null

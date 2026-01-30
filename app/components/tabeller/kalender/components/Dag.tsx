@@ -1,3 +1,4 @@
+import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
 import { getActivityClasses, getActivityDotColor } from "~/utils/aktivitet.utils";
 import { AKTIVITET_LABELS_KORT, AKTIVITET_TYPE } from "~/utils/constants";
 import { formatterDag, konverterFraISO8601Varighet } from "~/utils/dato.utils";
@@ -9,8 +10,34 @@ interface DagProps {
   dag: IRapporteringsperiodeDag;
 }
 
-const getAktivitetBeskrivelse = (type: TAktivitetType, timer?: string): string => {
-  const beskrivelse = AKTIVITET_LABELS_KORT[type] || type;
+const getAktivitetBeskrivelse = (
+  type: TAktivitetType,
+  timer?: string,
+  kortLabels?: { jobb: string; syk: string; ferie: string; utdanning: string },
+): string => {
+  let beskrivelse: string;
+
+  // Bruk Sanity-data hvis tilgjengelig, ellers fallback til constants
+  if (kortLabels) {
+    switch (type) {
+      case AKTIVITET_TYPE.Arbeid:
+        beskrivelse = kortLabels.jobb;
+        break;
+      case AKTIVITET_TYPE.Syk:
+        beskrivelse = kortLabels.syk;
+        break;
+      case AKTIVITET_TYPE.Fravaer:
+        beskrivelse = kortLabels.ferie;
+        break;
+      case AKTIVITET_TYPE.Utdanning:
+        beskrivelse = kortLabels.utdanning;
+        break;
+      default:
+        beskrivelse = type;
+    }
+  } else {
+    beskrivelse = AKTIVITET_LABELS_KORT[type] || type;
+  }
 
   if (type === AKTIVITET_TYPE.Arbeid && timer) {
     const arbeidTimer = konverterFraISO8601Varighet(timer);
@@ -21,9 +48,20 @@ const getAktivitetBeskrivelse = (type: TAktivitetType, timer?: string): string =
 };
 
 export function Dag({ dag }: DagProps) {
+  const sanityData = useGlobalSanityData();
   const harFlereAktiviteter = dag.aktiviteter && dag.aktiviteter.length > 1;
   const harAktiviteter = dag.aktiviteter && dag.aktiviteter.length > 0;
   const { datoColor, bgColor } = getActivityClasses(dag.aktiviteter);
+
+  // Hent kort labels fra Sanity
+  const kortLabels = sanityData?.aktiviteter
+    ? {
+        jobb: sanityData.aktiviteter.jobb.kort,
+        syk: sanityData.aktiviteter.syk.kort,
+        ferie: sanityData.aktiviteter.ferie.kort,
+        utdanning: sanityData.aktiviteter.utdanning.kort,
+      }
+    : undefined;
 
   // Sorter aktiviteter i visningsrekkefølge: Arbeid, Syk, Fravaer, Utdanning
   const sorterteAktiviteter = harAktiviteter
@@ -61,6 +99,7 @@ export function Dag({ dag }: DagProps) {
                   {getAktivitetBeskrivelse(
                     aktivitet.type as TAktivitetType,
                     aktivitet.timer ?? undefined,
+                    kortLabels,
                   )}
                 </span>
               ))}

@@ -1,6 +1,8 @@
 import { logger } from "~/models/logger.server";
 
 import { sanityClient } from "./client";
+import { aktiviteterQuery } from "./fellesKomponenter/aktiviteter/queries";
+import type { IMeldekortAktiviteter } from "./fellesKomponenter/aktiviteter/types";
 import { bekreftModalQuery } from "./fellesKomponenter/bekreft-modal/queries";
 import type { IMeldekortBekreftModal } from "./fellesKomponenter/bekreft-modal/types";
 import { headerQuery } from "./fellesKomponenter/header/queries";
@@ -15,6 +17,7 @@ export interface GlobalSanityData {
   personlinje: IMeldekortPersonlinje | null;
   bekreftModal: IMeldekortBekreftModal | null;
   historikkModal: IMeldekortHistorikkModal | null;
+  aktiviteter: IMeldekortAktiviteter | null;
 }
 
 /**
@@ -23,16 +26,23 @@ export interface GlobalSanityData {
  */
 export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
   try {
-    const [header, personlinje, bekreftModal, historikkModal] = await Promise.all([
+    const [header, personlinje, bekreftModal, historikkModal, aktiviteter] = await Promise.all([
       sanityClient.fetch<IMeldekortHeader>(headerQuery),
       sanityClient.fetch<IMeldekortPersonlinje>(personlinjeQuery),
       sanityClient.fetch<IMeldekortBekreftModal>(bekreftModalQuery),
       sanityClient.fetch<IMeldekortHistorikkModal>(historikkModalQuery),
+      sanityClient.fetch<IMeldekortAktiviteter>(aktiviteterQuery),
     ]);
 
-    return { header, personlinje, bekreftModal, historikkModal };
+    return { header, personlinje, bekreftModal, historikkModal, aktiviteter };
   } catch (error) {
     logger.error("Kunne ikke hente globale data fra Sanity:", { error });
-    return { header: null, personlinje: null, bekreftModal: null, historikkModal: null };
+    return {
+      header: null,
+      personlinje: null,
+      bekreftModal: null,
+      historikkModal: null,
+      aktiviteter: null,
+    };
   }
 }
