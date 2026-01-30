@@ -18,8 +18,12 @@ import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
 import { useToast } from "~/context/toast-context";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
+import { logger } from "~/models/logger.server";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
+import { sanityClient } from "~/sanity/client";
+import { fyllUtQuery } from "~/sanity/fellesKomponenter/fyll-ut/queries";
+import type { IMeldekortFyllUt } from "~/sanity/fellesKomponenter/fyll-ut/types";
 import styles from "~/styles/route-styles/fyllUt.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import {
@@ -41,6 +45,35 @@ import type { ISendInnMeldekort } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
 
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_TEKSTER = {
+  overskrift: "Fyll ut meldekort",
+  underoverskrift: "Uke {{uker}} | {{periode}}",
+  infovarsler: {
+    arenaVarsel:
+      "Dette meldekortet er fra Arena og har derfor ikke svar på spørsmål om arbeidssøkerregistrering.",
+    etterregistrertVarsel: "Dette meldekortet er av typen Etterregistrert",
+  },
+  utfyllingsskjema: {
+    datovelgerLabel: "Sett meldedato",
+    arbeidssoekerSpoersmaal: {
+      tittel: "Registrert som arbeidssøker de neste 14 dagene?",
+      ja: "Ja",
+      nei: "Nei",
+    },
+    begrunnelseLabel: "Begrunnelse",
+  },
+  feilmeldinger: {
+    datovelgerFeil: "Meldedato er ugyldig eller må fylles ut",
+    arbeidssoekerFeil: "Du må velge om bruker skal være registrert som arbeidssøker",
+    begrunnelseFeil: "Begrunnelse må fylles ut",
+  },
+  knapper: {
+    avbryt: "Avbryt utfylling",
+    sendInn: "Send inn meldekort",
+  },
+};
+
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
   const personId = params.personId;
@@ -49,18 +82,32 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const saksbehandler = await hentSaksbehandler(request);
   const variant = getABTestVariant(request);
 
-  return { periode, saksbehandler, personId, variant };
+  // Hent fyll-ut innhold fra Sanity
+  let fyllUtData: IMeldekortFyllUt | null = null;
+  try {
+    fyllUtData = await sanityClient.fetch<IMeldekortFyllUt>(fyllUtQuery);
+  } catch (error) {
+    logger.error(
+      `Kunne ikke hente fyll-ut data fra Sanity for person.${personId}.periode.${params.periodeId}.fyll-ut`,
+      { error },
+    );
+  }
+
+  return { periode, saksbehandler, personId, variant, fyllUtData };
 }
 
 export default function FyllUtPeriode() {
   const navigate = useNavigate();
-  const { periode, saksbehandler, personId, variant } = useLoaderData<typeof loader>();
+  const { periode, saksbehandler, personId, variant, fyllUtData } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const { showSuccess, showError } = useToast();
 
   const isMountedRef = useRef(true);
   const erFraArena = periode.opprettetAv === OPPRETTET_AV.Arena;
   const erEtterregistrert = periode.type === MELDEKORT_TYPE.ETTERREGISTRERT;
+
+  // Hent tekster fra Sanity med fallback
+  const tekster = fyllUtData ?? DEFAULT_TEKSTER;
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -154,6 +201,11 @@ export default function FyllUtPeriode() {
   const formattertFraOgMed = formatterDato({ dato: fraOgMed, format: DatoFormat.Kort });
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
+  // Generer underoverskrift med template variables
+  const underoverskriftTekst = tekster.underoverskrift
+    .replace("{{uker}}", String(ukenummer(periode)))
+    .replace("{{periode}}", `${formattertFraOgMed} - ${formattertTilOgMed}`);
+
   const skjemaClass = styles.skjema;
 
   return (
@@ -171,23 +223,20 @@ export default function FyllUtPeriode() {
       <div className={skjemaClass}>
         <div className={styles.title}>
           <Heading level="1" size="medium" id="fyll-ut-heading">
-            Fyll ut meldekort
+            {tekster.overskrift}
           </Heading>
-          <BodyLong size="small">
-            Uke {ukenummer(periode)} | {formattertFraOgMed} - {formattertTilOgMed}
-          </BodyLong>
+          <BodyLong size="small">{underoverskriftTekst}</BodyLong>
         </div>
 
         {erFraArena && (
           <Alert variant="info" size="small">
-            Dette meldekortet er fra Arena og har derfor ikke svar på spørsmål om
-            arbeidssøkerregistrering.
+            {tekster.infovarsler.arenaVarsel}
           </Alert>
         )}
 
         {erEtterregistrert && (
           <Alert variant="info" size="small">
-            Dette meldekortet er av typen Etterregistrert
+            {tekster.infovarsler.etterregistrertVarsel}
           </Alert>
         )}
 
@@ -213,13 +262,13 @@ export default function FyllUtPeriode() {
                 <DatePicker.Input
                   {...skjema.datepicker.inputProps}
                   ref={skjema.refs.meldedatoRef}
-                  label="Sett meldedato"
+                  label={tekster.utfyllingsskjema.datovelgerLabel}
                   placeholder="dd.mm.åååå"
                   size="small"
                   onBlur={skjema.handlers.handleMeldedatoBlur}
                   error={
                     skjema.state.visValideringsfeil.meldedato
-                      ? "Meldedato er ugyldig eller må fylles ut"
+                      ? tekster.feilmeldinger.datovelgerFeil
                       : undefined
                   }
                 />
@@ -228,30 +277,32 @@ export default function FyllUtPeriode() {
                 <RadioGroup
                   readOnly={erEtterregistrert}
                   size="small"
-                  legend="Registrert som arbeidssøker de neste 14 dagene?"
+                  legend={tekster.utfyllingsskjema.arbeidssoekerSpoersmaal.tittel}
                   error={
                     skjema.state.visValideringsfeil.arbeidssoker
-                      ? "Du må velge om bruker skal være registrert som arbeidssøker"
+                      ? tekster.feilmeldinger.arbeidssoekerFeil
                       : undefined
                   }
                   value={skjema.state.registrertArbeidssoker?.toString() || ""}
                   onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
                 >
                   <Radio ref={skjema.refs.arbeidssokerRef} value="true">
-                    Ja
+                    {tekster.utfyllingsskjema.arbeidssoekerSpoersmaal.ja}
                   </Radio>
-                  <Radio value="false">Nei</Radio>
+                  <Radio value="false">
+                    {tekster.utfyllingsskjema.arbeidssoekerSpoersmaal.nei}
+                  </Radio>
                 </RadioGroup>
               )}
               <Textarea
                 resize
                 ref={skjema.refs.begrunnelseRef}
                 size="small"
-                label="Begrunnelse"
+                label={tekster.utfyllingsskjema.begrunnelseLabel}
                 name="begrunnelse"
                 error={
                   skjema.state.visValideringsfeil.begrunnelse
-                    ? "Begrunnelse må fylles ut"
+                    ? tekster.feilmeldinger.begrunnelseFeil
                     : undefined
                 }
                 value={skjema.state.begrunnelse}
@@ -270,7 +321,7 @@ export default function FyllUtPeriode() {
               onClick={skjema.handlers.handleAvbryt}
               disabled={fetcher.state === "submitting"}
             >
-              Avbryt utfylling
+              {tekster.knapper.avbryt}
             </Button>
             <Button
               type="submit"
@@ -278,7 +329,7 @@ export default function FyllUtPeriode() {
               size="small"
               loading={fetcher.state === "submitting"}
             >
-              Send inn meldekort
+              {tekster.knapper.sendInn}
             </Button>
           </div>
         </fetcher.Form>
