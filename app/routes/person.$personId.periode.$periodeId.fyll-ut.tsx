@@ -116,6 +116,7 @@ export default function FyllUtPeriode() {
   const rootData = useRouteLoaderData("root");
   const fetcher = useFetcher();
   const { showSuccess, showError } = useToast();
+  const varslerData = rootData?.sanityData?.varsler;
 
   const isMountedRef = useRef(true);
   const erFraArena = periode.opprettetAv === OPPRETTET_AV.Arena;
@@ -151,17 +152,18 @@ export default function FyllUtPeriode() {
     if (fetcher.state === "idle" && fetcher.data && isMountedRef.current) {
       if (fetcher.data.error) {
         // Vis error toast med detaljert informasjon
-        const title = fetcher.data.title || "Innsending feilet";
+        const title =
+          fetcher.data.title || varslerData?.feil.submissionFailedTitle || "Innsending feilet";
         let message = fetcher.data.detail;
         if (fetcher.data.correlationId) {
-          message = message
-            ? `${message}\n\nFeil-ID: ${fetcher.data.correlationId}`
-            : `Feil-ID: ${fetcher.data.correlationId}`;
+          const errorText = varslerData?.feil.errorText || "Feil-ID: {{id}}";
+          const errorMessage = errorText.replace("{{id}}", fetcher.data.correlationId);
+          message = message ? `${message}\n\n${errorMessage}` : errorMessage;
         }
         showError(title, message);
       } else if (fetcher.data.success) {
         // Vis toast først, deretter naviger
-        showSuccess("Meldekortet ble sendt inn");
+        showSuccess(varslerData?.suksess.submittedSuccess || "Meldekortet ble sendt inn");
         setTimeout(() => {
           if (isMountedRef.current) {
             navigate(fetcher.data.redirectUrl);
@@ -169,7 +171,7 @@ export default function FyllUtPeriode() {
         }, 500); // Kort delay slik at toast rekker å vises
       }
     }
-  }, [fetcher.state, fetcher.data, showSuccess, showError, navigate]);
+  }, [fetcher.state, fetcher.data, showSuccess, showError, navigate, varslerData]);
 
   const handleSubmit = () => {
     // For etterregistrerte meldekort, sett alltid registrertArbeidssoker til true
@@ -236,9 +238,14 @@ export default function FyllUtPeriode() {
   return (
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllUtContainer}>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
-        {fetcher.state === "submitting" && "Sender inn meldekort..."}
-        {fetcher.state === "loading" && "Behandler meldekort..."}
-        {fetcher.state === "idle" && fetcher.data && fetcher.data.error && "Innsending feilet"}
+        {fetcher.state === "submitting" &&
+          (varslerData?.skjermleserStatus.senderInn || "Sender inn meldekort...")}
+        {fetcher.state === "loading" &&
+          (varslerData?.skjermleserStatus.behandler || "Behandler meldekort...")}
+        {fetcher.state === "idle" &&
+          fetcher.data &&
+          fetcher.data.error &&
+          (varslerData?.skjermleserStatus.feilet || "Innsending feilet")}
         {fetcher.state === "idle" &&
           fetcher.data &&
           !fetcher.data.error &&

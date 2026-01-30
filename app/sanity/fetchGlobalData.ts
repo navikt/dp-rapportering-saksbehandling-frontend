@@ -15,6 +15,8 @@ import { personlinjeQuery } from "./fellesKomponenter/personlinje/queries";
 import type { IMeldekortPersonlinje } from "./fellesKomponenter/personlinje/types";
 import { statuserQuery } from "./fellesKomponenter/statuser/queries";
 import type { IMeldekortStatuser } from "./fellesKomponenter/statuser/types";
+import { varslerQuery } from "./fellesKomponenter/varsler/queries";
+import type { IMeldekortVarsler } from "./fellesKomponenter/varsler/types";
 
 export interface GlobalSanityData {
   header: IMeldekortHeader | null;
@@ -24,6 +26,7 @@ export interface GlobalSanityData {
   aktiviteter: IMeldekortAktiviteter | null;
   statuser: IMeldekortStatuser | null;
   kalender: IMeldekortKalender | null;
+  varsler: IMeldekortVarsler | null;
 }
 
 /**
@@ -32,18 +35,36 @@ export interface GlobalSanityData {
  */
 export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
   try {
-    const [header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser, kalender] =
-      await Promise.all([
-        sanityClient.fetch<IMeldekortHeader>(headerQuery),
-        sanityClient.fetch<IMeldekortPersonlinje>(personlinjeQuery),
-        sanityClient.fetch<IMeldekortBekreftModal>(bekreftModalQuery),
-        sanityClient.fetch<IMeldekortHistorikkModal>(historikkModalQuery),
-        sanityClient.fetch<IMeldekortAktiviteter>(aktiviteterQuery),
-        sanityClient.fetch<IMeldekortStatuser>(statuserQuery),
-        sanityClient.fetch<IMeldekortKalender>(kalenderQuery),
-      ]);
+    const [
+      header,
+      personlinje,
+      bekreftModal,
+      historikkModal,
+      aktiviteter,
+      statuser,
+      kalender,
+      varsler,
+    ] = await Promise.all([
+      sanityClient.fetch<IMeldekortHeader>(headerQuery),
+      sanityClient.fetch<IMeldekortPersonlinje>(personlinjeQuery),
+      sanityClient.fetch<IMeldekortBekreftModal>(bekreftModalQuery),
+      sanityClient.fetch<IMeldekortHistorikkModal>(historikkModalQuery),
+      sanityClient.fetch<IMeldekortAktiviteter>(aktiviteterQuery),
+      sanityClient.fetch<IMeldekortStatuser>(statuserQuery),
+      sanityClient.fetch<IMeldekortKalender>(kalenderQuery),
+      sanityClient.fetch<IMeldekortVarsler>(varslerQuery),
+    ]);
 
-    return { header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser, kalender };
+    return {
+      header,
+      personlinje,
+      bekreftModal,
+      historikkModal,
+      aktiviteter,
+      statuser,
+      kalender,
+      varsler,
+    };
   } catch (error) {
     logger.error("Kunne ikke hente globale data fra Sanity:", { error });
     return {
@@ -54,6 +75,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
       aktiviteter: null,
       statuser: null,
       kalender: null,
+      varsler: null,
     };
   }
 }

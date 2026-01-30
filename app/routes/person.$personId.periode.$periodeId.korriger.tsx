@@ -107,6 +107,7 @@ export default function Periode() {
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
+  const varslerData = rootData?.sanityData?.varsler;
 
   // Hent tekster fra Sanity med fallback
   const tekster = {
@@ -115,7 +116,10 @@ export default function Periode() {
     gjeldendeMeldekort: korrigerData?.gjeldendeMeldekort ?? DEFAULT_TEKSTER.gjeldendeMeldekort,
     korrigeringsskjema: korrigerData?.korrigeringsskjema ?? DEFAULT_TEKSTER.korrigeringsskjema,
     knapper: korrigerData?.knapper ?? DEFAULT_TEKSTER.knapper,
-    skjermleserStatus: korrigerData?.skjermleserStatus ?? DEFAULT_TEKSTER.skjermleserStatus,
+    skjermleserStatus:
+      varslerData?.skjermleserStatus ??
+      korrigerData?.skjermleserStatus ??
+      DEFAULT_TEKSTER.skjermleserStatus,
   };
 
   // Hent bekreftModal fra global data
@@ -149,17 +153,18 @@ export default function Periode() {
     if (fetcher.state === "idle" && fetcher.data && isMountedRef.current) {
       if (fetcher.data.error) {
         // Vis error toast med detaljert informasjon
-        const title = fetcher.data.title || "Korrigering feilet";
+        const title =
+          fetcher.data.title || varslerData?.feil.correctionFailedTitle || "Korrigering feilet";
         let message = fetcher.data.detail;
         if (fetcher.data.correlationId) {
-          message = message
-            ? `${message}\n\nFeil-ID: ${fetcher.data.correlationId}`
-            : `Feil-ID: ${fetcher.data.correlationId}`;
+          const errorText = varslerData?.feil.errorText || "Feil-ID: {{id}}";
+          const errorMessage = errorText.replace("{{id}}", fetcher.data.correlationId);
+          message = message ? `${message}\n\n${errorMessage}` : errorMessage;
         }
         showError(title, message);
       } else if (fetcher.data.success) {
         // Vis toast først, deretter naviger
-        showSuccess("Meldekortet ble korrigert");
+        showSuccess(varslerData?.suksess.correctedSuccess || "Meldekortet ble korrigert");
         setTimeout(() => {
           if (isMountedRef.current) {
             navigate(fetcher.data.redirectUrl);
@@ -167,7 +172,7 @@ export default function Periode() {
         }, 500); // Kort delay slik at toast rekker å vises
       }
     }
-  }, [fetcher.state, fetcher.data, showSuccess, showError, navigate]);
+  }, [fetcher.state, fetcher.data, showSuccess, showError, navigate, varslerData]);
 
   const handleSubmit = () => {
     // Send kun IKorrigerMeldekort felter - ikke hele IRapporteringsperiode

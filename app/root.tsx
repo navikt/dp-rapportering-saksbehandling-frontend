@@ -12,6 +12,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useRouteLoaderData,
 } from "react-router";
 import { uuidv7 } from "uuidv7";
 
@@ -203,8 +204,20 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let title: string = "Det har skjedd en feil";
-  let description: string = "Vi beklager, men noe gikk galt.";
+  // Prøv å hente varsler data fra root loader
+  const rootData = useRouteLoaderData("root");
+  const varslerData = rootData?.sanity?.varsler;
+
+  // Default tekster som fallback
+  const DEFAULT_TITLES = {
+    notFound: "Siden du leter etter eksisterer ikke",
+    generalError: "Beklager, det har skjedd en feil",
+  };
+  const DEFAULT_DESCRIPTION = "Vi beklager, men noe gikk galt.";
+  const DEFAULT_ERROR_TEXT = "Om du trenger hjelp kan du oppgi feil-ID: {{id}}";
+
+  let title: string = varslerData?.errorBoundary.generalErrorTitle || DEFAULT_TITLES.generalError;
+  let description: string = varslerData?.errorBoundary.defaultDescription || DEFAULT_DESCRIPTION;
   let detail: string | undefined = undefined;
   let errorId: string | undefined = undefined;
   let stack: string | undefined = undefined;
@@ -221,8 +234,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
     title =
       error.status === 404
-        ? "Siden du leter etter eksisterer ikke"
-        : "Beklager, det har skjedd en feil";
+        ? varslerData?.errorBoundary.notFoundTitle || DEFAULT_TITLES.notFound
+        : varslerData?.errorBoundary.generalErrorTitle || DEFAULT_TITLES.generalError;
     // Støtt både 'message' og 'error' som hovedmelding
     description = errorData.message || errorData.error || description;
     // Støtt både 'detail' og 'details' som detaljmelding
@@ -255,7 +268,10 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             {detail && <BodyShort spacing>{detail}</BodyShort>}
             {errorId && (
               <BodyShort size="small">
-                Om du trenger hjelp kan du oppgi feil-ID: {errorId}
+                {(varslerData?.errorBoundary.errorText || DEFAULT_ERROR_TEXT).replace(
+                  "{{id}}",
+                  errorId,
+                )}
               </BodyShort>
             )}
             {stack && (

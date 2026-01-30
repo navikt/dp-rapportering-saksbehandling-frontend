@@ -7,6 +7,7 @@ import type { IMeldekortHistorikkModal } from "./fellesKomponenter/historikk-mod
 import type { IMeldekortKalender } from "./fellesKomponenter/kalender/types";
 import type { IMeldekortPersonlinje } from "./fellesKomponenter/personlinje/types";
 import type { IMeldekortStatuser } from "./fellesKomponenter/statuser/types";
+import type { IMeldekortVarsler } from "./fellesKomponenter/varsler/types";
 import { fetchGlobalSanityData } from "./fetchGlobalData";
 
 // Mock sanityClient
@@ -140,11 +141,35 @@ describe("fetchGlobalSanityData", () => {
     },
   };
 
+  const mockVarslerData: IMeldekortVarsler = {
+    skjermleserStatus: {
+      senderInn: "Sender inn meldekort...",
+      behandler: "Behandler meldekort...",
+      feilet: "Innsending feilet",
+      suksess: "Meldekort sendt inn",
+    },
+    suksess: {
+      submittedSuccess: "Meldekort er sendt inn",
+      correctedSuccess: "Meldekort er korrigert",
+    },
+    feil: {
+      submissionFailedTitle: "Kunne ikke sende inn meldekort",
+      correctionFailedTitle: "Kunne ikke korrigere meldekort",
+      errorText: "Om du trenger hjelp kan du oppgi feil-ID: {{id}}",
+    },
+    errorBoundary: {
+      notFoundTitle: "Siden finnes ikke",
+      generalErrorTitle: "Noe gikk galt",
+      defaultDescription: "Vi klarte ikke å laste siden",
+      errorText: "Om du trenger hjelp kan du oppgi feil-ID: {{id}}",
+    },
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("skal hente header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser og kalender data", async () => {
+  it("skal hente header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser, kalender og varsler data", async () => {
     const { sanityClient } = await import("./client");
 
     vi.mocked(sanityClient.fetch)
@@ -154,7 +179,8 @@ describe("fetchGlobalSanityData", () => {
       .mockResolvedValueOnce(mockHistorikkModalData as never)
       .mockResolvedValueOnce(mockAktiviteterData as never)
       .mockResolvedValueOnce(mockStatuserData as never)
-      .mockResolvedValueOnce(mockKalenderData as never);
+      .mockResolvedValueOnce(mockKalenderData as never)
+      .mockResolvedValueOnce(mockVarslerData as never);
 
     const result = await fetchGlobalSanityData();
 
@@ -166,8 +192,9 @@ describe("fetchGlobalSanityData", () => {
       aktiviteter: mockAktiviteterData,
       statuser: mockStatuserData,
       kalender: mockKalenderData,
+      varsler: mockVarslerData,
     });
-    expect(sanityClient.fetch).toHaveBeenCalledTimes(7);
+    expect(sanityClient.fetch).toHaveBeenCalledTimes(8);
   });
 
   it("skal returnere null-verdier ved feil", async () => {
@@ -186,6 +213,7 @@ describe("fetchGlobalSanityData", () => {
       aktiviteter: null,
       statuser: null,
       kalender: null,
+      varsler: null,
     });
     expect(logger.error).toHaveBeenCalledWith("Kunne ikke hente globale data fra Sanity:", {
       error: expect.any(Error),
@@ -209,6 +237,7 @@ describe("fetchGlobalSanityData", () => {
       aktiviteter: null,
       statuser: null,
       kalender: null,
+      varsler: null,
     });
   });
 
@@ -232,6 +261,7 @@ describe("fetchGlobalSanityData", () => {
       aktiviteter: null,
       statuser: null,
       kalender: null,
+      varsler: null,
     });
   });
 
@@ -245,7 +275,8 @@ describe("fetchGlobalSanityData", () => {
       .mockResolvedValueOnce(mockHistorikkModalData as never)
       .mockResolvedValueOnce(mockAktiviteterData as never)
       .mockResolvedValueOnce(mockStatuserData as never)
-      .mockResolvedValueOnce(mockKalenderData as never);
+      .mockResolvedValueOnce(mockKalenderData as never)
+      .mockResolvedValueOnce(mockVarslerData as never);
 
     const result = await fetchGlobalSanityData();
 
@@ -256,6 +287,7 @@ describe("fetchGlobalSanityData", () => {
     expect(result).toHaveProperty("aktiviteter");
     expect(result).toHaveProperty("statuser");
     expect(result).toHaveProperty("kalender");
+    expect(result).toHaveProperty("varsler");
     expect(typeof result).toBe("object");
   });
 });
