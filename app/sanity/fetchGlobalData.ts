@@ -9,6 +9,8 @@ import { headerQuery } from "./fellesKomponenter/header/queries";
 import type { IMeldekortHeader } from "./fellesKomponenter/header/types";
 import { historikkModalQuery } from "./fellesKomponenter/historikk-modal/queries";
 import type { IMeldekortHistorikkModal } from "./fellesKomponenter/historikk-modal/types";
+import { kalenderQuery } from "./fellesKomponenter/kalender/queries";
+import type { IMeldekortKalender } from "./fellesKomponenter/kalender/types";
 import { personlinjeQuery } from "./fellesKomponenter/personlinje/queries";
 import type { IMeldekortPersonlinje } from "./fellesKomponenter/personlinje/types";
 import { statuserQuery } from "./fellesKomponenter/statuser/queries";
@@ -21,6 +23,7 @@ export interface GlobalSanityData {
   historikkModal: IMeldekortHistorikkModal | null;
   aktiviteter: IMeldekortAktiviteter | null;
   statuser: IMeldekortStatuser | null;
+  kalender: IMeldekortKalender | null;
 }
 
 /**
@@ -29,7 +32,7 @@ export interface GlobalSanityData {
  */
 export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
   try {
-    const [header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser] =
+    const [header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser, kalender] =
       await Promise.all([
         sanityClient.fetch<IMeldekortHeader>(headerQuery),
         sanityClient.fetch<IMeldekortPersonlinje>(personlinjeQuery),
@@ -37,9 +40,10 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
         sanityClient.fetch<IMeldekortHistorikkModal>(historikkModalQuery),
         sanityClient.fetch<IMeldekortAktiviteter>(aktiviteterQuery),
         sanityClient.fetch<IMeldekortStatuser>(statuserQuery),
+        sanityClient.fetch<IMeldekortKalender>(kalenderQuery),
       ]);
 
-    return { header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser };
+    return { header, personlinje, bekreftModal, historikkModal, aktiviteter, statuser, kalender };
   } catch (error) {
     logger.error("Kunne ikke hente globale data fra Sanity:", { error });
     return {
@@ -49,6 +53,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
       historikkModal: null,
       aktiviteter: null,
       statuser: null,
+      kalender: null,
     };
   }
 }
