@@ -13,6 +13,12 @@ import { sortYearsDescending, ukenummer } from "~/utils/dato.utils";
 
 import type { Route } from "./+types/person.$personId.perioder";
 
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_TEKSTER = {
+  sidetittel: "Meldekort for {{navn}}",
+  listeOverskrift: "Meldekort for {{aar}}",
+};
+
 export async function loader({ request }: Route.LoaderArgs) {
   const variant = getABTestVariant(request);
 
@@ -23,6 +29,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
   const data = useRouteLoaderData<typeof personLoader>("routes/person.$personId");
   const perioder = data?.perioder ?? [];
   const person = data?.person ?? DEFAULT_PERSON;
+  const hovedsideData = data?.hovedsideData;
   const { variant } = loaderData;
   const [searchParams, setSearchParams] = useSearchParams();
   const [announceUpdate, setAnnounceUpdate] = useState("");
@@ -106,10 +113,15 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
 
   const fulltNavn = `${person.fornavn} ${person.etternavn}`;
 
+  // Hent tekster fra Sanity med fallback
+  const sidetittel =
+    hovedsideData?.overskrift?.replace("{{navn}}", fulltNavn) ??
+    DEFAULT_TEKSTER.sidetittel.replace("{{navn}}", fulltNavn);
+
   return (
     <div className={styles.perioderPageContainer}>
       <Heading level="1" size="large" spacing>
-        Meldekort for {fulltNavn}
+        {sidetittel}
       </Heading>
       <div className={styles.perioderContainer}>
         <section aria-label="Meldekort gruppert etter år">
@@ -120,26 +132,32 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
             </div>
           )}
           <Accordion size="small" indent={false}>
-            {years.map((year) => (
-              <Accordion.Item
-                key={year}
-                defaultOpen={year === years[0]}
-                open={valgteAar.includes(year)}
-              >
-                <Accordion.Header onClick={() => toggleAr(year)}>
-                  Meldekort for {year}
-                </Accordion.Header>
-                <Accordion.Content className={styles.accordionContent}>
-                  <MeldekortListe
-                    perioder={groupedPeriods[year]}
-                    personId={params.personId}
-                    ansvarligSystem={person.ansvarligSystem}
-                    variant={variant}
-                    behandlinger={data?.behandlingerPerPeriode}
-                  />
-                </Accordion.Content>
-              </Accordion.Item>
-            ))}
+            {years.map((year) => {
+              const aarOverskrift =
+                hovedsideData?.listeOverskrift?.replace("{{aar}}", String(year)) ??
+                DEFAULT_TEKSTER.listeOverskrift.replace("{{aar}}", String(year));
+              return (
+                <Accordion.Item
+                  key={year}
+                  defaultOpen={year === years[0]}
+                  open={valgteAar.includes(year)}
+                >
+                  <Accordion.Header onClick={() => toggleAr(year)}>
+                    {aarOverskrift}
+                  </Accordion.Header>
+                  <Accordion.Content className={styles.accordionContent}>
+                    <MeldekortListe
+                      perioder={groupedPeriods[year]}
+                      personId={params.personId}
+                      ansvarligSystem={person.ansvarligSystem}
+                      variant={variant}
+                      behandlinger={data?.behandlingerPerPeriode}
+                      hovedsideData={hovedsideData}
+                    />
+                  </Accordion.Content>
+                </Accordion.Item>
+              );
+            })}
           </Accordion>
         </section>
       </div>

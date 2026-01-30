@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
+import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import type {
@@ -41,6 +42,7 @@ interface IProps {
   variant?: ABTestVariant;
   allePerioder?: IRapporteringsperiode[];
   behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
+  hovedsideData?: IMeldekortHovedside | null;
 }
 
 export function MeldekortRad({
@@ -51,6 +53,7 @@ export function MeldekortRad({
   variant = null,
   allePerioder = [],
   behandlinger,
+  hovedsideData,
 }: IProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -195,6 +198,7 @@ export function MeldekortRad({
               ansvarligSystem={ansvarligSystem}
               variant={variant}
               behandlinger={behandlinger}
+              hovedsideData={hovedsideData}
             />
           </article>
         )

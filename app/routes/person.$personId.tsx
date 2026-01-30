@@ -17,6 +17,9 @@ import {
   hentArbeidssokerperioder,
   hentRapporteringsperioder,
 } from "~/models/rapporteringsperiode.server";
+import { sanityClient } from "~/sanity/client";
+import { hovedsideQuery } from "~/sanity/fellesKomponenter/forside/queries";
+import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
 import styles from "~/styles/route-styles/root.module.css";
 import { isDemoToolsEnabled } from "~/utils/ab-test.server";
 import { finnBehandlingerForPerioder } from "~/utils/behandlinger.utils";
@@ -62,7 +65,22 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       }
     }
 
-    return { person, perioder, arbeidssokerperioder, showDemoTools, behandlingerPerPeriode };
+    // Hent hovedside-innhold fra Sanity
+    let hovedsideData: IMeldekortHovedside | null = null;
+    try {
+      hovedsideData = await sanityClient.fetch<IMeldekortHovedside>(hovedsideQuery);
+    } catch (error) {
+      logger.error("Kunne ikke hente hovedside-data fra Sanity:", { error });
+    }
+
+    return {
+      person,
+      perioder,
+      arbeidssokerperioder,
+      showDemoTools,
+      behandlingerPerPeriode,
+      hovedsideData,
+    };
   } catch (error) {
     // Hvis henting av perioder feiler, legg til person-data i error response
     // slik at ErrorBoundary kan vise Personlinje
