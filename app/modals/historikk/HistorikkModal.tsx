@@ -1,10 +1,36 @@
 import { CheckmarkIcon, XMarkIcon } from "@navikt/aksel-icons";
 import { Accordion, Alert, BodyShort, Heading, Modal, Process, Tag, Theme } from "@navikt/ds-react";
+import { useRouteLoaderData } from "react-router";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import { groupByYear, sortYearsDescending } from "~/utils/dato.utils";
 
 import styles from "./historikkModal.module.css";
+
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_TEKSTER = {
+  overskrift: "Historikk",
+  prosessAriaLabel: "Meldekort for {{aar}}",
+  hendelsetyper: {
+    registrert: "Registrert som arbeidssøker",
+    avregistrert: "Avregistrert som arbeidssøker",
+  },
+  innsendt: "Innsendt: {{dato}}, kl. {{tid}}",
+  typeLabels: {
+    elektronisk: "Elektronisk",
+    manuell: "Manuell",
+  },
+  tags: {
+    forSentInnsendt: "Innsendt etter fristen",
+    korrigert: "Korrigert",
+  },
+  fristLabel: "Frist: {{dato}}",
+  feilmeldinger: {
+    ingenData: "Fant hverken meldekort eller arbeidssøkerstatus knyttet til denne personen",
+    ingenMeldekort: "Fant ingen meldekort knyttet til denne personen",
+    ingenStatus: "Fant ingen arbeidssøkerstatus knyttet til denne personen",
+  },
+};
 
 export interface IHendelse {
   dato: Date;
@@ -24,15 +50,15 @@ interface HistorikkModalProps {
   hendelser: IHendelse[];
 }
 
-// Konstanter for event-typer
+// Konstanter for event-typer (for bakoverkompatibilitet med tester)
 export const EVENT_TYPES = {
-  REGISTERED: "Registrert som arbeidssøker",
-  UNREGISTERED: "Avregistrert som arbeidssøker",
+  REGISTERED: DEFAULT_TEKSTER.hendelsetyper.registrert,
+  UNREGISTERED: DEFAULT_TEKSTER.hendelsetyper.avregistrert,
 } as const;
 
-function getBullet(event: string) {
-  const isRegistered = event === EVENT_TYPES.REGISTERED;
-  const isUnregistered = event === EVENT_TYPES.UNREGISTERED;
+function getBullet(event: string, registrertTekst: string, avregistrertTekst: string) {
+  const isRegistered = event === registrertTekst;
+  const isUnregistered = event === avregistrertTekst;
 
   if (isRegistered) {
     return <CheckmarkIcon title="" fontSize="1.5rem" />;
@@ -47,6 +73,16 @@ function getBullet(event: string) {
 
 export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps) {
   const { tema } = useSaksbehandler();
+
+  // Hent tekster fra Sanity med fallback (safe for tests)
+  let rootData;
+  try {
+    rootData = useRouteLoaderData("root");
+  } catch {
+    rootData = null;
+  }
+  const tekster = rootData?.sanityData?.historikkModal ?? DEFAULT_TEKSTER;
+
   const hendelserEtterAar = groupByYear(hendelser, (hendelse) => hendelse.dato);
   const sortedYears = sortYearsDescending(hendelserEtterAar);
 
@@ -57,10 +93,10 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
 
   const feilMelding =
     !harMeldekort && !harArbeidssokerperioder
-      ? "Fant hverken meldekort eller arbeidssøkerstatus knyttet til denne personen"
+      ? tekster.feilmeldinger.ingenData
       : !harMeldekort
-        ? "Fant ingen meldekort knyttet til denne personen"
-        : "Fant ingen arbeidssøkerstatus knyttet til denne personen";
+        ? tekster.feilmeldinger.ingenMeldekort
+        : tekster.feilmeldinger.ingenStatus;
 
   return (
     <Modal
@@ -74,7 +110,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
       <Theme theme={tema}>
         <Modal.Header>
           <Heading level="1" size="small" id="historikk-heading">
-            Historikk
+            {tekster.overskrift}
           </Heading>
         </Modal.Header>
         <Modal.Body>
@@ -85,14 +121,20 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
                 <Accordion.Item key={year} defaultOpen={index === 0}>
                   <Accordion.Header>{year}</Accordion.Header>
                   <Accordion.Content>
-                    <Process aria-label={`Meldekort for ${year}`}>
+                    <Process aria-label={tekster.prosessAriaLabel.replace("{{aar}}", String(year))}>
                       {hendelserEtterAar[year].map((hendelse, id) => {
                         const visningDatoTekst =
                           hendelse.kategori === "Meldekort"
-                            ? `Innsendt: ${hendelse.innsendtDato}, kl. ${hendelse.time}`
+                            ? tekster.innsendt
+                                .replace("{{dato}}", hendelse.innsendtDato)
+                                .replace("{{tid}}", hendelse.time)
                             : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
 
-                        const bullet = getBullet(hendelse.event);
+                        const bullet = getBullet(
+                          hendelse.event,
+                          tekster.hendelsetyper.registrert,
+                          tekster.hendelsetyper.avregistrert,
+                        );
 
                         // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
                         const srEventText =
@@ -109,20 +151,31 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
                             bullet={bullet}
                             aria-label={srEventText}
                           >
-                            {hendelse.type && <BodyShort size="small">{hendelse.type}</BodyShort>}
+                            {hendelse.type && (
+                              <BodyShort size="small">
+                                {hendelse.type === "Elektronisk"
+                                  ? tekster.typeLabels.elektronisk
+                                  : hendelse.type === "Manuell"
+                                    ? tekster.typeLabels.manuell
+                                    : hendelse.type}
+                              </BodyShort>
+                            )}
                             {hendelse.erSendtForSent && (
                               <>
                                 <BodyShort size="small">
-                                  Frist: {hendelse.sisteFristForTrekk}
+                                  {tekster.fristLabel.replace(
+                                    "{{dato}}",
+                                    hendelse.sisteFristForTrekk || "",
+                                  )}
                                 </BodyShort>
                                 <Tag variant="error" size="xsmall">
-                                  Innsendt etter fristen
+                                  {tekster.tags.forSentInnsendt}
                                 </Tag>
                               </>
                             )}
                             {hendelse.hendelseType === "Korrigert" && (
                               <Tag variant="warning" size="small">
-                                Korrigert
+                                {tekster.tags.korrigert}
                               </Tag>
                             )}
                           </Process.Event>
