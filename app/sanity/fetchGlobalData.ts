@@ -3,6 +3,8 @@ import { logger } from "~/models/logger.server";
 import { sanityClient } from "./client";
 import { aktiviteterQuery } from "./fellesKomponenter/aktiviteter/queries";
 import type { IMeldekortAktiviteter } from "./fellesKomponenter/aktiviteter/types";
+import { aktivitetstabellQuery } from "./fellesKomponenter/aktivitetstabell/queries";
+import type { IMeldekortAktivitetsTabell } from "./fellesKomponenter/aktivitetstabell/types";
 import { bekreftModalQuery } from "./fellesKomponenter/bekreft-modal/queries";
 import type { IMeldekortBekreftModal } from "./fellesKomponenter/bekreft-modal/types";
 import { headerQuery } from "./fellesKomponenter/header/queries";
@@ -27,6 +29,7 @@ export interface GlobalSanityData {
   statuser: IMeldekortStatuser | null;
   kalender: IMeldekortKalender | null;
   varsler: IMeldekortVarsler | null;
+  aktivitetstabell: IMeldekortAktivitetsTabell | null;
 }
 
 /**
@@ -44,6 +47,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
       statuser,
       kalender,
       varsler,
+      aktivitetstabell,
     ] = await Promise.all([
       sanityClient.fetch<IMeldekortHeader>(headerQuery),
       sanityClient.fetch<IMeldekortPersonlinje>(personlinjeQuery),
@@ -53,6 +57,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
       sanityClient.fetch<IMeldekortStatuser>(statuserQuery),
       sanityClient.fetch<IMeldekortKalender>(kalenderQuery),
       sanityClient.fetch<IMeldekortVarsler>(varslerQuery),
+      sanityClient.fetch<IMeldekortAktivitetsTabell>(aktivitetstabellQuery),
     ]);
 
     return {
@@ -64,6 +69,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
       statuser,
       kalender,
       varsler,
+      aktivitetstabell,
     };
   } catch (error) {
     logger.error("Kunne ikke hente globale data fra Sanity:", { error });
@@ -76,6 +82,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
       statuser: null,
       kalender: null,
       varsler: null,
+      aktivitetstabell: null,
     };
   }
 }

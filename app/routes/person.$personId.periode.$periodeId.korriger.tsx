@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useFetcher, useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
-import { FyllUtTabell } from "~/components/tabeller/fyll-ut/FyllUtTabell";
+import { AktivitetsTabell } from "~/components/tabeller/aktivitets-tabell/AktivitetsTabell";
 import { Kalender } from "~/components/tabeller/kalender/Kalender";
 import { useToast } from "~/context/toast-context";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
@@ -318,7 +318,7 @@ export default function Periode() {
             </BodyShort>
           </div>
           <div ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
-            <FyllUtTabell
+            <AktivitetsTabell
               dager={korrigerteDager}
               setKorrigerteDager={skjema.handlers.handleSetKorrigerteDager}
               periode={periode.periode}

@@ -11,9 +11,9 @@ import {
   formaterTotalBeløp,
   lagAktivitetKlassenavn,
   pluraliserEnhet,
-} from "./FyllUtTabell.helpers";
+} from "./AktivitetsTabell.helpers";
 
-describe("FyllUtTabell.helpers", () => {
+describe("AktivitetsTabell.helpers", () => {
   const baseDag: IKorrigertDag = {
     type: "dag",
     dato: "2024-01-01",
