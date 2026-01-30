@@ -1,5 +1,6 @@
 import { Table } from "@navikt/ds-react";
 
+import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { getTogglePlacement } from "~/utils/ab-test.utils";
 import type { IBehandlingerPerPeriode } from "~/utils/behandlingsresultat.types";
@@ -8,12 +9,23 @@ import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 import { MeldekortRad } from "./components/rad/MeldekortRad";
 import styles from "./meldekortListe.module.css";
 
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_KOLONNER = {
+  uke: "Uke",
+  dato: "Dato",
+  status: "Status",
+  aktiviteter: "Aktiviteter",
+  meldedato: "Meldedato",
+  frist: "Frist",
+};
+
 interface IProps {
   perioder: IRapporteringsperiode[];
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
   behandlinger?: IBehandlingerPerPeriode;
+  hovedsideData?: IMeldekortHovedside | null;
 }
 
 export function MeldekortListe({
@@ -22,18 +34,28 @@ export function MeldekortListe({
   ansvarligSystem,
   variant,
   behandlinger,
+  hovedsideData,
 }: IProps) {
   // Bestem toggle placement basert på variant (bruker helper-funksjon)
   // null (ikke-demo miljø), Variant A og Variant C: toggle left (original)
   // Variant B: toggle right
   const togglePlacement = getTogglePlacement(variant ?? null);
 
+  // Hent tekster fra Sanity med fallback
+  const kolonner = hovedsideData?.tabellKolonner ?? DEFAULT_KOLONNER;
+
   // Original layout for null/A/C: toggle left with empty first column
   // New layout for variant B: toggle right with empty last column
-  const KOLONNE_TITLER =
-    togglePlacement === "right"
-      ? ["Uke", "Dato", "Status", "Aktiviteter", "Meldedato", "Frist"]
-      : ["", "Uke", "Dato", "Status", "Aktiviteter", "Meldedato", "Frist"];
+  const basisKolonner = [
+    kolonner.uke,
+    kolonner.dato,
+    kolonner.status,
+    kolonner.aktiviteter,
+    kolonner.meldedato,
+    kolonner.frist,
+  ];
+
+  const KOLONNE_TITLER = togglePlacement === "right" ? basisKolonner : ["", ...basisKolonner];
 
   const KOLONNE_BREDDER =
     togglePlacement === "right"
@@ -76,6 +98,7 @@ export function MeldekortListe({
                 variant={variant}
                 allePerioder={perioder}
                 behandlinger={behandlinger ? behandlinger[periode.id] : undefined}
+                hovedsideData={hovedsideData}
               />
             );
           })}

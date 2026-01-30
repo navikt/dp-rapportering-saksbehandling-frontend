@@ -1,5 +1,6 @@
 import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
 
+import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import type {
@@ -14,12 +15,20 @@ import { UtvidetInfo } from "./components/utvidetInfo/UtvidetInfo";
 import { erPeriodeTilUtfylling, kanMeldekortSendes } from "./MeldekortVisning.helpers";
 import styles from "./meldekortVisning.module.css";
 
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_TEKSTER = {
+  tomtMeldekort: "Dette meldekortet er ikke fylt ut enda.",
+  fyllUtKnapp: "Fyll ut meldekort",
+  ukeOverskrift: "Uke {{uker}}",
+};
+
 interface IProps {
   perioder: IRapporteringsperiode[];
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
   behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
+  hovedsideData?: IMeldekortHovedside | null;
 }
 
 export function MeldekortVisning({
@@ -28,6 +37,7 @@ export function MeldekortVisning({
   ansvarligSystem,
   variant,
   behandlinger,
+  hovedsideData,
 }: IProps) {
   return perioder.map((periode) => {
     const { fraOgMed, tilOgMed } = periode.periode;
@@ -44,6 +54,14 @@ export function MeldekortVisning({
       variant ?? null,
     );
 
+    // Hent tekster fra Sanity med fallback
+    const tomtMeldekortTekst =
+      hovedsideData?.utvidetVisning.emptyCardMessage ?? DEFAULT_TEKSTER.tomtMeldekort;
+    const fyllUtKnapp = hovedsideData?.knapper.fyllutMeldekort ?? DEFAULT_TEKSTER.fyllUtKnapp;
+    const ukeOverskrift =
+      hovedsideData?.utvidetVisning.overskrift?.replace("{{uker}}", String(uker)) ??
+      DEFAULT_TEKSTER.ukeOverskrift.replace("{{uker}}", String(uker));
+
     return (
       <section
         key={periode.id}
@@ -53,12 +71,12 @@ export function MeldekortVisning({
         {erTilUtfylling ? (
           <>
             <div className={styles.tomtMeldekort}>
-              <BodyShort>Dette meldekortet er ikke fylt ut enda.</BodyShort>
+              <BodyShort>{tomtMeldekortTekst}</BodyShort>
             </div>
             {kanSendes && (
               <div>
                 <Button as="a" href={fyllUtUrl} className={styles.korrigerKnapp} size="small">
-                  Fyll ut meldekort
+                  {fyllUtKnapp}
                 </Button>
               </div>
             )}
@@ -67,7 +85,7 @@ export function MeldekortVisning({
           <>
             <div>
               <Heading level="3" id={`periode-${periode.id}`} size="small">
-                Uke {uker}
+                {ukeOverskrift}
               </Heading>
               <BodyLong size="small">
                 <time dateTime={fraOgMed}>{formattertFraOgMed}</time> -{" "}
@@ -75,7 +93,12 @@ export function MeldekortVisning({
               </BodyLong>
             </div>
             <div className={styles.innhold}>
-              <KalenderOgAktiviteter periode={periode} variant={variant} />
+              <KalenderOgAktiviteter
+                periode={periode}
+                variant={variant}
+                aktiviteterTittel={hovedsideData?.utvidetVisning.aktiviteterTittel}
+                noActivitiesText={hovedsideData?.utvidetVisning.noActivitiesText}
+              />
               <UtvidetInfo
                 key={periode.id}
                 periode={periode}
@@ -83,6 +106,7 @@ export function MeldekortVisning({
                 ansvarligSystem={ansvarligSystem}
                 variant={variant}
                 behandlinger={behandlinger}
+                hovedsideData={hovedsideData}
               />
             </div>
           </>
