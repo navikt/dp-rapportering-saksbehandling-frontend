@@ -57,7 +57,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
   // Log individuelle feil for bedre feilsøking
   results.forEach((result, index) => {
     if (result.status === "rejected") {
-      logger.error(`Sanity query '${queries[index].name}' feilet`, {
+      logger.warn(`Sanity query '${queries[index].name}' feilet`, {
         queryName: queries[index].name,
         error: result.reason,
       });

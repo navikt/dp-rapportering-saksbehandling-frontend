@@ -22,6 +22,7 @@ vi.mock("./client", () => ({
 vi.mock("~/models/logger.server", () => ({
   logger: {
     error: vi.fn(),
+    warn: vi.fn(),
   },
 }));
 
@@ -242,8 +243,8 @@ describe("fetchGlobalSanityData", () => {
       aktivitetstabell: null,
     });
     // Med Promise.allSettled logges hver feilende query individuelt
-    expect(logger.error).toHaveBeenCalledTimes(9);
-    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining("Sanity query"), {
+    expect(logger.warn).toHaveBeenCalledTimes(9);
+    expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining("Sanity query"), {
       queryName: expect.any(String),
       error: expect.any(Error),
     });
@@ -268,7 +269,7 @@ describe("fetchGlobalSanityData", () => {
       varsler: null,
       aktivitetstabell: null,
     });
-    expect(logger.error).toHaveBeenCalledTimes(9);
+    expect(logger.warn).toHaveBeenCalledTimes(9);
   });
 
   it("skal kunne håndtere at kun en av fetchene feiler", async () => {
@@ -304,8 +305,8 @@ describe("fetchGlobalSanityData", () => {
     });
 
     // Kun én feil skal logges (personlinje)
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith("Sanity query 'personlinje' feilet", {
+    expect(logger.warn).toHaveBeenCalledTimes(1);
+    expect(logger.warn).toHaveBeenCalledWith("Sanity query 'personlinje' feilet", {
       queryName: "personlinje",
       error: expect.any(Error),
     });
