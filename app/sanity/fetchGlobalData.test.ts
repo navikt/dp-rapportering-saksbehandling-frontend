@@ -241,17 +241,19 @@ describe("fetchGlobalSanityData", () => {
       varsler: null,
       aktivitetstabell: null,
     });
-    expect(logger.error).toHaveBeenCalledWith("Kunne ikke hente globale data fra Sanity:", {
+    // Med Promise.allSettled logges hver feilende query individuelt
+    expect(logger.error).toHaveBeenCalledTimes(9);
+    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining("Sanity query"), {
+      queryName: expect.any(String),
       error: expect.any(Error),
     });
   });
 
   it("skal returnere null-verdier hvis sanityClient.fetch kaster feil", async () => {
     const { sanityClient } = await import("./client");
+    const { logger } = await import("~/models/logger.server");
 
-    vi.mocked(sanityClient.fetch).mockImplementation(() => {
-      throw new Error("Network error");
-    });
+    vi.mocked(sanityClient.fetch).mockRejectedValue(new Error("Network error"));
 
     const result = await fetchGlobalSanityData();
 
@@ -266,30 +268,46 @@ describe("fetchGlobalSanityData", () => {
       varsler: null,
       aktivitetstabell: null,
     });
+    expect(logger.error).toHaveBeenCalledTimes(9);
   });
 
   it("skal kunne håndtere at kun en av fetchene feiler", async () => {
     const { sanityClient } = await import("./client");
+    const { logger } = await import("~/models/logger.server");
 
-    // Først returnerer den header data, så feiler den på personlinje
+    // Mock 9 queries: header lykkes, personlinje feiler, resten lykkes
     vi.mocked(sanityClient.fetch)
       .mockResolvedValueOnce(mockHeaderData as never)
-      .mockRejectedValueOnce(new Error("Personlinje fetch failed"));
+      .mockRejectedValueOnce(new Error("Personlinje fetch failed"))
+      .mockResolvedValueOnce(mockBekreftModalData as never)
+      .mockResolvedValueOnce(mockHistorikkModalData as never)
+      .mockResolvedValueOnce(mockAktiviteterData as never)
+      .mockResolvedValueOnce(mockStatuserData as never)
+      .mockResolvedValueOnce(mockKalenderData as never)
+      .mockResolvedValueOnce(mockVarslerData as never)
+      .mockResolvedValueOnce(mockAktivitetstabellData as never);
 
     const result = await fetchGlobalSanityData();
 
-    // Siden vi bruker Promise.all, vil hele operasjonen feile
-    // og returnere null for alle
+    // Med Promise.allSettled får vi partial success:
+    // kun personlinje feiler, resten returnerer data
     expect(result).toEqual({
-      header: null,
+      header: mockHeaderData,
       personlinje: null,
-      bekreftModal: null,
-      historikkModal: null,
-      aktiviteter: null,
-      statuser: null,
-      kalender: null,
-      varsler: null,
-      aktivitetstabell: null,
+      bekreftModal: mockBekreftModalData,
+      historikkModal: mockHistorikkModalData,
+      aktiviteter: mockAktiviteterData,
+      statuser: mockStatuserData,
+      kalender: mockKalenderData,
+      varsler: mockVarslerData,
+      aktivitetstabell: mockAktivitetstabellData,
+    });
+
+    // Kun én feil skal logges (personlinje)
+    expect(logger.error).toHaveBeenCalledTimes(1);
+    expect(logger.error).toHaveBeenCalledWith("Sanity query 'personlinje' feilet", {
+      queryName: "personlinje",
+      error: expect.any(Error),
     });
   });
 

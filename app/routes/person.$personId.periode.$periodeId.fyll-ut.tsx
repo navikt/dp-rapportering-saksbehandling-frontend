@@ -72,19 +72,22 @@ const DEFAULT_TEKSTER = {
     avbryt: "Avbryt utfylling",
     sendInn: "Send inn meldekort",
   },
-  bekreftModal: {
-    avbrytUtfylling: {
-      overskrift: "Vil du avbryte utfyllingen?",
-      innhold: "Hvis du avbryter, vil ikke det du har fylt ut så langt lagres",
-      bekreftKnapp: "Ja, avbryt",
-      avbrytKnapp: "Nei, fortsett",
-    },
-    fullfoerUtfylling: {
-      overskrift: "Vil du fullføre utfyllingen?",
-      innhold: 'Ved å trykke "Ja" vil utfyllingen sendes inn.',
-      bekreftKnapp: "Ja, send inn",
-      avbrytKnapp: "Nei, avbryt",
-    },
+};
+
+// BekreftModal hentes fra global Sanity-data, ikke lokale defaults
+// Disse brukes kun som siste fallback
+const DEFAULT_BEKREFT_MODAL = {
+  avbrytUtfylling: {
+    overskrift: "Vil du avbryte utfyllingen?",
+    innhold: "Hvis du avbryter, vil ikke det du har fylt ut så langt lagres",
+    bekreftKnapp: "Ja, avbryt",
+    avbrytKnapp: "Nei, fortsett",
+  },
+  fullfoerUtfylling: {
+    overskrift: "Vil du fullføre utfyllingen?",
+    innhold: 'Ved å trykke "Ja" vil utfyllingen sendes inn.',
+    bekreftKnapp: "Ja, send inn",
+    avbrytKnapp: "Nei, avbryt",
   },
 };
 
@@ -122,17 +125,16 @@ export default function FyllUtPeriode() {
   const erFraArena = periode.opprettetAv === OPPRETTET_AV.Arena;
   const erEtterregistrert = periode.type === MELDEKORT_TYPE.ETTERREGISTRERT;
 
-  // Hent tekster fra Sanity med fallback
-  const tekster = fyllUtData ?? DEFAULT_TEKSTER;
+  // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
+  const tekster = { ...DEFAULT_TEKSTER, ...(fyllUtData ?? {}) };
 
   // Hent bekreftModal fra global data
   const bekreftModalTekster = {
     avbryt:
-      rootData?.sanityData?.bekreftModal?.avbrytUtfylling ??
-      DEFAULT_TEKSTER.bekreftModal.avbrytUtfylling,
+      rootData?.sanityData?.bekreftModal?.avbrytUtfylling ?? DEFAULT_BEKREFT_MODAL.avbrytUtfylling,
     fullfoer:
       rootData?.sanityData?.bekreftModal?.fullfoerUtfylling ??
-      DEFAULT_TEKSTER.bekreftModal.fullfoerUtfylling,
+      DEFAULT_BEKREFT_MODAL.fullfoerUtfylling,
   };
 
   const [dager, setDager] = useState<IKorrigertDag[]>(

@@ -167,11 +167,11 @@ export function UtvidetInfo({
   const erSaksbehandler = erKildeSaksbehandler(periode);
   const useVariantLabels = variant === "B";
 
-  // Hent tekster fra Sanity med fallback
-  const labels = hovedsideData?.utvidetVisning.infoLabels ?? DEFAULT_LABELS;
+  // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
+  const labels = { ...DEFAULT_LABELS, ...(hovedsideData?.utvidetVisning.infoLabels ?? {}) };
   const tabellTittel =
     hovedsideData?.utvidetVisning.tabellTittel ?? "Detaljert informasjon om meldekortet";
-  const varsler = hovedsideData?.varsler ?? DEFAULT_VARSLER;
+  const varsler = { ...DEFAULT_VARSLER, ...(hovedsideData?.varsler ?? {}) };
   const korrigerKnapp = hovedsideData?.knapper.korrigerMeldekort ?? "Korriger meldekort";
 
   // Bruk samme logikk som i skjemaet for å bestemme om arbeidssøkerspørsmål skal vises

@@ -5,7 +5,6 @@ import type {
 } from "~/utils/behandlingsresultat.types";
 import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
-
 // Re-eksporter fra constants fil for bakoverkompatibilitet
 export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
 
@@ -32,7 +31,8 @@ export function getStatusConfig(
   behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[],
   statuser?: IMeldekortStatuser | null,
 ): StatusConfig {
-  const tekster = statuser ?? DEFAULT_STATUSER;
+  // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
+  const tekster = { ...DEFAULT_STATUSER, ...(statuser ?? {}) };
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
   const kanSendes = periode.kanSendes;
 

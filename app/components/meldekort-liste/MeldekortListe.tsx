@@ -41,8 +41,8 @@ export function MeldekortListe({
   // Variant B: toggle right
   const togglePlacement = getTogglePlacement(variant ?? null);
 
-  // Hent tekster fra Sanity med fallback
-  const kolonner = hovedsideData?.tabellKolonner ?? DEFAULT_KOLONNER;
+  // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
+  const kolonner = { ...DEFAULT_KOLONNER, ...(hovedsideData?.tabellKolonner ?? {}) };
 
   // Original layout for null/A/C: toggle left with empty first column
   // New layout for variant B: toggle right with empty last column

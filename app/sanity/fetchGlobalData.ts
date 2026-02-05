@@ -35,54 +35,44 @@ export interface GlobalSanityData {
 /**
  * Henter alle globale Sanity-data som trengs på tvers av siden.
  * Returnerer alltid et objekt, også ved feil (med null-verdier).
+ *
+ * Bruker Promise.allSettled for å sikre at individuelle feil ikke
+ * påvirker andre queries. Hvis en query feiler, vil kun den returnere null.
  */
 export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
-  try {
-    const [
-      header,
-      personlinje,
-      bekreftModal,
-      historikkModal,
-      aktiviteter,
-      statuser,
-      kalender,
-      varsler,
-      aktivitetstabell,
-    ] = await Promise.all([
-      sanityClient.fetch<IMeldekortHeader>(headerQuery),
-      sanityClient.fetch<IMeldekortPersonlinje>(personlinjeQuery),
-      sanityClient.fetch<IMeldekortBekreftModal>(bekreftModalQuery),
-      sanityClient.fetch<IMeldekortHistorikkModal>(historikkModalQuery),
-      sanityClient.fetch<IMeldekortAktiviteter>(aktiviteterQuery),
-      sanityClient.fetch<IMeldekortStatuser>(statuserQuery),
-      sanityClient.fetch<IMeldekortKalender>(kalenderQuery),
-      sanityClient.fetch<IMeldekortVarsler>(varslerQuery),
-      sanityClient.fetch<IMeldekortAktivitetsTabell>(aktivitetstabellQuery),
-    ]);
+  const queries = [
+    { name: "header", query: headerQuery },
+    { name: "personlinje", query: personlinjeQuery },
+    { name: "bekreftModal", query: bekreftModalQuery },
+    { name: "historikkModal", query: historikkModalQuery },
+    { name: "aktiviteter", query: aktiviteterQuery },
+    { name: "statuser", query: statuserQuery },
+    { name: "kalender", query: kalenderQuery },
+    { name: "varsler", query: varslerQuery },
+    { name: "aktivitetstabell", query: aktivitetstabellQuery },
+  ];
 
-    return {
-      header,
-      personlinje,
-      bekreftModal,
-      historikkModal,
-      aktiviteter,
-      statuser,
-      kalender,
-      varsler,
-      aktivitetstabell,
-    };
-  } catch (error) {
-    logger.error("Kunne ikke hente globale data fra Sanity:", { error });
-    return {
-      header: null,
-      personlinje: null,
-      bekreftModal: null,
-      historikkModal: null,
-      aktiviteter: null,
-      statuser: null,
-      kalender: null,
-      varsler: null,
-      aktivitetstabell: null,
-    };
-  }
+  const results = await Promise.allSettled(queries.map(({ query }) => sanityClient.fetch(query)));
+
+  // Log individuelle feil for bedre feilsøking
+  results.forEach((result, index) => {
+    if (result.status === "rejected") {
+      logger.error(`Sanity query '${queries[index].name}' feilet`, {
+        queryName: queries[index].name,
+        error: result.reason,
+      });
+    }
+  });
+
+  return {
+    header: results[0].status === "fulfilled" ? results[0].value : null,
+    personlinje: results[1].status === "fulfilled" ? results[1].value : null,
+    bekreftModal: results[2].status === "fulfilled" ? results[2].value : null,
+    historikkModal: results[3].status === "fulfilled" ? results[3].value : null,
+    aktiviteter: results[4].status === "fulfilled" ? results[4].value : null,
+    statuser: results[5].status === "fulfilled" ? results[5].value : null,
+    kalender: results[6].status === "fulfilled" ? results[6].value : null,
+    varsler: results[7].status === "fulfilled" ? results[7].value : null,
+    aktivitetstabell: results[8].status === "fulfilled" ? results[8].value : null,
+  };
 }
