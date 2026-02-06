@@ -62,19 +62,22 @@ const DEFAULT_TEKSTER = {
     feilet: "Korrigering feilet",
     suksess: "Korrigering sendt inn. Går tilbake til periodeoversikten...",
   },
-  bekreftModal: {
-    avbrytKorrigering: {
-      overskrift: "Vil du avbryte korrigeringen?",
-      innhold: "Hvis du avbryter, vil ikke endringene du har gjort så langt korrigeres",
-      bekreftKnapp: "Ja, avbryt",
-      avbrytKnapp: "Nei, fortsett",
-    },
-    fullfoerKorrigering: {
-      overskrift: "Vil du fullføre korrigeringen?",
-      innhold: 'Ved å trykke "Ja" vil korrigeringen sendes inn.',
-      bekreftKnapp: "Ja, fullfør",
-      avbrytKnapp: "Nei, avbryt",
-    },
+};
+
+// BekreftModal hentes fra global Sanity-data, ikke lokale defaults
+// Disse brukes kun som siste fallback
+const DEFAULT_BEKREFT_MODAL = {
+  avbrytKorrigering: {
+    overskrift: "Vil du avbryte korrigeringen?",
+    innhold: "Hvis du avbryter, vil ikke endringene du har gjort så langt korrigeres",
+    bekreftKnapp: "Ja, avbryt",
+    avbrytKnapp: "Nei, fortsett",
+  },
+  fullfoerKorrigering: {
+    overskrift: "Vil du fullføre korrigeringen?",
+    innhold: 'Ved å trykke "Ja" vil korrigeringen sendes inn.',
+    bekreftKnapp: "Ja, fullfør",
+    avbrytKnapp: "Nei, avbryt",
   },
 };
 
@@ -109,13 +112,11 @@ export default function Periode() {
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
   const varslerData = rootData?.sanityData?.varsler;
 
-  // Hent tekster fra Sanity med fallback
+  // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
   const tekster = {
-    overskrift: korrigerData?.overskrift ?? DEFAULT_TEKSTER.overskrift,
-    underoverskrift: korrigerData?.underoverskrift ?? DEFAULT_TEKSTER.underoverskrift,
-    gjeldendeMeldekort: korrigerData?.gjeldendeMeldekort ?? DEFAULT_TEKSTER.gjeldendeMeldekort,
-    korrigeringsskjema: korrigerData?.korrigeringsskjema ?? DEFAULT_TEKSTER.korrigeringsskjema,
-    knapper: korrigerData?.knapper ?? DEFAULT_TEKSTER.knapper,
+    ...DEFAULT_TEKSTER,
+    ...(korrigerData ?? {}),
+    // skjermleserStatus hentes fra varsler først, så korriger-data, så defaults
     skjermleserStatus:
       varslerData?.skjermleserStatus ??
       korrigerData?.skjermleserStatus ??
@@ -126,10 +127,10 @@ export default function Periode() {
   const bekreftModalTekster = {
     avbryt:
       rootData?.sanityData?.bekreftModal?.avbrytKorrigering ??
-      DEFAULT_TEKSTER.bekreftModal.avbrytKorrigering,
+      DEFAULT_BEKREFT_MODAL.avbrytKorrigering,
     fullfoer:
       rootData?.sanityData?.bekreftModal?.fullfoerKorrigering ??
-      DEFAULT_TEKSTER.bekreftModal.fullfoerKorrigering,
+      DEFAULT_BEKREFT_MODAL.fullfoerKorrigering,
   };
 
   const isMountedRef = useRef(true);
