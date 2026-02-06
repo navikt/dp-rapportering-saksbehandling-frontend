@@ -386,7 +386,7 @@ describe("MeldekortRad", () => {
         />,
       );
 
-      const expandableRow = container.querySelector('[class*="navds-table__expandable-row"]');
+      const expandableRow = container.querySelector('[class*="aksel-table__expandable-row"]');
       expect(expandableRow).toBeInTheDocument();
     });
 

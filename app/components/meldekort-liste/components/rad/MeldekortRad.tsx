@@ -229,19 +229,19 @@ export function MeldekortRad({
             {statusConfig.text}
           </Tag>
           {erKorrigert && (
-            <Tag variant="info" size="small">
+            <Tag data-color="info" variant="outline" size="small">
               {statusTekster.korrigering}
             </Tag>
           )}
 
           {!erKorrigert && harKorrigering && useVariantLabels && (
-            <Tag variant="warning" size="small">
+            <Tag data-color="warning" variant="outline" size="small">
               {statusTekster.korrigert}
             </Tag>
           )}
 
           {erFraArena && (
-            <Tag variant="info" size="small">
+            <Tag data-color="info" variant="outline" size="small">
               {statusTekster.arena}
             </Tag>
           )}
@@ -263,7 +263,7 @@ export function MeldekortRad({
       <Table.DataCell {...cellProps}>
         {skalViseInnsendt &&
           (erSendtForSent ? (
-            <Tag variant="error" size="small">
+            <Tag data-color="danger" variant="outline" size="small">
               {formatterDato({ dato: periode.meldedato! })}
               <span className="sr-only">, sendt inn for sent </span>
             </Tag>

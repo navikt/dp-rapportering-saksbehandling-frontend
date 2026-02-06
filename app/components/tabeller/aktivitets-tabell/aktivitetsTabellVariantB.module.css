@@ -58,7 +58,7 @@
 }
 
 @layer overrides {
-  .fyllUtTabell :global(.navds-body-short) {
+  .fyllUtTabell :global(.aksel-body-short) {
     font-size: var(--ax-font-size-small) !important;
     line-height: var(--ax-font-line-height-medium) !important;
   }

@@ -74,16 +74,16 @@ p {
 
 /* Overskriver Aksel */
 @layer overrides {
-  .navds-table__row:has(+ .navds-table__row--selected)
-    :is(.navds-table__header-cell, .navds-table__data-cell) {
+  .aksel-table__row:has(+ .aksel-table__row--selected)
+    :is(.aksel-table__header-cell, .aksel-table__data-cell) {
     border-left-color: transparent !important;
   }
 
-  .navds-table__row--selected :is(.navds-table__header-cell, .navds-table__data-cell) {
+  .aksel-table__row--selected :is(.aksel-table__header-cell, .aksel-table__data-cell) {
     border-left-color: transparent !important;
   }
 
-  .navds-accordion--small .navds-accordion__header {
+  .aksel-accordion--small .aksel-accordion__header {
     padding: var(--ax-space-16) var(--ax-space-12) !important;
   }
 
