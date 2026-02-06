@@ -37,7 +37,7 @@ export function KalenderOgAktiviteter({
 
   return (
     <div className={styles.kalenderOgSammenlagt}>
-      <Kalender periode={periode} variant={variant} hideWeekLabels={true} />
+      <Kalender periode={periode} variant={variant} hideWeekLabels={true} layout="vertical" />
       {harAktiviteter ? (
         <div className={styles.sammenlagt} id={`sammenlagt-${periode.id}`}>
           <Heading level="4" size="xsmall">
