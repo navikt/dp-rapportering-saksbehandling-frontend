@@ -277,7 +277,7 @@ export default function Periode() {
           </div>
           <div className={styles.kalenderOgBegrunnelseWrapper}>
             <div className={styles.kalenderContainer}>
-              <Kalender periode={periode} variant={variant} layout="horizontal" />
+              <Kalender periode={periode} variant={variant} />
             </div>
 
             {periode.begrunnelse && (

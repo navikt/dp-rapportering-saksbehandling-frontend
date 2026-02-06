@@ -47,7 +47,7 @@ export function Kalender({
   periode,
   variant = null,
   hideWeekLabels = false,
-  layout = "vertical",
+  layout = "horizontal",
 }: IProps) {
   if (!periode) return null;
 
@@ -81,9 +81,8 @@ export function Kalender({
     kalenderData?.tableCaption ??
     `Oversikt over rapporterte dager for uke ${forsteUkenummer} og ${andreUkenummer}`;
 
-  // Variant A (null eller eksplisitt "A"): alltid vertikal layout (ukene stablet)
-  const isVariantA = variant === "A" || variant === null;
-  if (isVariantA) {
+  // Original: alltid vertikal layout (ukene stablet)
+  if (variant === null) {
     return (
       <table className={stylesOriginal.kalenderTabell}>
         <caption className="sr-only">{tableCaption}</caption>
@@ -125,7 +124,7 @@ export function Kalender({
     );
   }
 
-  // Horisontal layout: ukene side ved side (for korriger med Variant B eller original)
+  // Horisontal layout: ukene side ved side (for korrigering)
   if (layout === "horizontal") {
     return (
       <div className={stylesVariantB.kalenderVariantB}>
