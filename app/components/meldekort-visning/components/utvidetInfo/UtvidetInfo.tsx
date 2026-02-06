@@ -1,4 +1,4 @@
-import { Alert, BodyLong, Button, Link, Table } from "@navikt/ds-react";
+import { Alert, BodyLong, Button, Link, Table, Tag } from "@navikt/ds-react";
 import { format } from "date-fns";
 import { useLayoutEffect, useRef, useState } from "react";
 
@@ -251,7 +251,9 @@ export function UtvidetInfo({
             periode.registrertArbeidssoker !== undefined &&
             skalViseArbeidssoker && (
               <DetailRow label={labels.svarPaaArbeidssoekerregistrering}>
-                {erArbeidssoker ? "Ja" : "Nei"}
+                <Tag size="small" variant={erArbeidssoker ? "success" : "error"}>
+                  {erArbeidssoker ? "Ja" : "Nei"}
+                </Tag>
               </DetailRow>
             )}
 
