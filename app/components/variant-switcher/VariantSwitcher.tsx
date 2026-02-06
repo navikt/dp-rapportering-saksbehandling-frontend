@@ -57,7 +57,7 @@ export function VariantSwitcher() {
     <div className={styles.variantButtonContainer}>
       <ActionMenu>
         <ActionMenu.Trigger>
-          <Button variant="primary-neutral" size="small">
+          <Button data-color="neutral" variant="primary" size="small">
             Verktøy
           </Button>
         </ActionMenu.Trigger>

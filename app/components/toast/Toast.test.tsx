@@ -49,7 +49,7 @@ describe("Toast", () => {
 
       const { container } = render(<Toast toast={toast} onClose={mockOnClose} />);
 
-      const alert = container.querySelector(".navds-alert--success");
+      const alert = container.querySelector(".aksel-alert--success");
       expect(alert).toBeInTheDocument();
     });
 
@@ -62,7 +62,7 @@ describe("Toast", () => {
 
       const { container } = render(<Toast toast={toast} onClose={mockOnClose} />);
 
-      const alert = container.querySelector(".navds-alert--error");
+      const alert = container.querySelector(".aksel-alert--error");
       expect(alert).toBeInTheDocument();
     });
   });

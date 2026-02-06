@@ -45,7 +45,7 @@
 .begrunnelse-visning {
   border: 1px solid var(--ax-border-accent-subtleA);
   padding: var(--ax-space-16);
-  border-radius: var(--ax-border-radius-medium);
+  border-radius: var(--ax-radius-4);
 }
 
 .begrunnelse-visning h4 {

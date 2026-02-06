@@ -166,7 +166,7 @@ app/components/tabeller/kalender/
   flex: 2;
 }
 
-.begrunnelse :global(.navds-textarea__input) {
+.begrunnelse :global(.aksel-textarea__input) {
   height: 115px !important;
   --__ac-textarea-height: 115px;
   --__axc-textarea-height: 115px;

@@ -36,8 +36,8 @@ export default function Rapportering() {
       as="main"
       id="main-content"
       tabIndex={-1}
-      paddingBlock="10"
-      paddingInline="4"
+      paddingBlock="space-40"
+      paddingInline="space-16"
       style={{ maxWidth: "800px", margin: "0 auto" }}
     >
       <VStack gap="space-48">
@@ -59,7 +59,7 @@ export default function Rapportering() {
             <Heading level="2" size="medium">
               {data.forside?.sectionHeading || "Gå til løsningen:"}
             </Heading>
-            <VStack gap="3">
+            <VStack gap="space-12">
               {data.personer.flatMap((person) => {
                 const navn = `${person.fornavn} ${person.mellomnavn ? person.mellomnavn + " " : ""}${
                   person.etternavn

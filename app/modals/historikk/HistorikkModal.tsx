@@ -168,13 +168,13 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
                                     hendelse.sisteFristForTrekk || "",
                                   )}
                                 </BodyShort>
-                                <Tag variant="error" size="xsmall">
+                                <Tag data-color="danger" variant="outline" size="xsmall">
                                   {tekster.tags.forSentInnsendt}
                                 </Tag>
                               </>
                             )}
                             {hendelse.hendelseType === "Korrigert" && (
-                              <Tag variant="warning" size="small">
+                              <Tag data-color="warning" variant="outline" size="small">
                                 {tekster.tags.korrigert}
                               </Tag>
                             )}

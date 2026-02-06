@@ -41,7 +41,7 @@
   animation: highlightBlinkAndFade 3.5s ease-out;
 }
 
-/* === NavDS Overrides === */
+/* === Aksel Overrides === */
 
 /* Overstyrer padding inline på innholdet */
 :global(.aksel-table__expanded-row-content--gutter-left),

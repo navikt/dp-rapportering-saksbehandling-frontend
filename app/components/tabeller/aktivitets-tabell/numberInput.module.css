@@ -7,7 +7,7 @@
   background: var(--ax-bg-default);
   padding: 2px;
   margin: -2px;
-  border-radius: var(--ax-border-radius-medium);
+  border-radius: var(--ax-radius-4);
 }
 
 .container {
@@ -23,7 +23,7 @@
   text-align: center;
   line-height: 1.2;
   border: 1px solid var(--ax-border-neutral-subtle);
-  border-radius: var(--ax-border-radius-medium);
+  border-radius: var(--ax-radius-4);
   background: var(--ax-bg-default);
   color: var(--ax-text-default);
   font-family: inherit;
@@ -72,7 +72,7 @@
   z-index: 10;
   background: var(--ax-bg-default);
   padding: 2px;
-  border-radius: var(--ax-border-radius-medium);
+  border-radius: var(--ax-radius-4);
 }
 
 .container:hover .buttons,
@@ -89,7 +89,7 @@
   height: 14px;
   padding: 0;
   border: 1px solid var(--ax-border-neutral-subtle);
-  border-radius: var(--ax-border-radius-small);
+  border-radius: var(--ax-radius-2);
   background: var(--ax-bg-default);
   color: var(--ax-text-default);
   cursor: pointer;
@@ -125,7 +125,7 @@
   background: var(--ax-bg-danger);
   color: var(--ax-text-on-danger);
   font-size: var(--ax-font-size-small);
-  border-radius: var(--ax-border-radius-medium);
+  border-radius: var(--ax-radius-4);
   white-space: nowrap;
   z-index: 100;
   box-shadow: var(--ax-shadow-dialog);

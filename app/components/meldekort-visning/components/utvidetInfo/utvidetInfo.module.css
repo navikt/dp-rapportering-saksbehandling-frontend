@@ -5,22 +5,22 @@
   width: 40%;
 }
 
-/* Overstyr NAVs Table-styling */
-.detaljer :global(.navds-table__body .navds-table__row) {
+/* Overstyr Aksel Table-styling */
+.detaljer :global(.aksel-table__body .aksel-table__row) {
   border-bottom: 2px solid var(--ax-neutral-100) !important;
 }
 
-.detaljer :global(.navds-table__header-cell) {
+.detaljer :global(.aksel-table__header-cell) {
   border-bottom: 2px solid var(--ax-neutral-100) !important;
 }
 
-.detaljer :global(.navds-table__data-cell) {
+.detaljer :global(.aksel-table__data-cell) {
   border-bottom: 2px solid var(--ax-neutral-100) !important;
 }
 
 /* For rader med lang tekst (som begrunnelse) */
-.alignTop :global(.navds-table__header-cell),
-.alignTop :global(.navds-table__data-cell) {
+.alignTop :global(.aksel-table__header-cell),
+.alignTop :global(.aksel-table__data-cell) {
   vertical-align: top !important;
 }
 

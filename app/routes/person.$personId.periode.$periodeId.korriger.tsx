@@ -355,7 +355,7 @@ export default function Periode() {
           </div>
           <div className={styles.knapper}>
             {skjema.state.visValideringsfeil.aktiviteter && (
-              <div className="navds-error-message navds-error-message--medium" role="alert">
+              <div className="aksel-error-message aksel-error-message--medium" role="alert">
                 {skjema.feilmeldinger.aktiviteter}
               </div>
             )}
