@@ -5,8 +5,6 @@ import type {
 } from "~/utils/behandlingsresultat.types";
 import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
-
-// Re-eksporter fra constants fil for bakoverkompatibilitet
 export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
