@@ -229,7 +229,7 @@ export function MeldekortRad({
             {statusConfig.text}
           </Tag>
           {erKorrigert && (
-            <Tag variant="info" size="small">
+            <Tag variant="warning" size="small">
               {statusTekster.korrigering}
             </Tag>
           )}

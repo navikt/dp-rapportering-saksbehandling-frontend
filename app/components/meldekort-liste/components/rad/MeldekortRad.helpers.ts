@@ -39,7 +39,7 @@ export function getStatusConfig(
   }
 
   if (erInnsendt) {
-    return { text: tekster.innsendt, variant: "success" };
+    return { text: tekster.innsendt, variant: "info" };
   }
 
   if (kanSendes) {

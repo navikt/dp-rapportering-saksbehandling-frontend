@@ -53,7 +53,7 @@ describe("MeldekortRad.helpers", () => {
 
       expect(result).toEqual({
         text: "Innsendt",
-        variant: "success",
+        variant: "info",
       });
     });
 
