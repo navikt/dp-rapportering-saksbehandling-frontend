@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { useMemo, useState } from "react";
 
 import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import {
@@ -50,7 +51,7 @@ export default function Personlinje({
   const erMaskert = fulltNavn.includes("•") || person.ident.includes("•");
 
   // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const texts = personlinjeData ?? DEFAULT_PERSONLINJE;
+  const texts = deepMerge(DEFAULT_PERSONLINJE, personlinjeData);
 
   const events = useMemo(() => {
     return [

@@ -116,19 +116,18 @@ export default function Periode() {
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
 
   // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const tekster = deepMerge(DEFAULT_TEKSTER, korrigerData);
+  const baseTekster = deepMerge(DEFAULT_TEKSTER, korrigerData);
   // skjermleserStatus hentes fra varsler (har prioritet over korriger-data)
-  if (rootData?.sanityData?.varsler?.skjermleserStatus) {
-    tekster.skjermleserStatus = rootData.sanityData.varsler.skjermleserStatus;
-  } else {
-    // Fallback skjermleserStatus
-    tekster.skjermleserStatus = {
-      senderInn: "Sender inn meldekort...",
-      behandler: "Behandler meldekort...",
-      feilet: "Innsending feilet",
-      suksess: "Meldekort sendt inn",
-    };
-  }
+  const skjermleserStatus = rootData?.sanityData?.varsler?.skjermleserStatus ?? {
+    senderInn: "Sender inn meldekort...",
+    behandler: "Behandler meldekort...",
+    feilet: "Innsending feilet",
+    suksess: "Meldekort sendt inn",
+  };
+  const tekster = {
+    ...baseTekster,
+    skjermleserStatus,
+  };
 
   const varslerData = rootData?.sanityData?.varsler;
   const bekreftModalTekster = deepMerge(DEFAULT_BEKREFT_MODAL, {

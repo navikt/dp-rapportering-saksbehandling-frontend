@@ -4,6 +4,7 @@ import type {
   IPengeVerdi,
 } from "~/utils/behandlingsresultat.types";
 import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 // Re-eksporter fra constants fil for bakoverkompatibilitet
 export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
@@ -32,7 +33,7 @@ export function getStatusConfig(
   statuser?: IMeldekortStatuser | null,
 ): StatusConfig {
   // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
-  const tekster = { ...DEFAULT_STATUSER, ...(statuser ?? {}) };
+  const tekster = deepMerge(DEFAULT_STATUSER, statuser);
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
   const kanSendes = periode.kanSendes;
 

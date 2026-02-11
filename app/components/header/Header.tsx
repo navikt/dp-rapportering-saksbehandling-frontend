@@ -5,6 +5,7 @@ import { useRevalidator } from "react-router";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import type { IMeldekortHeader } from "~/sanity/fellesKomponenter/header/types";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import type { ISaksbehandler } from "~/utils/types";
 
 import styles from "./header.module.css";
@@ -46,7 +47,7 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
   };
 
   // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const texts = headerData ?? DEFAULT_HEADER;
+  const texts = deepMerge(DEFAULT_HEADER, headerData);
   const userButtonAriaLabel = texts.userButtonAriaLabel.replace(
     "{{name}}",
     saksbehandler.givenName,
