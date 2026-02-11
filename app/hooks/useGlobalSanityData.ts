@@ -7,7 +7,7 @@ import type { GlobalSanityData } from "~/sanity/fetchGlobalData";
  * Returnerer null hvis data ikke er tilgjengelig (f.eks. i test-miljø).
  *
  * @example
- * const sanityData = useSanityData();
+ * const sanityData = useGlobalSanityData();
  * const aktivitetLabels = sanityData?.aktiviteter?.jobb.kort ?? "Jobb";
  */
 export function useGlobalSanityData(): GlobalSanityData | null {

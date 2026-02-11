@@ -9,24 +9,25 @@ import type { ISaksbehandler } from "~/utils/types";
 
 import styles from "./header.module.css";
 
-interface HeaderProps {
-  saksbehandler: ISaksbehandler;
-  headerData: IMeldekortHeader | null | undefined;
-}
-
-const defaultHeaderData: IMeldekortHeader = {
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_HEADER = {
   skipLink: "Hopp til hovedinnhold",
   systemHeaderAriaLabel: "Systemheader",
   homeLink: "Dagpenger",
   homeLinkAriaLabel: "Gå til forsiden",
-  userButtonAriaLabel: "Brukermeny for {{name}}",
-  dropdownAriaLabel: "Brukerhandlinger",
+  userButtonAriaLabel: "Meny for {{name}}",
+  dropdownAriaLabel: "Brukermeny",
   sensitiveDataSwitchLabel: "Skjul sensitive opplysninger",
   sensitiveDataSwitchDescription: "Anbefales for økt sikkerhet",
   logoutLinkText: "Logg ut",
-  darkThemeActive: "Mørkt tema aktivert. Klikk for å bytte til lyst tema",
-  lightThemeActive: "Lyst tema aktivert. Klikk for å bytte til mørkt tema",
+  darkThemeActive: "Mørkt tema er aktivt",
+  lightThemeActive: "Lyst tema er aktivt",
 };
+
+interface HeaderProps {
+  saksbehandler: ISaksbehandler;
+  headerData: IMeldekortHeader | null | undefined;
+}
 
 const Header = ({ saksbehandler, headerData }: HeaderProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -44,7 +45,8 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
     revalidator.revalidate();
   };
 
-  const texts = { ...defaultHeaderData, ...(headerData ?? {}) };
+  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
+  const texts = headerData ?? DEFAULT_HEADER;
   const userButtonAriaLabel = texts.userButtonAriaLabel.replace(
     "{{name}}",
     saksbehandler.givenName,

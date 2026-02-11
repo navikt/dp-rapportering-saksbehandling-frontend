@@ -63,7 +63,7 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
    SANITY_DATASETT="production"
    ```
 
-   > **Sanity CMS**: Brukes for å hente redaksjonsinnhold. Se [app/utils/SANITY_README.md](app/utils/SANITY_README.md) for mer info.
+   > **Sanity CMS**: Brukes for å hente redaksjonsinnhold. Se [app/sanity/README.md](app/sanity/README.md) for mer info.
 
 4. **Start utviklingsserveren**
    ```bash

@@ -2,14 +2,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { IMeldekortAktiviteter } from "./fellesKomponenter/aktiviteter/types";
 import type { IMeldekortAktivitetsTabell } from "./fellesKomponenter/aktivitetstabell/types";
-import type { IMeldekortBekreftModal } from "./fellesKomponenter/bekreft-modal/types";
 import type { IMeldekortHeader } from "./fellesKomponenter/header/types";
-import type { IMeldekortHistorikkModal } from "./fellesKomponenter/historikk-modal/types";
 import type { IMeldekortKalender } from "./fellesKomponenter/kalender/types";
 import type { IMeldekortPersonlinje } from "./fellesKomponenter/personlinje/types";
 import type { IMeldekortStatuser } from "./fellesKomponenter/statuser/types";
 import type { IMeldekortVarsler } from "./fellesKomponenter/varsler/types";
 import { fetchGlobalSanityData } from "./fetchGlobalData";
+import type { IMeldekortBekreftModal } from "./modaler/bekreft-modal/types";
+import type { IMeldekortHistorikkModal } from "./modaler/historikk-modal/types";
 
 // Mock sanityClient
 vi.mock("./client", () => ({

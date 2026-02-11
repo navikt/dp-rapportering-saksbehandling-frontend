@@ -14,14 +14,15 @@ import { logger } from "~/models/logger.server";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import { sanityClient } from "~/sanity/client";
-import { korrigerQuery } from "~/sanity/fellesKomponenter/korriger/queries";
-import type { IMeldekortKorriger } from "~/sanity/fellesKomponenter/korriger/types";
+import { korrigerQuery } from "~/sanity/sider/korriger/queries";
+import type { IMeldekortKorriger } from "~/sanity/sider/korriger/types";
 import stylesOriginal from "~/styles/route-styles/korriger.module.css";
 import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, formatterDatoUTC, ukenummer } from "~/utils/dato.utils";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import { addDemoParamsToURL, buildURLWithDemoParams } from "~/utils/demo-params.utils";
 import {
   type IKorrigertDag,
@@ -33,15 +34,15 @@ import type { IRapporteringsperiode } from "~/utils/types";
 import type { Route } from "../+types/root";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER = {
+const DEFAULT_TEKSTER: IMeldekortKorriger = {
   overskrift: "Korriger meldekort",
   underoverskrift: "Uke {{uker}} | {{periode}}",
   gjeldendeMeldekort: {
     overskrift: "Korrigering av følgende meldekort",
     innsendtDato: "Meldekortet ble innsendt {{dato}}",
     begrunnelseOverskrift: {
-      korrigering: "Begrunnelse for korrigering",
-      manuellInnsending: "Begrunnelse for innsending",
+      korrigering: "Begrunnelse for korrigering:",
+      manuellInnsending: "Begrunnelse for innsending:",
     },
   },
   korrigeringsskjema: {
@@ -64,16 +65,14 @@ const DEFAULT_TEKSTER = {
   },
 };
 
-// BekreftModal hentes fra global Sanity-data, ikke lokale defaults
-// Disse brukes kun som siste fallback
 const DEFAULT_BEKREFT_MODAL = {
-  avbrytKorrigering: {
+  avbryt: {
     overskrift: "Vil du avbryte korrigeringen?",
     innhold: "Hvis du avbryter, vil ikke endringene du har gjort så langt korrigeres",
     bekreftKnapp: "Ja, avbryt",
     avbrytKnapp: "Nei, fortsett",
   },
-  fullfoerKorrigering: {
+  fullfoer: {
     overskrift: "Vil du fullføre korrigeringen?",
     innhold: 'Ved å trykke "Ja" vil korrigeringen sendes inn.',
     bekreftKnapp: "Ja, fullfør",
@@ -95,8 +94,13 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   } catch (error) {
     logger.error(
       `Kunne ikke hente korriger-data fra Sanity for person.${personId}.periode.${params.periodeId}.korriger`,
-      { error },
+      {
+        error,
+        route: "korriger",
+        metric: "sanity_fetch_failed",
+      },
     );
+    // Hvis fetch feiler, vil build-time data brukes fra mergeWithBuildTimeData
   }
 
   return { periode, saksbehandler, personId, variant, korrigerData };
@@ -110,28 +114,27 @@ export default function Periode() {
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
+
+  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
+  const tekster = deepMerge(DEFAULT_TEKSTER, korrigerData);
+  // skjermleserStatus hentes fra varsler (har prioritet over korriger-data)
+  if (rootData?.sanityData?.varsler?.skjermleserStatus) {
+    tekster.skjermleserStatus = rootData.sanityData.varsler.skjermleserStatus;
+  } else {
+    // Fallback skjermleserStatus
+    tekster.skjermleserStatus = {
+      senderInn: "Sender inn meldekort...",
+      behandler: "Behandler meldekort...",
+      feilet: "Innsending feilet",
+      suksess: "Meldekort sendt inn",
+    };
+  }
+
   const varslerData = rootData?.sanityData?.varsler;
-
-  // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
-  const tekster = {
-    ...DEFAULT_TEKSTER,
-    ...(korrigerData ?? {}),
-    // skjermleserStatus hentes fra varsler først, så korriger-data, så defaults
-    skjermleserStatus:
-      varslerData?.skjermleserStatus ??
-      korrigerData?.skjermleserStatus ??
-      DEFAULT_TEKSTER.skjermleserStatus,
-  };
-
-  // Hent bekreftModal fra global data
-  const bekreftModalTekster = {
-    avbryt:
-      rootData?.sanityData?.bekreftModal?.avbrytKorrigering ??
-      DEFAULT_BEKREFT_MODAL.avbrytKorrigering,
-    fullfoer:
-      rootData?.sanityData?.bekreftModal?.fullfoerKorrigering ??
-      DEFAULT_BEKREFT_MODAL.fullfoerKorrigering,
-  };
+  const bekreftModalTekster = deepMerge(DEFAULT_BEKREFT_MODAL, {
+    avbryt: rootData?.sanityData?.bekreftModal?.avbrytKorrigering,
+    fullfoer: rootData?.sanityData?.bekreftModal?.fullfoerKorrigering,
+  });
 
   const isMountedRef = useRef(true);
 

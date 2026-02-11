@@ -1,6 +1,6 @@
 import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
 
-import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
+import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import type {
@@ -54,7 +54,7 @@ export function MeldekortVisning({
       variant ?? null,
     );
 
-    // Hent tekster fra Sanity med fallback
+    // Hent tekster fra Sanity med fallback til defaults
     const tomtMeldekortTekst =
       hovedsideData?.utvidetVisning.emptyCardMessage ?? DEFAULT_TEKSTER.tomtMeldekort;
     const fyllUtKnapp = hovedsideData?.knapper.fyllutMeldekort ?? DEFAULT_TEKSTER.fyllUtKnapp;

@@ -1,6 +1,6 @@
 import { Table } from "@navikt/ds-react";
 
-import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
+import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { getTogglePlacement } from "~/utils/ab-test.utils";
 import type { IBehandlingerPerPeriode } from "~/utils/behandlingsresultat.types";

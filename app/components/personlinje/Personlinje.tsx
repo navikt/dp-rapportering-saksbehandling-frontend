@@ -20,12 +20,13 @@ import {
 } from "./Personlinje.helpers";
 import styles from "./personlinje.module.css";
 
-const defaultPersonlinjeData: IMeldekortPersonlinje = {
-  sectionAriaLabel: "Informasjon om bruker",
-  birthNumberLabel: "Fødselsnummer",
-  ageLabel: "Alder",
-  genderLabel: "Kjønn",
-  citizenshipLabel: "Statsborgerskap",
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_PERSONLINJE = {
+  sectionAriaLabel: "Brukerinformasjon",
+  birthNumberLabel: "Fødselsnummer:",
+  ageLabel: "Alder:",
+  genderLabel: "Kjønn:",
+  citizenshipLabel: "Statsborgerskap:",
   historyButton: "Historikk",
 };
 
@@ -48,7 +49,8 @@ export default function Personlinje({
   // Sjekk om data er maskert (kommer fra server-side maskering)
   const erMaskert = fulltNavn.includes("•") || person.ident.includes("•");
 
-  const texts = { ...defaultPersonlinjeData, ...(personlinjeData ?? {}) };
+  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
+  const texts = personlinjeData ?? DEFAULT_PERSONLINJE;
 
   const events = useMemo(() => {
     return [

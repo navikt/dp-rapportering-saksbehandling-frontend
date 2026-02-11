@@ -1,10 +1,58 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import { ANSVARLIG_SYSTEM, MELDEKORT_TYPE, OPPRETTET_AV, ROLLE } from "~/utils/constants";
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import { UtvidetInfo } from "./UtvidetInfo";
+
+// Mock Sanity data for testing
+const mockHovedsideData: IMeldekortHovedside = {
+  overskrift: "Meldekort",
+  listeOverskrift: "Meldekortliste",
+  tabellKolonner: {
+    uke: "Uke",
+    dato: "Dato",
+    status: "Status",
+    aktiviteter: "Aktiviteter",
+    meldedato: "Meldedato",
+    frist: "Frist",
+  },
+  utvidetVisning: {
+    overskrift: "Uke {{uker}}",
+    emptyCardMessage: "Dette meldekortet er ikke fylt ut enda.",
+    aktiviteterTittel: "Aktiviteter",
+    noActivitiesText: "Ingen aktiviteter registrert",
+    tabellTittel: "Detaljert informasjon om meldekortet",
+    infoLabels: {
+      meldedato: "Meldedato:",
+      datoForInnsending: "Dato for innsending:",
+      datoForKorrigering: "Dato for korrigering:",
+      korrigertAv: "Korrigert av:",
+      innsendtAv: "Innsendt av:",
+      begrunnelse: {
+        label: "Begrunnelse:",
+        visMer: "Vis mer",
+        visMindre: "Vis mindre",
+      },
+      svarPaaArbeidssoekerregistrering: "Svar på spørsmål om arbeidssøkerregistrering:",
+      beregnetBruttobelop: "Beregnet bruttobeløp:",
+      periodenBeregningenGjelderFor: "Perioden beregningen gjelder for:",
+    },
+  },
+  knapper: {
+    korrigerMeldekort: "Korriger meldekort",
+    fyllutMeldekort: "Fyll ut meldekort",
+  },
+  varsler: {
+    forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen.",
+    fraArena: "Dette meldekortet er opprettet i Arena",
+    etterregistrert: "Dette meldekortet er etterregistrert",
+    kanIkkeEndres: "Dette meldekortet kan ikke endres",
+    belopSamsvarerIkke: "Beløpet samsvarer ikke med perioden",
+  },
+};
 
 describe("UtvidetInfo", () => {
   const basePeriode: IRapporteringsperiode = {
@@ -32,7 +80,12 @@ describe("UtvidetInfo", () => {
   describe("Rendering av detaljer", () => {
     it("skal ha tilgjengelig caption for skjermlesere", () => {
       render(
-        <UtvidetInfo periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       const caption = screen.getByText("Detaljert informasjon om meldekortet");
@@ -46,7 +99,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText("Meldedato:")).toBeInTheDocument();
@@ -60,7 +118,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.queryByText("Meldedato:")).not.toBeInTheDocument();
@@ -74,7 +137,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText("Dato for innsending:")).toBeInTheDocument();
@@ -89,7 +157,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText("Dato for korrigering:")).toBeInTheDocument();
@@ -102,7 +175,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.queryByText(/Dato for/)).not.toBeInTheDocument();
@@ -121,7 +199,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       // Skal ikke vise kilde når verken korrigert eller saksbehandler
@@ -139,7 +222,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText("Korrigert av:")).toBeInTheDocument();
@@ -157,7 +245,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText("Innsendt av:")).toBeInTheDocument();
@@ -175,7 +268,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       // Skal vise "Korrigert av" med rolle fordi det er korrigert
@@ -191,7 +289,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.queryByText(/av:/)).not.toBeInTheDocument();
@@ -206,7 +309,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText("Begrunnelse:")).toBeInTheDocument();
@@ -220,7 +328,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.queryByText("Begrunnelse:")).not.toBeInTheDocument();
@@ -235,7 +348,12 @@ describe("UtvidetInfo", () => {
       };
 
       const { container } = render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       const ariaLiveElement = container.querySelector('[aria-live="polite"]');
@@ -251,7 +369,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText("Svar på spørsmål om arbeidssøkerregistrering:")).toBeInTheDocument();
@@ -265,7 +388,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText("Svar på spørsmål om arbeidssøkerregistrering:")).toBeInTheDocument();
@@ -279,7 +407,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(
@@ -294,7 +427,12 @@ describe("UtvidetInfo", () => {
       // Eksplisitt ikke setter registrertArbeidssoker
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(
@@ -312,7 +450,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText(/dette meldekortet er sendt inn/i)).toBeInTheDocument();
@@ -327,7 +470,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.getByText(/1 dag etter fristen/i)).toBeInTheDocument();
@@ -341,7 +489,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       // Skal inneholde "dager" (flertall)
@@ -356,7 +509,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.queryByText(/sendt inn .* etter fristen/i)).not.toBeInTheDocument();
@@ -371,7 +529,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       const knapp = screen.getByRole("button", { name: /korriger meldekort/i });
@@ -386,7 +549,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.queryByRole("button", { name: /korriger meldekort/i })).not.toBeInTheDocument();
@@ -399,7 +567,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.ARENA} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.ARENA}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       expect(screen.queryByRole("button", { name: /korriger meldekort/i })).not.toBeInTheDocument();
@@ -413,7 +586,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="789" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="789"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       const knapp = screen.getByRole("button", { name: /korriger meldekort/i });
@@ -439,7 +617,12 @@ describe("UtvidetInfo", () => {
       };
 
       render(
-        <UtvidetInfo periode={periode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <UtvidetInfo
+          periode={periode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
       );
 
       // Skal vise alle detaljer
