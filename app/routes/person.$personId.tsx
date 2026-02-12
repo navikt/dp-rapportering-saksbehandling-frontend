@@ -18,8 +18,8 @@ import {
   hentRapporteringsperioder,
 } from "~/models/rapporteringsperiode.server";
 import { sanityClient } from "~/sanity/client";
-import { hovedsideQuery } from "~/sanity/fellesKomponenter/forside/queries";
-import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
+import { hovedsideQuery } from "~/sanity/sider/hovedside/queries";
+import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import styles from "~/styles/route-styles/root.module.css";
 import { isDemoToolsEnabled } from "~/utils/ab-test.server";
 import { finnBehandlingerForPerioder } from "~/utils/behandlinger.utils";
@@ -70,7 +70,12 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     try {
       hovedsideData = await sanityClient.fetch<IMeldekortHovedside>(hovedsideQuery);
     } catch (error) {
-      logger.error("Kunne ikke hente hovedside-data fra Sanity:", { error });
+      logger.error("Kunne ikke hente hovedside-data fra Sanity:", {
+        error,
+        route: "person.$personId",
+        metric: "sanity_fetch_failed",
+      });
+      // hovedsideData forblir null - komponenter vil bruke defaults
     }
 
     return {

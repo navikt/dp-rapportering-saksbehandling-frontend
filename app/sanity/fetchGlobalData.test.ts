@@ -2,14 +2,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { IMeldekortAktiviteter } from "./fellesKomponenter/aktiviteter/types";
 import type { IMeldekortAktivitetsTabell } from "./fellesKomponenter/aktivitetstabell/types";
-import type { IMeldekortBekreftModal } from "./fellesKomponenter/bekreft-modal/types";
 import type { IMeldekortHeader } from "./fellesKomponenter/header/types";
-import type { IMeldekortHistorikkModal } from "./fellesKomponenter/historikk-modal/types";
 import type { IMeldekortKalender } from "./fellesKomponenter/kalender/types";
 import type { IMeldekortPersonlinje } from "./fellesKomponenter/personlinje/types";
 import type { IMeldekortStatuser } from "./fellesKomponenter/statuser/types";
 import type { IMeldekortVarsler } from "./fellesKomponenter/varsler/types";
 import { fetchGlobalSanityData } from "./fetchGlobalData";
+import type { IMeldekortBekreftModal } from "./modaler/bekreft-modal/types";
+import type { IMeldekortHistorikkModal } from "./modaler/historikk-modal/types";
 
 // Mock sanityClient
 vi.mock("./client", () => ({
@@ -22,6 +22,7 @@ vi.mock("./client", () => ({
 vi.mock("~/models/logger.server", () => ({
   logger: {
     error: vi.fn(),
+    warn: vi.fn(),
   },
 }));
 
@@ -241,17 +242,19 @@ describe("fetchGlobalSanityData", () => {
       varsler: null,
       aktivitetstabell: null,
     });
-    expect(logger.error).toHaveBeenCalledWith("Kunne ikke hente globale data fra Sanity:", {
+    // Med Promise.allSettled logges hver feilende query individuelt
+    expect(logger.warn).toHaveBeenCalledTimes(9);
+    expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining("Sanity query"), {
+      queryName: expect.any(String),
       error: expect.any(Error),
     });
   });
 
   it("skal returnere null-verdier hvis sanityClient.fetch kaster feil", async () => {
     const { sanityClient } = await import("./client");
+    const { logger } = await import("~/models/logger.server");
 
-    vi.mocked(sanityClient.fetch).mockImplementation(() => {
-      throw new Error("Network error");
-    });
+    vi.mocked(sanityClient.fetch).mockRejectedValue(new Error("Network error"));
 
     const result = await fetchGlobalSanityData();
 
@@ -266,30 +269,46 @@ describe("fetchGlobalSanityData", () => {
       varsler: null,
       aktivitetstabell: null,
     });
+    expect(logger.warn).toHaveBeenCalledTimes(9);
   });
 
   it("skal kunne håndtere at kun en av fetchene feiler", async () => {
     const { sanityClient } = await import("./client");
+    const { logger } = await import("~/models/logger.server");
 
-    // Først returnerer den header data, så feiler den på personlinje
+    // Mock 9 queries: header lykkes, personlinje feiler, resten lykkes
     vi.mocked(sanityClient.fetch)
       .mockResolvedValueOnce(mockHeaderData as never)
-      .mockRejectedValueOnce(new Error("Personlinje fetch failed"));
+      .mockRejectedValueOnce(new Error("Personlinje fetch failed"))
+      .mockResolvedValueOnce(mockBekreftModalData as never)
+      .mockResolvedValueOnce(mockHistorikkModalData as never)
+      .mockResolvedValueOnce(mockAktiviteterData as never)
+      .mockResolvedValueOnce(mockStatuserData as never)
+      .mockResolvedValueOnce(mockKalenderData as never)
+      .mockResolvedValueOnce(mockVarslerData as never)
+      .mockResolvedValueOnce(mockAktivitetstabellData as never);
 
     const result = await fetchGlobalSanityData();
 
-    // Siden vi bruker Promise.all, vil hele operasjonen feile
-    // og returnere null for alle
+    // Med Promise.allSettled får vi partial success:
+    // kun personlinje feiler, resten returnerer data
     expect(result).toEqual({
-      header: null,
+      header: mockHeaderData,
       personlinje: null,
-      bekreftModal: null,
-      historikkModal: null,
-      aktiviteter: null,
-      statuser: null,
-      kalender: null,
-      varsler: null,
-      aktivitetstabell: null,
+      bekreftModal: mockBekreftModalData,
+      historikkModal: mockHistorikkModalData,
+      aktiviteter: mockAktiviteterData,
+      statuser: mockStatuserData,
+      kalender: mockKalenderData,
+      varsler: mockVarslerData,
+      aktivitetstabell: mockAktivitetstabellData,
+    });
+
+    // Kun én feil skal logges (personlinje)
+    expect(logger.warn).toHaveBeenCalledTimes(1);
+    expect(logger.warn).toHaveBeenCalledWith("Sanity query 'personlinje' feilet", {
+      queryName: "personlinje",
+      error: expect.any(Error),
     });
   });
 

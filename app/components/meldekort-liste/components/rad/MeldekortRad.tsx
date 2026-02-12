@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router";
 
 import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
 import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
-import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
+import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import type {

@@ -126,7 +126,7 @@ export function AktivitetsTabell({ dager, setKorrigerteDager, periode, variant =
   // Hent aktivitetstabell-tekster fra Sanity
   const aktivitetstabellData = sanityData?.aktivitetstabell;
   const DEFAULT_TEKSTER = {
-    fieldsetLegend: "{fieldsetLegend}",
+    fieldsetLegend: "Fyll ut aktiviteter for perioden",
     aktiviteterCaption: "Aktivitet",
     sumCaption: "Oppsummering",
     weekCaption: "Uke {{ukenummer}}",

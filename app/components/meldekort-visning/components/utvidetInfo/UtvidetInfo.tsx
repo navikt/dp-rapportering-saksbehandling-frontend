@@ -6,7 +6,7 @@ import {
   erPeriodeEtterregistrert,
   erPeriodeOpprettetAvArena,
 } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
-import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
+import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import { erMeldekortInnenforBehandlingsperiode } from "~/utils/behandlinger.utils";
@@ -15,6 +15,7 @@ import type {
   IPengeVerdi,
 } from "~/utils/behandlingsresultat.types";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import { skalViseArbeidssokerSporsmal } from "~/utils/meldekort-validering.helpers";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -26,19 +27,6 @@ import {
   pluraliserDager,
 } from "./UtvidetInfo.helpers";
 import styles from "./utvidetInfo.module.css";
-
-interface IProps {
-  periode: IRapporteringsperiode;
-  personId?: string;
-  ansvarligSystem: TAnsvarligSystem;
-  variant?: ABTestVariant;
-  behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
-  hovedsideData?: IMeldekortHovedside | null;
-}
-
-const MAX_LINES = 4;
-
-const NOK = new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK" });
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
 const DEFAULT_LABELS = {
@@ -58,7 +46,7 @@ const DEFAULT_LABELS = {
 };
 
 const DEFAULT_VARSLER = {
-  forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen",
+  forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen.",
   fraArena:
     "Dette meldekortet er fra Arena og vi viser derfor ikke svar på spørsmålet om arbeidssøkerregistrering.",
   etterregistrert:
@@ -67,6 +55,19 @@ const DEFAULT_VARSLER = {
   belopSamsvarerIkke:
     "Brutto beregnet beløp for dette meldekortet samsvarer ikke med meldekortperioden. Du kan se beregningen for meldekortet i DP-sak.",
 };
+
+interface IProps {
+  periode: IRapporteringsperiode;
+  personId?: string;
+  ansvarligSystem: TAnsvarligSystem;
+  variant?: ABTestVariant;
+  behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[];
+  hovedsideData?: IMeldekortHovedside | null;
+}
+
+const MAX_LINES = 4;
+
+const NOK = new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK" });
 
 const TruncatedText = ({
   text,
@@ -167,12 +168,12 @@ export function UtvidetInfo({
   const erSaksbehandler = erKildeSaksbehandler(periode);
   const useVariantLabels = variant === "B";
 
-  // Hent tekster fra Sanity med fallback
-  const labels = hovedsideData?.utvidetVisning.infoLabels ?? DEFAULT_LABELS;
+  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
+  const labels = deepMerge(DEFAULT_LABELS, hovedsideData?.utvidetVisning?.infoLabels);
   const tabellTittel =
-    hovedsideData?.utvidetVisning.tabellTittel ?? "Detaljert informasjon om meldekortet";
-  const varsler = hovedsideData?.varsler ?? DEFAULT_VARSLER;
-  const korrigerKnapp = hovedsideData?.knapper.korrigerMeldekort ?? "Korriger meldekort";
+    hovedsideData?.utvidetVisning?.tabellTittel ?? "Detaljert informasjon om meldekortet";
+  const varsler = deepMerge(DEFAULT_VARSLER, hovedsideData?.varsler);
+  const korrigerKnapp = hovedsideData?.knapper?.korrigerMeldekort ?? "Korriger meldekort";
 
   // Bruk samme logikk som i skjemaet for å bestemme om arbeidssøkerspørsmål skal vises
   const skalViseArbeidssoker = skalViseArbeidssokerSporsmal(

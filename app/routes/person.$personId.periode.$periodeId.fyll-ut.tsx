@@ -22,8 +22,8 @@ import { logger } from "~/models/logger.server";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import { sanityClient } from "~/sanity/client";
-import { fyllUtQuery } from "~/sanity/fellesKomponenter/fyll-ut/queries";
-import type { IMeldekortFyllUt } from "~/sanity/fellesKomponenter/fyll-ut/types";
+import { fyllUtQuery } from "~/sanity/sider/fyll-ut/queries";
+import type { IMeldekortFyllUt } from "~/sanity/sider/fyll-ut/types";
 import styles from "~/styles/route-styles/fyllUt.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import {
@@ -35,6 +35,7 @@ import {
   ROLLE,
 } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import { addDemoParamsToURL, buildURLWithDemoParams } from "~/utils/demo-params.utils";
 import {
   type IKorrigertDag,
@@ -46,13 +47,12 @@ import type { ISendInnMeldekort } from "~/utils/types";
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER = {
+const DEFAULT_TEKSTER: IMeldekortFyllUt = {
   overskrift: "Fyll ut meldekort",
   underoverskrift: "Uke {{uker}} | {{periode}}",
   infovarsler: {
-    arenaVarsel:
-      "Dette meldekortet er fra Arena og har derfor ikke svar på spørsmål om arbeidssøkerregistrering.",
-    etterregistrertVarsel: "Dette meldekortet er av typen Etterregistrert",
+    arenaVarsel: "Dette meldekortet er opprettet i Arena",
+    etterregistrertVarsel: "Dette meldekortet er etterregistrert",
   },
   utfyllingsskjema: {
     datovelgerLabel: "Sett meldedato",
@@ -64,27 +64,43 @@ const DEFAULT_TEKSTER = {
     begrunnelseLabel: "Begrunnelse",
   },
   feilmeldinger: {
-    datovelgerFeil: "Meldedato er ugyldig eller må fylles ut",
-    arbeidssoekerFeil: "Du må velge om bruker skal være registrert som arbeidssøker",
+    datovelgerFeil: "Meldedato må fylles ut",
+    arbeidssoekerFeil: "Du må svare på om du er registrert som arbeidssøker",
     begrunnelseFeil: "Begrunnelse må fylles ut",
   },
   knapper: {
     avbryt: "Avbryt utfylling",
     sendInn: "Send inn meldekort",
   },
-  bekreftModal: {
-    avbrytUtfylling: {
-      overskrift: "Vil du avbryte utfyllingen?",
-      innhold: "Hvis du avbryter, vil ikke det du har fylt ut så langt lagres",
-      bekreftKnapp: "Ja, avbryt",
-      avbrytKnapp: "Nei, fortsett",
-    },
-    fullfoerUtfylling: {
-      overskrift: "Vil du fullføre utfyllingen?",
-      innhold: 'Ved å trykke "Ja" vil utfyllingen sendes inn.',
-      bekreftKnapp: "Ja, send inn",
-      avbrytKnapp: "Nei, avbryt",
-    },
+};
+
+interface BekreftModalTekster {
+  avbryt: {
+    overskrift: string;
+    innhold: string;
+    bekreftKnapp: string;
+    avbrytKnapp: string;
+  };
+  fullfoer: {
+    overskrift: string;
+    innhold: string;
+    bekreftKnapp: string;
+    avbrytKnapp: string;
+  };
+}
+
+const DEFAULT_BEKREFT_MODAL: BekreftModalTekster = {
+  avbryt: {
+    overskrift: "Vil du avbryte utfyllingen?",
+    innhold: "Hvis du avbryter, vil ikke det du har fylt ut så langt lagres",
+    bekreftKnapp: "Ja, avbryt",
+    avbrytKnapp: "Nei, fortsett",
+  },
+  fullfoer: {
+    overskrift: "Vil du fullføre utfyllingen?",
+    innhold: 'Ved å trykke "Ja" vil utfyllingen sendes inn.',
+    bekreftKnapp: "Ja, send inn",
+    avbrytKnapp: "Nei, avbryt",
   },
 };
 
@@ -103,8 +119,13 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   } catch (error) {
     logger.error(
       `Kunne ikke hente fyll-ut data fra Sanity for person.${personId}.periode.${params.periodeId}.fyll-ut`,
-      { error },
+      {
+        error,
+        route: "fyll-ut",
+        metric: "sanity_fetch_failed",
+      },
     );
+    // Hvis fetch feiler, vil build-time data brukes fra mergeWithBuildTimeData
   }
 
   return { periode, saksbehandler, personId, variant, fyllUtData };
@@ -122,18 +143,12 @@ export default function FyllUtPeriode() {
   const erFraArena = periode.opprettetAv === OPPRETTET_AV.Arena;
   const erEtterregistrert = periode.type === MELDEKORT_TYPE.ETTERREGISTRERT;
 
-  // Hent tekster fra Sanity med fallback
-  const tekster = fyllUtData ?? DEFAULT_TEKSTER;
-
-  // Hent bekreftModal fra global data
-  const bekreftModalTekster = {
-    avbryt:
-      rootData?.sanityData?.bekreftModal?.avbrytUtfylling ??
-      DEFAULT_TEKSTER.bekreftModal.avbrytUtfylling,
-    fullfoer:
-      rootData?.sanityData?.bekreftModal?.fullfoerUtfylling ??
-      DEFAULT_TEKSTER.bekreftModal.fullfoerUtfylling,
-  };
+  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
+  const tekster = deepMerge(DEFAULT_TEKSTER, fyllUtData);
+  const bekreftModalTekster = deepMerge(DEFAULT_BEKREFT_MODAL, {
+    avbryt: rootData?.sanityData?.bekreftModal?.avbrytUtfylling,
+    fullfoer: rootData?.sanityData?.bekreftModal?.fullfoerUtfylling,
+  });
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),

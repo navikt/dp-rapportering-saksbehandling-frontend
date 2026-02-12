@@ -5,28 +5,30 @@ import { useRevalidator } from "react-router";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import type { IMeldekortHeader } from "~/sanity/fellesKomponenter/header/types";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import type { ISaksbehandler } from "~/utils/types";
 
 import styles from "./header.module.css";
+
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_HEADER: IMeldekortHeader = {
+  skipLink: "Hopp til hovedinnhold",
+  systemHeaderAriaLabel: "Systemheader",
+  homeLink: "Dagpenger",
+  homeLinkAriaLabel: "Gå til forsiden",
+  userButtonAriaLabel: "Meny for {{name}}",
+  dropdownAriaLabel: "Brukermeny",
+  sensitiveDataSwitchLabel: "Skjul sensitive opplysninger",
+  sensitiveDataSwitchDescription: "Anbefales for økt sikkerhet",
+  logoutLinkText: "Logg ut",
+  darkThemeActive: "Mørkt tema er aktivt",
+  lightThemeActive: "Lyst tema er aktivt",
+};
 
 interface HeaderProps {
   saksbehandler: ISaksbehandler;
   headerData: IMeldekortHeader | null | undefined;
 }
-
-const defaultHeaderData: IMeldekortHeader = {
-  skipLink: "Hopp til hovedinnhold",
-  systemHeaderAriaLabel: "Systemheader",
-  homeLink: "Dagpenger",
-  homeLinkAriaLabel: "Gå til forsiden",
-  userButtonAriaLabel: "Brukermeny for {{name}}",
-  dropdownAriaLabel: "Brukerhandlinger",
-  sensitiveDataSwitchLabel: "Skjul sensitive opplysninger",
-  sensitiveDataSwitchDescription: "Anbefales for økt sikkerhet",
-  logoutLinkText: "Logg ut",
-  darkThemeActive: "Mørkt tema aktivert. Klikk for å bytte til lyst tema",
-  lightThemeActive: "Lyst tema aktivert. Klikk for å bytte til mørkt tema",
-};
 
 const Header = ({ saksbehandler, headerData }: HeaderProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -44,7 +46,8 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
     revalidator.revalidate();
   };
 
-  const texts = { ...defaultHeaderData, ...(headerData ?? {}) };
+  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
+  const texts = deepMerge(DEFAULT_HEADER, headerData);
   const userButtonAriaLabel = texts.userButtonAriaLabel.replace(
     "{{name}}",
     saksbehandler.givenName,
