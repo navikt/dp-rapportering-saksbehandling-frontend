@@ -6,7 +6,7 @@ import type {
 import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import { deepMerge } from "~/utils/deep-merge.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
-// Re-eksporter fra constants fil for bakoverkompatibilitet
+
 export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
@@ -42,7 +42,7 @@ export function getStatusConfig(
   }
 
   if (erInnsendt) {
-    return { text: tekster.innsendt, variant: "success" };
+    return { text: tekster.innsendt, variant: "info" };
   }
 
   if (kanSendes) {
