@@ -33,6 +33,25 @@ export interface GlobalSanityData {
 }
 
 /**
+ * Helper for å fetche en enkelt query med error handling
+ */
+async function fetchQuery<T>(
+  queryName: string,
+  query: string,
+  fetchFn: () => Promise<T>,
+): Promise<T | null> {
+  try {
+    return await fetchFn();
+  } catch (error) {
+    logger.warn(`Sanity query '${queryName}' feilet`, {
+      queryName,
+      error,
+    });
+    return null;
+  }
+}
+
+/**
  * Henter alle globale Sanity-data som brukes på tvers av applikasjonen
  * (header, personlinje, kalender, aktiviteter, osv).
  *
@@ -43,67 +62,56 @@ export interface GlobalSanityData {
  *
  * Implementasjonsdetaljer:
  * - Bruker Promise.allSettled for å kjøre alle queries parallelt
- * - Matcher results til query names (ikke array-indekser) for robusthet
+ * - Type-safe per query via generics på sanityClient.fetch
  * - Sanity CDN håndterer caching automatisk
  */
 export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
-  // Definer queries med navn og query strings
-  const queries = [
-    { name: "header" as const, query: headerQuery },
-    { name: "personlinje" as const, query: personlinjeQuery },
-    { name: "bekreftModal" as const, query: bekreftModalQuery },
-    { name: "historikkModal" as const, query: historikkModalQuery },
-    { name: "aktiviteter" as const, query: aktiviteterQuery },
-    { name: "statuser" as const, query: statuserQuery },
-    { name: "kalender" as const, query: kalenderQuery },
-    { name: "varsler" as const, query: varslerQuery },
-    { name: "aktivitetstabell" as const, query: aktivitetstabellQuery },
-  ];
+  // Kjør alle queries parallelt med full type-sikkerhet per query
+  const [
+    header,
+    personlinje,
+    bekreftModal,
+    historikkModal,
+    aktiviteter,
+    statuser,
+    kalender,
+    varsler,
+    aktivitetstabell,
+  ] = await Promise.all([
+    fetchQuery("header", headerQuery, () => sanityClient.fetch<IMeldekortHeader>(headerQuery)),
+    fetchQuery("personlinje", personlinjeQuery, () =>
+      sanityClient.fetch<IMeldekortPersonlinje>(personlinjeQuery),
+    ),
+    fetchQuery("bekreftModal", bekreftModalQuery, () =>
+      sanityClient.fetch<IMeldekortBekreftModal>(bekreftModalQuery),
+    ),
+    fetchQuery("historikkModal", historikkModalQuery, () =>
+      sanityClient.fetch<IMeldekortHistorikkModal>(historikkModalQuery),
+    ),
+    fetchQuery("aktiviteter", aktiviteterQuery, () =>
+      sanityClient.fetch<IMeldekortAktiviteter>(aktiviteterQuery),
+    ),
+    fetchQuery("statuser", statuserQuery, () =>
+      sanityClient.fetch<IMeldekortStatuser>(statuserQuery),
+    ),
+    fetchQuery("kalender", kalenderQuery, () =>
+      sanityClient.fetch<IMeldekortKalender>(kalenderQuery),
+    ),
+    fetchQuery("varsler", varslerQuery, () => sanityClient.fetch<IMeldekortVarsler>(varslerQuery)),
+    fetchQuery("aktivitetstabell", aktivitetstabellQuery, () =>
+      sanityClient.fetch<IMeldekortAktivitetsTabell>(aktivitetstabellQuery),
+    ),
+  ]);
 
-  // Kjør alle queries parallelt
-  const results = await Promise.allSettled(queries.map(({ query }) => sanityClient.fetch(query)));
-
-  // Opprett et map av query navn til resultatene deres for sikker tilgang
-  const resultMap = new Map<
-    string,
-    | IMeldekortHeader
-    | IMeldekortPersonlinje
-    | IMeldekortBekreftModal
-    | IMeldekortHistorikkModal
-    | IMeldekortAktiviteter
-    | IMeldekortStatuser
-    | IMeldekortKalender
-    | IMeldekortVarsler
-    | IMeldekortAktivitetsTabell
-    | null
-  >();
-
-  results.forEach((result, index) => {
-    const queryName = queries[index].name;
-
-    if (result.status === "rejected") {
-      logger.warn(`Sanity query '${queryName}' feilet`, {
-        queryName,
-        error: result.reason,
-      });
-      resultMap.set(queryName, null);
-    } else {
-      resultMap.set(queryName, result.value);
-    }
-  });
-
-  // Bygg retur-objekt ved å bruke map i stedet for array indices
-  // Dette gjør koden robust mot endringer i query rekkefølge
   return {
-    header: (resultMap.get("header") as IMeldekortHeader | null) ?? null,
-    personlinje: (resultMap.get("personlinje") as IMeldekortPersonlinje | null) ?? null,
-    bekreftModal: (resultMap.get("bekreftModal") as IMeldekortBekreftModal | null) ?? null,
-    historikkModal: (resultMap.get("historikkModal") as IMeldekortHistorikkModal | null) ?? null,
-    aktiviteter: (resultMap.get("aktiviteter") as IMeldekortAktiviteter | null) ?? null,
-    statuser: (resultMap.get("statuser") as IMeldekortStatuser | null) ?? null,
-    kalender: (resultMap.get("kalender") as IMeldekortKalender | null) ?? null,
-    varsler: (resultMap.get("varsler") as IMeldekortVarsler | null) ?? null,
-    aktivitetstabell:
-      (resultMap.get("aktivitetstabell") as IMeldekortAktivitetsTabell | null) ?? null,
+    header,
+    personlinje,
+    bekreftModal,
+    historikkModal,
+    aktiviteter,
+    statuser,
+    kalender,
+    varsler,
+    aktivitetstabell,
   };
 }

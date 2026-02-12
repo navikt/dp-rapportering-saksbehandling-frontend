@@ -10,7 +10,7 @@ import type { IRapporteringsperiode } from "~/utils/types";
 export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_STATUSER = {
+const DEFAULT_STATUSER: IMeldekortStatuser = {
   tilUtfylling: "Klar til utfylling",
   innsendt: "Innsendt",
   meldekortOpprettet: "Meldekort opprettet",

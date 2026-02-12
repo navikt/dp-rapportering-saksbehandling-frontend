@@ -22,7 +22,7 @@ import {
 import styles from "./personlinje.module.css";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_PERSONLINJE = {
+const DEFAULT_PERSONLINJE: IMeldekortPersonlinje = {
   sectionAriaLabel: "Brukerinformasjon",
   birthNumberLabel: "Fødselsnummer:",
   ageLabel: "Alder:",

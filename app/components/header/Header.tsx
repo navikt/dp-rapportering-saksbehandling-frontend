@@ -11,7 +11,7 @@ import type { ISaksbehandler } from "~/utils/types";
 import styles from "./header.module.css";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_HEADER = {
+const DEFAULT_HEADER: IMeldekortHeader = {
   skipLink: "Hopp til hovedinnhold",
   systemHeaderAriaLabel: "Systemheader",
   homeLink: "Dagpenger",

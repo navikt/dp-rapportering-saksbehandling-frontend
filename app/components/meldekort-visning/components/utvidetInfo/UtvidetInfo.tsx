@@ -169,11 +169,11 @@ export function UtvidetInfo({
   const useVariantLabels = variant === "B";
 
   // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const labels = deepMerge(DEFAULT_LABELS, hovedsideData?.utvidetVisning.infoLabels);
+  const labels = deepMerge(DEFAULT_LABELS, hovedsideData?.utvidetVisning?.infoLabels);
   const tabellTittel =
-    hovedsideData?.utvidetVisning.tabellTittel ?? "Detaljert informasjon om meldekortet";
+    hovedsideData?.utvidetVisning?.tabellTittel ?? "Detaljert informasjon om meldekortet";
   const varsler = deepMerge(DEFAULT_VARSLER, hovedsideData?.varsler);
-  const korrigerKnapp = hovedsideData?.knapper.korrigerMeldekort ?? "Korriger meldekort";
+  const korrigerKnapp = hovedsideData?.knapper?.korrigerMeldekort ?? "Korriger meldekort";
 
   // Bruk samme logikk som i skjemaet for å bestemme om arbeidssøkerspørsmål skal vises
   const skalViseArbeidssoker = skalViseArbeidssokerSporsmal(

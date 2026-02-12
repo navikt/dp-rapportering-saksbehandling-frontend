@@ -65,7 +65,22 @@ const DEFAULT_TEKSTER: IMeldekortKorriger = {
   },
 };
 
-const DEFAULT_BEKREFT_MODAL = {
+interface BekreftModalTekster {
+  avbryt: {
+    overskrift: string;
+    innhold: string;
+    bekreftKnapp: string;
+    avbrytKnapp: string;
+  };
+  fullfoer: {
+    overskrift: string;
+    innhold: string;
+    bekreftKnapp: string;
+    avbrytKnapp: string;
+  };
+}
+
+const DEFAULT_BEKREFT_MODAL: BekreftModalTekster = {
   avbryt: {
     overskrift: "Vil du avbryte korrigeringen?",
     innhold: "Hvis du avbryter, vil ikke endringene du har gjort så langt korrigeres",
@@ -117,13 +132,10 @@ export default function Periode() {
 
   // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
   const baseTekster = deepMerge(DEFAULT_TEKSTER, korrigerData);
-  // skjermleserStatus hentes fra varsler (har prioritet over korriger-data)
-  const skjermleserStatus = rootData?.sanityData?.varsler?.skjermleserStatus ?? {
-    senderInn: "Sender inn meldekort...",
-    behandler: "Behandler meldekort...",
-    feilet: "Innsending feilet",
-    suksess: "Meldekort sendt inn",
-  };
+  // skjermleserStatus hentes fra varsler (har høyeste prioritet),
+  // fallback til baseTekster som allerede er merget med defaults + korrigerData
+  const skjermleserStatus =
+    rootData?.sanityData?.varsler?.skjermleserStatus ?? baseTekster.skjermleserStatus;
   const tekster = {
     ...baseTekster,
     skjermleserStatus,

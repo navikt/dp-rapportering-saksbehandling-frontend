@@ -66,28 +66,43 @@ describe("deepMerge", () => {
     });
   });
 
-  it("skal håndtere null source", () => {
+  it("skal håndtere null source og returnere ny referanse", () => {
     const target = { a: 1, b: { c: 2 } };
 
     const result = deepMerge(target, null);
 
     expect(result).toEqual(target);
+    expect(result).not.toBe(target); // Ny referanse, ikke samme objekt
   });
 
-  it("skal håndtere undefined source", () => {
+  it("skal håndtere undefined source og returnere ny referanse", () => {
     const target = { a: 1, b: { c: 2 } };
 
     const result = deepMerge(target, undefined);
 
     expect(result).toEqual(target);
+    expect(result).not.toBe(target); // Ny referanse, ikke samme objekt
   });
 
-  it("skal håndtere tom source", () => {
+  it("skal håndtere tom source og returnere ny referanse", () => {
     const target = { a: 1, b: { c: 2 } };
 
     const result = deepMerge(target, {});
 
     expect(result).toEqual(target);
+    expect(result).not.toBe(target); // Ny referanse, ikke samme objekt
+  });
+
+  it("skal beskytte default-objekter mot mutasjon", () => {
+    const DEFAULT_CONFIG = { setting1: "value1", setting2: "value2" };
+
+    // Merge med null source
+    const result = deepMerge(DEFAULT_CONFIG, null);
+    result.setting1 = "changed";
+
+    // DEFAULT_CONFIG skal ikke bli påvirket
+    expect(DEFAULT_CONFIG.setting1).toBe("value1");
+    expect(result.setting1).toBe("changed");
   });
 
   it("skal ignorere undefined verdier i source", () => {

@@ -74,7 +74,22 @@ const DEFAULT_TEKSTER: IMeldekortFyllUt = {
   },
 };
 
-const DEFAULT_BEKREFT_MODAL = {
+interface BekreftModalTekster {
+  avbryt: {
+    overskrift: string;
+    innhold: string;
+    bekreftKnapp: string;
+    avbrytKnapp: string;
+  };
+  fullfoer: {
+    overskrift: string;
+    innhold: string;
+    bekreftKnapp: string;
+    avbrytKnapp: string;
+  };
+}
+
+const DEFAULT_BEKREFT_MODAL: BekreftModalTekster = {
   avbryt: {
     overskrift: "Vil du avbryte utfyllingen?",
     innhold: "Hvis du avbryter, vil ikke det du har fylt ut så langt lagres",

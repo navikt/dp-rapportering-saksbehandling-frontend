@@ -36,9 +36,10 @@ export function deepMerge<T extends Record<string, any>>(
   target: T,
   source: DeepPartial<T> | null | undefined,
 ): T {
-  // Hvis source er null/undefined, returner target som den er
+  // Hvis source er null/undefined, returner en klon av target
+  // Dette forhindrer at kallere utilsiktet muterer default-objektet
   if (!source) {
-    return target;
+    return { ...target };
   }
 
   const result = { ...target };
