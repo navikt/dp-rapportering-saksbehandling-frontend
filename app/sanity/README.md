@@ -7,15 +7,26 @@ Dette prosjektet bruker Sanity CMS for å hente tekstinnhold.
 ```
 app/sanity/
 ├── client.ts                    # Sanity client konfigurasjon
+├── fetchGlobalData.ts           # Henter alle globale Sanity-data parallelt
 ├── utils.ts                     # Utility-funksjoner (sanityDataMangler)
 ├── components/                  # Gjenbrukbare komponenter
 │   └── SanityDevWarning.tsx     # Dev-warning for manglende data
 ├── sider/                       # Queries og types for sider
-│   └── forside/
-│       ├── queries.ts
-│       └── types.ts
+│   ├── forside/
+│   ├── hovedside/
+│   ├── fyll-ut/                 # Fyll ut meldekort-siden
+│   └── korriger/                # Korriger meldekort-siden
 ├── modaler/                     # Queries og types for modaler
-└── fellesKomponenter/           # Queries og types for felles komponenter
+│   ├── bekreft-modal/
+│   └── historikk-modal/
+└── fellesKomponenter/           # Queries og types for felles komponenter (header, footer, osv.)
+    ├── header/
+    ├── personlinje/
+    ├── kalender/
+    ├── aktiviteter/
+    ├── aktivitetstabell/
+    ├── statuser/
+    └── varsler/
 ```
 
 Strukturen speiler `dp-sanity-cms-v3/schema/meldekort/saksbehandlerflate/`
@@ -39,7 +50,39 @@ SANITY_TOKEN=""  # Valgfri - kun nødvendig for private datasett
 
 ## Bruk
 
-### Hente data fra Sanity
+### Globale Sanity-data
+
+Globale data (header, personlinje, kalender, osv.) hentes automatisk i root loader via `fetchGlobalData()`:
+
+```typescript
+// app/root.tsx
+import { fetchGlobalSanityData } from "~/sanity/fetchGlobalData";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const sanityData = await fetchGlobalSanityData();
+  return { sanity: sanityData };
+}
+```
+
+Komponenter kan bruke `useGlobalSanityData()` hook for å få tilgang til disse dataene:
+
+```typescript
+import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
+import { deepMerge } from "~/utils/deep-merge.utils";
+
+function MinKomponent() {
+  const sanityData = useGlobalSanityData();
+
+  // Merge Sanity-data med hardkodede defaults
+  const tekster = deepMerge(DEFAULT_TEKSTER, sanityData?.header);
+
+  return <div>{tekster.tittel}</div>;
+}
+```
+
+### Hente side-spesifikke data
+
+For side-spesifikke data, bruk `sanityClient` direkte i loader:
 
 ```typescript
 import { sanityClient } from "~/sanity/client";

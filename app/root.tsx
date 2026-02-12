@@ -24,6 +24,7 @@ import { NavigationWarningProvider } from "./context/navigation-warning-context"
 import { SaksbehandlerProvider } from "./context/saksbehandler-context";
 import { ToastProvider } from "./context/toast-context";
 import { getSessionId } from "./mocks/session";
+import { logger } from "./models/logger.server";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { fetchGlobalSanityData } from "./sanity/fetchGlobalData";
 import { getEnv, isLocalOrDemo } from "./utils/env.utils";
@@ -68,7 +69,22 @@ export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeader = request.headers.get("Cookie");
   const tema = cookieHeader?.match(/tema=([^;]+)/)?.[1] || null;
 
-  const sanityData = await fetchGlobalSanityData();
+  /**
+   * Hent Sanity data med error boundary.
+   * Hvis fetching feiler, returnerer vi null slik at appen fortsatt fungerer
+   * med hardkodede default-verdier i komponenter.
+   */
+  let sanityData = null;
+  try {
+    sanityData = await fetchGlobalSanityData();
+  } catch (error) {
+    logger.error("Kritisk feil ved henting av globale Sanity data i root loader", {
+      error,
+      url: request.url,
+      userAgent: request.headers.get("User-Agent"),
+    });
+    // Appen vil fortsatt fungere, men med default-verdier
+  }
 
   return {
     saksbehandler,

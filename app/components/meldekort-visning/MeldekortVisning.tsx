@@ -1,6 +1,6 @@
 import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
 
-import type { IMeldekortHovedside } from "~/sanity/fellesKomponenter/forside/types";
+import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import type {
@@ -54,12 +54,12 @@ export function MeldekortVisning({
       variant ?? null,
     );
 
-    // Hent tekster fra Sanity med fallback
+    // Hent tekster fra Sanity med fallback til defaults
     const tomtMeldekortTekst =
-      hovedsideData?.utvidetVisning.emptyCardMessage ?? DEFAULT_TEKSTER.tomtMeldekort;
-    const fyllUtKnapp = hovedsideData?.knapper.fyllutMeldekort ?? DEFAULT_TEKSTER.fyllUtKnapp;
+      hovedsideData?.utvidetVisning?.emptyCardMessage ?? DEFAULT_TEKSTER.tomtMeldekort;
+    const fyllUtKnapp = hovedsideData?.knapper?.fyllutMeldekort ?? DEFAULT_TEKSTER.fyllUtKnapp;
     const ukeOverskrift =
-      hovedsideData?.utvidetVisning.overskrift?.replace("{{uker}}", String(uker)) ??
+      hovedsideData?.utvidetVisning?.overskrift?.replace("{{uker}}", String(uker)) ??
       DEFAULT_TEKSTER.ukeOverskrift.replace("{{uker}}", String(uker));
 
     return (
@@ -96,8 +96,8 @@ export function MeldekortVisning({
               <KalenderOgAktiviteter
                 periode={periode}
                 variant={variant}
-                aktiviteterTittel={hovedsideData?.utvidetVisning.aktiviteterTittel}
-                noActivitiesText={hovedsideData?.utvidetVisning.noActivitiesText}
+                aktiviteterTittel={hovedsideData?.utvidetVisning?.aktiviteterTittel}
+                noActivitiesText={hovedsideData?.utvidetVisning?.noActivitiesText}
               />
               <UtvidetInfo
                 key={periode.id}

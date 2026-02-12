@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { useMemo, useState } from "react";
 
 import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import {
@@ -20,12 +21,13 @@ import {
 } from "./Personlinje.helpers";
 import styles from "./personlinje.module.css";
 
-const defaultPersonlinjeData: IMeldekortPersonlinje = {
-  sectionAriaLabel: "Informasjon om bruker",
-  birthNumberLabel: "Fødselsnummer",
-  ageLabel: "Alder",
-  genderLabel: "Kjønn",
-  citizenshipLabel: "Statsborgerskap",
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_PERSONLINJE: IMeldekortPersonlinje = {
+  sectionAriaLabel: "Brukerinformasjon",
+  birthNumberLabel: "Fødselsnummer:",
+  ageLabel: "Alder:",
+  genderLabel: "Kjønn:",
+  citizenshipLabel: "Statsborgerskap:",
   historyButton: "Historikk",
 };
 
@@ -48,7 +50,8 @@ export default function Personlinje({
   // Sjekk om data er maskert (kommer fra server-side maskering)
   const erMaskert = fulltNavn.includes("•") || person.ident.includes("•");
 
-  const texts = { ...defaultPersonlinjeData, ...(personlinjeData ?? {}) };
+  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
+  const texts = deepMerge(DEFAULT_PERSONLINJE, personlinjeData);
 
   const events = useMemo(() => {
     return [

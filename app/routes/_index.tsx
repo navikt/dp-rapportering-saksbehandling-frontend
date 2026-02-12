@@ -9,7 +9,30 @@ import { SanityDevWarning } from "~/sanity/components/SanityDevWarning";
 import { forsideQuery } from "~/sanity/sider/forside/queries";
 import type { IMeldekortForside } from "~/sanity/sider/forside/types";
 import { sanityDataMangler } from "~/sanity/utils";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import { usesMsw } from "~/utils/env.utils";
+
+// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
+const DEFAULT_FORSIDE: IMeldekortForside = {
+  heading: "Hei!",
+  welcomeText: [
+    {
+      _type: "block",
+      _key: "default",
+      children: [
+        {
+          _type: "span",
+          _key: "default-span",
+          text: "Velkommen til demo av saksbehandlerflaten for meldekort.",
+          marks: [],
+        },
+      ],
+      markDefs: [],
+      style: "normal",
+    },
+  ],
+  sectionHeading: "Gå til løsningen:",
+};
 
 export async function loader() {
   let forsideData: IMeldekortForside | null = null;
@@ -17,13 +40,20 @@ export async function loader() {
   try {
     forsideData = await sanityClient.fetch<IMeldekortForside>(forsideQuery);
   } catch (error) {
-    logger.error("Kunne ikke hente forsidedata fra Sanity for _index", { error });
+    logger.error("Kunne ikke hente forsidedata fra Sanity for _index", {
+      error,
+      route: "_index",
+      metric: "sanity_fetch_failed",
+    });
   }
 
+  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
+  const forside = deepMerge(DEFAULT_FORSIDE, forsideData);
+
   if (usesMsw) {
-    return { personer: mockPersons, forside: forsideData };
+    return { personer: mockPersons, forside };
   }
-  return { personer: [], forside: forsideData };
+  return { personer: [], forside };
 }
 
 export default function Rapportering() {
@@ -45,19 +75,15 @@ export default function Rapportering() {
 
         <GuidePanel style={{ margin: "auto" }}>
           <Heading level="1" size="small" spacing>
-            {data.forside?.heading || "Hei!"}
+            {data.forside.heading}
           </Heading>
-          {data.forside?.welcomeText ? (
-            <PortableText value={data.forside.welcomeText} />
-          ) : (
-            "Velkommen til demo av saksbehandlerflaten for meldekort."
-          )}
+          <PortableText value={data.forside.welcomeText} />
         </GuidePanel>
 
         {data.personer.length > 0 ? (
           <VStack gap="space-24">
             <Heading level="2" size="medium">
-              {data.forside?.sectionHeading || "Gå til løsningen:"}
+              {data.forside.sectionHeading}
             </Heading>
             <VStack gap="space-12">
               {data.personer.flatMap((person) => {

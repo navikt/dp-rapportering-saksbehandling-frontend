@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import {
   ANSVARLIG_SYSTEM,
   MELDEKORT_TYPE,
@@ -10,6 +11,53 @@ import {
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import { MeldekortVisning } from "./MeldekortVisning";
+
+// Mock Sanity data for testing
+const mockHovedsideData: IMeldekortHovedside = {
+  overskrift: "Meldekort",
+  listeOverskrift: "Meldekortliste",
+  tabellKolonner: {
+    uke: "Uke",
+    dato: "Dato",
+    status: "Status",
+    aktiviteter: "Aktiviteter",
+    meldedato: "Meldedato",
+    frist: "Frist",
+  },
+  utvidetVisning: {
+    overskrift: "Uke {{uker}}",
+    emptyCardMessage: "Dette meldekortet er ikke fylt ut enda.",
+    aktiviteterTittel: "Aktiviteter",
+    noActivitiesText: "Ingen aktiviteter registrert",
+    tabellTittel: "Detaljert informasjon om meldekortet",
+    infoLabels: {
+      meldedato: "Meldedato:",
+      datoForInnsending: "Dato for innsending:",
+      datoForKorrigering: "Dato for korrigering:",
+      korrigertAv: "Korrigert av:",
+      innsendtAv: "Innsendt av:",
+      begrunnelse: {
+        label: "Begrunnelse:",
+        visMer: "Vis mer",
+        visMindre: "Vis mindre",
+      },
+      svarPaaArbeidssoekerregistrering: "Svar på spørsmål om arbeidssøkerregistrering:",
+      beregnetBruttobelop: "Beregnet bruttobeløp:",
+      periodenBeregningenGjelderFor: "Perioden beregningen gjelder for:",
+    },
+  },
+  knapper: {
+    korrigerMeldekort: "Korriger meldekort",
+    fyllutMeldekort: "Fyll ut meldekort",
+  },
+  varsler: {
+    forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen.",
+    fraArena: "Dette meldekortet er opprettet i Arena",
+    etterregistrert: "Dette meldekortet er etterregistrert",
+    kanIkkeEndres: "Dette meldekortet kan ikke endres",
+    belopSamsvarerIkke: "Beløpet samsvarer ikke med perioden",
+  },
+};
 
 describe("MeldekortVisning", () => {
   const basePeriode: IRapporteringsperiode = {
@@ -48,6 +96,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -68,6 +117,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -90,6 +140,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -110,6 +161,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.ARENA}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -129,6 +181,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -155,6 +208,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -174,6 +228,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -193,6 +248,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -214,6 +270,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -259,6 +316,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -286,6 +344,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 
@@ -341,6 +400,7 @@ describe("MeldekortVisning", () => {
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
         />,
       );
 

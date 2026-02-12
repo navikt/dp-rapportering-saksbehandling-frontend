@@ -3,12 +3,13 @@ import { Accordion, Alert, BodyShort, Heading, Modal, Process, Tag, Theme } from
 import { useRouteLoaderData } from "react-router";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
+import type { IMeldekortHistorikkModal } from "~/sanity/modaler/historikk-modal/types";
 import { groupByYear, sortYearsDescending } from "~/utils/dato.utils";
 
 import styles from "./historikkModal.module.css";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER = {
+const DEFAULT_TEKSTER: IMeldekortHistorikkModal = {
   overskrift: "Historikk",
   prosessAriaLabel: "Meldekort for {{aar}}",
   hendelsetyper: {

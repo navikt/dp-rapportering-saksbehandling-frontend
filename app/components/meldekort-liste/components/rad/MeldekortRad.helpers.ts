@@ -4,13 +4,13 @@ import type {
   IPengeVerdi,
 } from "~/utils/behandlingsresultat.types";
 import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { deepMerge } from "~/utils/deep-merge.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-// Re-eksporter fra constants fil for bakoverkompatibilitet
 export { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.constants";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_STATUSER = {
+const DEFAULT_STATUSER: IMeldekortStatuser = {
   tilUtfylling: "Klar til utfylling",
   innsendt: "Innsendt",
   meldekortOpprettet: "Meldekort opprettet",
@@ -32,7 +32,8 @@ export function getStatusConfig(
   behandlinger?: IBehandlingsresultatPeriodeMedMeta<IPengeVerdi>[],
   statuser?: IMeldekortStatuser | null,
 ): StatusConfig {
-  const tekster = statuser ?? DEFAULT_STATUSER;
+  // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
+  const tekster = deepMerge(DEFAULT_STATUSER, statuser);
   const erInnsendt = periode.status === RAPPORTERINGSPERIODE_STATUS.Innsendt;
   const kanSendes = periode.kanSendes;
 
@@ -41,7 +42,7 @@ export function getStatusConfig(
   }
 
   if (erInnsendt) {
-    return { text: tekster.innsendt, variant: "success" };
+    return { text: tekster.innsendt, variant: "info" };
   }
 
   if (kanSendes) {
