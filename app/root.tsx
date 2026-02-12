@@ -1,6 +1,6 @@
 import "./app.css";
 
-import darksideCss from "@navikt/ds-css/darkside?url";
+import darksideCss from "@navikt/ds-css?url";
 import { BodyShort, Box, Heading, Page } from "@navikt/ds-react";
 import * as React from "react";
 import {
@@ -270,7 +270,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   return (
     <>
       <Page.Block as="main" width="xl" gutters id="main-content" tabIndex={-1}>
-        <Box paddingBlock="20 16" data-aksel-template="404-v2">
+        <Box paddingBlock="space-80 space-64" data-aksel-template="404-v2">
           <div>
             {isDemoMode && (
               <div style={{ position: "fixed", top: "5rem", right: "1rem", zIndex: 1000 }}>

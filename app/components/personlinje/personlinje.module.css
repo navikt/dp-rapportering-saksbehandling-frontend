@@ -43,7 +43,7 @@
 }
 
 .iconContainer {
-  border-radius: var(--ax-border-radius-full);
+  border-radius: var(--ax-radius-full);
   display: flex;
   justify-content: center;
   align-items: center;

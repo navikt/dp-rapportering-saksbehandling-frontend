@@ -917,7 +917,7 @@
               }
             ],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -943,9 +943,9 @@
               }
             ],
             "impact": null,
-            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"navds-internalheader__title navds-body-short\"><span>Dagpenger</span></a>",
+            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"aksel-internalheader__title aksel-body-short\"><span>Dagpenger</span></a>",
             "target": [
-              ".navds-internalheader__title"
+              ".aksel-internalheader__title"
             ]
           },
           {
@@ -969,9 +969,9 @@
               }
             ],
             "impact": null,
-            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"navds-dropdown__toggle navds-internalheader__button navds-internalheader__user-button\">",
+            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"aksel-dropdown__toggle aksel-internalheader__button aksel-internalheader__user-button\">",
             "target": [
-              ".navds-dropdown__toggle"
+              ".aksel-dropdown__toggle"
             ]
           },
           {
@@ -1047,9 +1047,9 @@
               }
             ],
             "impact": null,
-            "html": "<a class=\"navds-panel navds-link-panel navds-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
+            "html": "<a class=\"aksel-panel aksel-link-panel aksel-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
             "target": [
-              ".navds-panel"
+              ".aksel-panel"
             ]
           }
         ]
@@ -1078,7 +1078,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -1098,7 +1098,7 @@
             "impact": null,
             "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" fill=\"none\" viewBox=\"0 0 24 24\" focusable=\"false\" role=\"img\" aria-hidden=\"true\">",
             "target": [
-              ".navds-dropdown__toggle > svg"
+              ".aksel-dropdown__toggle > svg"
             ]
           },
           {
@@ -1114,9 +1114,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div role=\"menu\" aria-label=\"Brukerhandlinger\" class=\"navds-popover navds-dropdown__menu navds-popover--hidden\" style=\"position: absolute; left: 0px; top: 0px; transform: translate(655px, 44px);\" data-placement=\"bottom\" aria-hidden=\"true\" data-index=\"0\">",
+            "html": "<div role=\"menu\" aria-label=\"Brukerhandlinger\" class=\"aksel-popover aksel-dropdown__menu aksel-popover--hidden\" style=\"position: absolute; left: 0px; top: 0px; transform: translate(655px, 44px);\" data-placement=\"bottom\" aria-hidden=\"true\" data-index=\"0\">",
             "target": [
-              ".navds-popover"
+              ".aksel-popover"
             ]
           },
           {
@@ -1132,9 +1132,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<button role=\"menuitem\" value=\"[object Object]\" class=\"navds-dropdown__item navds-body-short navds-body-short--small\"><a href=\"/rapportering/oauth2/logout\" aria-label=\"Logg ut av systemet\">Logg ut</a></button>",
+            "html": "<button role=\"menuitem\" value=\"[object Object]\" class=\"aksel-dropdown__item aksel-body-short aksel-body-short--small\"><a href=\"/rapportering/oauth2/logout\" aria-label=\"Logg ut av systemet\">Logg ut</a></button>",
             "target": [
-              ".navds-dropdown__item"
+              ".aksel-dropdown__item"
             ]
           },
           {
@@ -1150,9 +1150,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" fill=\"none\" viewBox=\"0 0 24 24\" focusable=\"false\" role=\"img\" class=\"navds-link-panel__chevron\" aria-hidden=\"true\">",
+            "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" fill=\"none\" viewBox=\"0 0 24 24\" focusable=\"false\" role=\"img\" class=\"aksel-link-panel__chevron\" aria-hidden=\"true\">",
             "target": [
-              ".navds-link-panel__chevron"
+              ".aksel-link-panel__chevron"
             ]
           }
         ]
@@ -1184,7 +1184,7 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -1202,9 +1202,9 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"navds-internalheader__title navds-body-short\"><span>Dagpenger</span></a>",
+            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"aksel-internalheader__title aksel-body-short\"><span>Dagpenger</span></a>",
             "target": [
-              ".navds-internalheader__title"
+              ".aksel-internalheader__title"
             ]
           },
           {
@@ -1220,9 +1220,9 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"navds-dropdown__toggle navds-internalheader__button navds-internalheader__user-button\">",
+            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"aksel-dropdown__toggle aksel-internalheader__button aksel-internalheader__user-button\">",
             "target": [
-              ".navds-dropdown__toggle"
+              ".aksel-dropdown__toggle"
             ]
           },
           {
@@ -1274,9 +1274,9 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<a class=\"navds-panel navds-link-panel navds-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
+            "html": "<a class=\"aksel-panel aksel-link-panel aksel-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
             "target": [
-              ".navds-panel"
+              ".aksel-panel"
             ]
           }
         ]
@@ -1308,7 +1308,7 @@
               }
             ],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -1396,7 +1396,7 @@
             "impact": null,
             "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" fill=\"none\" viewBox=\"0 0 24 24\" focusable=\"false\" role=\"img\" aria-hidden=\"true\">",
             "target": [
-              ".navds-dropdown__toggle > svg"
+              ".aksel-dropdown__toggle > svg"
             ]
           },
           {
@@ -1426,9 +1426,9 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<div role=\"menu\" aria-label=\"Brukerhandlinger\" class=\"navds-popover navds-dropdown__menu navds-popover--hidden\" style=\"position: absolute; left: 0px; top: 0px; transform: translate(655px, 44px);\" data-placement=\"bottom\" aria-hidden=\"true\" data-index=\"0\">",
+            "html": "<div role=\"menu\" aria-label=\"Brukerhandlinger\" class=\"aksel-popover aksel-dropdown__menu aksel-popover--hidden\" style=\"position: absolute; left: 0px; top: 0px; transform: translate(655px, 44px);\" data-placement=\"bottom\" aria-hidden=\"true\" data-index=\"0\">",
             "target": [
-              ".navds-popover"
+              ".aksel-popover"
             ]
           },
           {
@@ -1458,9 +1458,9 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" fill=\"none\" viewBox=\"0 0 24 24\" focusable=\"false\" role=\"img\" class=\"navds-link-panel__chevron\" aria-hidden=\"true\">",
+            "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" fill=\"none\" viewBox=\"0 0 24 24\" focusable=\"false\" role=\"img\" class=\"aksel-link-panel__chevron\" aria-hidden=\"true\">",
             "target": [
-              ".navds-link-panel__chevron"
+              ".aksel-link-panel__chevron"
             ]
           }
         ]
@@ -1492,7 +1492,7 @@
               }
             ],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -1510,9 +1510,9 @@
               }
             ],
             "impact": null,
-            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"navds-internalheader__title navds-body-short\"><span>Dagpenger</span></a>",
+            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"aksel-internalheader__title aksel-body-short\"><span>Dagpenger</span></a>",
             "target": [
-              ".navds-internalheader__title"
+              ".aksel-internalheader__title"
             ]
           },
           {
@@ -1528,9 +1528,9 @@
               }
             ],
             "impact": null,
-            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"navds-dropdown__toggle navds-internalheader__button navds-internalheader__user-button\">",
+            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"aksel-dropdown__toggle aksel-internalheader__button aksel-internalheader__user-button\">",
             "target": [
-              ".navds-dropdown__toggle"
+              ".aksel-dropdown__toggle"
             ]
           },
           {
@@ -1582,9 +1582,9 @@
               }
             ],
             "impact": null,
-            "html": "<a class=\"navds-panel navds-link-panel navds-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
+            "html": "<a class=\"aksel-panel aksel-link-panel aksel-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
             "target": [
-              ".navds-panel"
+              ".aksel-panel"
             ]
           }
         ]
@@ -1616,7 +1616,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -1664,7 +1664,7 @@
               }
             ],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -1712,7 +1712,7 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -1744,9 +1744,9 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"navds-internalheader__title navds-body-short\"><span>Dagpenger</span></a>",
+            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"aksel-internalheader__title aksel-body-short\"><span>Dagpenger</span></a>",
             "target": [
-              ".navds-internalheader__title"
+              ".aksel-internalheader__title"
             ]
           },
           {
@@ -1776,9 +1776,9 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"navds-dropdown__toggle navds-internalheader__button navds-internalheader__user-button\">",
+            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"aksel-dropdown__toggle aksel-internalheader__button aksel-internalheader__user-button\">",
             "target": [
-              ".navds-dropdown__toggle"
+              ".aksel-dropdown__toggle"
             ]
           },
           {
@@ -1872,9 +1872,9 @@
             ],
             "none": [],
             "impact": null,
-            "html": "<a class=\"navds-panel navds-link-panel navds-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
+            "html": "<a class=\"aksel-panel aksel-link-panel aksel-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
             "target": [
-              ".navds-panel"
+              ".aksel-panel"
             ]
           }
         ]
@@ -1906,7 +1906,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -1924,9 +1924,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"navds-internalheader__title navds-body-short\"><span>Dagpenger</span></a>",
+            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"aksel-internalheader__title aksel-body-short\"><span>Dagpenger</span></a>",
             "target": [
-              ".navds-internalheader__title"
+              ".aksel-internalheader__title"
             ]
           },
           {
@@ -1942,9 +1942,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"navds-dropdown__toggle navds-internalheader__button navds-internalheader__user-button\">",
+            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"aksel-dropdown__toggle aksel-internalheader__button aksel-internalheader__user-button\">",
             "target": [
-              ".navds-dropdown__toggle"
+              ".aksel-dropdown__toggle"
             ]
           },
           {
@@ -1996,9 +1996,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<a class=\"navds-panel navds-link-panel navds-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
+            "html": "<a class=\"aksel-panel aksel-link-panel aksel-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
             "target": [
-              ".navds-panel"
+              ".aksel-panel"
             ]
           }
         ]
@@ -2155,9 +2155,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"navds-dropdown__toggle navds-internalheader__button navds-internalheader__user-button\">",
+            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"aksel-dropdown__toggle aksel-internalheader__button aksel-internalheader__user-button\">",
             "target": [
-              ".navds-dropdown__toggle"
+              ".aksel-dropdown__toggle"
             ]
           }
         ]
@@ -2194,7 +2194,7 @@
                 "data": null,
                 "relatedNodes": [
                   {
-                    "html": "<h1 id=\"page-title\" class=\"navds-heading navds-heading--medium\">Saksbehandlerflate for meldekort</h1>",
+                    "html": "<h1 id=\"page-title\" class=\"aksel-heading aksel-heading--medium\">Saksbehandlerflate for meldekort</h1>",
                     "target": [
                       "#page-title"
                     ]
@@ -2267,7 +2267,7 @@
             "impact": null,
             "html": "<span>Dagpenger</span>",
             "target": [
-              ".navds-internalheader__title > span"
+              ".aksel-internalheader__title > span"
             ]
           },
           {
@@ -2290,9 +2290,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-body-short navds-body-short--small\">Frans Kake Jaeger</div>",
+            "html": "<div class=\"aksel-body-short aksel-body-short--small\">Frans Kake Jaeger</div>",
             "target": [
-              "div > .navds-body-short--small.navds-body-short"
+              "div > .aksel-body-short--small.aksel-body-short"
             ]
           },
           {
@@ -2315,9 +2315,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-detail\">Z993298</div>",
+            "html": "<div class=\"aksel-detail\">Z993298</div>",
             "target": [
-              ".navds-detail"
+              ".aksel-detail"
             ]
           },
           {
@@ -2340,7 +2340,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<h1 id=\"page-title\" class=\"navds-heading navds-heading--medium\">Saksbehandlerflate for meldekort</h1>",
+            "html": "<h1 id=\"page-title\" class=\"aksel-heading aksel-heading--medium\">Saksbehandlerflate for meldekort</h1>",
             "target": [
               "#page-title"
             ]
@@ -2365,7 +2365,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<p class=\"navds-body-short navds-body-short--small\">Velkommen til demoversjonen av saksbehandlerflaten for meldekort. <br>Klikk på personen under for å se hele rapporteringsperioden deres.</p>",
+            "html": "<p class=\"aksel-body-short aksel-body-short--small\">Velkommen til demoversjonen av saksbehandlerflaten for meldekort. <br>Klikk på personen under for å se hele rapporteringsperioden deres.</p>",
             "target": [
               "p"
             ]
@@ -2390,9 +2390,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-link-panel__title navds-heading navds-heading--medium\">Full Demo</div>",
+            "html": "<div class=\"aksel-link-panel__title aksel-heading aksel-heading--medium\">Full Demo</div>",
             "target": [
-              ".navds-link-panel__title"
+              ".aksel-link-panel__title"
             ]
           },
           {
@@ -2415,9 +2415,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-link-panel__description navds-body-long navds-body-long--medium\">Full demo med alle scenarioer</div>",
+            "html": "<div class=\"aksel-link-panel__description aksel-body-long aksel-body-long--medium\">Full demo med alle scenarioer</div>",
             "target": [
-              ".navds-link-panel__description"
+              ".aksel-link-panel__description"
             ]
           }
         ]
@@ -2486,7 +2486,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<h1 id=\"page-title\" class=\"navds-heading navds-heading--medium\">Saksbehandlerflate for meldekort</h1>",
+            "html": "<h1 id=\"page-title\" class=\"aksel-heading aksel-heading--medium\">Saksbehandlerflate for meldekort</h1>",
             "target": [
               "#page-title"
             ]
@@ -2517,7 +2517,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<h1 id=\"page-title\" class=\"navds-heading navds-heading--medium\">Saksbehandlerflate for meldekort</h1>",
+            "html": "<h1 id=\"page-title\" class=\"aksel-heading aksel-heading--medium\">Saksbehandlerflate for meldekort</h1>",
             "target": [
               "#page-title"
             ]
@@ -2557,7 +2557,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<h1 id=\"page-title\" class=\"navds-heading navds-heading--medium\">Saksbehandlerflate for meldekort</h1>",
+            "html": "<h1 id=\"page-title\" class=\"aksel-heading aksel-heading--medium\">Saksbehandlerflate for meldekort</h1>",
             "target": [
               "#page-title"
             ]
@@ -2664,7 +2664,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -2728,7 +2728,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -2831,7 +2831,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -2976,9 +2976,9 @@
               }
             ],
             "impact": null,
-            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"navds-internalheader__title navds-body-short\"><span>Dagpenger</span></a>",
+            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"aksel-internalheader__title aksel-body-short\"><span>Dagpenger</span></a>",
             "target": [
-              ".navds-internalheader__title"
+              ".aksel-internalheader__title"
             ]
           },
           {
@@ -3009,9 +3009,9 @@
               }
             ],
             "impact": null,
-            "html": "<a class=\"navds-panel navds-link-panel navds-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
+            "html": "<a class=\"aksel-panel aksel-link-panel aksel-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
             "target": [
-              ".navds-panel"
+              ".aksel-panel"
             ]
           }
         ]
@@ -3179,9 +3179,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"navds-dropdown__toggle navds-internalheader__button navds-internalheader__user-button\">",
+            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"aksel-dropdown__toggle aksel-internalheader__button aksel-internalheader__user-button\">",
             "target": [
-              ".navds-dropdown__toggle"
+              ".aksel-dropdown__toggle"
             ]
           }
         ]
@@ -3205,7 +3205,7 @@
                 "data": null,
                 "relatedNodes": [
                   {
-                    "html": "<h1 id=\"page-title\" class=\"navds-heading navds-heading--medium\">Saksbehandlerflate for meldekort</h1>",
+                    "html": "<h1 id=\"page-title\" class=\"aksel-heading aksel-heading--medium\">Saksbehandlerflate for meldekort</h1>",
                     "target": [
                       "#page-title"
                     ]
@@ -3270,7 +3270,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"navds-internalheader\">",
+            "html": "<header data-theme=\"dark\" role=\"banner\" aria-label=\"Systemheader\" class=\"aksel-internalheader\">",
             "target": [
               "header"
             ]
@@ -3290,9 +3290,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"navds-internalheader__title navds-body-short\"><span>Dagpenger</span></a>",
+            "html": "<a href=\"/\" aria-label=\"Gå til forsiden\" class=\"aksel-internalheader__title aksel-body-short\"><span>Dagpenger</span></a>",
             "target": [
-              ".navds-internalheader__title"
+              ".aksel-internalheader__title"
             ]
           },
           {
@@ -3312,7 +3312,7 @@
             "impact": null,
             "html": "<span>Dagpenger</span>",
             "target": [
-              ".navds-internalheader__title > span"
+              ".aksel-internalheader__title > span"
             ]
           },
           {
@@ -3330,9 +3330,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<span class=\"navds-stack__spacer\"></span>",
+            "html": "<span class=\"aksel-stack__spacer\"></span>",
             "target": [
-              ".navds-stack__spacer"
+              ".aksel-stack__spacer"
             ]
           },
           {
@@ -3350,9 +3350,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"navds-dropdown__toggle navds-internalheader__button navds-internalheader__user-button\">",
+            "html": "<button aria-label=\"Brukermeny for Frans Kake Jaeger\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"aksel-dropdown__toggle aksel-internalheader__button aksel-internalheader__user-button\">",
             "target": [
-              ".navds-dropdown__toggle"
+              ".aksel-dropdown__toggle"
             ]
           },
           {
@@ -3370,9 +3370,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div><div class=\"navds-body-short navds-body-short--small\">Frans Kake Jaeger</div><div class=\"navds-detail\">Z993298</div></div>",
+            "html": "<div><div class=\"aksel-body-short aksel-body-short--small\">Frans Kake Jaeger</div><div class=\"aksel-detail\">Z993298</div></div>",
             "target": [
-              ".navds-dropdown__toggle > div"
+              ".aksel-dropdown__toggle > div"
             ]
           },
           {
@@ -3390,9 +3390,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-body-short navds-body-short--small\">Frans Kake Jaeger</div>",
+            "html": "<div class=\"aksel-body-short aksel-body-short--small\">Frans Kake Jaeger</div>",
             "target": [
-              "div > .navds-body-short--small.navds-body-short"
+              "div > .aksel-body-short--small.aksel-body-short"
             ]
           },
           {
@@ -3410,9 +3410,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-detail\">Z993298</div>",
+            "html": "<div class=\"aksel-detail\">Z993298</div>",
             "target": [
-              ".navds-detail"
+              ".aksel-detail"
             ]
           },
           {
@@ -3470,7 +3470,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<h1 id=\"page-title\" class=\"navds-heading navds-heading--medium\">Saksbehandlerflate for meldekort</h1>",
+            "html": "<h1 id=\"page-title\" class=\"aksel-heading aksel-heading--medium\">Saksbehandlerflate for meldekort</h1>",
             "target": [
               "#page-title"
             ]
@@ -3490,7 +3490,7 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<p class=\"navds-body-short navds-body-short--small\">Velkommen til demoversjonen av saksbehandlerflaten for meldekort. <br>Klikk på personen under for å se hele rapporteringsperioden deres.</p>",
+            "html": "<p class=\"aksel-body-short aksel-body-short--small\">Velkommen til demoversjonen av saksbehandlerflaten for meldekort. <br>Klikk på personen under for å se hele rapporteringsperioden deres.</p>",
             "target": [
               "p"
             ]
@@ -3590,9 +3590,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<a class=\"navds-panel navds-link-panel navds-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
+            "html": "<a class=\"aksel-panel aksel-link-panel aksel-panel--border\" href=\"/person/2277730/perioder\" aria-label=\"Gå til perioder for Full Demo\">",
             "target": [
-              ".navds-panel"
+              ".aksel-panel"
             ]
           },
           {
@@ -3610,9 +3610,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-link-panel__content\"><div class=\"navds-link-panel__title navds-heading navds-heading--medium\">Full Demo</div><div class=\"navds-link-panel__description navds-body-long navds-body-long--medium\">Full demo med alle scenarioer</div></div>",
+            "html": "<div class=\"aksel-link-panel__content\"><div class=\"aksel-link-panel__title aksel-heading aksel-heading--medium\">Full Demo</div><div class=\"aksel-link-panel__description aksel-body-long aksel-body-long--medium\">Full demo med alle scenarioer</div></div>",
             "target": [
-              ".navds-link-panel__content"
+              ".aksel-link-panel__content"
             ]
           },
           {
@@ -3630,9 +3630,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-link-panel__title navds-heading navds-heading--medium\">Full Demo</div>",
+            "html": "<div class=\"aksel-link-panel__title aksel-heading aksel-heading--medium\">Full Demo</div>",
             "target": [
-              ".navds-link-panel__title"
+              ".aksel-link-panel__title"
             ]
           },
           {
@@ -3650,9 +3650,9 @@
             "all": [],
             "none": [],
             "impact": null,
-            "html": "<div class=\"navds-link-panel__description navds-body-long navds-body-long--medium\">Full demo med alle scenarioer</div>",
+            "html": "<div class=\"aksel-link-panel__description aksel-body-long aksel-body-long--medium\">Full demo med alle scenarioer</div>",
             "target": [
-              ".navds-link-panel__description"
+              ".aksel-link-panel__description"
             ]
           }
         ]

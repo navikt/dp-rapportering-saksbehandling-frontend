@@ -107,11 +107,15 @@ export default function Personlinje({
         </BodyShort>
       </div>
       <div className={styles.historikkKnapp}>
-        <Button variant="secondary-neutral" size="xsmall" onClick={() => setModalOpen(true)}>
+        <Button
+          data-color="neutral"
+          variant="secondary"
+          size="xsmall"
+          onClick={() => setModalOpen(true)}
+        >
           {texts.historyButton}
         </Button>
       </div>
-
       <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} hendelser={events} />
     </section>
   );

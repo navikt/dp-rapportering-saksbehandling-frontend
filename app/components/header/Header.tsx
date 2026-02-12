@@ -101,7 +101,8 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
           </Dropdown.Menu>
         </Dropdown>
         <Button
-          variant="tertiary-neutral"
+          data-color="neutral"
+          variant="tertiary"
           size="medium"
           onClick={toggleTheme}
           aria-label={tema === "dark" ? texts.darkThemeActive : texts.lightThemeActive}
