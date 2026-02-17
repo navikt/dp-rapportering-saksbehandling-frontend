@@ -65,7 +65,8 @@ jobs:
           cache: 'pnpm'
           registry-url: 'https://pnpm.pkg.github.com'
 
-      - run: pnpm ci --ignore-scripts
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
@@ -91,7 +92,7 @@ jobs:
         registry-url: 'https://pnpm.pkg.github.com'
         
     - name: Install dependencies
-      run: pnpm ci --ignore-scripts
+      run: pnpm install --frozen-lockfile
       if: steps.node_modules.outputs.cache-hit != 'true'
       env:
         NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
