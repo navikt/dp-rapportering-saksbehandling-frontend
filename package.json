@@ -12,7 +12,7 @@
     "test": "pnpm run test:vitest",
     "prepare": "husky",
     "test:vitest": "vitest run",
-    "pre-commit": "lint-staged && npm run typecheck",
+    "pre-commit": "lint-staged && pnpm run typecheck",
     "test:playwright": "playwright test --trace on"
   },
   "dependencies": {
