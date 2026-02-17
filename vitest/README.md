@@ -263,7 +263,7 @@ const periode = createMockPeriode({ status: "Innsendt" });
 
 Kjør coverage regelmessig:
 ```bash
-npm run test:coverage
+pnpm run test:coverage
 ```
 
 **Mål**: Lines 80%, Functions 80%, Branches 75%, Statements 80%
@@ -271,18 +271,18 @@ npm run test:coverage
 ## Kjøre tester
 
 ```bash
-npm test                    # Kjør alle enhetstester
-npm run test:watch          # Watch mode
-npm run test:coverage       # Med coverage
-npm run test:playwright     # E2E-tester
+pnpm test                    # Kjør alle enhetstester
+pnpm run test:watch          # Watch mode
+pnpm run test:coverage       # Med coverage
+pnpm run test:playwright     # E2E-tester
 ```
 
 ## Debugging
 
 **Vitest**:
 ```bash
-npm run test -- --ui                # UI mode
-npm run test -- -t "skal vise"      # Spesifikk test
+pnpm run test -- --ui                # UI mode
+pnpm run test -- -t "skal vise"      # Spesifikk test
 ```
 
 **Playwright**:

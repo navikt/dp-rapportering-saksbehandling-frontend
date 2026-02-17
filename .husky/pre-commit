@@ -1,2 +1,2 @@
-npm run pre-commit
-npm test
+pnpm run pre-commit
+pnpm test

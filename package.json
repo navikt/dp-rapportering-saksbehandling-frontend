@@ -2,16 +2,17 @@
   "name": "dp-rapportering-saksbehandling-frontend",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.29.3",
   "scripts": {
     "build": "react-router build",
     "dev": "cross-env react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "lint": "eslint",
-    "test": "npm run test:vitest",
+    "test": "pnpm run test:vitest",
     "prepare": "husky",
     "test:vitest": "vitest run",
-    "pre-commit": "lint-staged && npm run typecheck",
+    "pre-commit": "lint-staged && pnpm run typecheck",
     "test:playwright": "playwright test --trace on"
   },
   "dependencies": {
@@ -46,6 +47,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.58.2",
+    "@portabletext/types": "^4.0.1",
     "@react-router/dev": "^7.13.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -77,14 +79,15 @@
     "vitest": "^4.0.18"
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=24",
+    "pnpm": ">=10"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
       "eslint --max-warnings 0",
       "bash -c tsc",
-      "bash -c 'npm run lint'"
+      "bash -c 'pnpm run lint'"
     ]
   }
 }

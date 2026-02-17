@@ -130,7 +130,7 @@ Tester finnes i `client.test.ts`.
 Kjør tester:
 
 ```bash
-npm test -- client.test.ts
+pnpm test -- client.test.ts
 ```
 
 ### Manuell testing

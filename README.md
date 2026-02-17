@@ -31,7 +31,7 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
 ### Forutsetninger
 
 - Node.js v22+ (sjekk `.nvmrc` for eksakt versjon)
-- npm
+- pnpm
 - VS Code med Prettier-plugin anbefales
 
 ### Oppsett for lokal utvikling
@@ -46,7 +46,7 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
 2. **Installer avhengigheter**
 
    ```bash
-   npm install
+   pnpm install --frozen-lockfile
    ```
 
 3. **Konfigurer miljøvariabler**
@@ -67,7 +67,7 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
 
 4. **Start utviklingsserveren**
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
 Applikasjonen vil være tilgjengelig på `http://localhost:5173`
@@ -99,13 +99,13 @@ For å teste mot faktisk backend i dev-miljø:
 
 ```bash
 # Alle tester
-npm run test
+pnpm run test
 
 # Kun enhetstester (Vitest)
-npm run test:vitest
+pnpm run test:vitest
 
 # Ende-til-ende tester (Playwright)
-npm run test:playwright
+pnpm run test:playwright
 ```
 
 ## Utvikling
@@ -113,11 +113,11 @@ npm run test:playwright
 ### Viktige kommandoer
 
 ```bash
-npm run dev          # Start utviklingsserver
-npm run build        # Bygg produksjonsversjon
-npm run start        # Kjør produksjonsserver
-npm run typecheck    # TypeScript type-sjekking
-npm run lint         # ESLint kodesjekk
+pnpm run dev          # Start utviklingsserver
+pnpm run build        # Bygg produksjonsversjon
+pnpm run start        # Kjør produksjonsserver
+pnpm run typecheck    # TypeScript type-sjekking
+pnpm run lint         # ESLint kodesjekk
 ```
 
 ### Pre-commit hooks
