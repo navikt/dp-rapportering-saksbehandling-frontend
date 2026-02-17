@@ -9,7 +9,7 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "lint": "eslint",
-    "test": "npm run test:vitest",
+    "test": "pnpm run test:vitest",
     "prepare": "husky",
     "test:vitest": "vitest run",
     "pre-commit": "lint-staged && npm run typecheck",
@@ -86,7 +86,7 @@
       "prettier --write",
       "eslint --max-warnings 0",
       "bash -c tsc",
-      "bash -c 'npm run lint'"
+      "bash -c 'pnpm run lint'"
     ]
   }
 }
