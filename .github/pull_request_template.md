@@ -9,7 +9,7 @@
 - [ ] Annet
 
 ## Sjekkliste
-- [ ] Koden bygger uten feil (`npm run build`)
+- [ ] Koden bygger uten feil (`pnpm run build`)
 - [ ] Tester er lagt til/oppdatert
-- [ ] Alle tester passerer (`npm test`)
+- [ ] Alle tester passerer (`pnpm test`)
 - [ ] README/dokumentasjon er oppdatert (hvis relevant)
