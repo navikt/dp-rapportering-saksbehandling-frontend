@@ -26,7 +26,7 @@ WORKDIR /app
 COPY ./package.json ./
 COPY ./pnpm-lock.yaml  ./
 
-RUN pnpm install --ignore-scripts  --frozen-lockfile --prod
+RUN pnpm install --ignore-scripts --frozen-lockfile --prod
 
 
 # export build to filesystem (GitHub)
