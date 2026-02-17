@@ -1,5 +1,5 @@
 FROM node:24-alpine AS node
-
+RUN corepack enable
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     pnpm config set //npm.pkg.github.com/:_authToken=$(cat /run/secrets/NODE_AUTH_TOKEN)
 RUN pnpm config set @navikt:registry=https://npm.pkg.github.com
