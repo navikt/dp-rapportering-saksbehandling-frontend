@@ -2,6 +2,7 @@
   "name": "dp-rapportering-saksbehandling-frontend",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.29.3",
   "scripts": {
     "build": "react-router build",
     "dev": "cross-env react-router dev",
@@ -46,6 +47,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.58.2",
+    "@portabletext/types": "^4.0.1",
     "@react-router/dev": "^7.13.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
