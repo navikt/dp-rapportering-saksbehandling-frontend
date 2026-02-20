@@ -6,36 +6,20 @@ import { mockAzure } from "./mock-azure";
 import { mockBehandling } from "./mock-behandling";
 import { mockMeldekortregister } from "./mock-meldekortregister";
 import { mockPersonregister } from "./mock-personregister";
+import { mockSanity } from "./mock-sanity";
 
 export const handlers = [
   ...mockAzure(),
   ...mockMeldekortregister(),
   ...mockPersonregister(),
   ...mockBehandling(),
+  ...mockSanity(),
 ];
 
 export const server = setupServer(...handlers);
 
 export function startMockServer(server: SetupServerApi) {
-  server.listen({
-    onUnhandledRequest(request, print) {
-      try {
-        const url = new URL(request.url);
-        const hostname = url.hostname;
-
-        const isSanityHost = hostname === "sanity.io" || hostname.endsWith(".sanity.io");
-
-        if (isSanityHost) {
-          return;
-        }
-      } catch {
-        // Hvis URL ikke kan parses, fall tilbake til å logge warning under
-      }
-
-      logger.warn(`Unhandled request: ${request.url}`);
-      print.warning();
-    },
-  });
+  server.listen({ onUnhandledRequest: "bypass" });
 
   process.once("SIGINT", () => server.close());
   process.once("SIGTERM", () => server.close());
