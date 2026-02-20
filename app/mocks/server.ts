@@ -20,7 +20,8 @@ export function startMockServer(server: SetupServerApi) {
   server.listen({
     onUnhandledRequest(request, print) {
       // La Sanity-requests gå gjennom uten warning
-      if (request.url.includes("sanity.io")) {
+      const url = new URL(request.url);
+      if (url.hostname.endsWith(".sanity.io") || url.hostname === "sanity.io") {
         return;
       }
 
