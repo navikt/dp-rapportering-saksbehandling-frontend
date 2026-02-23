@@ -53,6 +53,7 @@ const mockHovedsideData: IMeldekortHovedside = {
   varsler: {
     forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen.",
     fraArena: "Dette meldekortet er opprettet i Arena",
+    korrigeringAvArenaMeldekort: "string",
     etterregistrert: "Dette meldekortet er etterregistrert",
     kanIkkeEndres: "Dette meldekortet kan ikke endres",
     belopSamsvarerIkke: "Beløpet samsvarer ikke med perioden",
