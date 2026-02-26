@@ -8,6 +8,7 @@ jobs:
     uses: ./.github/workflows/build-test.yaml
     permissions:
       contents: read
+      packages: write
       id-token: write
     with:
       project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
