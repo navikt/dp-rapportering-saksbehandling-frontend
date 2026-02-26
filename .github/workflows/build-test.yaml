@@ -88,7 +88,7 @@ jobs:
           retention-days: 30
 
   build:
-    name: Build and push
+    name: Build and publish Docker image
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: [test, playwright]
