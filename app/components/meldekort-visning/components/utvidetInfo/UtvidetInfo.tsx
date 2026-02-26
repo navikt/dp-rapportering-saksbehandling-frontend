@@ -48,7 +48,9 @@ const DEFAULT_LABELS = {
 const DEFAULT_VARSLER = {
   forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen.",
   fraArena:
-    "Dette meldekortet er fra Arena og vi viser derfor ikke svar på spørsmålet om arbeidssøkerregistrering.",
+    "Dette meldekortet er fra Arena, og viser derfor ikke svar på spørsmålet om arbeidssøkerregistrering.",
+  korrigeringAvArenaMeldekort:
+    "Dette meldekortet er en korrigering av et meldekort fra Arena, og viser derfor ikke svar på spørsmålet om arbeidssøkerregistrering.",
   etterregistrert:
     "Dette meldekortet er etterregistrert, og har derfor ikke spørsmål om arbeidssøkerregistrering.",
   kanIkkeEndres: "Dette meldekortet har en korrigering og kan derfor ikke endres igjen.",
@@ -58,6 +60,7 @@ const DEFAULT_VARSLER = {
 
 interface IProps {
   periode: IRapporteringsperiode;
+  originaltMeldekort?: IRapporteringsperiode;
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
   variant?: ABTestVariant;
@@ -167,6 +170,9 @@ export function UtvidetInfo({
   const antallDagerForSent = dagerForSent(periode);
   const erSaksbehandler = erKildeSaksbehandler(periode);
   const useVariantLabels = variant === "B";
+
+  // Sjekk om det er en korrigering av et Arena-meldekort
+  const erKorrigeringAvArenaMeldekort = erKorrigert && erPeriodeOpprettetAvArena(periode);
 
   // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
   const labels = deepMerge(DEFAULT_LABELS, hovedsideData?.utvidetVisning?.infoLabels);
@@ -290,9 +296,15 @@ export function UtvidetInfo({
         </Alert>
       )}
 
-      {erFraArena && (
+      {erFraArena && !erKorrigeringAvArenaMeldekort && (
         <Alert variant="info" size="small">
           {varsler.fraArena}
+        </Alert>
+      )}
+
+      {erKorrigeringAvArenaMeldekort && (
+        <Alert variant="info" size="small">
+          {varsler.korrigeringAvArenaMeldekort}
         </Alert>
       )}
 

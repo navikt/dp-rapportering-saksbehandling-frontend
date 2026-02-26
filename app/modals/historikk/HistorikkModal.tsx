@@ -1,8 +1,7 @@
 import { CheckmarkIcon, XMarkIcon } from "@navikt/aksel-icons";
-import { Accordion, Alert, BodyShort, Heading, Modal, Process, Tag, Theme } from "@navikt/ds-react";
+import { Accordion, Alert, BodyShort, Heading, Modal, Process, Tag } from "@navikt/ds-react";
 import { useRouteLoaderData } from "react-router";
 
-import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import type { IMeldekortHistorikkModal } from "~/sanity/modaler/historikk-modal/types";
 import { groupByYear, sortYearsDescending } from "~/utils/dato.utils";
 
@@ -73,8 +72,6 @@ function getBullet(event: string, registrertTekst: string, avregistrertTekst: st
 }
 
 export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps) {
-  const { tema } = useSaksbehandler();
-
   // Hent tekster fra Sanity med fallback (safe for tests)
   let rootData;
   try {
@@ -105,91 +102,88 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
       onClose={onClose}
       aria-labelledby="historikk-heading"
       closeOnBackdropClick
-      portal
       className={styles.modal}
     >
-      <Theme theme={tema}>
-        <Modal.Header>
-          <Heading level="1" size="small" id="historikk-heading">
-            {tekster.overskrift}
-          </Heading>
-        </Modal.Header>
-        <Modal.Body>
-          <div className={styles.modalContent}>
-            {harFeil && <Alert variant="error">{feilMelding}</Alert>}
-            <Accordion indent={false} className={styles.yearList}>
-              {sortedYears.map((year, index) => (
-                <Accordion.Item key={year} defaultOpen={index === 0}>
-                  <Accordion.Header>{year}</Accordion.Header>
-                  <Accordion.Content>
-                    <Process aria-label={tekster.prosessAriaLabel.replace("{{aar}}", String(year))}>
-                      {hendelserEtterAar[year].map((hendelse, id) => {
-                        const visningDatoTekst =
-                          hendelse.kategori === "Meldekort"
-                            ? tekster.innsendt
-                                .replace("{{dato}}", hendelse.innsendtDato)
-                                .replace("{{tid}}", hendelse.time)
-                            : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
+      <Modal.Header>
+        <Heading level="1" size="small" id="historikk-heading">
+          {tekster.overskrift}
+        </Heading>
+      </Modal.Header>
+      <Modal.Body>
+        <div className={styles.modalContent}>
+          {harFeil && <Alert variant="error">{feilMelding}</Alert>}
+          <Accordion indent={false} className={styles.yearList}>
+            {sortedYears.map((year, index) => (
+              <Accordion.Item key={year} defaultOpen={index === 0}>
+                <Accordion.Header>{year}</Accordion.Header>
+                <Accordion.Content>
+                  <Process aria-label={tekster.prosessAriaLabel.replace("{{aar}}", String(year))}>
+                    {hendelserEtterAar[year].map((hendelse, id) => {
+                      const visningDatoTekst =
+                        hendelse.kategori === "Meldekort"
+                          ? tekster.innsendt
+                              .replace("{{dato}}", hendelse.innsendtDato)
+                              .replace("{{tid}}", hendelse.time)
+                          : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
 
-                        const bullet = getBullet(
-                          hendelse.event,
-                          tekster.hendelsetyper.registrert,
-                          tekster.hendelsetyper.avregistrert,
-                        );
+                      const bullet = getBullet(
+                        hendelse.event,
+                        tekster.hendelsetyper.registrert,
+                        tekster.hendelsetyper.avregistrert,
+                      );
 
-                        // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
-                        const srEventText =
-                          hendelse.kategori === "Meldekort"
-                            ? hendelse.event.replace("Meldekort ", "")
-                            : hendelse.event;
+                      // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
+                      const srEventText =
+                        hendelse.kategori === "Meldekort"
+                          ? hendelse.event.replace("Meldekort ", "")
+                          : hendelse.event;
 
-                        return (
-                          <Process.Event
-                            key={`${hendelse.innsendtDato}-${id}`}
-                            title={hendelse.event}
-                            timestamp={visningDatoTekst}
-                            status="completed"
-                            bullet={bullet}
-                            aria-label={srEventText}
-                          >
-                            {hendelse.type && (
+                      return (
+                        <Process.Event
+                          key={`${hendelse.innsendtDato}-${id}`}
+                          title={hendelse.event}
+                          timestamp={visningDatoTekst}
+                          status="completed"
+                          bullet={bullet}
+                          aria-label={srEventText}
+                        >
+                          {hendelse.type && (
+                            <BodyShort size="small">
+                              {hendelse.type === "Elektronisk"
+                                ? tekster.typeLabels.elektronisk
+                                : hendelse.type === "Manuell"
+                                  ? tekster.typeLabels.manuell
+                                  : hendelse.type}
+                            </BodyShort>
+                          )}
+                          {hendelse.erSendtForSent && (
+                            <>
                               <BodyShort size="small">
-                                {hendelse.type === "Elektronisk"
-                                  ? tekster.typeLabels.elektronisk
-                                  : hendelse.type === "Manuell"
-                                    ? tekster.typeLabels.manuell
-                                    : hendelse.type}
+                                {tekster.fristLabel.replace(
+                                  "{{dato}}",
+                                  hendelse.sisteFristForTrekk || "",
+                                )}
                               </BodyShort>
-                            )}
-                            {hendelse.erSendtForSent && (
-                              <>
-                                <BodyShort size="small">
-                                  {tekster.fristLabel.replace(
-                                    "{{dato}}",
-                                    hendelse.sisteFristForTrekk || "",
-                                  )}
-                                </BodyShort>
-                                <Tag data-color="danger" variant="outline" size="xsmall">
-                                  {tekster.tags.forSentInnsendt}
-                                </Tag>
-                              </>
-                            )}
-                            {hendelse.hendelseType === "Korrigert" && (
-                              <Tag data-color="warning" variant="outline" size="small">
-                                {tekster.tags.korrigert}
+                              <Tag data-color="danger" variant="outline" size="xsmall">
+                                {tekster.tags.forSentInnsendt}
                               </Tag>
-                            )}
-                          </Process.Event>
-                        );
-                      })}
-                    </Process>
-                  </Accordion.Content>
-                </Accordion.Item>
-              ))}
-            </Accordion>
-          </div>
-        </Modal.Body>
-      </Theme>
+                            </>
+                          )}
+                          {hendelse.hendelseType === "Korrigert" && (
+                            <Tag data-color="warning" variant="outline" size="small">
+                              {tekster.tags.korrigert}
+                            </Tag>
+                          )}
+                        </Process.Event>
+                      );
+                    })}
+                  </Process>
+                </Accordion.Content>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </div>
+      </Modal.Body>
     </Modal>
   );
 }

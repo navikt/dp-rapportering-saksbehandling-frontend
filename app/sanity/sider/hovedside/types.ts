@@ -38,6 +38,7 @@ export interface IMeldekortHovedside {
   varsler: {
     forSentInnsendt: string;
     fraArena: string;
+    korrigeringAvArenaMeldekort: string;
     etterregistrert: string;
     kanIkkeEndres: string;
     belopSamsvarerIkke: string;
