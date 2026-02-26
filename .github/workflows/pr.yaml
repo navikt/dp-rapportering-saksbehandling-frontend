@@ -1,0 +1,16 @@
+name: PR
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    uses: ./.github/workflows/build-test.yaml
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+    secrets:
+      READER_TOKEN: ${{ secrets.READER_TOKEN }}
+      NAIS_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
