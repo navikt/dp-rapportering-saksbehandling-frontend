@@ -24,7 +24,7 @@ on:
     outputs:
       image:
         description: "The docker image"
-        value: ${{ jobs.test.outputs.image }}
+        value: ${{ inputs.push_image && jobs.test.outputs.image || '' }}
 
 jobs:
   test:
@@ -63,6 +63,23 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
+      - name: Build static files
+        if: ${{ inputs.push_image }}
+        uses: docker/build-push-action@v6
+        with:
+          target: export
+          outputs: type=local,dest=build
+          secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
+      - name: Upload static files
+        if: ${{ inputs.push_image }}
+        uses: nais/deploy/actions/cdn-upload/v2@master
+        with:
+          team: teamdagpenger
+          source: ./build/client
+          destination: '/dp-rapportering-saksbehandling-frontend/'
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
       - name: docker-build-push
         uses: nais/docker-build-push@v0
         id: docker-build-push
@@ -75,5 +92,8 @@ jobs:
           project_id: ${{ inputs.project_id }}
           build_args: ${{ inputs.build_args }}
           build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
+          target: export
+          outputs: type=local,dest=build
+          secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}

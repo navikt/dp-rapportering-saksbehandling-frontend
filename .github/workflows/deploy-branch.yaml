@@ -13,7 +13,7 @@ on:
           - demo
 
 jobs:
-  build:
+  build-test:
     uses: ./.github/workflows/build-test.yaml
     permissions:
       contents: read
@@ -27,33 +27,8 @@ jobs:
       READER_TOKEN: ${{ secrets.READER_TOKEN }}
       NAIS_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
 
-  cdn-upload:
-    name: Upload static files (demo only)
-    if: inputs.environment == 'demo'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v6
-      - name: Build static files
-        uses: docker/build-push-action@v5
-        with:
-          target: export
-          outputs: type=local,dest=build
-          secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
-      - name: Upload static files
-        uses: nais/deploy/actions/cdn-upload/v2@master
-        with:
-          team: teamdagpenger
-          source: ./build/client
-          destination: '/dp-rapportering-saksbehandling-frontend/'
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-
   deploy:
-    needs: [build, cdn-upload]
+    needs: [build-test]
     if: |
       always() &&
       needs.build.result == 'success' && 
