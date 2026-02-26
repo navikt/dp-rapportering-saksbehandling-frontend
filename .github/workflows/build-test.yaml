@@ -78,9 +78,10 @@ jobs:
           source: ./build/client
           destination: '/dp-rapportering-saksbehandling-frontend/'
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          project_id: ${{ inputs.project_id }}
 
       - name: docker-build-push
+        if: ${{ inputs.push_image }}
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
@@ -92,8 +93,5 @@ jobs:
           project_id: ${{ inputs.project_id }}
           build_args: ${{ inputs.build_args }}
           build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
-          target: export
-          outputs: type=local,dest=build
-          secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
     outputs:
-      image: ${{ steps.docker-build-push.outputs.image }}
+      image: ${{ steps.docker-build-push.outputs.image || '' }}
