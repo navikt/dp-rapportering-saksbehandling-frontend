@@ -1,114 +1,31 @@
 name: Build and deploy
 
 on:
-  workflow_dispatch:
   push:
-  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 env:
   prDeploy: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-test:
+    uses: ./.github/workflows/build-test.yaml
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: read
+      id-token: write
       packages: write
-    outputs:
-      image: ${{ steps.docker-build-push.outputs.image }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '24.x'
-      - name: docker-build-push
-        uses: nais/docker-build-push@v0
-        id: docker-build-push
-        with:
-          team: teamdagpenger
-          push_image: true
-          dockerfile: Dockerfile
-          docker_context: .
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-          build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
-      - name: Build static files
-        uses: docker/build-push-action@v6
-        with:
-          target: export
-          outputs: type=local,dest=build
-          secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
-      - name: Upload static files
-        uses: nais/deploy/actions/cdn-upload/v2@master
-        with:
-          team: teamdagpenger
-          source: ./build/client
-          destination: '/dp-rapportering-saksbehandling-frontend/'
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v4
-      - name: Cache node_modules
-        uses: actions/cache@v5
-        id: node_modules
-        with:
-          path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '24.x'
-          cache: 'pnpm'
-          registry-url: 'https://npm.pkg.github.com'
-
-      - name: Install dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile
-        if: steps.node_modules.outputs.cache-hit != 'true'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
-
-      - run: pnpm run test:vitest
-
-  playwright:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-    - uses: actions/checkout@v6
-    - uses: pnpm/action-setup@v4
-    - name: Cache node_modules
-      uses: actions/cache@v5
-      id: node_modules
-      with:
-        path: ./node_modules
-        key: modules-${{ hashFiles('package-lock.json') }}
-    - uses: actions/setup-node@v6
-      with:
-        node-version: '24.x'
-        cache: 'pnpm'
-        registry-url: 'https://npm.pkg.github.com'
-        
-    - name: Install dependencies
-      run: pnpm install --ignore-scripts --frozen-lockfile
-      if: steps.node_modules.outputs.cache-hit != 'true'
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: pnpm run test:playwright
-    - uses: actions/upload-artifact@v6
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+    with:
+      project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+      push_image: true
+      build_args: ${{ inputs.environment == 'demo' && 'RUNTIME_ENVIRONMENT=demo' || '' }}
+    secrets:
+      READER_TOKEN: ${{ secrets.READER_TOKEN }}
+      NAIS_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
 
   deploy-demo:
-    needs: [build, test]
+    needs: [build-test]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -126,7 +43,7 @@ jobs:
           PRINT_PAYLOAD: true
 
   deploy-dev:
-    needs: [build, test]
+    needs: [build-test]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -144,7 +61,7 @@ jobs:
           PRINT_PAYLOAD: true
 
   deploy-prod:
-    needs: [build, test]
+    needs: [build-test]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -160,35 +77,3 @@ jobs:
           RESOURCE: .nais/nais.yaml
           VARS: .nais/vars-prod.yaml
           PRINT_PAYLOAD: true
-
-  deploy-pr-preview:
-    needs: [build, test]
-    if: vars.prDeploy == 'true' && github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-      packages: write
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v6
-      - name: Create PR-specific NAIS config
-        run: |
-          sed 's|{{prNumber}}|${{ github.event.pull_request.number }}|g; s|{{image}}|${{ needs.build.outputs.image }}|g' .nais/nais-pr.yaml > .nais/nais-pr-${{ github.event.pull_request.number }}.yaml
-      - uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: dev-gcp
-          RESOURCE: .nais/nais-pr-${{ github.event.pull_request.number }}.yaml
-          PRINT_PAYLOAD: true
-      - name: Comment PR with preview URL
-        uses: actions/github-script@v8
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚀 **Preview deployment**\n\n✅ https://dp-rapportering-saksbehandling-frontend-pr-${{ github.event.pull_request.number }}.ekstern.dev.nav.no'
-            })
-
-

@@ -1,0 +1,73 @@
+name: Deploy branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - demo
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-test.yaml
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    with:
+      project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+      push_image: true
+      build_args: ${{ inputs.environment == 'demo' && 'RUNTIME_ENVIRONMENT=demo' || '' }}
+    secrets:
+      READER_TOKEN: ${{ secrets.READER_TOKEN }}
+      NAIS_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+
+  cdn-upload:
+    name: Upload static files (demo only)
+    if: inputs.environment == 'demo'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build static files
+        uses: docker/build-push-action@v5
+        with:
+          target: export
+          outputs: type=local,dest=build
+          secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
+      - name: Upload static files
+        uses: nais/deploy/actions/cdn-upload/v2@master
+        with:
+          team: teamdagpenger
+          source: ./build/client
+          destination: '/dp-rapportering-saksbehandling-frontend/'
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
+  deploy:
+    needs: [build, cdn-upload]
+    if: |
+      always() &&
+      needs.build.result == 'success' && 
+      (needs.cdn-upload.result == 'success' || needs.cdn-upload.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          VAR: image=${{ needs.build.outputs.image }},githubSha=${{ github.sha }}
+          CLUSTER: ${{ inputs.environment == 'prod' && 'prod-gcp' || 'dev-gcp' }}
+          RESOURCE: ${{ inputs.environment == 'demo' && '.nais/nais.demo.yaml' || '.nais/nais.yaml' }}
+          VARS: .nais/vars-${{ inputs.environment }}.yaml
+          PRINT_PAYLOAD: true

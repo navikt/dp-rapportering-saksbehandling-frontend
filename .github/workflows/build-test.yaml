@@ -1,0 +1,79 @@
+name: Build and test
+
+on:
+  workflow_call:
+    inputs:
+      project_id:
+        required: true
+        type: string
+        description: 'NAIS Management Project ID'
+      push_image:
+        description: 'Push docker image'
+        required: false
+        type: boolean
+        default: false
+      build_args:
+        required: false
+        type: string
+        description: 'Build arguments'
+    secrets:
+      READER_TOKEN:
+        required: true
+      NAIS_WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+    outputs:
+      image:
+        description: "The docker image"
+        value: ${{ jobs.test.outputs.image }}
+
+jobs:
+  test:
+    name: Test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '10.30.1'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+      - run: pnpm run test
+      - run: pnpm run build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: pnpm run test:playwright
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: docker-build-push
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: teamdagpenger
+          push_image: ${{ inputs.push_image }}
+          dockerfile: Dockerfile
+          docker_context: .
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ inputs.project_id }}
+          build_args: ${{ inputs.build_args }}
+          build_secrets: NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
