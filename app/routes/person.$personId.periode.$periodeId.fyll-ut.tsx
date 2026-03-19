@@ -15,6 +15,7 @@ import { useFetcher, useLoaderData, useNavigate, useRouteLoaderData } from "reac
 import invariant from "tiny-invariant";
 
 import { AktivitetsTabell } from "~/components/tabeller/aktivitets-tabell/AktivitetsTabell";
+import Valideringsfeil from "~/components/valideringsfeil/Valideringsfeil";
 import { useToast } from "~/context/toast-context";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
@@ -360,7 +361,9 @@ export default function FyllUtPeriode() {
               />
             </fieldset>
           </div>
-
+          <div>
+            <Valideringsfeil skjema={skjema} />
+          </div>
           <div className={styles.handlinger}>
             <Button
               variant="secondary"

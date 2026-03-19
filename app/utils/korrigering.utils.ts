@@ -45,7 +45,7 @@ export function konverterTimerTilISO8601Varighet(dag: IKorrigertDag): IRapporter
 }
 
 export function hentAktiviteter(dag: IRapporteringsperiodeDag): {
-  arbeid: number | undefined;
+  arbeid: number | null | undefined;
   syk: boolean;
   fravaer: boolean;
   utdanning: boolean;
@@ -186,6 +186,22 @@ export function endreArbeid(
 }
 
 export function erIkkeAktiv(aktiviteter: TAktivitetType[], aktivitet: TAktivitetType): boolean {
+  // Lar saksbehandleren fjerne Syk og Fravaer hvis det er Arbeid den dagen
+  if (
+    aktivitet === AKTIVITET_TYPE.Syk &&
+    aktiviteter.includes(AKTIVITET_TYPE.Syk) &&
+    aktiviteter.includes(AKTIVITET_TYPE.Arbeid)
+  ) {
+    return false;
+  }
+  if (
+    aktivitet === AKTIVITET_TYPE.Fravaer &&
+    aktiviteter.includes(AKTIVITET_TYPE.Fravaer) &&
+    aktiviteter.includes(AKTIVITET_TYPE.Arbeid)
+  ) {
+    return false;
+  }
+
   if (
     aktiviteter.includes(AKTIVITET_TYPE.Arbeid) &&
     ([AKTIVITET_TYPE.Syk, AKTIVITET_TYPE.Fravaer] as TAktivitetType[]).includes(aktivitet)
@@ -225,11 +241,5 @@ function erArbeidsaktivitetGyldig(
 export function harMinstEnGyldigAktivitet(dager: IKorrigertDag[]): boolean {
   return dager.some((dag) =>
     dag.aktiviteter.some((aktivitet) => erArbeidsaktivitetGyldig(aktivitet, false)),
-  );
-}
-
-export function erAlleArbeidsaktiviteterGyldige(dager: IKorrigertDag[]): boolean {
-  return dager.every((dag) =>
-    dag.aktiviteter.every((aktivitet) => erArbeidsaktivitetGyldig(aktivitet, true)),
   );
 }

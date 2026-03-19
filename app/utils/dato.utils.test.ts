@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { groupByYear, sortYearsDescending } from "./dato.utils";
+import {
+  groupByYear,
+  konverterFraISO8601Varighet,
+  konverterTilISO8601Varighet,
+  konverterTilNumber,
+  sortYearsDescending,
+} from "./dato.utils";
 
 describe("groupByYear", () => {
   it("skal gruppere objekter etter år basert på dato", () => {
@@ -113,5 +119,155 @@ describe("sortYearsDescending", () => {
     const result = sortYearsDescending(grouped);
 
     expect(result).toEqual([2024, 2020, 2015, 2010]);
+  });
+});
+
+describe("konverterTilNumber", () => {
+  it("skal returnere null hvis string er null", () => {
+    const result = konverterTilNumber(null);
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis string er undefined", () => {
+    const result = konverterTilNumber(undefined);
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis string er tom", () => {
+    const result = konverterTilNumber("");
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis string inneholder kun mellomrom", () => {
+    const result = konverterTilNumber("   ");
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere 0 hvis string er 0", () => {
+    const result = konverterTilNumber("0");
+
+    expect(result).toBe(0);
+  });
+
+  it("skal returnere tall hvis string er heltall", () => {
+    const result = konverterTilNumber("7");
+
+    expect(result).toBe(7);
+  });
+
+  it("skal returnere tall hvis string er desimaltall med prikk som skilletegn", () => {
+    const result = konverterTilNumber("0.5");
+
+    expect(result).toBe(0.5);
+  });
+
+  it("skal returnere tall hvis string er desimaltall med komma som skilletegn", () => {
+    const result = konverterTilNumber("0,5");
+
+    expect(result).toBe(0.5);
+  });
+});
+
+describe("konverterTilISO8601Varighet", () => {
+  it("skal returnere null hvis tid er null", () => {
+    const result = konverterTilISO8601Varighet(null);
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis tid er undefined", () => {
+    const result = konverterTilISO8601Varighet(undefined);
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis tid er tom", () => {
+    const result = konverterTilISO8601Varighet("");
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis tid inneholder kun mellomrom", () => {
+    const result = konverterTilISO8601Varighet("   ");
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere varighet hvis tid er 0", () => {
+    const result = konverterTilISO8601Varighet("0");
+
+    expect(result).toBe("PT0H");
+  });
+
+  it("skal returnere varighet hvis tid er heltall", () => {
+    const result = konverterTilISO8601Varighet("7");
+
+    expect(result).toBe("PT7H");
+  });
+
+  it("skal returnere varighet hvis tid er desimaltall med prikk som skilletegn", () => {
+    const result = konverterTilISO8601Varighet("0.5");
+
+    expect(result).toBe("PT0H30M");
+  });
+
+  it("skal returnere varighet hvis tid er desimaltall med komma som skilletegn", () => {
+    const result = konverterTilISO8601Varighet("0,5");
+
+    expect(result).toBe("PT0H30M");
+  });
+});
+
+describe("konverterFraISO8601Varighet", () => {
+  it("skal returnere null hvis varighet er null", () => {
+    const result = konverterFraISO8601Varighet(null);
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis varighet er undefined", () => {
+    const result = konverterFraISO8601Varighet(undefined);
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis varighet er tom", () => {
+    const result = konverterFraISO8601Varighet("");
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere null hvis varighet inneholder kun mellomrom", () => {
+    const result = konverterFraISO8601Varighet("   ");
+
+    expect(result).toBe(null);
+  });
+
+  it("skal returnere 0 hvis varighet er PT0H", () => {
+    const result = konverterFraISO8601Varighet("PT0H");
+
+    expect(result).toBe(0);
+  });
+
+  it("skal returnere tid hvis varighet har kun timer", () => {
+    const result = konverterFraISO8601Varighet("PT7H");
+
+    expect(result).toBe(7);
+  });
+
+  it("skal returnere tid hvis varighet har kun minutter", () => {
+    const result = konverterFraISO8601Varighet("PT30M");
+
+    expect(result).toBe(0.5);
+  });
+
+  it("skal returnere tid hvis varighet har både timer og minutter", () => {
+    const result = konverterFraISO8601Varighet("PT4H30M");
+
+    expect(result).toBe(4.5);
   });
 });

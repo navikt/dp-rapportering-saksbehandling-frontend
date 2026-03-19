@@ -90,7 +90,7 @@ export interface IAktivitet {
   id?: string;
   type: TAktivitetType;
   dato: string;
-  timer?: string | null;
+  timer?: string | null; // string er ISO8601 varighet, null for ikke-arbeidsaktiviteter
 }
 
 export interface IRapporteringsperiodeDag {

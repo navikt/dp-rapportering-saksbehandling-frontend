@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type IMeldekortSkjemaSubmitData, useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import type { IKorrigertDag, SetKorrigerteDager } from "~/utils/korrigering.utils";
+import type { IRapporteringsperiodeDag } from "~/utils/types";
 
 // Mock navigation warning hook
 vi.mock("~/hooks/useNavigationWarning", () => ({
@@ -44,7 +45,15 @@ describe("useMeldekortSkjema", () => {
     },
   };
 
-  const mockDager: IKorrigertDag[] = [
+  const mockDager: IRapporteringsperiodeDag[] = [
+    {
+      type: "dag",
+      dagIndex: 0,
+      dato: "2024-01-01",
+      aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "PT8H" }],
+    },
+  ];
+  const mockKorrigerteDager: IKorrigertDag[] = [
     {
       type: "dag",
       dagIndex: 0,
@@ -66,7 +75,7 @@ describe("useMeldekortSkjema", () => {
 
   const getDefaultProps = () => ({
     periode: mockPeriode,
-    dager: mockDager,
+    dager: mockKorrigerteDager,
     setKorrigerteDager: mockSetKorrigerteDager as SetKorrigerteDager,
     onSubmit: mockOnSubmit as (data: IMeldekortSkjemaSubmitData) => void,
     onCancel: mockOnCancel as () => void,
@@ -270,7 +279,7 @@ describe("useMeldekortSkjema", () => {
         meldedato: undefined,
         registrertArbeidssoker: undefined,
         begrunnelse: "Test begrunnelse",
-        dager: mockDager,
+        dager: mockKorrigerteDager,
       });
       expect(result.current.state.modalOpen).toBe(false);
     });
@@ -319,7 +328,7 @@ describe("useMeldekortSkjema", () => {
           meldedato: undefined,
           registrertArbeidssoker: true, // Sendes ved fyll-ut
           begrunnelse: "Test begrunnelse",
-          dager: mockDager,
+          dager: mockKorrigerteDager,
         });
       });
 
@@ -350,7 +359,7 @@ describe("useMeldekortSkjema", () => {
           meldedato: undefined,
           registrertArbeidssoker: undefined, // IKKE sendt ved korrigering
           begrunnelse: "Test begrunnelse",
-          dager: mockDager,
+          dager: mockKorrigerteDager,
         });
       });
     });
@@ -454,13 +463,17 @@ describe("useMeldekortSkjema", () => {
   });
 
   describe("dynamiske feilmeldinger", () => {
-    it("skal vise spesifikk feilmelding for ugyldige timer-verdier ved korrigering", () => {
-      const dagerMedUgyldigTimer: IKorrigertDag[] = [
+    it("skal vise spesifikk feilmelding for duplikate aktivitetstyper ved korrigering", () => {
+      const datoMedFeil = "2024-01-01";
+      const dager: IKorrigertDag[] = [
         {
           type: "dag",
           dagIndex: 0,
-          dato: "2024-01-01",
-          aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "0.3" }],
+          dato: datoMedFeil,
+          aktiviteter: [
+            { id: "1", type: "Syk", dato: datoMedFeil },
+            { id: "2", type: "Syk", dato: datoMedFeil },
+          ],
         },
       ];
 
@@ -468,7 +481,7 @@ describe("useMeldekortSkjema", () => {
         useMeldekortSkjema({
           ...getDefaultProps(),
           isKorrigering: true,
-          dager: dagerMedUgyldigTimer,
+          dager: dager,
           originalData: {
             meldedato: "2024-01-15",
             dager: [],
@@ -483,14 +496,145 @@ describe("useMeldekortSkjema", () => {
         } as unknown as React.FormEvent);
       });
 
-      // Should have aktiviteter error with ugyldige-verdier type
-      expect(result.current.state.visValideringsfeil.aktiviteter).toBe(true);
-      expect(result.current.state.visValideringsfeil.aktiviteterType).toBe("ugyldige-verdier");
+      const feilmeldinger = result.current.state.visValideringsfeil.aktiviteter;
 
-      // Should show specific error message for invalid values
-      expect(result.current.feilmeldinger.aktiviteter).toBe(
-        "Du må rette opp ugyldige timer-verdier (minimum 0 timer, kun hele eller halve timer)",
+      // Should have 1 aktivitet-feil
+      expect(feilmeldinger?.size).toBe(1);
+
+      // Should show specific error message for specific date
+      expect(feilmeldinger?.has(datoMedFeil)).toBe(true);
+      expect(feilmeldinger?.get(datoMedFeil)?.length).toBe(1);
+      expect(feilmeldinger?.get(datoMedFeil)?.at(0)).toBe("duplikateAktivitetstyper");
+    });
+
+    it("skal vise spesifikk feilmelding for ugyldig aktivitetskombinasjon ved korrigering", () => {
+      const datoMedFeil = "2024-01-01";
+      const dager: IKorrigertDag[] = [
+        {
+          type: "dag",
+          dagIndex: 0,
+          dato: datoMedFeil,
+          aktiviteter: [
+            { id: "1", type: "Arbeid", dato: datoMedFeil, timer: "4" },
+            { id: "2", type: "Syk", dato: datoMedFeil },
+          ],
+        },
+      ];
+
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          isKorrigering: true,
+          dager: dager,
+          originalData: {
+            meldedato: "2024-01-15",
+            dager: [],
+          },
+        }),
       );
+
+      // Submit form to trigger validation
+      act(() => {
+        result.current.handlers.handleSubmit({
+          preventDefault: vi.fn(),
+        } as unknown as React.FormEvent);
+      });
+
+      const feilmeldinger = result.current.state.visValideringsfeil.aktiviteter;
+
+      // Should have 1 aktivitet-feil
+      expect(feilmeldinger?.size).toBe(1);
+
+      // Should show specific error message for specific date
+      expect(feilmeldinger?.has(datoMedFeil)).toBe(true);
+      expect(feilmeldinger?.get(datoMedFeil)?.length).toBe(1);
+      expect(feilmeldinger?.get(datoMedFeil)?.at(0)).toBe("ugyldigAktivitetskombinasjon");
+    });
+
+    it("skal vise spesifikk feilmelding for ugyldige timer-verdier ved korrigering", () => {
+      const datoMedFeil1 = "2024-01-01";
+      const datoMedFeil2 = "2024-01-02";
+      const datoMedFeil3 = "2024-01-03";
+      const datoMedFeil4 = "2024-01-04";
+      const datoMedFeil5 = "2024-01-05";
+      const datoMedFeil6 = "2024-01-06";
+      const datoMedFeil7 = "2024-01-07";
+
+      const dager: IKorrigertDag[] = [
+        {
+          type: "dag",
+          dagIndex: 0,
+          dato: datoMedFeil1,
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil1, timer: null }],
+        },
+        {
+          type: "dag",
+          dagIndex: 1,
+          dato: datoMedFeil2,
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil2, timer: "" }],
+        },
+        {
+          type: "dag",
+          dagIndex: 2,
+          dato: datoMedFeil3,
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil3, timer: "   " }],
+        },
+        {
+          type: "dag",
+          dagIndex: 3,
+          dato: datoMedFeil4,
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil4, timer: "-1" }],
+        },
+        {
+          type: "dag",
+          dagIndex: 4,
+          dato: datoMedFeil5,
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil5, timer: "25" }],
+        },
+        {
+          type: "dag",
+          dagIndex: 5,
+          dato: datoMedFeil6,
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil6, timer: "0.3" }],
+        },
+        {
+          type: "dag",
+          dagIndex: 6,
+          dato: datoMedFeil7,
+          aktiviteter: [{ id: "1", type: "Syk", dato: datoMedFeil7, timer: "5" }],
+        },
+      ];
+
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          isKorrigering: true,
+          dager: dager,
+          originalData: {
+            meldedato: "2024-01-15",
+            dager: [],
+          },
+        }),
+      );
+
+      // Submit form to trigger validation
+      act(() => {
+        result.current.handlers.handleSubmit({
+          preventDefault: vi.fn(),
+        } as unknown as React.FormEvent);
+      });
+
+      const feilmeldinger = result.current.state.visValideringsfeil.aktiviteter;
+
+      // Should have 1 aktivitet-feil
+      expect(feilmeldinger?.size).toBe(7);
+
+      // Should show specific error message for specific date
+      for (let i = 1; i <= 7; i++) {
+        expect(feilmeldinger?.has("2024-01-0" + i)).toBe(true);
+        expect(feilmeldinger?.get("2024-01-0" + i)?.length).toBe(1);
+        expect(feilmeldinger?.get("2024-01-0" + i)?.at(0)).toBe("ugyldigeTimer");
+      }
     });
 
     it("skal vise generisk feilmelding for ingen endringer ved korrigering", () => {
@@ -498,7 +642,7 @@ describe("useMeldekortSkjema", () => {
         useMeldekortSkjema({
           ...getDefaultProps(),
           isKorrigering: true,
-          dager: mockDager,
+          dager: mockKorrigerteDager,
           originalData: {
             meldedato: "2024-01-15",
             dager: mockDager,
@@ -513,23 +657,18 @@ describe("useMeldekortSkjema", () => {
         } as unknown as React.FormEvent);
       });
 
-      // Should have aktiviteter error with ingen-endringer type
-      expect(result.current.state.visValideringsfeil.aktiviteter).toBe(true);
-      expect(result.current.state.visValideringsfeil.aktiviteterType).toBe("ingen-endringer");
-
       // Should show generic error message for no changes
-      expect(result.current.feilmeldinger.aktiviteter).toBe(
-        "Du må endre enten meldedato eller aktivitet for å kunne sende inn korrigering",
-      );
+      expect(result.current.state.visValideringsfeil.endringer).toBe(true);
     });
 
     it("skal vise spesifikk feilmelding for ugyldige timer-verdier ved fyll-ut", () => {
-      const dagerMedUgyldigTimer: IKorrigertDag[] = [
+      const datoMedFeil = "2024-01-01";
+      const dager: IKorrigertDag[] = [
         {
           type: "dag",
           dagIndex: 0,
-          dato: "2024-01-01",
-          aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "0.3" }],
+          dato: datoMedFeil,
+          aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil, timer: "0.3" }],
         },
       ];
 
@@ -537,7 +676,7 @@ describe("useMeldekortSkjema", () => {
         useMeldekortSkjema({
           ...getDefaultProps(),
           isKorrigering: false,
-          dager: dagerMedUgyldigTimer,
+          dager: dager,
         }),
       );
 
@@ -548,14 +687,15 @@ describe("useMeldekortSkjema", () => {
         } as unknown as React.FormEvent);
       });
 
-      // Should have aktiviteter error with ugyldige-verdier type
-      expect(result.current.state.visValideringsfeil.aktiviteter).toBe(true);
-      expect(result.current.state.visValideringsfeil.aktiviteterType).toBe("ugyldige-verdier");
+      const feilmeldinger = result.current.state.visValideringsfeil.aktiviteter;
 
-      // Should show specific error message for invalid values
-      expect(result.current.feilmeldinger.aktiviteter).toBe(
-        "Du må rette opp ugyldige timer-verdier (minimum 0 timer, kun hele eller halve timer)",
-      );
+      // Should have 1 aktivitet-feil
+      expect(feilmeldinger?.size).toBe(1);
+
+      // Should show specific error message for specific date
+      expect(feilmeldinger?.has(datoMedFeil)).toBe(true);
+      expect(feilmeldinger?.get(datoMedFeil)?.length).toBe(1);
+      expect(feilmeldinger?.get(datoMedFeil)?.at(0)).toBe("ugyldigeTimer");
     });
   });
 });
