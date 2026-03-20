@@ -7,6 +7,7 @@ import invariant from "tiny-invariant";
 
 import { AktivitetsTabell } from "~/components/tabeller/aktivitets-tabell/AktivitetsTabell";
 import { Kalender } from "~/components/tabeller/kalender/Kalender";
+import Valideringsfeil from "~/components/valideringsfeil/Valideringsfeil";
 import { useToast } from "~/context/toast-context";
 import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
@@ -368,12 +369,10 @@ export default function Periode() {
               className={styles.begrunnelse}
             />
           </div>
+          <div>
+            <Valideringsfeil skjema={skjema} />
+          </div>
           <div className={styles.knapper}>
-            {skjema.state.visValideringsfeil.aktiviteter && (
-              <div className="aksel-error-message aksel-error-message--medium" role="alert">
-                {skjema.feilmeldinger.aktiviteter}
-              </div>
-            )}
             <Button
               type="button"
               variant="secondary"

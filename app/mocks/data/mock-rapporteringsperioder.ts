@@ -1147,7 +1147,7 @@ function byggRapporteringsperioderFraKonfigurasjon(
           ...dag,
           dato,
           aktiviteter:
-            aktiviteter?.[index]?.map(({ type, timer = "" }) => ({
+            aktiviteter?.[index]?.map(({ type, timer = null }) => ({
               id: uuidv7(),
               type,
               dato,

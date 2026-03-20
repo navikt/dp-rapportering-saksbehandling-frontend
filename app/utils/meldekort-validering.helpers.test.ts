@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import type { IKorrigertDag } from "~/utils/korrigering.utils";
+
 import { AKTIVITET_TYPE } from "./constants";
 import type {
   ISkjemaData,
@@ -65,9 +67,17 @@ describe("meldekort-validering.helpers", () => {
      * 2. Vi må kunne advare bruker om usaved changes
      * 3. Vi må validere at minst én endring er gjort ved korrigering
      */
-    it("skal returnere false når ingen aktiviteter har endret seg", () => {
+    it("skal returnere false når ingen aktiviteter med timer har endret seg", () => {
       // Test at identiske aktiviteter ikke detekteres som endring
       const opprinneligeDager: IRapporteringsperiodeDag[] = [
+        {
+          ...baseDag,
+          dato: "2024-01-01",
+          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT7H30M" }],
+        },
+      ];
+
+      const redigerteDager: IKorrigertDag[] = [
         {
           ...baseDag,
           dato: "2024-01-01",
@@ -75,11 +85,24 @@ describe("meldekort-validering.helpers", () => {
         },
       ];
 
-      const redigerteDager: IRapporteringsperiodeDag[] = [
+      expect(harAktivitetEndringer(opprinneligeDager, redigerteDager)).toBe(false);
+    });
+
+    it("skal returnere false når ingen aktiviteter uten timer har endret seg", () => {
+      // Test at identiske aktiviteter ikke detekteres som endring
+      const opprinneligeDager: IRapporteringsperiodeDag[] = [
         {
           ...baseDag,
           dato: "2024-01-01",
-          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "7.5" }],
+          aktiviteter: [{ type: AKTIVITET_TYPE.Syk, dato: "2024-01-01" }],
+        },
+      ];
+
+      const redigerteDager: IKorrigertDag[] = [
+        {
+          ...baseDag,
+          dato: "2024-01-01",
+          aktiviteter: [{ type: AKTIVITET_TYPE.Syk, dato: "2024-01-01" }],
         },
       ];
 
@@ -91,7 +114,7 @@ describe("meldekort-validering.helpers", () => {
         { ...baseDag, dato: "2024-01-01", aktiviteter: [] },
       ];
 
-      const redigerteDager: IRapporteringsperiodeDag[] = [
+      const redigerteDager: IKorrigertDag[] = [
         { ...baseDag, dato: "2024-01-01", aktiviteter: [] },
         { ...baseDag, dato: "2024-01-02", dagIndex: 1, aktiviteter: [] },
       ];
@@ -104,11 +127,11 @@ describe("meldekort-validering.helpers", () => {
         {
           ...baseDag,
           dato: "2024-01-01",
-          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "7.5" }],
+          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT7H30M" }],
         },
       ];
 
-      const redigerteDager: IRapporteringsperiodeDag[] = [
+      const redigerteDager: IKorrigertDag[] = [
         {
           ...baseDag,
           dato: "2024-01-01",
@@ -124,11 +147,11 @@ describe("meldekort-validering.helpers", () => {
         {
           ...baseDag,
           dato: "2024-01-01",
-          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "7.5" }],
+          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT7H30M" }],
         },
       ];
 
-      const redigerteDager: IRapporteringsperiodeDag[] = [
+      const redigerteDager: IKorrigertDag[] = [
         {
           ...baseDag,
           dato: "2024-01-01",
@@ -144,11 +167,11 @@ describe("meldekort-validering.helpers", () => {
         {
           ...baseDag,
           dato: "2024-01-01",
-          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "7.5" }],
+          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT7H30M" }],
         },
       ];
 
-      const redigerteDager: IRapporteringsperiodeDag[] = [
+      const redigerteDager: IKorrigertDag[] = [
         {
           ...baseDag,
           dato: "2024-01-01",
@@ -167,7 +190,7 @@ describe("meldekort-validering.helpers", () => {
         { ...baseDag, dato: "2024-01-01", aktiviteter: [] },
       ];
 
-      const redigerteDager: IRapporteringsperiodeDag[] = [
+      const redigerteDager: IKorrigertDag[] = [
         {
           ...baseDag,
           dato: "2024-01-01",
@@ -187,9 +210,7 @@ describe("meldekort-validering.helpers", () => {
         },
       ];
 
-      const redigerteDager: IRapporteringsperiodeDag[] = [
-        { ...baseDag, dato: "2024-01-01", aktiviteter: [] },
-      ];
+      const redigerteDager: IKorrigertDag[] = [{ ...baseDag, dato: "2024-01-01", aktiviteter: [] }];
 
       expect(harAktivitetEndringer(opprinneligeDager, redigerteDager)).toBe(true);
     });
@@ -199,7 +220,7 @@ describe("meldekort-validering.helpers", () => {
         {
           ...baseDag,
           dato: "2024-01-01",
-          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "7.5" }],
+          aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT7H30M" }],
         },
         {
           ...baseDag,
@@ -209,7 +230,7 @@ describe("meldekort-validering.helpers", () => {
         },
       ];
 
-      const redigerteDager: IRapporteringsperiodeDag[] = [
+      const redigerteDager: IKorrigertDag[] = [
         {
           ...baseDag,
           dato: "2024-01-01",
@@ -494,7 +515,7 @@ describe("meldekort-validering.helpers", () => {
         };
 
         const feil = validerMeldekortSkjema(skjemaData, kontekst);
-        expect(feil.aktiviteter).toBe(false);
+        expect(feil.aktiviteter).toBe(null);
       });
 
       it("skal godkjenne gyldig fyll ut skjema", () => {
@@ -514,7 +535,8 @@ describe("meldekort-validering.helpers", () => {
         expect(feil.meldedato).toBe(false);
         expect(feil.arbeidssoker).toBe(false);
         expect(feil.begrunnelse).toBe(false);
-        expect(feil.aktiviteter).toBe(false);
+        expect(feil.aktiviteter).toBe(null);
+        expect(feil.endringer).toBe(false);
       });
     });
 
@@ -570,7 +592,7 @@ describe("meldekort-validering.helpers", () => {
         };
 
         const feil = validerMeldekortSkjema(skjemaData, kontekst);
-        expect(feil.aktiviteter).toBe(true); // Skal feile fordi ingen endringer er gjort
+        expect(feil.endringer).toBe(true); // Skal feile fordi ingen endringer er gjort
       });
 
       it("skal godkjenne korrigering med endret meldedato", () => {
@@ -593,7 +615,8 @@ describe("meldekort-validering.helpers", () => {
         const feil = validerMeldekortSkjema(skjemaData, kontekst);
         expect(feil.meldedato).toBe(false);
         expect(feil.begrunnelse).toBe(false);
-        expect(feil.aktiviteter).toBe(false);
+        expect(feil.aktiviteter).toBe(null);
+        expect(feil.endringer).toBe(false);
       });
 
       it("skal godkjenne korrigering med endret aktivitet", () => {
@@ -620,8 +643,9 @@ describe("meldekort-validering.helpers", () => {
         };
 
         const feil = validerMeldekortSkjema(skjemaData, kontekst);
-        expect(feil.aktiviteter).toBe(false);
         expect(feil.begrunnelse).toBe(false);
+        expect(feil.aktiviteter).toBe(null);
+        expect(feil.endringer).toBe(false);
       });
 
       it("skal IKKE kreve arbeidssøker-svar ved korrigering", () => {
@@ -669,7 +693,8 @@ describe("meldekort-validering.helpers", () => {
         meldedato: true,
         arbeidssoker: true,
         begrunnelse: true,
-        aktiviteter: true,
+        aktiviteter: new Map(),
+        endringer: true,
       };
 
       fokuserPaForsteFeil(feil, refs);
@@ -697,7 +722,8 @@ describe("meldekort-validering.helpers", () => {
         meldedato: false,
         arbeidssoker: true,
         begrunnelse: true,
-        aktiviteter: true,
+        aktiviteter: new Map(),
+        endringer: true,
       };
 
       fokuserPaForsteFeil(feil, refs);
@@ -725,14 +751,15 @@ describe("meldekort-validering.helpers", () => {
         meldedato: false,
         arbeidssoker: false,
         begrunnelse: true,
-        aktiviteter: true,
+        aktiviteter: new Map(),
+        endringer: true,
       };
 
       fokuserPaForsteFeil(feil, refs);
       expect(focused).toBe("begrunnelse");
     });
 
-    it("skal fokusere på aktiviteter hvis det er den eneste feilen", () => {
+    it("skal fokusere på aktiviteter hvis det finnes feil", () => {
       const mockFocus = { current: { focus: () => {} } };
       let focused = "";
 
@@ -753,7 +780,37 @@ describe("meldekort-validering.helpers", () => {
         meldedato: false,
         arbeidssoker: false,
         begrunnelse: false,
-        aktiviteter: true,
+        aktiviteter: new Map(),
+        endringer: true,
+      };
+
+      fokuserPaForsteFeil(feil, refs);
+      expect(focused).toBe("aktiviteter");
+    });
+
+    it("skal fokusere på aktiviteter hvis manglende endringer er den eneste feilen", () => {
+      const mockFocus = { current: { focus: () => {} } };
+      let focused = "";
+
+      const refs: ISkjemaRefs = {
+        meldedatoRef: mockFocus as unknown as ISkjemaRefs["meldedatoRef"],
+        arbeidssokerRef: mockFocus as unknown as ISkjemaRefs["arbeidssokerRef"],
+        begrunnelseRef: mockFocus as unknown as ISkjemaRefs["begrunnelseRef"],
+        aktiviteterRef: {
+          current: {
+            focus: () => {
+              focused = "aktiviteter";
+            },
+          } as HTMLElement,
+        },
+      };
+
+      const feil = {
+        meldedato: false,
+        arbeidssoker: false,
+        begrunnelse: false,
+        aktiviteter: null,
+        endringer: true,
       };
 
       fokuserPaForsteFeil(feil, refs);
@@ -772,7 +829,8 @@ describe("meldekort-validering.helpers", () => {
         meldedato: true,
         arbeidssoker: true,
         begrunnelse: true,
-        aktiviteter: true,
+        aktiviteter: new Map(),
+        endringer: true,
       };
 
       expect(() => fokuserPaForsteFeil(feil, refs)).not.toThrow();
@@ -791,7 +849,7 @@ describe("meldekort-validering.helpers", () => {
       expect(meldinger.meldedato).toContain("velge en meldedato");
       expect(meldinger.arbeidssoker).toContain("arbeidssøker");
       expect(meldinger.begrunnelse).toContain("begrunnelse");
-      expect(meldinger.aktiviteter).toBe("");
+      expect(meldinger.ingenEndringer).toBe("");
     });
 
     it("skal returnere feilmeldinger for korrigering", () => {
@@ -809,7 +867,7 @@ describe("meldekort-validering.helpers", () => {
       expect(meldinger.meldedato).toContain("velge en meldedato");
       expect(meldinger.arbeidssoker).toBe("");
       expect(meldinger.begrunnelse).toContain("korrigering");
-      expect(meldinger.aktiviteter).toContain("endre");
+      expect(meldinger.ingenEndringer).toContain("korrigering");
     });
   });
 });

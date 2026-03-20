@@ -1,18 +1,28 @@
 import type { RefObject } from "react";
 
-import { MELDEKORT_TYPE, OPPRETTET_AV } from "./constants";
-import { erAlleArbeidsaktiviteterGyldige, type IKorrigertDag } from "./korrigering.utils";
+import { konverterFraISO8601Varighet, konverterTilNumber } from "~/utils/dato.utils";
+import type { IKorrigertAktivitet, IKorrigertDag } from "~/utils/korrigering.utils";
+
+import { AKTIVITET_TYPE, MELDEKORT_TYPE, OPPRETTET_AV } from "./constants";
 import type { IAktivitet, IRapporteringsperiodeDag, TOpprettetAv } from "./types";
 
 /**
  * Resultat fra validering av meldekortskjema
  */
+export const AKTIVITETS_FEILKODER = {
+  DuplikateAktivitetstyper: "duplikateAktivitetstyper",
+  UgyldigAktivitetskombinasjon: "ugyldigAktivitetskombinasjon",
+  UgyldigeTimer: "ugyldigeTimer",
+};
+
+export type AktivitetsFeilkode = (typeof AKTIVITETS_FEILKODER)[keyof typeof AKTIVITETS_FEILKODER];
+
 export interface IValideringsFeil {
   meldedato: boolean;
   arbeidssoker: boolean;
   begrunnelse: boolean;
-  aktiviteter: boolean;
-  aktiviteterType?: "ingen-endringer" | "ugyldige-verdier";
+  aktiviteter: Map<string, AktivitetsFeilkode[]> | null;
+  endringer: boolean;
 }
 
 /**
@@ -79,7 +89,7 @@ export function skalViseArbeidssokerSporsmal(
  */
 export function harAktivitetEndringer(
   opprinneligeDager: IRapporteringsperiodeDag[],
-  redigerteDager: IRapporteringsperiodeDag[],
+  redigerteDager: IKorrigertDag[],
 ): boolean {
   if (opprinneligeDager.length !== redigerteDager.length) {
     return true;
@@ -99,7 +109,10 @@ export function harAktivitetEndringer(
 /**
  * Sammenligner aktiviteter for en enkelt dag
  */
-function harAktivitetEndringerForDag(opprinnelige: IAktivitet[], redigerte: IAktivitet[]): boolean {
+function harAktivitetEndringerForDag(
+  opprinnelige: IAktivitet[],
+  redigerte: IKorrigertAktivitet[],
+): boolean {
   if (opprinnelige.length !== redigerte.length) {
     return true;
   }
@@ -123,10 +136,13 @@ function harAktivitetEndringerForDag(opprinnelige: IAktivitet[], redigerte: IAkt
       return true;
     }
 
+    // Det er bedre å konvertere ISO8601 til number enn omvendt fordi 0 i ISO8601 kan skrives som
+    // PT0H, PT0M, PT0S eller P0D
+    // Redigerte timer må konverteres til number for sammenligning
     return (
       opprinnelig.type !== redigert.type ||
       opprinnelig.dato !== redigert.dato ||
-      opprinnelig.timer !== redigert.timer
+      konverterFraISO8601Varighet(opprinnelig.timer) !== konverterTilNumber(redigert.timer)
     );
   });
 }
@@ -203,24 +219,19 @@ export function validerMeldekortSkjema(
   const { meldedato, registrertArbeidssoker, begrunnelse, dager } = skjemaData;
   const { isKorrigering, showArbeidssokerField } = kontekst;
 
-  // Sjekk om alle arbeidsaktiviteter har gyldige timer-verdier
-  const harUgyldigeAktiviteter = dager ? !erAlleArbeidsaktiviteterGyldige(dager) : false;
+  // Valider aktiviteter: timer-verdier, duplikate aktivitetstyper og ugyldige aktivitetskombinasjoner
+  const ugyldigeAktiviteter = validerAktiviteter(dager);
 
   if (isKorrigering) {
     // Korrigering: Må ha endringer (meldedato ELLER aktivitet) + begrunnelse
     const harEndringer = harSkjemaEndringer(skjemaData, kontekst);
-    const harAktivitetFeil = !harEndringer || harUgyldigeAktiviteter;
 
     return {
       meldedato: false, // Meldedato er ikke påkrevd ved korrigering (kan være uendret)
       arbeidssoker: false, // Arbeidssøker-spørsmålet vises ikke ved korrigering
       begrunnelse: begrunnelse.trim() === "",
-      aktiviteter: harAktivitetFeil,
-      aktiviteterType: harAktivitetFeil
-        ? harUgyldigeAktiviteter
-          ? "ugyldige-verdier"
-          : "ingen-endringer"
-        : undefined,
+      aktiviteter: ugyldigeAktiviteter,
+      endringer: !harEndringer,
     };
   } else {
     // Fyll ut: Må ha meldedato + besvart arbeidssøker + begrunnelse (aktivitet IKKE påkrevd)
@@ -228,8 +239,8 @@ export function validerMeldekortSkjema(
       meldedato: !meldedato,
       arbeidssoker: showArbeidssokerField && registrertArbeidssoker === null,
       begrunnelse: begrunnelse.trim() === "",
-      aktiviteter: harUgyldigeAktiviteter,
-      aktiviteterType: harUgyldigeAktiviteter ? "ugyldige-verdier" : undefined,
+      aktiviteter: ugyldigeAktiviteter,
+      endringer: false,
     };
   }
 }
@@ -248,7 +259,7 @@ export interface ISkjemaRefs {
 }
 
 export function fokuserPaForsteFeil(feil: IValideringsFeil, refs: ISkjemaRefs): void {
-  const { meldedato, arbeidssoker, begrunnelse, aktiviteter } = feil;
+  const { meldedato, arbeidssoker, begrunnelse, aktiviteter, endringer } = feil;
   const { meldedatoRef, arbeidssokerRef, begrunnelseRef, aktiviteterRef } = refs;
 
   if (meldedato) {
@@ -270,6 +281,11 @@ export function fokuserPaForsteFeil(feil: IValideringsFeil, refs: ISkjemaRefs): 
     aktiviteterRef.current?.focus();
     return;
   }
+
+  if (endringer) {
+    aktiviteterRef.current?.focus();
+    return;
+  }
 }
 
 /**
@@ -282,23 +298,126 @@ export interface IFeilmeldinger {
   meldedato: string;
   arbeidssoker: string;
   begrunnelse: string;
-  aktiviteter: string;
+  ingenEndringer: string;
+  duplikateAktivitetstyper: string;
+  ugyldigAktivitetskombinasjon: string;
+  ugyldigeTimer: string;
 }
 
 export function lagValideringsFeilmeldinger(kontekst: IValideringsKontekst): IFeilmeldinger {
+  const fellesFeilmeldinger = {
+    duplikateAktivitetstyper: "har duplikate aktivitetstyper",
+    ugyldigAktivitetskombinasjon: "har ugyldig aktivitetskombinasjon",
+    ugyldigeTimer:
+      "har ugyldige timer-verdier (må være minimum 0 timer, maksimum 24, kun hele eller halve timer)",
+  };
+
   if (kontekst.isKorrigering) {
     return {
+      ...fellesFeilmeldinger,
       meldedato: "Du må velge en meldedato",
       arbeidssoker: "", // Vises ikke ved korrigering
       begrunnelse: "Du må oppgi en begrunnelse for korrigeringen",
-      aktiviteter: "Du må endre enten meldedato eller aktivitet for å kunne sende inn korrigering",
+      ingenEndringer:
+        "Du må endre enten meldedato eller aktivitet for å kunne sende inn korrigering",
     };
   } else {
     return {
+      ...fellesFeilmeldinger,
       meldedato: "Du må velge en meldedato",
       arbeidssoker: "Du må svare på om brukeren skal være registrert som arbeidssøker",
       begrunnelse: "Du må oppgi en begrunnelse",
-      aktiviteter: "", // Ikke påkrevd ved fyll ut
+      ingenEndringer: "", // Ikke påkrevd ved fyll ut
     };
+  }
+}
+
+export function validerAktiviteter(
+  dager?: IKorrigertDag[] | null,
+): Map<string, AktivitetsFeilkode[]> | null {
+  const dagFeilMap = new Map<string, AktivitetsFeilkode[]>();
+
+  dager?.forEach((dag) => {
+    const feil = [
+      validerIngenDuplikateAktivitetsTyper(dag),
+      validerAktivitetsTypeKombinasjoner(dag),
+      validerArbeidedeTimer(dag),
+    ];
+
+    const filteredFeil = feil.filter((f) => f != null);
+
+    if (filteredFeil.length > 0) {
+      dagFeilMap.set(dag.dato, filteredFeil);
+    }
+  });
+
+  if (dagFeilMap.size === 0) {
+    return null;
+  }
+
+  return dagFeilMap;
+}
+
+function validerIngenDuplikateAktivitetsTyper(dag: IKorrigertDag): AktivitetsFeilkode | null {
+  const aktivitetSet = new Set();
+  dag.aktiviteter.forEach((aktivitet) => {
+    aktivitetSet.add(aktivitet.type);
+  });
+
+  if (aktivitetSet.size !== dag.aktiviteter.length) {
+    return AKTIVITETS_FEILKODER.DuplikateAktivitetstyper;
+  }
+
+  return null;
+}
+
+function validerAktivitetsTypeKombinasjoner(dag: IKorrigertDag): AktivitetsFeilkode | null {
+  if (
+    dag.aktiviteter.find((aktivitet) => aktivitet.type === AKTIVITET_TYPE.Arbeid) != null &&
+    (dag.aktiviteter.find((aktivitet) => aktivitet.type === AKTIVITET_TYPE.Syk) != null ||
+      dag.aktiviteter.find((aktivitet) => aktivitet.type === AKTIVITET_TYPE.Fravaer) != null)
+  ) {
+    return AKTIVITETS_FEILKODER.UgyldigAktivitetskombinasjon;
+  }
+
+  return null;
+}
+
+function validerArbeidedeTimer(dag: IKorrigertDag): AktivitetsFeilkode | null {
+  let feil = false;
+
+  dag.aktiviteter.forEach((aktivitet) => {
+    if (aktivitet.type === AKTIVITET_TYPE.Arbeid) {
+      const timer = aktivitet.timer;
+      if (timer == null || timer.trim() === "") {
+        feil = true;
+        return;
+      }
+
+      // Konverter komma til punktum for norske brukere
+      const normalizedTimer = timer.replace(",", ".");
+      const timerNum = Number(normalizedTimer);
+
+      if (
+        isNaN(timerNum) ||
+        timerNum < 0 ||
+        timerNum > 24 ||
+        Math.round(timerNum * 2) !== timerNum * 2
+      ) {
+        feil = true;
+        return;
+      }
+    }
+
+    if (aktivitet.type !== AKTIVITET_TYPE.Arbeid && aktivitet.timer) {
+      feil = true;
+      return;
+    }
+  });
+
+  if (feil) {
+    return AKTIVITETS_FEILKODER.UgyldigeTimer;
+  } else {
+    return null;
   }
 }

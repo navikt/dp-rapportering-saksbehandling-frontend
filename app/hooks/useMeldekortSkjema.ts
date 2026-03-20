@@ -9,7 +9,11 @@ import {
   type IKorrigertDag,
   type SetKorrigerteDager,
 } from "~/utils/korrigering.utils";
-import type { IValideringsFeil, IValideringsKontekst } from "~/utils/meldekort-validering.helpers";
+import type {
+  IFeilmeldinger,
+  IValideringsFeil,
+  IValideringsKontekst,
+} from "~/utils/meldekort-validering.helpers";
 import {
   fokuserPaForsteFeil,
   lagValideringsFeilmeldinger,
@@ -36,7 +40,8 @@ type ValidationAction =
   | { type: "CLEAR_MELDEDATO" }
   | { type: "CLEAR_ARBEIDSSOKER" }
   | { type: "CLEAR_BEGRUNNELSE" }
-  | { type: "CLEAR_AKTIVITETER" };
+  | { type: "CLEAR_AKTIVITETER" }
+  | { type: "CLEAR_ENDRINGER" };
 
 function validationReducer(state: IValideringsFeil, action: ValidationAction): IValideringsFeil {
   switch (action.type) {
@@ -49,7 +54,9 @@ function validationReducer(state: IValideringsFeil, action: ValidationAction): I
     case "CLEAR_BEGRUNNELSE":
       return { ...state, begrunnelse: false };
     case "CLEAR_AKTIVITETER":
-      return { ...state, aktiviteter: false, aktiviteterType: undefined };
+      return { ...state, aktiviteter: null };
+    case "CLEAR_ENDRINGER":
+      return { ...state, endringer: false };
     default:
       return state;
   }
@@ -128,8 +135,8 @@ export function useMeldekortSkjema({
     meldedato: false,
     arbeidssoker: false,
     begrunnelse: false,
-    aktiviteter: false,
-    aktiviteterType: undefined,
+    aktiviteter: null,
+    endringer: false,
   });
 
   // Navigation warning
@@ -157,8 +164,11 @@ export function useMeldekortSkjema({
     setKorrigerteDager(nyeDager);
     if (typeof nyeDager !== "function") {
       const harGyldigeAktiviteter = harMinstEnGyldigAktivitet(nyeDager);
-      if (harGyldigeAktiviteter && visValideringsfeil.aktiviteter) {
+      if (harGyldigeAktiviteter && visValideringsfeil.aktiviteter != null) {
         dispatchValidation({ type: "CLEAR_AKTIVITETER" });
+      }
+      if (visValideringsfeil.endringer) {
+        dispatchValidation({ type: "CLEAR_ENDRINGER" });
       }
     }
   };
@@ -243,18 +253,14 @@ export function useMeldekortSkjema({
   // Generer feilmeldinger basert på kontekst og aktiviteterType
   const baseFeilmeldinger = lagValideringsFeilmeldinger(valideringsKontekst);
 
-  // Generer aktivitet-feilmelding basert på type
-  let aktivitetFeilmelding = baseFeilmeldinger.aktiviteter;
-  if (visValideringsfeil.aktiviteterType === "ugyldige-verdier") {
-    aktivitetFeilmelding =
-      "Du må rette opp ugyldige timer-verdier (minimum 0 timer, kun hele eller halve timer)";
-  }
-
-  const feilmeldinger = {
+  const feilmeldinger: IFeilmeldinger = {
     meldedato: baseFeilmeldinger.meldedato,
     arbeidssoker: baseFeilmeldinger.arbeidssoker,
     begrunnelse: baseFeilmeldinger.begrunnelse,
-    aktiviteter: aktivitetFeilmelding,
+    ingenEndringer: baseFeilmeldinger.ingenEndringer,
+    duplikateAktivitetstyper: baseFeilmeldinger.duplikateAktivitetstyper,
+    ugyldigAktivitetskombinasjon: baseFeilmeldinger.ugyldigAktivitetskombinasjon,
+    ugyldigeTimer: baseFeilmeldinger.ugyldigeTimer,
   };
 
   return {

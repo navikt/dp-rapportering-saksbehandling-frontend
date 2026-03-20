@@ -156,8 +156,18 @@ export function hentUkedag(dato: string): string {
   return weekDays[(date.getUTCDay() + 6) % 7].kort;
 }
 
-export function konverterTilISO8601Varighet(varighet: string): string {
-  const delt = varighet.trim().replace(/\./g, ",").split(",");
+export function konverterTilNumber(str?: string | null): number | null {
+  if (!str || str.trim() === "") return null;
+
+  const delt = str.trim().replace(/,/g, ".");
+
+  return Number(delt);
+}
+
+export function konverterTilISO8601Varighet(tid?: string | null): string | null {
+  if (!tid || tid.trim() === "") return null;
+
+  const delt = tid.trim().replace(/\./g, ",").split(",");
   const timer = delt[0] || 0;
   const minutter = delt[1] || 0;
   const minutterProsent = parseFloat(`0.${minutter}`);
@@ -168,17 +178,17 @@ export function konverterTilISO8601Varighet(varighet: string): string {
   });
 }
 
-export function konverterFraISO8601Varighet(periode?: string | null): number | undefined {
-  if (!periode || periode.trim() === "") return undefined;
+export function konverterFraISO8601Varighet(varighet?: string | null): number | null | undefined {
+  if (!varighet || varighet.trim() === "") return null;
 
   try {
-    periode = periode.replace(/\s/g, "");
-    const parsed = parse(periode);
+    varighet = varighet.replace(/\s/g, "");
+    const parsed = parse(varighet);
     const timer = parsed.hours || 0;
     const minutt = parsed.minutes || 0;
     return timer + minutt / 60;
   } catch (error) {
-    console.warn("Invalid duration format:", periode, error);
+    console.warn("Invalid duration format:", varighet, error);
     return undefined;
   }
 }
