@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 
 import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
 import { deepMerge } from "~/utils/deep-merge.utils";
+import { byggFulltNavn } from "~/utils/person.utils";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
 import {
@@ -12,13 +13,7 @@ import {
   transformPerioderToHistoryEvents,
 } from "../../modals/historikk/historikk.utils";
 import { HistorikkModal } from "../../modals/historikk/HistorikkModal";
-import {
-  beregnAlder,
-  byggFulltNavn,
-  erKvinne,
-  erMann,
-  getKjonnKlasse,
-} from "./Personlinje.helpers";
+import { beregnAlder, erKvinne, erMann, getKjonnKlasse } from "./Personlinje.helpers";
 import styles from "./personlinje.module.css";
 
 // Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
