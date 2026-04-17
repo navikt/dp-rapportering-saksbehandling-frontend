@@ -10,6 +10,7 @@ import { getABTestVariant } from "~/utils/ab-test.server";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DEFAULT_PERSON } from "~/utils/constants";
 import { sortYearsDescending, ukenummer } from "~/utils/dato.utils";
+import { byggFulltNavn } from "~/utils/person.utils";
 
 import type { Route } from "./+types/person.$personId.perioder";
 
@@ -111,7 +112,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
     );
   };
 
-  const fulltNavn = `${person.fornavn} ${person.etternavn}`;
+  const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
 
   // Hent tekster fra Sanity med fallback
   const sidetittel =

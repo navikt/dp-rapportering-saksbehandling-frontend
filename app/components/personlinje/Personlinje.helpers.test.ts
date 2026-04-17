@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import {
   beregnAlder,
-  byggFulltNavn,
   erKvinne,
   erMann,
   formaterSensitivTekst,
@@ -10,34 +9,6 @@ import {
 } from "./Personlinje.helpers";
 
 describe("Personlinje.helpers", () => {
-  describe("byggFulltNavn", () => {
-    it("skal bygge fullt navn med fornavn, mellomnavn og etternavn", () => {
-      expect(byggFulltNavn("Ole", "Johan", "Hansen")).toBe("Ole Johan Hansen");
-    });
-
-    it("skal bygge fullt navn uten mellomnavn", () => {
-      expect(byggFulltNavn("Kari", null, "Nordmann")).toBe("Kari Nordmann");
-    });
-
-    it("skal håndtere undefined mellomnavn", () => {
-      expect(byggFulltNavn("Per", undefined, "Berg")).toBe("Per Berg");
-    });
-
-    it("skal håndtere tom streng som mellomnavn", () => {
-      expect(byggFulltNavn("Ane", "", "Svendsen")).toBe("Ane Svendsen");
-    });
-
-    it("skal håndtere bare fornavn og etternavn", () => {
-      expect(byggFulltNavn("Lisa", null, "Jensen")).toBe("Lisa Jensen");
-    });
-
-    it("skal håndtere flere mellomrom mellom navn", () => {
-      const resultat = byggFulltNavn("Ola", "Petter", "Larsen");
-      expect(resultat).toBe("Ola Petter Larsen");
-      expect(resultat.split(" ")).toHaveLength(3);
-    });
-  });
-
   describe("beregnAlder", () => {
     it("skal beregne riktig alder basert på fødselsdato", () => {
       // Person født for 30 år siden
@@ -228,24 +199,16 @@ describe("Personlinje.helpers", () => {
   });
 
   describe("Integrasjonstester", () => {
-    it("skal bygge fullt navn og beregne alder for en person", () => {
-      const navn = byggFulltNavn("Ole", "Johan", "Hansen");
+    it("skal håndtere kjønn og alder sammen", () => {
+      const kjonn = "MANN";
       const fodselsdato = new Date();
       fodselsdato.setFullYear(fodselsdato.getFullYear() - 35);
       const alder = beregnAlder(fodselsdato);
-
-      expect(navn).toBe("Ole Johan Hansen");
-      expect(alder).toBe(35);
-    });
-
-    it("skal håndtere kjønn og navn sammen", () => {
-      const kjonn = "MANN";
-      const navn = byggFulltNavn("Per", null, "Berg");
       const klasse = getKjonnKlasse(kjonn);
 
       expect(erMann(kjonn)).toBe(true);
       expect(klasse).toBe("iconContainerMann");
-      expect(navn).toBe("Per Berg");
+      expect(alder).toBe(35);
     });
   });
 });
