@@ -38,7 +38,7 @@ jobs:
       - name: Read pnpm version from package.json
         id: pnpm-version
         run: echo "version=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> "$GITHUB_OUTPUT"
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@v6.0.3
         with:
           version: ${{ steps.pnpm-version.outputs.version }}
       - uses: actions/setup-node@v6.4.0
@@ -62,7 +62,7 @@ jobs:
       - name: Read pnpm version from package.json
         id: pnpm-version
         run: echo "version=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> "$GITHUB_OUTPUT"
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@v6.0.3
         with:
           version: ${{ steps.pnpm-version.outputs.version }}
       - uses: actions/setup-node@v6.4.0
