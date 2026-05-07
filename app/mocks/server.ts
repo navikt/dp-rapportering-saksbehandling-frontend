@@ -1,4 +1,4 @@
-import { setupServer, type SetupServerApi } from "msw/node";
+import { type SetupServer, setupServer } from "msw/node";
 
 import { logger } from "~/models/logger.server";
 
@@ -16,7 +16,7 @@ export const handlers = [
 
 export const server = setupServer(...handlers);
 
-export function startMockServer(server: SetupServerApi) {
+export function startMockServer(server: SetupServer) {
   server.listen({
     onUnhandledRequest(request, print) {
       logger.warn(`Unhandled request: ${request.url}`);
