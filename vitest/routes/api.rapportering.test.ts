@@ -72,7 +72,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       // Skal returnere success med redirect URL
@@ -119,7 +120,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       // Skal returnere success med redirect URL
@@ -166,7 +168,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       // Skal fallback til originalMeldekortId
@@ -212,7 +215,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       // Skal behandles som korrigering og få nytt ID
@@ -256,7 +260,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       expect(response).not.toBeInstanceOf(Response);
@@ -304,7 +309,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       expect(response).not.toBeInstanceOf(Response);
@@ -351,7 +357,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       expect(response).not.toBeInstanceOf(Response);
@@ -402,7 +409,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       expect(response).not.toBeInstanceOf(Response);
@@ -443,7 +451,8 @@ describe("api.rapportering action", () => {
         request,
         params: {},
         context: {},
-        unstable_pattern: "",
+        pattern: "",
+        url: new URL(request.url),
       });
 
       expect(response).not.toBeInstanceOf(Response);
