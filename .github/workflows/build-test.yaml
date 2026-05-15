@@ -43,7 +43,7 @@ jobs:
           version: ${{ steps.pnpm-version.outputs.version }}
       - uses: actions/setup-node@v6.4.0
         with:
-          node-version: '24.x'
+          node-version: '25.x'
           cache: 'pnpm'
           registry-url: 'https://npm.pkg.github.com'
       - run: pnpm install --ignore-scripts --frozen-lockfile
@@ -67,7 +67,7 @@ jobs:
           version: ${{ steps.pnpm-version.outputs.version }}
       - uses: actions/setup-node@v6.4.0
         with:
-          node-version: '24.x'
+          node-version: '25.x'
           cache: 'pnpm'
           registry-url: 'https://npm.pkg.github.com'
       - run: pnpm install --ignore-scripts --frozen-lockfile

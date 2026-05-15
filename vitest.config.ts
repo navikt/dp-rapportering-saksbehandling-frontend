@@ -13,6 +13,7 @@ export default defineConfig({
       provider: "istanbul",
       include: ["app/*"],
     },
+    execArgv: ["--no-webstorage"],
   },
   resolve: {
     alias: {
