@@ -203,6 +203,7 @@ export interface IEnv {
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";
   FARO_URL: string;
+  GITHUB_SHA?: string;
   RUNTIME_ENVIRONMENT: "development" | "demo" | "production";
   SANITY_DATASETT: string;
   SANITY_TOKEN?: string;

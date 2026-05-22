@@ -95,6 +95,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       USE_MSW: getEnv("USE_MSW"),
       NODE_ENV: getEnv("NODE_ENV"),
       FARO_URL: getEnv("FARO_URL"),
+      GITHUB_SHA: getEnv("GITHUB_SHA"),
     },
   };
 }

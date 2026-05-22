@@ -35,6 +35,7 @@ export function getEnv<T>(key: keyof IEnv): T {
     DP_PERSONREGISTER_URL: "https://dp-rapportering-personregister.intern.dev.nav.no",
     DP_BEHANDLING_URL: "https://dp-behandling.intern.dev.nav.no",
     FARO_URL: "http://localhost:12347/collect",
+    GITHUB_SHA: "local",
     RUNTIME_ENVIRONMENT: "production",
     SANITY_DATASETT: "production",
   };
