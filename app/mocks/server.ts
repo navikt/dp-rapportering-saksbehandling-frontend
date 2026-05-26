@@ -19,6 +19,13 @@ export const server = setupServer(...handlers);
 export function startMockServer(server: SetupServer) {
   server.listen({
     onUnhandledRequest(request, print) {
+      const url = new URL(request.url);
+
+      // Ignorer Sanity API requests
+      if (url.hostname.includes("sanity.io")) {
+        return;
+      }
+
       logger.warn(`Unhandled request: ${request.url}`);
       print.warning();
     },

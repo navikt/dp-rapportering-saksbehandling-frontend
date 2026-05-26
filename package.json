@@ -45,7 +45,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4",
     "@playwright/test": "^1.60.0",
     "@portabletext/types": "^4.0.2",
     "@react-router/dev": "^7.15.1",
