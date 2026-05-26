@@ -10,14 +10,13 @@ export function initFaro() {
     return;
   }
 
-  const paused = isLocalhost;
   const faroUrl = getEnv<string>("FARO_URL");
   const githubSha = getEnv<string>("GITHUB_SHA");
 
-  console.log("[Faro] Initializing with:", { isLocalhost, faroUrl, paused });
+  console.log("[Faro] Initializing with:", { isLocalhost, faroUrl });
 
   faro = initializeFaro({
-    paused,
+    paused: isLocalhost,
     url: faroUrl,
     app: {
       name: "dp-rapportering-saksbehandling-frontend",
@@ -28,6 +27,7 @@ export function initFaro() {
         try {
           const url = new URL(item.meta.page.url);
           url.search = "";
+          url.hash = "";
           item.meta.page.url = url.toString();
         } catch {
           /* ignore */
