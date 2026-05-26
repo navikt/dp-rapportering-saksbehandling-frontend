@@ -7,7 +7,7 @@ startTransition(() => {
   hydrateRoot(
     document,
     <StrictMode>
-      <FaroErrorBoundary fallback={<p>Noe gikk galt</p>}>
+      <FaroErrorBoundary>
         <HydratedRouter />
       </FaroErrorBoundary>
     </StrictMode>,
