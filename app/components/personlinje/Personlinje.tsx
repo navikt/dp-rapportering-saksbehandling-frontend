@@ -66,8 +66,9 @@ export default function Personlinje({
   return (
     <section className={styles.personlinjeContainer} aria-label={texts.sectionAriaLabel}>
       <div className={styles.personlinje}>
+        {/* Mobil - interactive button */}
         <button
-          className={styles.navnContainer}
+          className={styles.navnContainerMobil}
           onClick={() => setIsOpen(!isOpen)}
           aria-expanded={isOpen}
           aria-controls="personlinje-detaljer"
@@ -100,6 +101,29 @@ export default function Personlinje({
             )}
           </span>
         </button>
+
+        {/* Desktop - static div */}
+        <div className={styles.navnContainerDesktop}>
+          {person.kjonn && (
+            <span
+              className={classNames(
+                styles.iconContainer,
+                person.kjonn ? styles[getKjonnKlasse(person.kjonn)] : undefined,
+              )}
+              aria-hidden="true"
+            >
+              {erMann(person.kjonn) && (
+                <SilhouetteFillIcon title="" fontSize="1.5rem" color="white" />
+              )}
+              {erKvinne(person.kjonn) && (
+                <FigureOutwardFillIcon title="" fontSize="1.5rem" color="white" />
+              )}
+            </span>
+          )}
+          <BodyShort size="small" as="span">
+            <strong className={erMaskert ? styles.sensitiv : undefined}>{fulltNavn}</strong>
+          </BodyShort>
+        </div>
 
         <div
           id="personlinje-detaljer"

@@ -27,7 +27,7 @@
 
 .personlinje {
   display: flex;
-  gap: var(--ax-space-24);
+  gap: var(--ax-space-20);
   align-items: flex-start;
   flex: 1;
   flex-direction: column;
@@ -37,10 +37,11 @@
   .personlinje {
     flex-direction: row;
     align-items: center;
+    gap: var(--ax-space-24);
   }
 }
 
-.navnContainer {
+.navnContainerMobil {
   display: flex;
   align-items: center;
   gap: var(--ax-space-8);
@@ -54,21 +55,27 @@
   font-family: inherit;
 }
 
-.navnContainer:focus-visible {
+.navnContainerMobil:focus-visible {
   outline: 2px solid var(--ax-focus-color, #0067c5);
   outline-offset: 2px;
   border-radius: var(--ax-radius-small);
 }
 
 @media (min-width: 1100px) {
-  .navnContainer {
-    width: auto;
-    cursor: default;
-    pointer-events: none;
+  .navnContainerMobil {
+    display: none;
   }
+}
 
-  .navnContainer:focus-visible {
-    outline: none;
+.navnContainerDesktop {
+  display: none;
+  align-items: center;
+  gap: var(--ax-space-8);
+}
+
+@media (min-width: 1100px) {
+  .navnContainerDesktop {
+    display: flex;
   }
 }
 
@@ -87,7 +94,7 @@
 .detaljer {
   display: none;
   flex-direction: column;
-  gap: var(--ax-space-12);
+  gap: var(--ax-space-16);
 }
 
 .detaljerOpen {
@@ -105,7 +112,7 @@
 .knappContainerMobil {
   display: flex;
   flex-direction: column;
-  gap: var(--ax-space-12);
+  gap: var(--ax-space-16);
 }
 
 @media (min-width: 1100px) {
