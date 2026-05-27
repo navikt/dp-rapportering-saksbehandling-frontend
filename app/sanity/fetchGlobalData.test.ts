@@ -48,6 +48,7 @@ describe("fetchGlobalSanityData", () => {
     genderLabel: "Kjønn",
     citizenshipLabel: "Statsborgerskap",
     historyButton: "Historikk",
+    createReportCardButton: "Opprett meldekort",
   };
 
   const mockBekreftModalData: IMeldekortBekreftModal = {

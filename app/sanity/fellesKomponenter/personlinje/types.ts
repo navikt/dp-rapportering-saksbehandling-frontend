@@ -5,4 +5,5 @@ export interface IMeldekortPersonlinje {
   genderLabel: string;
   citizenshipLabel: string;
   historyButton: string;
+  createReportCardButton: string;
 }
