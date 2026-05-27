@@ -19,12 +19,15 @@ import { bekreftModalQuery } from "./modaler/bekreft-modal/queries";
 import type { IMeldekortBekreftModal } from "./modaler/bekreft-modal/types";
 import { historikkModalQuery } from "./modaler/historikk-modal/queries";
 import type { IMeldekortHistorikkModal } from "./modaler/historikk-modal/types";
+import { opprettMeldekortModalQuery } from "./modaler/opprett-meldekort-modal/queries";
+import type { IMeldekortOpprettMeldekortModal } from "./modaler/opprett-meldekort-modal/types";
 
 export interface GlobalSanityData {
   header: IMeldekortHeader | null;
   personlinje: IMeldekortPersonlinje | null;
   bekreftModal: IMeldekortBekreftModal | null;
   historikkModal: IMeldekortHistorikkModal | null;
+  opprettMeldekortModal: IMeldekortOpprettMeldekortModal | null;
   aktiviteter: IMeldekortAktiviteter | null;
   statuser: IMeldekortStatuser | null;
   kalender: IMeldekortKalender | null;
@@ -72,6 +75,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
     personlinje,
     bekreftModal,
     historikkModal,
+    opprettMeldekortModal,
     aktiviteter,
     statuser,
     kalender,
@@ -87,6 +91,9 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
     ),
     fetchQuery("historikkModal", historikkModalQuery, () =>
       sanityClient.fetch<IMeldekortHistorikkModal>(historikkModalQuery),
+    ),
+    fetchQuery("opprettMeldekortModal", opprettMeldekortModalQuery, () =>
+      sanityClient.fetch<IMeldekortOpprettMeldekortModal>(opprettMeldekortModalQuery),
     ),
     fetchQuery("aktiviteter", aktiviteterQuery, () =>
       sanityClient.fetch<IMeldekortAktiviteter>(aktiviteterQuery),
@@ -108,6 +115,7 @@ export async function fetchGlobalSanityData(): Promise<GlobalSanityData> {
     personlinje,
     bekreftModal,
     historikkModal,
+    opprettMeldekortModal,
     aktiviteter,
     statuser,
     kalender,
