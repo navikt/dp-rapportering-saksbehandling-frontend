@@ -102,17 +102,6 @@
   }
 }
 
-.historikkKnappDesktop {
-  display: none;
-}
-
-@media (min-width: 1100px) {
-  .historikkKnappDesktop {
-    display: block;
-    margin-left: auto;
-  }
-}
-
 .knappContainerMobil {
   display: flex;
   flex-direction: column;
