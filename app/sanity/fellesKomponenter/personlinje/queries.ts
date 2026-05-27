@@ -6,5 +6,6 @@ export const personlinjeQuery = groq`*[_type == "meldekortPersonlinje"][0]{
   ageLabel,
   genderLabel,
   citizenshipLabel,
-  historyButton
+  historyButton,
+  createReportCardButton
 }`;

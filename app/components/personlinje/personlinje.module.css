@@ -1,12 +1,18 @@
 .personlinjeContainer {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: var(--ax-space-12) var(--ax-space-24);
   background-color: var(--ax-bg-default);
   box-shadow: var(--ax-shadow-dialog);
   position: sticky;
   top: 4rem;
   z-index: 1000;
+}
+
+@media (min-width: 1100px) {
+  .personlinjeContainer {
+    align-items: center;
+  }
 }
 
 .sensitiv {
@@ -22,11 +28,113 @@
 .personlinje {
   display: flex;
   gap: var(--ax-space-24);
-  align-items: center;
+  align-items: flex-start;
+  flex: 1;
+  flex-direction: column;
 }
 
-.historikkKnapp {
+@media (min-width: 1100px) {
+  .personlinje {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.navnContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--ax-space-8);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  font-family: inherit;
+}
+
+.navnContainer:focus-visible {
+  outline: 2px solid var(--ax-focus-color, #0067c5);
+  outline-offset: 2px;
+  border-radius: var(--ax-radius-small);
+}
+
+@media (min-width: 1100px) {
+  .navnContainer {
+    width: auto;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .navnContainer:focus-visible {
+    outline: none;
+  }
+}
+
+.chevronIcon {
+  display: flex;
+  align-items: center;
   margin-left: auto;
+}
+
+@media (min-width: 1100px) {
+  .chevronIcon {
+    display: none;
+  }
+}
+
+.detaljer {
+  display: none;
+  flex-direction: column;
+  gap: var(--ax-space-12);
+}
+
+.detaljerOpen {
+  display: flex;
+}
+
+@media (min-width: 1100px) {
+  .detaljer {
+    display: flex;
+    flex-direction: row;
+    gap: var(--ax-space-24);
+  }
+}
+
+.historikkKnappDesktop {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .historikkKnappDesktop {
+    display: block;
+    margin-left: auto;
+  }
+}
+
+.knappContainerMobil {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ax-space-12);
+}
+
+@media (min-width: 1100px) {
+  .knappContainerMobil {
+    display: none;
+  }
+}
+
+.knappContainerDesktop {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .knappContainerDesktop {
+    display: flex;
+    gap: var(--ax-space-8);
+    margin-left: auto;
+  }
 }
 
 .infoElement {
@@ -34,12 +142,13 @@
   align-items: center;
   gap: var(--ax-space-8);
   white-space: nowrap;
+  flex-wrap: wrap;
 }
 
-.navnContainer {
-  display: flex;
-  align-items: center;
-  gap: var(--ax-space-8);
+@media (min-width: 1100px) {
+  .infoElement {
+    flex-wrap: nowrap;
+  }
 }
 
 .iconContainer {

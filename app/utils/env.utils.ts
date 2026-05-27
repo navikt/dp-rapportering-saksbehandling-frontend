@@ -48,3 +48,5 @@ export const isLocalhost = getEnv("IS_LOCALHOST") === "true";
 export const usesMsw = getEnv("USE_MSW") === "true";
 
 export const isLocalOrDemo = isLocalhost || usesMsw;
+
+export const showOpprettMeldekortManuelt = isLocalhost || usesMsw;

@@ -1,10 +1,16 @@
-import { FigureOutwardFillIcon, SilhouetteFillIcon } from "@navikt/aksel-icons";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  FigureOutwardFillIcon,
+  SilhouetteFillIcon,
+} from "@navikt/aksel-icons";
 import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useMemo, useState } from "react";
 
 import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
 import { deepMerge } from "~/utils/deep-merge.utils";
+import { showOpprettMeldekortManuelt } from "~/utils/env.utils";
 import { byggFulltNavn } from "~/utils/person.utils";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
@@ -24,6 +30,7 @@ const DEFAULT_PERSONLINJE: IMeldekortPersonlinje = {
   genderLabel: "Kjønn:",
   citizenshipLabel: "Statsborgerskap:",
   historyButton: "Historikk",
+  createReportCardButton: "Opprett meldekort",
 };
 
 interface IProps {
@@ -41,6 +48,7 @@ export default function Personlinje({
 }: IProps) {
   const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   // Sjekk om data er maskert (kommer fra server-side maskering)
   const erMaskert = fulltNavn.includes("•") || person.ident.includes("•");
@@ -58,13 +66,20 @@ export default function Personlinje({
   return (
     <section className={styles.personlinjeContainer} aria-label={texts.sectionAriaLabel}>
       <div className={styles.personlinje}>
-        <div className={styles.navnContainer}>
+        <button
+          className={styles.navnContainer}
+          onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-controls="personlinje-detaljer"
+          type="button"
+        >
           {person.kjonn && (
             <span
               className={classNames(
                 styles.iconContainer,
                 person.kjonn ? styles[getKjonnKlasse(person.kjonn)] : undefined,
               )}
+              aria-hidden="true"
             >
               {erMann(person.kjonn) && (
                 <SilhouetteFillIcon title="" fontSize="1.5rem" color="white" />
@@ -74,42 +89,79 @@ export default function Personlinje({
               )}
             </span>
           )}
-          <BodyShort size="small">
+          <BodyShort size="small" as="span">
             <strong className={erMaskert ? styles.sensitiv : undefined}>{fulltNavn}</strong>
           </BodyShort>
+          <span className={styles.chevronIcon} aria-hidden="true">
+            {isOpen ? (
+              <ChevronUpIcon title="" fontSize="1.5rem" />
+            ) : (
+              <ChevronDownIcon title="" fontSize="1.5rem" />
+            )}
+          </span>
+        </button>
+
+        <div
+          id="personlinje-detaljer"
+          className={classNames(styles.detaljer, { [styles.detaljerOpen]: isOpen })}
+        >
+          <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+            {texts.birthNumberLabel}{" "}
+            <strong className={erMaskert ? styles.sensitiv : undefined}>{person.ident}</strong>{" "}
+            {!erMaskert && <CopyButton copyText={person.ident} size="xsmall" />}
+          </BodyShort>
+
+          {person.fodselsdato && (
+            <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+              {texts.ageLabel} <b>{beregnAlder(person.fodselsdato)}</b>
+            </BodyShort>
+          )}
+
+          {person.kjonn && (
+            <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+              {texts.genderLabel} <b>{person.kjonn}</b>
+            </BodyShort>
+          )}
+
+          <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
+            {texts.citizenshipLabel} <strong>{person.statsborgerskap}</strong>
+          </BodyShort>
+
+          <div className={styles.knappContainerMobil}>
+            <div>
+              <Button
+                data-color="neutral"
+                variant="secondary"
+                size="xsmall"
+                onClick={() => setModalOpen(true)}
+              >
+                {texts.historyButton}
+              </Button>
+            </div>
+            {showOpprettMeldekortManuelt && (
+              <div>
+                <Button data-color="neutral" variant="secondary" size="xsmall">
+                  {texts.createReportCardButton}
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-
-        <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-          {texts.birthNumberLabel}{" "}
-          <strong className={erMaskert ? styles.sensitiv : undefined}>{person.ident}</strong>{" "}
-          {!erMaskert && <CopyButton copyText={person.ident} size="xsmall" />}
-        </BodyShort>
-
-        {person.fodselsdato && (
-          <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-            {texts.ageLabel} <b>{beregnAlder(person.fodselsdato)}</b>
-          </BodyShort>
-        )}
-
-        {person.kjonn && (
-          <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-            {texts.genderLabel} <b>{person.kjonn}</b>
-          </BodyShort>
-        )}
-
-        <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-          {texts.citizenshipLabel} <strong>{person.statsborgerskap}</strong>
-        </BodyShort>
       </div>
-      <div className={styles.historikkKnapp}>
+      <div className={styles.knappContainerDesktop}>
         <Button
           data-color="neutral"
           variant="secondary"
-          size="xsmall"
+          size="small"
           onClick={() => setModalOpen(true)}
         >
           {texts.historyButton}
         </Button>
+        {showOpprettMeldekortManuelt && (
+          <Button data-color="neutral" variant="secondary" size="small">
+            {texts.createReportCardButton}
+          </Button>
+        )}
       </div>
       <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} hendelser={events} />
     </section>
