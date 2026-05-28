@@ -57,7 +57,7 @@ jobs:
           PRINT_PAYLOAD: true
 
   deploy-prod:
-    needs: [build-test]
+    needs: [build-test, deploy-dev]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
