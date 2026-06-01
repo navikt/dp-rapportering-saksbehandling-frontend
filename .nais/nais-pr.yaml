@@ -50,6 +50,8 @@ spec:
       value: pr-preview
     - name: SANITY_DATASETT
       value: "production"
+    - name: GITHUB_SHA
+      value: {{githubSha}}
   accessPolicy:
     outbound:
       external:

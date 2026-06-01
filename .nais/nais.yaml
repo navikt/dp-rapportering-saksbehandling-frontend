@@ -52,6 +52,8 @@ spec:
       value: "{{runtime_environment}}"
     - name: SANITY_DATASETT
       value: "{{sanity_datasett}}"
+    - name: GITHUB_SHA
+      value: {{githubSha}}
   accessPolicy:
     outbound:
       external:
