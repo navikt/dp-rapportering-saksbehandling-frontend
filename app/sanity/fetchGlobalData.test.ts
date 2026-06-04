@@ -10,6 +10,7 @@ import type { IMeldekortVarsler } from "./fellesKomponenter/varsler/types";
 import { fetchGlobalSanityData } from "./fetchGlobalData";
 import type { IMeldekortBekreftModal } from "./modaler/bekreft-modal/types";
 import type { IMeldekortHistorikkModal } from "./modaler/historikk-modal/types";
+import type { IMeldekortOpprettMeldekortModal } from "./modaler/opprett-meldekort-modal/types";
 
 // Mock sanityClient
 vi.mock("./client", () => ({
@@ -99,6 +100,29 @@ describe("fetchGlobalSanityData", () => {
       ingenData: "Fant hverken meldekort eller arbeidssøkerstatus knyttet til denne personen",
       ingenMeldekort: "Fant ingen meldekort knyttet til denne personen",
       ingenStatus: "Fant ingen arbeidssøkerstatus knyttet til denne personen",
+    },
+  };
+
+  const mockOpprettMeldekortModalData: IMeldekortOpprettMeldekortModal = {
+    tittel: "Opprett meldekort",
+    fraDato: {
+      label: "Fra dato",
+      helpText: "Velg startdato",
+    },
+    tilDato: {
+      label: "Til dato",
+      helpText: "Velg sluttdato",
+    },
+    forklaringstekst: "Basert på valgt dato, vil det opprettes {{antall}} nye meldekort.",
+    submitKnapp: "Opprett",
+    avbrytKnapp: "Avbryt",
+    infoBoks: {
+      tittel: "Info",
+      tekst: "Nye meldekort opprettes hver 14. dag.",
+    },
+    feilmelding: {
+      tittel: "Feil",
+      tekst: "Kunne ikke opprette meldekort.",
     },
   };
 
@@ -202,6 +226,7 @@ describe("fetchGlobalSanityData", () => {
       .mockResolvedValueOnce(mockPersonlinjeData as never)
       .mockResolvedValueOnce(mockBekreftModalData as never)
       .mockResolvedValueOnce(mockHistorikkModalData as never)
+      .mockResolvedValueOnce(mockOpprettMeldekortModalData as never)
       .mockResolvedValueOnce(mockAktiviteterData as never)
       .mockResolvedValueOnce(mockStatuserData as never)
       .mockResolvedValueOnce(mockKalenderData as never)
@@ -215,13 +240,14 @@ describe("fetchGlobalSanityData", () => {
       personlinje: mockPersonlinjeData,
       bekreftModal: mockBekreftModalData,
       historikkModal: mockHistorikkModalData,
+      opprettMeldekortModal: mockOpprettMeldekortModalData,
       aktiviteter: mockAktiviteterData,
       statuser: mockStatuserData,
       kalender: mockKalenderData,
       varsler: mockVarslerData,
       aktivitetstabell: mockAktivitetstabellData,
     });
-    expect(sanityClient.fetch).toHaveBeenCalledTimes(9);
+    expect(sanityClient.fetch).toHaveBeenCalledTimes(10);
   });
 
   it("skal returnere null-verdier ved feil", async () => {
@@ -237,6 +263,7 @@ describe("fetchGlobalSanityData", () => {
       personlinje: null,
       bekreftModal: null,
       historikkModal: null,
+      opprettMeldekortModal: null,
       aktiviteter: null,
       statuser: null,
       kalender: null,
@@ -244,7 +271,7 @@ describe("fetchGlobalSanityData", () => {
       aktivitetstabell: null,
     });
     // Med Promise.allSettled logges hver feilende query individuelt
-    expect(logger.warn).toHaveBeenCalledTimes(9);
+    expect(logger.warn).toHaveBeenCalledTimes(10);
     expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining("Sanity query"), {
       queryName: expect.any(String),
       error: expect.any(Error),
@@ -264,13 +291,14 @@ describe("fetchGlobalSanityData", () => {
       personlinje: null,
       bekreftModal: null,
       historikkModal: null,
+      opprettMeldekortModal: null,
       aktiviteter: null,
       statuser: null,
       kalender: null,
       varsler: null,
       aktivitetstabell: null,
     });
-    expect(logger.warn).toHaveBeenCalledTimes(9);
+    expect(logger.warn).toHaveBeenCalledTimes(10);
   });
 
   it("skal kunne håndtere at kun en av fetchene feiler", async () => {
@@ -283,6 +311,7 @@ describe("fetchGlobalSanityData", () => {
       .mockRejectedValueOnce(new Error("Personlinje fetch failed"))
       .mockResolvedValueOnce(mockBekreftModalData as never)
       .mockResolvedValueOnce(mockHistorikkModalData as never)
+      .mockResolvedValueOnce(mockOpprettMeldekortModalData as never)
       .mockResolvedValueOnce(mockAktiviteterData as never)
       .mockResolvedValueOnce(mockStatuserData as never)
       .mockResolvedValueOnce(mockKalenderData as never)
@@ -298,6 +327,7 @@ describe("fetchGlobalSanityData", () => {
       personlinje: null,
       bekreftModal: mockBekreftModalData,
       historikkModal: mockHistorikkModalData,
+      opprettMeldekortModal: mockOpprettMeldekortModalData,
       aktiviteter: mockAktiviteterData,
       statuser: mockStatuserData,
       kalender: mockKalenderData,
@@ -321,6 +351,7 @@ describe("fetchGlobalSanityData", () => {
       .mockResolvedValueOnce(mockPersonlinjeData as never)
       .mockResolvedValueOnce(mockBekreftModalData as never)
       .mockResolvedValueOnce(mockHistorikkModalData as never)
+      .mockResolvedValueOnce(mockOpprettMeldekortModalData as never)
       .mockResolvedValueOnce(mockAktiviteterData as never)
       .mockResolvedValueOnce(mockStatuserData as never)
       .mockResolvedValueOnce(mockKalenderData as never)
@@ -333,6 +364,7 @@ describe("fetchGlobalSanityData", () => {
     expect(result).toHaveProperty("personlinje");
     expect(result).toHaveProperty("bekreftModal");
     expect(result).toHaveProperty("historikkModal");
+    expect(result).toHaveProperty("opprettMeldekortModal");
     expect(result).toHaveProperty("aktiviteter");
     expect(result).toHaveProperty("statuser");
     expect(result).toHaveProperty("kalender");

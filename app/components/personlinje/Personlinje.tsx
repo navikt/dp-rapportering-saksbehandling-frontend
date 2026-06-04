@@ -19,6 +19,7 @@ import {
   transformPerioderToHistoryEvents,
 } from "../../modals/historikk/historikk.utils";
 import { HistorikkModal } from "../../modals/historikk/HistorikkModal";
+import { OpprettMeldekortModal } from "../../modals/opprett-meldekort/OpprettMeldekortModal";
 import { beregnAlder, erKvinne, erMann, getKjonnKlasse } from "./Personlinje.helpers";
 import styles from "./personlinje.module.css";
 
@@ -48,6 +49,7 @@ export default function Personlinje({
 }: IProps) {
   const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
   const [modalOpen, setModalOpen] = useState(false);
+  const [opprettModalOpen, setOpprettModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   // Sjekk om data er maskert (kommer fra server-side maskering)
@@ -164,7 +166,12 @@ export default function Personlinje({
             </div>
             {showOpprettMeldekortManuelt && (
               <div>
-                <Button data-color="neutral" variant="secondary" size="xsmall">
+                <Button
+                  data-color="neutral"
+                  variant="secondary"
+                  size="xsmall"
+                  onClick={() => setOpprettModalOpen(true)}
+                >
                   {texts.createReportCardButton}
                 </Button>
               </div>
@@ -182,12 +189,22 @@ export default function Personlinje({
           {texts.historyButton}
         </Button>
         {showOpprettMeldekortManuelt && (
-          <Button data-color="neutral" variant="secondary" size="small">
+          <Button
+            data-color="neutral"
+            variant="secondary"
+            size="small"
+            onClick={() => setOpprettModalOpen(true)}
+          >
             {texts.createReportCardButton}
           </Button>
         )}
       </div>
       <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} hendelser={events} />
+      <OpprettMeldekortModal
+        open={opprettModalOpen}
+        onClose={() => setOpprettModalOpen(false)}
+        brukerNavn={fulltNavn}
+      />
     </section>
   );
 }
