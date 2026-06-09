@@ -104,6 +104,7 @@ export const KJONN = {
 
 export const MELDEKORT_TYPE = {
   ETTERREGISTRERT: "Etterregistrert",
+  KORRIGERT: "Korrigert",
   ORDINAERT: "Ordinaert",
 } as const;
 

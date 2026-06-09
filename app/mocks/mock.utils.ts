@@ -102,6 +102,11 @@ export function lagRapporteringsperiode(
     ...props,
   };
 
+  // Hvis originalMeldekortId finnes, må det være en korrigering
+  if (meldekort.originalMeldekortId) {
+    meldekort.type = MELDEKORT_TYPE.KORRIGERT;
+  }
+
   meldekort.kanSendesFra = format(subDays(new Date(meldekort.periode.tilOgMed), 1), "yyyy-MM-dd");
 
   // Korrigerte meldekort skal ikke ha sisteFristForTrekk

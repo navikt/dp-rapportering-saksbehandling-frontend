@@ -1,7 +1,7 @@
 import { uuidv7 } from "uuidv7";
 
 import type { IBehandlingsresultat } from "~/utils/behandlingsresultat.types";
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MELDEKORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type {
   IArbeidssokerperiode,
   IPerson,
@@ -17,8 +17,8 @@ function hentAlleRapporteringsperioder(db: Database) {
       periode: {
         fraOgMed: "desc",
       },
-      innsendtTidspunkt: "desc",
-      originalMeldekortId: "desc",
+      originalMeldekortId: "desc", // desc = null after (korrigeringer før originaler)
+      innsendtTidspunkt: "desc", // nyeste korrigering først
     },
   }) as IRapporteringsperiode[];
 }
@@ -33,6 +33,7 @@ function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperio
   return db.rapporteringsperioder.create({
     ...rapporteringsperiode,
     id,
+    type: MELDEKORT_TYPE.KORRIGERT,
     originalMeldekortId: rapporteringsperiode.id,
     innsendtTidspunkt: new Date().toISOString(),
     status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
