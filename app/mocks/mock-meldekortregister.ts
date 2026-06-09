@@ -281,8 +281,25 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
 
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/tell-meldekort`,
-      async ({ request, cookies }) => {
+      async ({ params, request, cookies }) => {
         const db = database || (await getDatabase(cookies));
+        const personId = params.personId as string;
+        const person = db.hentPerson(personId);
+
+        if (!person) {
+          logger.error(`[mock meldekortregister]: Fant ikke person ${personId}`);
+          return HttpResponse.json(
+            {
+              title: "Person ikke funnet",
+              status: 404,
+              detail: `Fant ikke person med ID ${personId}`,
+              correlationId: "person-not-found-error",
+              errorType: "NOT_FOUND",
+            },
+            { status: 404 },
+          );
+        }
+
         const url = new URL(request.url);
         const fraDato = url.searchParams.get("fraDato");
         const tilDato = url.searchParams.get("tilDato");
@@ -301,10 +318,10 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           );
         }
 
-        const antall = db.beregnAntallMeldekort(fraDato, tilDato);
+        const antall = db.beregnAntallOpprettbareMeldekort(fraDato, tilDato, person.ident);
 
         logger.info(
-          `[mock meldekortregister]: Beregnet ${antall} meldekort fra ${fraDato} til ${tilDato}`,
+          `[mock meldekortregister]: Beregnet ${antall} opprettbare meldekort fra ${fraDato} til ${tilDato} for person ${personId}`,
         );
 
         return HttpResponse.json({ antall });
