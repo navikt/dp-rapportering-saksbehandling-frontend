@@ -1,14 +1,17 @@
+import { addDays, addWeeks, differenceInDays, format, startOfWeek } from "date-fns";
 import { uuidv7 } from "uuidv7";
 
 import type { IBehandlingsresultat } from "~/utils/behandlingsresultat.types";
-import { RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
+import { MELDEKORT_TYPE, RAPPORTERINGSPERIODE_STATUS } from "~/utils/constants";
 import type {
   IArbeidssokerperiode,
+  IKilde,
   IPerson,
   IRapporteringsperiode,
   ISaksbehandler,
 } from "~/utils/types";
 
+import { lagDager, lagRapporteringsperiode } from "./mock.utils";
 import { type Database } from "./session";
 
 function hentAlleRapporteringsperioder(db: Database) {
@@ -102,6 +105,7 @@ async function oppdaterRapporteringsperiode(db: Database, oppdatertPeriode: IRap
       periode.meldedato = oppdatertPeriode.meldedato;
       periode.registrertArbeidssoker = oppdatertPeriode.registrertArbeidssoker;
       periode.begrunnelse = oppdatertPeriode.begrunnelse;
+      periode.opprettetManuelt = oppdatertPeriode.opprettetManuelt;
     },
   });
 }
@@ -128,6 +132,112 @@ function hentBehandlingsresultat(db: Database) {
   return db.behandlingsresultat.findMany() as IBehandlingsresultat[];
 }
 
+function beregnAntallMeldekort(fraDato: string, tilDato: string): number {
+  const startDato = new Date(fraDato);
+  startDato.setHours(0, 0, 0, 0);
+  const sluttDato = new Date(tilDato);
+  sluttDato.setHours(0, 0, 0, 0);
+
+  // Finn første mandag på eller etter startDato
+  const forsteMandagIStart = startOfWeek(startDato, { weekStartsOn: 1 });
+
+  // Beregn antall dager fra start til slutt (inklusiv)
+  const dagerTotalt = differenceInDays(sluttDato, forsteMandagIStart) + 1;
+
+  // Hver periode er 14 dager, så antall komplette perioder er:
+  return Math.max(0, Math.floor(dagerTotalt / 14));
+}
+
+function opprettManueltMeldekort(
+  db: Database,
+  fraDato: string,
+  tilDato: string,
+  ident: string,
+  kilde: IKilde,
+): IRapporteringsperiode[] {
+  const startDato = new Date(fraDato);
+  startDato.setHours(0, 0, 0, 0); // Normaliser til midnatt for sammenligning
+  const sluttDato = new Date(tilDato);
+  sluttDato.setHours(0, 0, 0, 0); // Normaliser til midnatt for sammenligning
+  const iDag = new Date();
+  iDag.setHours(0, 0, 0, 0); // Normaliser til midnatt for sammenligning
+
+  // Finn første mandag i start-perioden
+  const forsteMandagIStart = startOfWeek(startDato, { weekStartsOn: 1 });
+
+  // Beregn antall 2-ukers perioder
+  const antallPerioder = beregnAntallMeldekort(fraDato, tilDato);
+
+  const opprettedeMeldekort: IRapporteringsperiode[] = [];
+
+  // Hent alle eksisterende perioder for denne personen én gang (utenfor løkken)
+  const eksisterendePerioder = hentAlleRapporteringsperioder(db).filter((p) => p.ident === ident);
+
+  for (let i = 0; i < antallPerioder; i++) {
+    // Beregn start og slutt for hver 2-ukers periode
+    const periodeStart = addWeeks(forsteMandagIStart, i * 2);
+    const periodeSlutt = addDays(periodeStart, 13);
+
+    // Sjekk at perioden er innenfor det ønskede området
+    if (periodeSlutt > sluttDato) {
+      break;
+    }
+
+    // Sjekk om det allerede finnes et meldekort for denne perioden
+    const periodeStartStr = format(periodeStart, "yyyy-MM-dd");
+    const periodeSluttStr = format(periodeSlutt, "yyyy-MM-dd");
+    const finnesDuplikat = eksisterendePerioder.some(
+      (p) => p.periode.fraOgMed === periodeStartStr && p.periode.tilOgMed === periodeSluttStr,
+    );
+
+    if (finnesDuplikat) {
+      continue; // Hopp over denne perioden hvis den allerede eksisterer
+    }
+
+    // Bestem type basert på om perioden er i fortiden
+    const meldekortType =
+      periodeSlutt < iDag ? MELDEKORT_TYPE.ETTERREGISTRERT : MELDEKORT_TYPE.ORDINAERT;
+
+    // Lag dager for perioden med riktige datoer
+    const dager = lagDager().map((dag, index) => ({
+      ...dag,
+      dato: format(addDays(periodeStart, index), "yyyy-MM-dd"),
+    }));
+
+    // Beregn kanSendesFra og sisteFristForTrekk
+    // For alle meldekort: kan sendes fra siste dag i perioden (én dag før slutt)
+    const kanSendesFra = format(addDays(periodeSlutt, -1), "yyyy-MM-dd");
+
+    // For etterregistrerte: sett frist til 8 dager fra nå (siden perioden allerede er over)
+    // For ordinære: sett frist til 8 dager etter periodeSlutt
+    const sisteFristForTrekk =
+      meldekortType === MELDEKORT_TYPE.ETTERREGISTRERT
+        ? format(addDays(iDag, 8), "yyyy-MM-dd")
+        : format(addDays(periodeSlutt, 8), "yyyy-MM-dd");
+
+    // Lag nytt meldekort med lagRapporteringsperiode helper
+    const nyttMeldekort = lagRapporteringsperiode({
+      type: meldekortType,
+      ident,
+      periode: {
+        fraOgMed: format(periodeStart, "yyyy-MM-dd"),
+        tilOgMed: format(periodeSlutt, "yyyy-MM-dd"),
+      },
+      dager,
+      kilde,
+      kanSendesFra,
+      sisteFristForTrekk,
+      opprettetManuelt: true,
+    });
+
+    // Lagre til database
+    db.rapporteringsperioder.create(nyttMeldekort);
+    opprettedeMeldekort.push(nyttMeldekort);
+  }
+
+  return opprettedeMeldekort;
+}
+
 export function withDb(db: Database) {
   return {
     hentAlleRapporteringsperioder: () => hentAlleRapporteringsperioder(db),
@@ -141,5 +251,9 @@ export function withDb(db: Database) {
     periodeKanIkkeLengerSendes: (periodeId: string) => periodeKanIkkeLengerSendes(db, periodeId),
     hentArbeidssokerperioder: () => hentArbeidssokerperioder(db),
     hentBehandlingsresultat: () => hentBehandlingsresultat(db),
+    beregnAntallMeldekort: (fraDato: string, tilDato: string) =>
+      beregnAntallMeldekort(fraDato, tilDato),
+    opprettManueltMeldekort: (fraDato: string, tilDato: string, ident: string, kilde: IKilde) =>
+      opprettManueltMeldekort(db, fraDato, tilDato, ident, kilde),
   };
 }

@@ -125,6 +125,8 @@ export interface IRapporteringsperiode {
   /** yyyy-mm-dd, dato for når meldekortet skal regnes som registrert, kan settes av saksbehandler ellers følger det av innsendtTidspunkt */
   meldedato: string | null;
   registrertArbeidssoker: boolean | null;
+  /** Indikerer om meldekortet ble opprettet manuelt av saksbehandler */
+  opprettetManuelt?: boolean | null;
 }
 
 export interface ITilUtfyllingMeldekort extends IRapporteringsperiode {

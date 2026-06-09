@@ -3,7 +3,7 @@ import { http, HttpResponse } from "msw";
 import { logger } from "~/models/logger.server";
 import { getDemoAction, getDemoStatus } from "~/utils/demo-params.utils";
 import { getEnv } from "~/utils/env.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IKilde, IRapporteringsperiode } from "~/utils/types";
 
 import type { withDb } from "./db";
 import { getDatabase } from "./db.utils";
@@ -276,6 +276,100 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         );
 
         return HttpResponse.json({ id: nyPeriode.id }, { status: 200 });
+      },
+    ),
+
+    http.get(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/tell-meldekort`,
+      async ({ request, cookies }) => {
+        const db = database || (await getDatabase(cookies));
+        const url = new URL(request.url);
+        const fraDato = url.searchParams.get("fraDato");
+        const tilDato = url.searchParams.get("tilDato");
+
+        if (!fraDato || !tilDato) {
+          logger.error("[mock meldekortregister]: Mangler fraDato eller tilDato");
+          return HttpResponse.json(
+            {
+              title: "Ugyldig forespørsel",
+              status: 400,
+              detail: "fraDato og tilDato må oppgis som query parametere",
+              correlationId: "missing-dates-error",
+              errorType: "BAD_REQUEST",
+            },
+            { status: 400 },
+          );
+        }
+
+        const antall = db.beregnAntallMeldekort(fraDato, tilDato);
+
+        logger.info(
+          `[mock meldekortregister]: Beregnet ${antall} meldekort fra ${fraDato} til ${tilDato}`,
+        );
+
+        return HttpResponse.json({ antall });
+      },
+    ),
+
+    http.post(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/opprett-manuelt`,
+      async ({ params, request, cookies }) => {
+        const db = database || (await getDatabase(cookies));
+        const personId = params.personId as string;
+        const person = db.hentPerson(personId);
+
+        if (!person) {
+          logger.error(`[mock meldekortregister]: Fant ikke person ${personId}`);
+          return HttpResponse.json(
+            {
+              title: "Person ikke funnet",
+              status: 404,
+              detail: `Fant ikke person med ID ${personId}`,
+              correlationId: "person-not-found-error",
+              errorType: "NOT_FOUND",
+            },
+            { status: 404 },
+          );
+        }
+
+        const body = (await request.json()) as {
+          fraDato: string;
+          tilDato: string;
+          kilde: IKilde;
+        };
+
+        if (!body.fraDato || !body.tilDato || !body.kilde) {
+          logger.error("[mock meldekortregister]: Mangler påkrevde felter");
+          return HttpResponse.json(
+            {
+              title: "Ugyldig forespørsel",
+              status: 400,
+              detail: "fraDato, tilDato og kilde må oppgis i request body",
+              correlationId: "missing-fields-error",
+              errorType: "BAD_REQUEST",
+            },
+            { status: 400 },
+          );
+        }
+
+        const opprettedeMeldekort = db.opprettManueltMeldekort(
+          body.fraDato,
+          body.tilDato,
+          person.ident,
+          body.kilde,
+        );
+
+        logger.info(
+          `[mock meldekortregister]: Opprettet ${opprettedeMeldekort.length} meldekort manuelt for person ${personId}`,
+        );
+
+        return HttpResponse.json(
+          {
+            antall: opprettedeMeldekort.length,
+            meldekortIds: opprettedeMeldekort.map((m) => m.id),
+          },
+          { status: 201 },
+        );
       },
     ),
   ];
