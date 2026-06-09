@@ -18,7 +18,7 @@ function hentAlleRapporteringsperioder(db: Database) {
         fraOgMed: "desc",
       },
       innsendtTidspunkt: "desc",
-      originalMeldekortId: "asc",
+      originalMeldekortId: "desc",
     },
   }) as IRapporteringsperiode[];
 }
