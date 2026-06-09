@@ -133,10 +133,8 @@ function hentBehandlingsresultat(db: Database) {
 }
 
 function beregnAntallMeldekort(fraDato: string, tilDato: string): number {
-  const startDato = new Date(fraDato);
-  startDato.setHours(0, 0, 0, 0);
-  const sluttDato = new Date(tilDato);
-  sluttDato.setHours(0, 0, 0, 0);
+  const startDato = new Date(`${fraDato}T00:00:00`);
+  const sluttDato = new Date(`${tilDato}T00:00:00`);
 
   // Valider datoer
   if (Number.isNaN(startDato.getTime()) || Number.isNaN(sluttDato.getTime())) {
@@ -161,10 +159,8 @@ function beregnAntallOpprettbareMeldekort(
   tilDato: string,
   ident: string,
 ): number {
-  const startDato = new Date(fraDato);
-  startDato.setHours(0, 0, 0, 0);
-  const sluttDato = new Date(tilDato);
-  sluttDato.setHours(0, 0, 0, 0);
+  const startDato = new Date(`${fraDato}T00:00:00`);
+  const sluttDato = new Date(`${tilDato}T00:00:00`);
 
   // Valider datoer
   if (Number.isNaN(startDato.getTime()) || Number.isNaN(sluttDato.getTime())) {
@@ -216,10 +212,8 @@ function opprettManueltMeldekort(
   ident: string,
   kilde: IKilde,
 ): IRapporteringsperiode[] {
-  const startDato = new Date(fraDato);
-  startDato.setHours(0, 0, 0, 0); // Normaliser til midnatt for sammenligning
-  const sluttDato = new Date(tilDato);
-  sluttDato.setHours(0, 0, 0, 0); // Normaliser til midnatt for sammenligning
+  const startDato = new Date(`${fraDato}T00:00:00`);
+  const sluttDato = new Date(`${tilDato}T00:00:00`);
 
   // Valider datoer
   if (Number.isNaN(startDato.getTime()) || Number.isNaN(sluttDato.getTime())) {

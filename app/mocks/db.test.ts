@@ -119,8 +119,8 @@ describe("beregnAntallMeldekort", () => {
       format(sluttDato, "yyyy-MM-dd"),
     );
 
-    // Starter på første mandag i januar, kan få inn 2 hele 2-ukers perioder
-    expect(antall).toBeGreaterThanOrEqual(2);
+    // Starter på første mandag i januar (1. jan 2024), kan få inn 2 hele 2-ukers perioder
+    expect(antall).toBe(2);
   });
 
   it("skal ikke telle ufullstendige perioder på slutten", () => {
