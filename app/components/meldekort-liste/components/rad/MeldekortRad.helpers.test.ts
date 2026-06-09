@@ -148,6 +148,26 @@ describe("MeldekortRad.helpers", () => {
 
       expect(erPeriodeKorrigert(periode)).toBe(false);
     });
+
+    it("skal returnere true når type er Korrigert", () => {
+      const periode: IRapporteringsperiode = {
+        ...basePeriode,
+        type: MELDEKORT_TYPE.KORRIGERT,
+        originalMeldekortId: null,
+      };
+
+      expect(erPeriodeKorrigert(periode)).toBe(true);
+    });
+
+    it("skal returnere true når både type er Korrigert og originalMeldekortId finnes", () => {
+      const periode: IRapporteringsperiode = {
+        ...basePeriode,
+        type: MELDEKORT_TYPE.KORRIGERT,
+        originalMeldekortId: "original-123",
+      };
+
+      expect(erPeriodeKorrigert(periode)).toBe(true);
+    });
   });
 
   describe("skalViseInnsendtInfo", () => {
@@ -217,6 +237,7 @@ describe("MeldekortRad.helpers", () => {
       const korrigeringsPeriode: IRapporteringsperiode = {
         ...basePeriode,
         id: "korrigering-456",
+        type: MELDEKORT_TYPE.KORRIGERT,
         originalMeldekortId: "original-123",
       };
 
@@ -251,6 +272,7 @@ describe("MeldekortRad.helpers", () => {
       const korrigeringsPeriode: IRapporteringsperiode = {
         ...basePeriode,
         id: "korrigering-456",
+        type: MELDEKORT_TYPE.KORRIGERT,
         originalMeldekortId: "original-123",
       };
 
@@ -277,12 +299,14 @@ describe("MeldekortRad.helpers", () => {
       const korrigering1: IRapporteringsperiode = {
         ...basePeriode,
         id: "korrigering-1",
+        type: MELDEKORT_TYPE.KORRIGERT,
         originalMeldekortId: "original-123",
       };
 
       const korrigering2: IRapporteringsperiode = {
         ...basePeriode,
         id: "korrigering-2",
+        type: MELDEKORT_TYPE.KORRIGERT,
         originalMeldekortId: "korrigering-1",
       };
 

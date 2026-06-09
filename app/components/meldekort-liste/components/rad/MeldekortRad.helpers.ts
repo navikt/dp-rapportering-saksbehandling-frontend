@@ -61,10 +61,10 @@ export function erPeriodeOpprettet(periode: IRapporteringsperiode): boolean {
 }
 
 /**
- * Sjekker om perioden har blitt korrigert (har en original meldekort-ID)
+ * Sjekker om perioden har blitt korrigert (har en original meldekort-ID eller er av type Korrigert)
  */
 export function erPeriodeKorrigert(periode: IRapporteringsperiode): boolean {
-  return !!periode.originalMeldekortId;
+  return !!periode.originalMeldekortId || periode.type === MELDEKORT_TYPE.KORRIGERT;
 }
 
 /**
@@ -90,13 +90,18 @@ export function erPeriodeOpprettetAvArena(periode: IRapporteringsperiode): boole
 }
 
 /**
- * Sjekker om perioden har en korrigering (et annet meldekort som korrigerer denne perioden)
+ * Sjekker om perioden har en korrigering (et annet meldekort av type Korrigert som korrigerer denne perioden)
  */
 export function periodeHarKorrigering(
   periode: IRapporteringsperiode,
   allePerioder: IRapporteringsperiode[],
 ): boolean {
-  return allePerioder.some((p) => p.originalMeldekortId === periode.id && p.id !== periode.id);
+  return allePerioder.some(
+    (p) =>
+      p.type === MELDEKORT_TYPE.KORRIGERT &&
+      p.originalMeldekortId === periode.id &&
+      p.id !== periode.id,
+  );
 }
 
 /**
