@@ -326,7 +326,7 @@ describe("opprettManueltMeldekort", () => {
     expect(opprettet[0].periode.tilOgMed).toBe(format(sluttDato, "yyyy-MM-dd"));
   });
 
-  it("skal sette opprettetManuelt til true", () => {
+  it("skal sette opprettetManueltAvSaksbehandler til true", () => {
     const startDato = startOfWeek(new Date("2024-01-01"), { weekStartsOn: 1 });
     const sluttDato = addDays(startDato, 13);
 
@@ -337,7 +337,7 @@ describe("opprettManueltMeldekort", () => {
       testKilde,
     );
 
-    expect(opprettet[0].opprettetManuelt).toBe(true);
+    expect(opprettet[0].opprettetManueltAvSaksbehandler).toBe(true);
   });
 
   it("skal sette riktig kilde", () => {

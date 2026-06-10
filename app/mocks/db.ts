@@ -105,7 +105,7 @@ async function oppdaterRapporteringsperiode(db: Database, oppdatertPeriode: IRap
       periode.meldedato = oppdatertPeriode.meldedato;
       periode.registrertArbeidssoker = oppdatertPeriode.registrertArbeidssoker;
       periode.begrunnelse = oppdatertPeriode.begrunnelse;
-      periode.opprettetManuelt = oppdatertPeriode.opprettetManuelt;
+      periode.opprettetManueltAvSaksbehandler = oppdatertPeriode.opprettetManueltAvSaksbehandler;
     },
   });
 }
@@ -290,7 +290,7 @@ function opprettManueltMeldekort(
       kilde,
       kanSendesFra,
       sisteFristForTrekk,
-      opprettetManuelt: true,
+      opprettetManueltAvSaksbehandler: true,
     });
 
     // Lagre til database

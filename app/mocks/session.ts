@@ -115,7 +115,7 @@ class SessionRecord {
           innsendtTidspunkt: z.string().nullable(),
           meldedato: z.string().nullable(),
           registrertArbeidssoker: z.boolean().nullable(),
-          opprettetManuelt: z.boolean().nullable().optional(),
+          opprettetManueltAvSaksbehandler: z.boolean().nullable().optional(),
           begrunnelse: z.string().optional(),
         }),
       }),
