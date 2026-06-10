@@ -33,7 +33,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - uses: nais/deploy/actions/deploy@v2
         env:
           VAR: image=${{ needs.build-test.outputs.image }},githubSha=${{ github.sha }}

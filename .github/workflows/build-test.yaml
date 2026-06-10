@@ -34,7 +34,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - name: Read pnpm version from package.json
         id: pnpm-version
         run: echo "version=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> "$GITHUB_OUTPUT"
@@ -58,7 +58,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - name: Read pnpm version from package.json
         id: pnpm-version
         run: echo "version=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> "$GITHUB_OUTPUT"
@@ -95,7 +95,7 @@ jobs:
       id-token: write
       packages: write
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - name: Build static files
         if: ${{ inputs.push_image }}
         uses: docker/build-push-action@v7.2.0
