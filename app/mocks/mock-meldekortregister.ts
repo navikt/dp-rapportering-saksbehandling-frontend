@@ -318,7 +318,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           );
         }
 
-        const antall = db.beregnAntallOpprettbareMeldekort(fraDato, tilDato, person.ident);
+        const antall = db.beregnAntallOpprettbareMeldekort(fraDato, tilDato);
 
         logger.info(
           `[mock meldekortregister]: Beregnet ${antall} opprettbare meldekort fra ${fraDato} til ${tilDato} for person ${personId}`,

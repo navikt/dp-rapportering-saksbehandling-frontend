@@ -153,56 +153,10 @@ function beregnAntallMeldekort(fraDato: string, tilDato: string): number {
   return Math.max(0, Math.floor(dagerTotalt / 14));
 }
 
-function beregnAntallOpprettbareMeldekort(
-  db: Database,
-  fraDato: string,
-  tilDato: string,
-  ident: string,
-): number {
-  const startDato = new Date(`${fraDato}T00:00:00`);
-  const sluttDato = new Date(`${tilDato}T00:00:00`);
-
-  // Valider datoer
-  if (Number.isNaN(startDato.getTime()) || Number.isNaN(sluttDato.getTime())) {
-    return 0;
-  }
-
-  // Finn første mandag på eller etter startDato
-  const mandagIStartUke = startOfWeek(startDato, { weekStartsOn: 1 });
-  const forsteMandagIStart =
-    mandagIStartUke < startDato ? addWeeks(mandagIStartUke, 1) : mandagIStartUke;
-
-  // Beregn antall 2-ukers perioder
-  const antallPerioder = beregnAntallMeldekort(fraDato, tilDato);
-
-  // Hent alle eksisterende perioder for denne personen
-  const eksisterendePerioder = hentAlleRapporteringsperioder(db).filter((p) => p.ident === ident);
-
-  let opprettbarePerioder = 0;
-
-  for (let i = 0; i < antallPerioder; i++) {
-    // Beregn start og slutt for hver 2-ukers periode
-    const periodeStart = addWeeks(forsteMandagIStart, i * 2);
-    const periodeSlutt = addDays(periodeStart, 13);
-
-    // Sjekk at perioden er innenfor det ønskede området
-    if (periodeSlutt > sluttDato) {
-      break;
-    }
-
-    // Sjekk om det allerede finnes et meldekort for denne perioden
-    const periodeStartStr = format(periodeStart, "yyyy-MM-dd");
-    const periodeSluttStr = format(periodeSlutt, "yyyy-MM-dd");
-    const finnesDuplikat = eksisterendePerioder.some(
-      (p) => p.periode.fraOgMed === periodeStartStr && p.periode.tilOgMed === periodeSluttStr,
-    );
-
-    if (!finnesDuplikat) {
-      opprettbarePerioder++;
-    }
-  }
-
-  return opprettbarePerioder;
+function beregnAntallOpprettbareMeldekort(fraDato: string, tilDato: string): number {
+  // Returnerer ca-antall meldekort som kan opprettes
+  // Backend håndterer duplikater, så vi trenger ikke sjekke her
+  return beregnAntallMeldekort(fraDato, tilDato);
 }
 
 function opprettManueltMeldekort(
@@ -316,8 +270,8 @@ export function withDb(db: Database) {
     hentBehandlingsresultat: () => hentBehandlingsresultat(db),
     beregnAntallMeldekort: (fraDato: string, tilDato: string) =>
       beregnAntallMeldekort(fraDato, tilDato),
-    beregnAntallOpprettbareMeldekort: (fraDato: string, tilDato: string, ident: string) =>
-      beregnAntallOpprettbareMeldekort(db, fraDato, tilDato, ident),
+    beregnAntallOpprettbareMeldekort: (fraDato: string, tilDato: string) =>
+      beregnAntallOpprettbareMeldekort(fraDato, tilDato),
     opprettManueltMeldekort: (fraDato: string, tilDato: string, ident: string, kilde: IKilde) =>
       opprettManueltMeldekort(db, fraDato, tilDato, ident, kilde),
   };

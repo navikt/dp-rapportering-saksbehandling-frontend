@@ -162,7 +162,7 @@ describe("beregnAntallMeldekort", () => {
 });
 
 describe("beregnAntallOpprettbareMeldekort", () => {
-  it("skal returnere samme tall som beregnAntallMeldekort når ingen perioder finnes", () => {
+  it("skal returnere ca-antall meldekort uten duplikat-sjekk", () => {
     const mockDb = createMockDatabase();
     const db = withDb(mockDb);
 
@@ -176,99 +176,10 @@ describe("beregnAntallOpprettbareMeldekort", () => {
     const antallOpprettbare = db.beregnAntallOpprettbareMeldekort(
       format(startDato, "yyyy-MM-dd"),
       format(sluttDato, "yyyy-MM-dd"),
-      "12345678901",
     );
 
+    // Returnerer alltid samme som beregnAntallMeldekort (ca-tall)
     expect(antallOpprettbare).toBe(antallTotalt);
-    expect(antallOpprettbare).toBe(2);
-  });
-
-  it("skal trekke fra eksisterende perioder", () => {
-    const mockDb = createMockDatabase();
-    const db = withDb(mockDb);
-
-    const startDato = startOfWeek(new Date("2024-01-01"), { weekStartsOn: 1 });
-    const sluttDato = addDays(startDato, 27);
-
-    // Opprett først én periode
-    const testKilde: IKilde = {
-      rolle: ROLLE.Saksbehandler,
-      ident: "Z123456",
-    };
-    db.opprettManueltMeldekort(
-      format(startDato, "yyyy-MM-dd"),
-      format(addDays(startDato, 13), "yyyy-MM-dd"),
-      "12345678901",
-      testKilde,
-    );
-
-    // Nå skal det bare være 1 opprettbar periode igjen
-    const antallOpprettbare = db.beregnAntallOpprettbareMeldekort(
-      format(startDato, "yyyy-MM-dd"),
-      format(sluttDato, "yyyy-MM-dd"),
-      "12345678901",
-    );
-
-    expect(antallOpprettbare).toBe(1);
-  });
-
-  it("skal returnere 0 når alle perioder allerede eksisterer", () => {
-    const mockDb = createMockDatabase();
-    const db = withDb(mockDb);
-
-    const startDato = startOfWeek(new Date("2024-01-01"), { weekStartsOn: 1 });
-    const sluttDato = addDays(startDato, 27);
-
-    const testKilde: IKilde = {
-      rolle: ROLLE.Saksbehandler,
-      ident: "Z123456",
-    };
-
-    // Opprett alle perioder først
-    db.opprettManueltMeldekort(
-      format(startDato, "yyyy-MM-dd"),
-      format(sluttDato, "yyyy-MM-dd"),
-      "12345678901",
-      testKilde,
-    );
-
-    // Nå skal det ikke være noen opprettbare perioder igjen
-    const antallOpprettbare = db.beregnAntallOpprettbareMeldekort(
-      format(startDato, "yyyy-MM-dd"),
-      format(sluttDato, "yyyy-MM-dd"),
-      "12345678901",
-    );
-
-    expect(antallOpprettbare).toBe(0);
-  });
-
-  it("skal bare telle perioder for riktig person", () => {
-    const mockDb = createMockDatabase();
-    const db = withDb(mockDb);
-
-    const startDato = startOfWeek(new Date("2024-01-01"), { weekStartsOn: 1 });
-    const sluttDato = addDays(startDato, 27);
-
-    const testKilde: IKilde = {
-      rolle: ROLLE.Saksbehandler,
-      ident: "Z123456",
-    };
-
-    // Opprett perioder for person A
-    db.opprettManueltMeldekort(
-      format(startDato, "yyyy-MM-dd"),
-      format(sluttDato, "yyyy-MM-dd"),
-      "11111111111",
-      testKilde,
-    );
-
-    // Person B skal fortsatt kunne opprette alle perioder
-    const antallOpprettbare = db.beregnAntallOpprettbareMeldekort(
-      format(startDato, "yyyy-MM-dd"),
-      format(sluttDato, "yyyy-MM-dd"),
-      "22222222222",
-    );
-
     expect(antallOpprettbare).toBe(2);
   });
 
@@ -276,7 +187,7 @@ describe("beregnAntallOpprettbareMeldekort", () => {
     const mockDb = createMockDatabase();
     const db = withDb(mockDb);
 
-    const antall = db.beregnAntallOpprettbareMeldekort("ugyldig-dato", "2024-01-31", "12345678901");
+    const antall = db.beregnAntallOpprettbareMeldekort("ugyldig-dato", "2024-01-31");
 
     expect(antall).toBe(0);
   });
