@@ -4,8 +4,9 @@ metadata:
   name: "{{name}}"
   namespace: teamdagpenger
   labels:
-    team: teamdagpenger
+    team: "teamdagpenger"
     app: "{{name}}"
+    subteam: "ramp"
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "64M"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
