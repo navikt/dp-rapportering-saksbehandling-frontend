@@ -4,9 +4,10 @@ metadata:
   name: dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}
   namespace: teamdagpenger
   labels:
-    team: teamdagpenger
-    app: dp-rapportering-saksbehandling-frontend
+    team: "teamdagpenger"
+    app: "dp-rapportering-saksbehandling-frontend"
     pr-preview: "true"
+    subteam: "ramp"
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "64M"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
