@@ -74,7 +74,6 @@ spec:
       claims:
         groups:
           - id: "{{azure.grupper.saksbehandler}}"
-          - id: "{{azure.grupper.beslutter}}"
         extra:
           - NAVident
     sidecar:
