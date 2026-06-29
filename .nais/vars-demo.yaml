@@ -18,4 +18,3 @@ azure:
   enabled: false
   grupper:
     saksbehandler: ""
-    beslutter: ""
