@@ -87,8 +87,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     // Appen vil fortsatt fungere, men med default-verdier
   }
 
-  // Annotasjonen gir getEnv en kontekst å utlede returtypen fra. Uten den
-  // blir verdiene unknown, og react-router 8 sender loader-data videre urørt.
   const env: Partial<IEnv> = {
     IS_LOCALHOST: getEnv("IS_LOCALHOST"),
     USE_MSW: getEnv("USE_MSW"),
