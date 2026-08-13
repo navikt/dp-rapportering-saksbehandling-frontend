@@ -28,6 +28,7 @@ import { logger } from "./models/logger.server";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { fetchGlobalSanityData } from "./sanity/fetchGlobalData";
 import { getEnv, isLocalOrDemo } from "./utils/env.utils";
+import type { IEnv } from "./utils/types";
 
 export async function loader({ request }: Route.LoaderArgs) {
   // Sjekk for demo 404-page simulering
@@ -86,17 +87,21 @@ export async function loader({ request }: Route.LoaderArgs) {
     // Appen vil fortsatt fungere, men med default-verdier
   }
 
+  // Annotasjonen gir getEnv en kontekst å utlede returtypen fra. Uten den
+  // blir verdiene unknown, og react-router 8 sender loader-data videre urørt.
+  const env: Partial<IEnv> = {
+    IS_LOCALHOST: getEnv("IS_LOCALHOST"),
+    USE_MSW: getEnv("USE_MSW"),
+    NODE_ENV: getEnv("NODE_ENV"),
+    FARO_URL: getEnv("FARO_URL"),
+    GITHUB_SHA: getEnv("GITHUB_SHA"),
+  };
+
   return {
     saksbehandler,
     tema,
     sanity: sanityData,
-    env: {
-      IS_LOCALHOST: getEnv("IS_LOCALHOST"),
-      USE_MSW: getEnv("USE_MSW"),
-      NODE_ENV: getEnv("NODE_ENV"),
-      FARO_URL: getEnv("FARO_URL"),
-      GITHUB_SHA: getEnv("GITHUB_SHA"),
-    },
+    env,
   };
 }
 

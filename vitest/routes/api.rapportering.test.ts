@@ -1,3 +1,4 @@
+import { RouterContextProvider } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
 import { action } from "~/routes/api.rapportering";
@@ -71,7 +72,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
@@ -119,7 +120,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
@@ -167,7 +168,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
@@ -214,7 +215,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
@@ -259,7 +260,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
@@ -308,7 +309,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
@@ -356,7 +357,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
@@ -408,7 +409,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
@@ -450,7 +451,7 @@ describe("api.rapportering action", () => {
       const response = await action({
         request,
         params: {},
-        context: {},
+        context: new RouterContextProvider(),
         pattern: "",
         url: new URL(request.url),
       });
