@@ -1,26 +1,24 @@
 #!/usr/bin/env sh
-export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+set -e
 
-if [ -d "$HOME/.nvm/versions/node" ]; then
-	for dir in "$HOME/.nvm/versions/node"/*/bin; do
-		if [ -d "$dir" ]; then
-			PATH="$dir:$PATH"
-		fi
-	done
-fi
+if command -v corepack >/dev/null 2>&1; then
+	PNPM_VERSION=$(sed -n 's/.*"packageManager":[[:space:]]*"pnpm@\([^"]*\)".*/\1/p' package.json | head -n 1)
 
-for dir in "$HOME/Library/pnpm" "$HOME/Library/pnpm/bin" "$HOME/Library/pnpm/.tools/pnpm"/*/bin; do
-	if [ -d "$dir" ]; then
-		PATH="$dir:$PATH"
+	if [ -n "$PNPM_VERSION" ]; then
+		corepack "pnpm@$PNPM_VERSION" exec lint-staged
+		corepack "pnpm@$PNPM_VERSION" run typecheck
+		corepack "pnpm@$PNPM_VERSION" run test:vitest
+	else
+		corepack pnpm exec lint-staged
+		corepack pnpm run typecheck
+		corepack pnpm run test:vitest
 	fi
-done
-
-export PATH
-
-if ! command -v pnpm >/dev/null 2>&1; then
-	echo "pnpm not found in PATH=$PATH" >&2
+elif command -v pnpm >/dev/null 2>&1; then
+	pnpm exec lint-staged
+	pnpm run typecheck
+	pnpm run test:vitest
+else
+	echo "Neither corepack nor pnpm is available in PATH." >&2
+	echo "Install Node.js with Corepack enabled (or install pnpm) and retry." >&2
 	exit 127
 fi
-
-pnpm run pre-commit
-pnpm test
