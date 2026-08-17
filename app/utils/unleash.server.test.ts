@@ -73,23 +73,7 @@ describe("erToggleAktiv", () => {
     expect(isEnabled).toHaveBeenCalledWith(FEATURE_TOGGLES.opprettMeldekortManuelt);
   });
 
-  it("skal legge på /api når URL-en fra nais mangler suffikset", async () => {
-    process.env.UNLEASH_SERVER_API_URL = "https://teamdagpenger-unleash-api.nav.cloud.nais.io";
-    process.env.UNLEASH_SERVER_API_TOKEN = "hemmelig";
-    startUnleashMock.mockResolvedValue({ isEnabled: vi.fn().mockReturnValue(false) });
-
-    mockEnv({ isLocalOrDemo: false });
-    const { erToggleAktiv, FEATURE_TOGGLES } = await importerModul();
-    await erToggleAktiv(FEATURE_TOGGLES.opprettMeldekortManuelt);
-
-    expect(startUnleashMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        url: "https://teamdagpenger-unleash-api.nav.cloud.nais.io/api",
-      }),
-    );
-  });
-
-  it("skal ikke dublere /api hvis URL-en allerede har det", async () => {
+  it("skal bruke URL-en fra nais som den er", async () => {
     process.env.UNLEASH_SERVER_API_URL = "https://teamdagpenger-unleash-api.nav.cloud.nais.io/api";
     process.env.UNLEASH_SERVER_API_TOKEN = "hemmelig";
     startUnleashMock.mockResolvedValue({ isEnabled: vi.fn().mockReturnValue(false) });
@@ -101,6 +85,7 @@ describe("erToggleAktiv", () => {
     expect(startUnleashMock).toHaveBeenCalledWith(
       expect.objectContaining({
         url: "https://teamdagpenger-unleash-api.nav.cloud.nais.io/api",
+        appName: "dp-rapportering-saksbehandling-frontend",
       }),
     );
   });

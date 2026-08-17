@@ -19,10 +19,8 @@ function harUnleashConfig(): boolean {
 
 async function hentKlient(): Promise<Unleash> {
   if (!klientPromise) {
-    const baseUrl = process.env.UNLEASH_SERVER_API_URL!.replace(/\/+$/, "");
-
     klientPromise = startUnleash({
-      url: baseUrl.endsWith("/api") ? baseUrl : `${baseUrl}/api`,
+      url: process.env.UNLEASH_SERVER_API_URL!,
       appName: "dp-rapportering-saksbehandling-frontend",
       environment: process.env.UNLEASH_SERVER_API_ENV,
       customHeaders: { Authorization: process.env.UNLEASH_SERVER_API_TOKEN! },

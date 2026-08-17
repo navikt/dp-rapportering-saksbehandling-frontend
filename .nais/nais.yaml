@@ -55,8 +55,8 @@ spec:
       value: "{{sanity_datasett}}"
     - name: GITHUB_SHA
       value: {{githubSha}}
-  # UNLEASH_SERVER_API_URL, _TOKEN og _ENV kommer fra ApiToken-ressursen
-  # i .nais/unleash-apitoken.yaml
+    - name: UNLEASH_SERVER_API_URL
+      value: "{{unleash.url}}"
   envFrom:
     - secret: "{{name}}-unleash-api-token"
   accessPolicy:
