@@ -11,6 +11,7 @@ is_localhost: false
 
 faro_url: "https://telemetry.ekstern.dev.nav.no/collect"
 
+unleash_environment: "development"
 runtime_environment: "development"
 sanity_datasett: "development"
 

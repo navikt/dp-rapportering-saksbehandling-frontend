@@ -1,15 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 import type { IPerson } from "~/utils/types";
 
 import Personlinje from "./Personlinje";
-
-vi.mock("~/utils/env.utils", () => ({
-  showOpprettMeldekortManuelt: false,
-}));
 
 function renderWithProviders(ui: React.ReactElement) {
   return render(<SaksbehandlerProvider>{ui}</SaksbehandlerProvider>);
@@ -74,72 +70,39 @@ describe("Personlinje", () => {
     expect(screen.queryByRole("dialog", { name: "Historikk" })).not.toBeInTheDocument();
   });
 
-  describe("Opprett meldekort feature flag", () => {
-    it("skal ikke vise opprett meldekort knapp når feature flag er av", async () => {
-      vi.resetModules();
-      vi.doMock("~/utils/env.utils", () => ({
-        showOpprettMeldekortManuelt: false,
-      }));
-
-      const { showOpprettMeldekortManuelt } = await import("~/utils/env.utils");
-      expect(showOpprettMeldekortManuelt).toBe(false);
-
-      const PersonlinjeModule = await import("./Personlinje");
-      const PersonlinjeWithoutFlag = PersonlinjeModule.default;
-
-      renderWithProviders(<PersonlinjeWithoutFlag person={mockPerson} />);
+  describe("Opprett meldekort feature toggle", () => {
+    it("skal ikke vise opprett meldekort knapp når toggle er av", () => {
+      renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort={false} />);
 
       expect(screen.queryByRole("button", { name: "Opprett meldekort" })).not.toBeInTheDocument();
     });
 
-    it("skal vise opprett meldekort knapp når feature flag er på", async () => {
-      vi.resetModules();
-      vi.doMock("~/utils/env.utils", () => ({
-        showOpprettMeldekortManuelt: true,
-      }));
+    it("skal ikke vise opprett meldekort knapp når prop ikke er satt", () => {
+      renderWithProviders(<Personlinje person={mockPerson} />);
 
-      const { showOpprettMeldekortManuelt } = await import("~/utils/env.utils");
-      expect(showOpprettMeldekortManuelt).toBe(true);
+      expect(screen.queryByRole("button", { name: "Opprett meldekort" })).not.toBeInTheDocument();
+    });
 
-      const PersonlinjeModule = await import("./Personlinje");
-      const PersonlinjeWithFlag = PersonlinjeModule.default;
-
-      renderWithProviders(<PersonlinjeWithFlag person={mockPerson} />);
+    it("skal vise opprett meldekort knapp når toggle er på", () => {
+      renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort />);
 
       const opprettButtons = screen.queryAllByRole("button", { name: "Opprett meldekort" });
       expect(opprettButtons.length).toBeGreaterThan(0);
     });
 
     it("skal åpne opprett meldekort modal når knappen klikkes", async () => {
-      vi.resetModules();
-      vi.doMock("~/utils/env.utils", () => ({
-        showOpprettMeldekortManuelt: true,
-      }));
-
-      const PersonlinjeModule = await import("./Personlinje");
-      const PersonlinjeWithFlag = PersonlinjeModule.default;
-
       const user = userEvent.setup();
-      renderWithProviders(<PersonlinjeWithFlag person={mockPerson} />);
+      renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort />);
 
       const opprettButtons = screen.getAllByRole("button", { name: "Opprett meldekort" });
       await user.click(opprettButtons[0]);
 
-      const dialog = screen.getByRole("dialog", { name: "Opprett meldekort" });
-      expect(dialog).toBeInTheDocument();
+      expect(screen.getByRole("dialog", { name: "Opprett meldekort" })).toBeInTheDocument();
     });
 
     it("skal lukke opprett meldekort modal når avbryt klikkes", async () => {
-      vi.resetModules();
-      vi.doMock("~/utils/env.utils", () => ({
-        showOpprettMeldekortManuelt: true,
-      }));
-
-      const PersonlinjeModule = await import("./Personlinje");
-      const PersonlinjeWithFlag = PersonlinjeModule.default;
-
       const user = userEvent.setup();
-      renderWithProviders(<PersonlinjeWithFlag person={mockPerson} />);
+      renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort />);
 
       const opprettButtons = screen.getAllByRole("button", { name: "Opprett meldekort" });
       await user.click(opprettButtons[0]);
