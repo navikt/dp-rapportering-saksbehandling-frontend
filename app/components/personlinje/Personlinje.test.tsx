@@ -24,20 +24,20 @@ const mockPerson: IPerson = {
 
 describe("Personlinje", () => {
   it("skal vise brukerens navn", () => {
-    renderWithProviders(<Personlinje person={mockPerson} />);
+    renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort={false} />);
 
     const nameElements = screen.getAllByText("Ola Mellomnavn Nordmann");
     expect(nameElements.length).toBe(2);
   });
 
   it("skal vise fødselsnummer", () => {
-    renderWithProviders(<Personlinje person={mockPerson} />);
+    renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort={false} />);
 
     expect(screen.getByText("12345678901")).toBeInTheDocument();
   });
 
   it("skal vise kopier-knapp for fødselsnummer", () => {
-    renderWithProviders(<Personlinje person={mockPerson} />);
+    renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort={false} />);
 
     const copyButton = screen.getByRole("button", { name: /kopier/i });
     expect(copyButton).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe("Personlinje", () => {
 
   it("skal åpne historikk modal når historikk-knappen klikkes på desktop", async () => {
     const user = userEvent.setup();
-    renderWithProviders(<Personlinje person={mockPerson} />);
+    renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort={false} />);
 
     const historikkButtons = screen.getAllByRole("button", { name: "Historikk" });
     expect(historikkButtons.length).toBeGreaterThan(0);
@@ -57,7 +57,7 @@ describe("Personlinje", () => {
 
   it("skal lukke historikk modal når lukk-knappen klikkes", async () => {
     const user = userEvent.setup();
-    renderWithProviders(<Personlinje person={mockPerson} />);
+    renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort={false} />);
 
     const historikkButtons = screen.getAllByRole("button", { name: "Historikk" });
     await user.click(historikkButtons[0]);
@@ -78,7 +78,7 @@ describe("Personlinje", () => {
     });
 
     it("skal ikke vise opprett meldekort knapp når prop ikke er satt", () => {
-      renderWithProviders(<Personlinje person={mockPerson} />);
+      renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort={false} />);
 
       expect(screen.queryByRole("button", { name: "Opprett meldekort" })).not.toBeInTheDocument();
     });
@@ -119,7 +119,7 @@ describe("Personlinje", () => {
   describe("Accordion behavior på mobil", () => {
     it("skal toggle detaljer når navn-knappen klikkes på mobil", async () => {
       const user = userEvent.setup();
-      renderWithProviders(<Personlinje person={mockPerson} />);
+      renderWithProviders(<Personlinje person={mockPerson} visOpprettMeldekort />);
 
       const nameButtons = screen.getAllByRole("button", {
         name: /ola mellomnavn nordmann/i,
@@ -139,7 +139,9 @@ describe("Personlinje", () => {
 
   describe("Responsiv design", () => {
     it("skal ha både mobil og desktop navn-containere", () => {
-      const { container } = renderWithProviders(<Personlinje person={mockPerson} />);
+      const { container } = renderWithProviders(
+        <Personlinje person={mockPerson} visOpprettMeldekort />,
+      );
 
       const mobilContainer = container.querySelector('[class*="navnContainerMobil"]');
       expect(mobilContainer).toBeInTheDocument();
@@ -149,7 +151,9 @@ describe("Personlinje", () => {
     });
 
     it("skal ha både mobil og desktop knapp-containere", () => {
-      const { container } = renderWithProviders(<Personlinje person={mockPerson} />);
+      const { container } = renderWithProviders(
+        <Personlinje person={mockPerson} visOpprettMeldekort={false} />,
+      );
 
       const mobilKnapper = container.querySelector('[class*="knappContainerMobil"]');
       expect(mobilKnapper).toBeInTheDocument();
@@ -168,7 +172,7 @@ describe("Personlinje", () => {
         ident: "•••••••••••",
       };
 
-      renderWithProviders(<Personlinje person={maskedPerson} />);
+      renderWithProviders(<Personlinje person={maskedPerson} visOpprettMeldekort={false} />);
 
       expect(screen.queryByRole("button", { name: /kopier/i })).not.toBeInTheDocument();
     });
@@ -180,7 +184,9 @@ describe("Personlinje", () => {
         etternavn: "•••••",
       };
 
-      const { container } = renderWithProviders(<Personlinje person={maskedPerson} />);
+      const { container } = renderWithProviders(
+        <Personlinje person={maskedPerson} visOpprettMeldekort={false} />,
+      );
 
       const sensitivElements = container.querySelectorAll('[class*="sensitiv"]');
       expect(sensitivElements.length).toBeGreaterThan(0);

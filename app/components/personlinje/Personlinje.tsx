@@ -38,8 +38,7 @@ interface IProps {
   perioder?: IRapporteringsperiode[];
   arbeidssokerperioder?: IArbeidssokerperiode[];
   personlinjeData?: IMeldekortPersonlinje | null;
-  /** Styres av feature toggle i Unleash, evaluert server-side i loaderen. */
-  visOpprettMeldekort?: boolean;
+  visOpprettMeldekort: boolean;
 }
 
 export default function Personlinje({
