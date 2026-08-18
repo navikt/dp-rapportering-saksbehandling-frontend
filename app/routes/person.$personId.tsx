@@ -27,6 +27,7 @@ import type { IBehandlingerPerPeriode } from "~/utils/behandlingsresultat.types"
 import { getEnv, usesMsw } from "~/utils/env.utils";
 import { maskerPerson, skalSkjuleSensitiveOpplysninger } from "~/utils/maskering.server";
 import type { IPerson } from "~/utils/types";
+import { erToggleAktiv, FEATURE_TOGGLES } from "~/utils/unleash.server";
 
 import type { Route } from "./+types/person.$personId";
 
@@ -38,6 +39,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.personId, "rapportering-feilmelding-periode-id-mangler-i-url");
 
   const showDemoTools = isDemoToolsEnabled();
+  const visOpprettMeldekort = await erToggleAktiv(FEATURE_TOGGLES.opprettMeldekortManuelt);
 
   // Sjekk om sensitive opplysninger skal skjules
   const skjulSensitiv = skalSkjuleSensitiveOpplysninger(request);
@@ -83,6 +85,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       perioder,
       arbeidssokerperioder,
       showDemoTools,
+      visOpprettMeldekort,
       behandlingerPerPeriode,
       hovedsideData,
     };
@@ -107,7 +110,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
           message: originalData.message || originalData.error,
           detail: originalData.detail || originalData.details,
           errorId: originalData.errorId || originalData.correlationId,
-          personContext: { person, showDemoTools },
+          personContext: { person, showDemoTools, visOpprettMeldekort },
         }),
         {
           status: error.status,
@@ -124,7 +127,8 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 export default function Rapportering() {
-  const { person, perioder, arbeidssokerperioder, showDemoTools } = useLoaderData<typeof loader>();
+  const { person, perioder, arbeidssokerperioder, showDemoTools, visOpprettMeldekort } =
+    useLoaderData<typeof loader>();
   const rootData = useRouteLoaderData("root");
   const personlinjeData = rootData?.sanity?.personlinje;
 
@@ -136,6 +140,7 @@ export default function Rapportering() {
           perioder={perioder}
           arbeidssokerperioder={arbeidssokerperioder}
           personlinjeData={personlinjeData}
+          visOpprettMeldekort={visOpprettMeldekort}
         />
       </aside>
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
@@ -160,7 +165,9 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let description: string = "Vi beklager, men noe gikk galt.";
   let detail: string | undefined = undefined;
   let errorId: string | undefined = undefined;
-  let personContext: { person: IPerson; showDemoTools: boolean } | undefined = undefined;
+  let personContext:
+    | { person: IPerson; showDemoTools: boolean; visOpprettMeldekort?: boolean }
+    | undefined = undefined;
 
   if (isRouteErrorResponse(error)) {
     const errorData = error.data as {
@@ -170,7 +177,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       error?: string;
       detail?: string;
       details?: string;
-      personContext?: { person: IPerson; showDemoTools: boolean };
+      personContext?: { person: IPerson; showDemoTools: boolean; visOpprettMeldekort?: boolean };
     };
 
     title =
@@ -202,6 +209,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             perioder={[]}
             arbeidssokerperioder={[]}
             personlinjeData={personlinjeData}
+            visOpprettMeldekort={personContext.visOpprettMeldekort ?? false}
           />
         </aside>
       )}

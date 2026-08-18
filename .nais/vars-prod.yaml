@@ -11,6 +11,10 @@ is_localhost: false
 
 faro_url: "https://telemetry.ekstern.nav.no/collect"
 
+unleash:
+  url: https://teamdagpenger-unleash-api.nav.cloud.nais.io/api
+  environment: production
+
 runtime_environment: "production"
 sanity_datasett: "development"
 

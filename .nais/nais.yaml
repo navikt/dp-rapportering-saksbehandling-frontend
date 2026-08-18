@@ -55,6 +55,10 @@ spec:
       value: "{{sanity_datasett}}"
     - name: GITHUB_SHA
       value: {{githubSha}}
+    - name: UNLEASH_SERVER_API_URL
+      value: "{{unleash.url}}"
+  envFrom:
+    - secret: "{{name}}-unleash-api-token"
   accessPolicy:
     outbound:
       external:
@@ -62,6 +66,7 @@ spec:
         - host: www.nav.no
         - host: graph.microsoft.com
         - host: login.microsoftonline.com
+        - host: teamdagpenger-unleash-api.nav.cloud.nais.io
       rules:
         - application: dp-meldekortregister
         - application: dp-rapportering-personregister

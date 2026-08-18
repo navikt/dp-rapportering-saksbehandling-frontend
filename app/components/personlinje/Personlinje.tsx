@@ -10,7 +10,6 @@ import { useMemo, useState } from "react";
 
 import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
 import { deepMerge } from "~/utils/deep-merge.utils";
-import { showOpprettMeldekortManuelt } from "~/utils/env.utils";
 import { byggFulltNavn } from "~/utils/person.utils";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
@@ -39,6 +38,7 @@ interface IProps {
   perioder?: IRapporteringsperiode[];
   arbeidssokerperioder?: IArbeidssokerperiode[];
   personlinjeData?: IMeldekortPersonlinje | null;
+  visOpprettMeldekort: boolean;
 }
 
 export default function Personlinje({
@@ -46,6 +46,7 @@ export default function Personlinje({
   perioder = [],
   arbeidssokerperioder = [],
   personlinjeData,
+  visOpprettMeldekort = false,
 }: IProps) {
   const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
   const [modalOpen, setModalOpen] = useState(false);
@@ -164,7 +165,7 @@ export default function Personlinje({
                 {texts.historyButton}
               </Button>
             </div>
-            {showOpprettMeldekortManuelt && (
+            {visOpprettMeldekort && (
               <div>
                 <Button
                   data-color="neutral"
@@ -188,7 +189,7 @@ export default function Personlinje({
         >
           {texts.historyButton}
         </Button>
-        {showOpprettMeldekortManuelt && (
+        {visOpprettMeldekort && (
           <Button
             data-color="neutral"
             variant="secondary"
