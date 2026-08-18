@@ -5,25 +5,10 @@ import { useRevalidator } from "react-router";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import type { IMeldekortHeader } from "~/sanity/fellesKomponenter/header/types";
-import { deepMerge } from "~/utils/deep-merge.utils";
+import { sanityTekst } from "~/sanity/utils";
 import type { ISaksbehandler } from "~/utils/types";
 
 import styles from "./header.module.css";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_HEADER: IMeldekortHeader = {
-  skipLink: "Hopp til hovedinnhold",
-  systemHeaderAriaLabel: "Systemheader",
-  homeLink: "Dagpenger",
-  homeLinkAriaLabel: "Gå til forsiden",
-  userButtonAriaLabel: "Meny for {{name}}",
-  dropdownAriaLabel: "Brukermeny",
-  sensitiveDataSwitchLabel: "Skjul sensitive opplysninger",
-  sensitiveDataSwitchDescription: "Anbefales for økt sikkerhet",
-  logoutLinkText: "Logg ut",
-  darkThemeActive: "Mørkt tema er aktivt",
-  lightThemeActive: "Lyst tema er aktivt",
-};
 
 interface HeaderProps {
   saksbehandler: ISaksbehandler;
@@ -46,25 +31,26 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
     revalidator.revalidate();
   };
 
-  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const texts = deepMerge(DEFAULT_HEADER, headerData);
-  const userButtonAriaLabel = texts.userButtonAriaLabel.replace(
-    "{{name}}",
-    saksbehandler.givenName,
-  );
+  const userButtonAriaLabel = sanityTekst(
+    headerData?.userButtonAriaLabel,
+    "header.userButtonAriaLabel",
+  ).replace("{{name}}", saksbehandler.givenName);
 
   return (
     <>
       <a href="#main-content" className={styles.skipLink}>
-        {texts.skipLink}
+        {sanityTekst(headerData?.skipLink, "header.skipLink")}
       </a>
       <InternalHeader
         role="banner"
-        aria-label={texts.systemHeaderAriaLabel}
+        aria-label={sanityTekst(headerData?.systemHeaderAriaLabel, "header.systemHeaderAriaLabel")}
         className={styles.header}
       >
-        <InternalHeader.Title href={"/"} aria-label={texts.homeLinkAriaLabel}>
-          {texts.homeLink}
+        <InternalHeader.Title
+          href={"/"}
+          aria-label={sanityTekst(headerData?.homeLinkAriaLabel, "header.homeLinkAriaLabel")}
+        >
+          {sanityTekst(headerData?.homeLink, "header.homeLink")}
         </InternalHeader.Title>
         <Spacer />
         <Dropdown onOpenChange={setDropdownOpen}>
@@ -78,7 +64,7 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
           />
           <Dropdown.Menu
             role="menu"
-            aria-label={texts.dropdownAriaLabel}
+            aria-label={sanityTekst(headerData?.dropdownAriaLabel, "header.dropdownAriaLabel")}
             className={styles.dropdownMenu}
           >
             <Dropdown.Menu.List>
@@ -87,14 +73,21 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
                   checked={skjulSensitiveOpplysninger}
                   size="small"
                   onChange={(e) => handleSkjulSensitiveOpplysningerChange(e.target.checked)}
-                  description={texts.sensitiveDataSwitchDescription}
+                  description={sanityTekst(
+                    headerData?.sensitiveDataSwitchDescription,
+                    "header.sensitiveDataSwitchDescription",
+                  )}
                 >
-                  {texts.sensitiveDataSwitchLabel}
+                  {sanityTekst(
+                    headerData?.sensitiveDataSwitchLabel,
+                    "header.sensitiveDataSwitchLabel",
+                  )}
                 </Switch>
               </Dropdown.Menu.List.Item>
               <Dropdown.Menu.List.Item role="menuitem">
                 <a href="/oauth2/logout" aria-label="Logg ut av systemet" className={styles.loggUt}>
-                  {texts.logoutLinkText} <LeaveIcon aria-hidden fontSize="1.5rem" />
+                  {sanityTekst(headerData?.logoutLinkText, "header.logoutLinkText")}{" "}
+                  <LeaveIcon aria-hidden fontSize="1.5rem" />
                 </a>
               </Dropdown.Menu.List.Item>
             </Dropdown.Menu.List>
@@ -105,7 +98,11 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
           variant="tertiary"
           size="medium"
           onClick={toggleTheme}
-          aria-label={tema === "dark" ? texts.darkThemeActive : texts.lightThemeActive}
+          aria-label={
+            tema === "dark"
+              ? sanityTekst(headerData?.darkThemeActive, "header.darkThemeActive")
+              : sanityTekst(headerData?.lightThemeActive, "header.lightThemeActive")
+          }
           aria-pressed={tema === "dark"}
           icon={tema === "dark" ? <MoonIcon aria-hidden /> : <SunIcon aria-hidden />}
         />

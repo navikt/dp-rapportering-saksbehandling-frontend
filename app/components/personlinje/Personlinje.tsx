@@ -9,7 +9,7 @@ import classNames from "classnames";
 import { useMemo, useState } from "react";
 
 import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
-import { deepMerge } from "~/utils/deep-merge.utils";
+import { sanityTekst } from "~/sanity/utils";
 import { byggFulltNavn } from "~/utils/person.utils";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
@@ -21,17 +21,6 @@ import { HistorikkModal } from "../../modals/historikk/HistorikkModal";
 import { OpprettMeldekortModal } from "../../modals/opprett-meldekort/OpprettMeldekortModal";
 import { beregnAlder, erKvinne, erMann, getKjonnKlasse } from "./Personlinje.helpers";
 import styles from "./personlinje.module.css";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_PERSONLINJE: IMeldekortPersonlinje = {
-  sectionAriaLabel: "Brukerinformasjon",
-  birthNumberLabel: "Fødselsnummer:",
-  ageLabel: "Alder:",
-  genderLabel: "Kjønn:",
-  citizenshipLabel: "Statsborgerskap:",
-  historyButton: "Historikk",
-  createReportCardButton: "Opprett meldekort",
-};
 
 interface IProps {
   person: IPerson;
@@ -56,8 +45,7 @@ export default function Personlinje({
   // Sjekk om data er maskert (kommer fra server-side maskering)
   const erMaskert = fulltNavn.includes("•") || person.ident.includes("•");
 
-  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const texts = deepMerge(DEFAULT_PERSONLINJE, personlinjeData);
+  const texts = personlinjeData;
 
   const events = useMemo(() => {
     return [
@@ -67,7 +55,10 @@ export default function Personlinje({
   }, [perioder, arbeidssokerperioder]);
 
   return (
-    <section className={styles.personlinjeContainer} aria-label={texts.sectionAriaLabel}>
+    <section
+      className={styles.personlinjeContainer}
+      aria-label={sanityTekst(texts?.sectionAriaLabel, "personlinje.sectionAriaLabel")}
+    >
       <div className={styles.personlinje}>
         {/* Mobil - interactive button */}
         <button
@@ -133,25 +124,27 @@ export default function Personlinje({
           className={classNames(styles.detaljer, { [styles.detaljerOpen]: isOpen })}
         >
           <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-            {texts.birthNumberLabel}{" "}
+            {sanityTekst(texts?.birthNumberLabel, "personlinje.birthNumberLabel")}{" "}
             <strong className={erMaskert ? styles.sensitiv : undefined}>{person.ident}</strong>{" "}
             {!erMaskert && <CopyButton copyText={person.ident} size="xsmall" />}
           </BodyShort>
 
           {person.fodselsdato && (
             <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-              {texts.ageLabel} <b>{beregnAlder(person.fodselsdato)}</b>
+              {sanityTekst(texts?.ageLabel, "personlinje.ageLabel")}{" "}
+              <b>{beregnAlder(person.fodselsdato)}</b>
             </BodyShort>
           )}
 
           {person.kjonn && (
             <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-              {texts.genderLabel} <b>{person.kjonn}</b>
+              {sanityTekst(texts?.genderLabel, "personlinje.genderLabel")} <b>{person.kjonn}</b>
             </BodyShort>
           )}
 
           <BodyShort size="small" textColor="subtle" className={styles.infoElement}>
-            {texts.citizenshipLabel} <strong>{person.statsborgerskap}</strong>
+            {sanityTekst(texts?.citizenshipLabel, "personlinje.citizenshipLabel")}{" "}
+            <strong>{person.statsborgerskap}</strong>
           </BodyShort>
 
           <div className={styles.knappContainerMobil}>
@@ -162,7 +155,7 @@ export default function Personlinje({
                 size="xsmall"
                 onClick={() => setModalOpen(true)}
               >
-                {texts.historyButton}
+                {sanityTekst(texts?.historyButton, "personlinje.historyButton")}
               </Button>
             </div>
             {visOpprettMeldekort && (
@@ -173,7 +166,7 @@ export default function Personlinje({
                   size="xsmall"
                   onClick={() => setOpprettModalOpen(true)}
                 >
-                  {texts.createReportCardButton}
+                  {sanityTekst(texts?.createReportCardButton, "personlinje.createReportCardButton")}
                 </Button>
               </div>
             )}
@@ -187,7 +180,7 @@ export default function Personlinje({
           size="small"
           onClick={() => setModalOpen(true)}
         >
-          {texts.historyButton}
+          {sanityTekst(texts?.historyButton, "personlinje.historyButton")}
         </Button>
         {visOpprettMeldekort && (
           <Button
@@ -196,7 +189,7 @@ export default function Personlinje({
             size="small"
             onClick={() => setOpprettModalOpen(true)}
           >
-            {texts.createReportCardButton}
+            {sanityTekst(texts?.createReportCardButton, "personlinje.createReportCardButton")}
           </Button>
         )}
       </div>

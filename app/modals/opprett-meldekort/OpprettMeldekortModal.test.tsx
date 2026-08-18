@@ -4,7 +4,42 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 
+const mockUseRouteLoaderData = vi.hoisted(() => vi.fn());
+
+vi.mock("react-router", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("react-router")>()),
+  useRouteLoaderData: mockUseRouteLoaderData,
+}));
+
 import { OpprettMeldekortModal } from "./OpprettMeldekortModal";
+
+mockUseRouteLoaderData.mockReturnValue({
+  sanityData: {
+    opprettMeldekortModal: {
+      tittel: "Opprett meldekort",
+      fraDato: {
+        label: "Fra dato",
+        helpText: "Velg startdato for perioden du vil opprette meldekort for",
+      },
+      tilDato: {
+        label: "Til dato",
+        helpText: "Velg sluttdato for perioden du vil opprette meldekort for",
+      },
+      forklaringstekst: "Basert på valgt dato, vil det opprettes {{antall}} nye meldekort.",
+      submitKnapp: "Opprett",
+      avbrytKnapp: "Avbryt",
+      infoBoks: {
+        tittel: "Info om meldekortsyklus",
+        tekst:
+          "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
+      },
+      feilmelding: {
+        tittel: "Kunne ikke opprette meldekort",
+        tekst: "Noe gikk galt ved opprettelse av meldekort. Prøv igjen senere.",
+      },
+    },
+  },
+});
 
 // Helper function to render with required providers
 function renderWithProviders(ui: React.ReactElement) {
@@ -95,7 +130,6 @@ describe("OpprettMeldekortModal", () => {
       <OpprettMeldekortModal open={true} onClose={vi.fn()} brukerNavn="Ola Nordmann" />,
     );
 
-    // Assuming the title template uses {{navn}} placeholder
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeInTheDocument();
   });
@@ -149,7 +183,6 @@ describe("OpprettMeldekortModal", () => {
     it("skal bruke useRangeDatepicker for dato-valg", () => {
       renderWithProviders(<OpprettMeldekortModal open={true} onClose={vi.fn()} />);
 
-      // Verify that both date inputs are present and part of a range picker
       const fromInput = screen.getByLabelText("Fra dato");
       const toInput = screen.getByLabelText("Til dato");
 

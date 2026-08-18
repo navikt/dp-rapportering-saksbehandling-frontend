@@ -20,3 +20,15 @@ export function sanityDataMangler<T extends Record<string, unknown>>(
     );
   });
 }
+
+export function sanityTekst(
+  value: string | null | undefined,
+  field: string,
+  isDevelopment = import.meta.env.DEV ||
+    import.meta.env.MODE === "test" ||
+    import.meta.env.VITEST === true,
+): string {
+  if (value) return value;
+
+  return isDevelopment ? `[Mangler Sanity: ${field}]` : "";
+}

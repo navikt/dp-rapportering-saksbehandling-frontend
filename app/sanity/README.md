@@ -68,15 +68,11 @@ Komponenter kan bruke `useGlobalSanityData()` hook for å få tilgang til disse 
 
 ```typescript
 import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
-import { deepMerge } from "~/utils/deep-merge.utils";
 
 function MinKomponent() {
   const sanityData = useGlobalSanityData();
 
-  // Merge Sanity-data med hardkodede defaults
-  const tekster = deepMerge(DEFAULT_TEKSTER, sanityData?.header);
-
-  return <div>{tekster.tittel}</div>;
+  return <div>{sanityData?.header?.tittel ?? ""}</div>;
 }
 ```
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { sanityDataMangler } from "./utils";
+import { sanityDataMangler, sanityTekst } from "./utils";
 
 describe("sanityDataMangler", () => {
   describe("når data er null eller undefined", () => {
@@ -103,5 +103,21 @@ describe("sanityDataMangler", () => {
       const data = { name: "Test", nested: { deep: { value: "test" } } };
       expect(sanityDataMangler(data, ["name", "nested"])).toBe(false);
     });
+  });
+});
+
+describe("sanityTekst", () => {
+  it("returnerer Sanity-teksten når den finnes", () => {
+    expect(sanityTekst("Tittel", "header.homeLink", true)).toBe("Tittel");
+  });
+
+  it("viser feltstien i development når teksten mangler", () => {
+    expect(sanityTekst(undefined, "header.homeLink", true)).toBe(
+      "[Mangler Sanity: header.homeLink]",
+    );
+  });
+
+  it("viser tom tekst utenfor development når teksten mangler", () => {
+    expect(sanityTekst("", "header.homeLink", false)).toBe("");
   });
 });

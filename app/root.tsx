@@ -27,6 +27,7 @@ import { getSessionId } from "./mocks/session";
 import { logger } from "./models/logger.server";
 import { hentSaksbehandler } from "./models/saksbehandler.server";
 import { fetchGlobalSanityData } from "./sanity/fetchGlobalData";
+import { sanityTekst } from "./sanity/utils";
 import { getEnv, isLocalOrDemo } from "./utils/env.utils";
 import type { IEnv } from "./utils/types";
 
@@ -98,7 +99,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   return {
     saksbehandler,
     tema,
-    sanity: sanityData,
+    sanityData,
     env,
   };
 }
@@ -153,7 +154,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const env = loaderData?.env ?? {};
   const saksbehandler = loaderData?.saksbehandler;
   const serverTema = loaderData?.tema;
-  const sanityData = loaderData?.sanity;
+  const sanityData = loaderData?.sanityData;
 
   return (
     <html lang="nb" suppressHydrationWarning data-theme={serverTema || undefined}>
@@ -226,18 +227,16 @@ export default function App() {
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   // Prøv å hente varsler data fra root loader
   const rootData = useRouteLoaderData("root");
-  const varslerData = rootData?.sanity?.varsler;
+  const varslerData = rootData?.sanityData?.varsler;
 
-  // Default tekster som fallback
-  const DEFAULT_TITLES = {
-    notFound: "Siden du leter etter eksisterer ikke",
-    generalError: "Beklager, det har skjedd en feil",
-  };
-  const DEFAULT_DESCRIPTION = "Vi beklager, men noe gikk galt.";
-  const DEFAULT_ERROR_TEXT = "Om du trenger hjelp kan du oppgi feil-ID: {{id}}";
-
-  let title: string = varslerData?.errorBoundary.generalErrorTitle || DEFAULT_TITLES.generalError;
-  let description: string = varslerData?.errorBoundary.defaultDescription || DEFAULT_DESCRIPTION;
+  let title: string = sanityTekst(
+    varslerData?.errorBoundary.generalErrorTitle,
+    "varsler.errorBoundary.generalErrorTitle",
+  );
+  let description: string = sanityTekst(
+    varslerData?.errorBoundary.defaultDescription,
+    "varsler.errorBoundary.defaultDescription",
+  );
   let detail: string | undefined = undefined;
   let errorId: string | undefined = undefined;
   let stack: string | undefined = undefined;
@@ -254,8 +253,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
     title =
       error.status === 404
-        ? varslerData?.errorBoundary.notFoundTitle || DEFAULT_TITLES.notFound
-        : varslerData?.errorBoundary.generalErrorTitle || DEFAULT_TITLES.generalError;
+        ? sanityTekst(
+            varslerData?.errorBoundary.notFoundTitle,
+            "varsler.errorBoundary.notFoundTitle",
+          )
+        : sanityTekst(
+            varslerData?.errorBoundary.generalErrorTitle,
+            "varsler.errorBoundary.generalErrorTitle",
+          );
     // Støtt både 'message' og 'error' som hovedmelding
     description = errorData.message || errorData.error || description;
     // Støtt både 'detail' og 'details' som detaljmelding
@@ -288,10 +293,10 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             {detail && <BodyShort spacing>{detail}</BodyShort>}
             {errorId && (
               <BodyShort size="small">
-                {(varslerData?.errorBoundary.errorText || DEFAULT_ERROR_TEXT).replace(
-                  "{{id}}",
-                  errorId,
-                )}
+                {sanityTekst(
+                  varslerData?.errorBoundary.errorText,
+                  "varsler.errorBoundary.errorText",
+                ).replace("{{id}}", errorId)}
               </BodyShort>
             )}
             {stack && (

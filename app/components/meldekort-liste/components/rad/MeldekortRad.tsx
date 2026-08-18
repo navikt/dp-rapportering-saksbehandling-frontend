@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router";
 import { MeldekortVisning } from "~/components/meldekort-visning/MeldekortVisning";
 import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
 import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
+import { sanityTekst } from "~/sanity/utils";
 import aktivitetStyles from "~/styles/aktiviteter.module.css";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import type {
@@ -83,15 +84,7 @@ export function MeldekortRad({
   const erSendtForSent = skalViseInnsendt && erMeldekortSendtForSent(periode);
   const aktiviteter = sorterAktiviteter(unikeAktiviteter(periode));
 
-  // Hent status-tekster fra Sanity eller bruk default
-  const statusTekster = sanityData?.statuser ?? {
-    tilUtfylling: "Klar til utfylling",
-    innsendt: "Innsendt",
-    meldekortOpprettet: "Meldekort opprettet",
-    korrigering: "Korrigering",
-    korrigert: "Korrigert",
-    arena: "Arena",
-  };
+  const statusTekster = sanityData?.statuser;
 
   // Highlight-effekt når meldekort er oppdatert
   useEffect(() => {
@@ -230,19 +223,19 @@ export function MeldekortRad({
           </Tag>
           {erKorrigert && (
             <Tag data-color="warning" variant="outline" size="small">
-              {statusTekster.korrigering}
+              {sanityTekst(statusTekster?.korrigering, "statuser.korrigering")}
             </Tag>
           )}
 
           {!erKorrigert && harKorrigering && useVariantLabels && (
             <Tag data-color="warning" variant="outline" size="small">
-              {statusTekster.korrigert}
+              {sanityTekst(statusTekster?.korrigert, "statuser.korrigert")}
             </Tag>
           )}
 
           {erFraArena && (
             <Tag data-color="info" variant="outline" size="small">
-              {statusTekster.arena}
+              {sanityTekst(statusTekster?.arena, "statuser.arena")}
             </Tag>
           )}
         </div>

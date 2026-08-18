@@ -117,7 +117,7 @@ describe("MeldekortRad", () => {
         />,
       );
 
-      expect(screen.getByText("Klar til utfylling")).toBeInTheDocument();
+      expect(screen.getByText("[Mangler Sanity: statuser.tilUtfylling]")).toBeInTheDocument();
     });
 
     it("skal vise 'Meldekort opprettet' når periode ikke kan sendes", () => {
@@ -129,7 +129,7 @@ describe("MeldekortRad", () => {
         />,
       );
 
-      expect(screen.getByText("Meldekort opprettet")).toBeInTheDocument();
+      expect(screen.getByText("[Mangler Sanity: statuser.meldekortOpprettet]")).toBeInTheDocument();
     });
 
     it("skal vise 'Innsendt' når periode er innsendt", () => {
@@ -144,7 +144,7 @@ describe("MeldekortRad", () => {
         />,
       );
 
-      expect(screen.getByText("Innsendt")).toBeInTheDocument();
+      expect(screen.getByText("[Mangler Sanity: statuser.innsendt]")).toBeInTheDocument();
     });
 
     it("skal vise 'Korrigering' tag når periode er korrigert", () => {
@@ -159,7 +159,7 @@ describe("MeldekortRad", () => {
         />,
       );
 
-      expect(screen.getByText("Korrigering")).toBeInTheDocument();
+      expect(screen.getByText("[Mangler Sanity: statuser.korrigering]")).toBeInTheDocument();
     });
 
     it("skal ikke vise 'Korrigering' tag når periode ikke er korrigert", () => {
@@ -167,7 +167,7 @@ describe("MeldekortRad", () => {
         <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
       );
 
-      expect(screen.queryByText("Korrigering")).not.toBeInTheDocument();
+      expect(screen.queryByText("[Mangler Sanity: statuser.korrigering]")).not.toBeInTheDocument();
     });
   });
 
