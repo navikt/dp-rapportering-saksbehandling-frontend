@@ -1,6 +1,7 @@
 import { Label } from "@navikt/ds-react";
 
 import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
+import { sanityTekst } from "~/sanity/utils";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { getWeekDays, ukenummer } from "~/utils/dato.utils";
 import type { IRapporteringsperiode, IRapporteringsperiodeDag } from "~/utils/types";
@@ -16,24 +17,32 @@ interface IProps {
   layout?: "horizontal" | "vertical";
 }
 
+function formatWeekLabel(weekLabel: string, weekNumber: string): string {
+  const template = weekLabel.trim();
+  const replaced = template.replaceAll("{{uke}}", weekNumber).replaceAll("{{uker}}", weekNumber);
+
+  if (template.length === 0) return weekNumber;
+  return replaced === template ? `${template} ${weekNumber}` : replaced;
+}
+
 function UkeRad({
   dager,
   ukenummer,
   hideWeekLabel = false,
-  weekLabel = "Uke",
+  weekLabel = "",
 }: {
   dager: IRapporteringsperiodeDag[];
   ukenummer: string;
   hideWeekLabel?: boolean;
   weekLabel?: string;
 }) {
+  const formattedWeekLabel = formatWeekLabel(weekLabel ?? "", ukenummer);
+
   return (
     <tr>
       {!hideWeekLabel && (
         <th scope="row">
-          <Label size="small">
-            {weekLabel} {ukenummer}
-          </Label>
+          <Label size="small">{formattedWeekLabel}</Label>
         </th>
       )}
       {dager.map((dag) => (
@@ -75,11 +84,8 @@ export function Kalender({
 
   const [forsteUkenummer, andreUkenummer] = ukenummer(periode).split("-");
 
-  // Hent tekster fra Sanity eller bruk default
-  const weekLabel = kalenderData?.weekLabel ?? "Uke";
-  const tableCaption =
-    kalenderData?.tableCaption ??
-    `Oversikt over rapporterte dager for uke ${forsteUkenummer} og ${andreUkenummer}`;
+  const weekLabel = sanityTekst(kalenderData?.weekLabel, "kalender.weekLabel");
+  const tableCaption = sanityTekst(kalenderData?.tableCaption, "kalender.tableCaption");
 
   // Original: alltid vertikal layout (ukene stablet)
   if (variant === null) {
@@ -131,9 +137,7 @@ export function Kalender({
         <table className={stylesVariantB.kalenderTabellB}>
           {!hideWeekLabels && (
             <caption className={stylesVariantB.ukeCaption}>
-              <Label size="small">
-                {weekLabel} {forsteUkenummer}
-              </Label>
+              <Label size="small">{formatWeekLabel(weekLabel, forsteUkenummer)}</Label>
             </caption>
           )}
           <thead>
@@ -160,9 +164,7 @@ export function Kalender({
         <table className={stylesVariantB.kalenderTabellB}>
           {!hideWeekLabels && (
             <caption className={stylesVariantB.ukeCaption}>
-              <Label size="small">
-                {weekLabel} {andreUkenummer}
-              </Label>
+              <Label size="small">{formatWeekLabel(weekLabel, andreUkenummer)}</Label>
             </caption>
           )}
           <thead>

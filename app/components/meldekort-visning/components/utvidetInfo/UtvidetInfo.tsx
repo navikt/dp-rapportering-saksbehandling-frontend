@@ -7,6 +7,7 @@ import {
   erPeriodeOpprettetAvArena,
 } from "~/components/meldekort-liste/components/rad/MeldekortRad.helpers";
 import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
+import { sanityTekst } from "~/sanity/utils";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import { erMeldekortInnenforBehandlingsperiode } from "~/utils/behandlinger.utils";
@@ -15,7 +16,6 @@ import type {
   IPengeVerdi,
 } from "~/utils/behandlingsresultat.types";
 import { DatoFormat, formatterDato, formatterDatoUTC } from "~/utils/dato.utils";
-import { deepMerge } from "~/utils/deep-merge.utils";
 import { skalViseArbeidssokerSporsmal } from "~/utils/meldekort-validering.helpers";
 import { dagerForSent, erMeldekortSendtForSent } from "~/utils/rapporteringsperiode.utils";
 import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
@@ -28,36 +28,6 @@ import {
 } from "./UtvidetInfo.helpers";
 import styles from "./utvidetInfo.module.css";
 
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_LABELS = {
-  meldedato: "Meldedato:",
-  datoForInnsending: "Dato for innsending:",
-  datoForKorrigering: "Dato for korrigering:",
-  korrigertAv: "Korrigert av:",
-  innsendtAv: "Innsendt av:",
-  begrunnelse: {
-    label: "Begrunnelse:",
-    visMer: "Vis mer",
-    visMindre: "Vis mindre",
-  },
-  svarPaaArbeidssoekerregistrering: "Svar på spørsmål om arbeidssøkerregistrering:",
-  beregnetBruttobelop: "Beregnet bruttobeløp:",
-  periodenBeregningenGjelderFor: "Perioden beregningen gjelder for:",
-};
-
-const DEFAULT_VARSLER = {
-  forSentInnsendt: "Dette meldekortet er sendt inn {{antall}} {{dager}} etter fristen.",
-  fraArena:
-    "Dette meldekortet er fra Arena, og viser derfor ikke svar på spørsmålet om arbeidssøkerregistrering.",
-  korrigeringAvArenaMeldekort:
-    "Dette meldekortet er en korrigering av et meldekort fra Arena, og viser derfor ikke svar på spørsmålet om arbeidssøkerregistrering.",
-  etterregistrert:
-    "Dette meldekortet er etterregistrert, og har derfor ikke spørsmål om arbeidssøkerregistrering.",
-  kanIkkeEndres: "Dette meldekortet har en korrigering og kan derfor ikke endres igjen.",
-  belopSamsvarerIkke:
-    "Brutto beregnet beløp for dette meldekortet samsvarer ikke med meldekortperioden. Du kan se beregningen for meldekortet i DP-sak.",
-};
-
 interface IProps {
   periode: IRapporteringsperiode;
   originaltMeldekort?: IRapporteringsperiode;
@@ -69,13 +39,12 @@ interface IProps {
 }
 
 const MAX_LINES = 4;
-
 const NOK = new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK" });
 
 const TruncatedText = ({
   text,
-  visMer = "Vis mer",
-  visMindre = "Vis mindre",
+  visMer,
+  visMindre,
 }: {
   text: string;
   visMer?: string;
@@ -121,7 +90,9 @@ const TruncatedText = ({
             className={styles.visMerLink}
             aria-expanded={isExpanded}
           >
-            {isExpanded ? visMindre : visMer}
+            {isExpanded
+              ? sanityTekst(visMindre, "hovedside.utvidetVisning.infoLabels.begrunnelse.visMindre")
+              : sanityTekst(visMer, "hovedside.utvidetVisning.infoLabels.begrunnelse.visMer")}
           </Link>
         </>
       )}
@@ -174,12 +145,16 @@ export function UtvidetInfo({
   // Sjekk om det er en korrigering av et Arena-meldekort
   const erKorrigeringAvArenaMeldekort = erKorrigert && erPeriodeOpprettetAvArena(periode);
 
-  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const labels = deepMerge(DEFAULT_LABELS, hovedsideData?.utvidetVisning?.infoLabels);
-  const tabellTittel =
-    hovedsideData?.utvidetVisning?.tabellTittel ?? "Detaljert informasjon om meldekortet";
-  const varsler = deepMerge(DEFAULT_VARSLER, hovedsideData?.varsler);
-  const korrigerKnapp = hovedsideData?.knapper?.korrigerMeldekort ?? "Korriger meldekort";
+  const labels = hovedsideData?.utvidetVisning?.infoLabels;
+  const tabellTittel = sanityTekst(
+    hovedsideData?.utvidetVisning?.tabellTittel,
+    "hovedside.utvidetVisning.tabellTittel",
+  );
+  const varsler = hovedsideData?.varsler;
+  const korrigerKnapp = sanityTekst(
+    hovedsideData?.knapper?.korrigerMeldekort,
+    "hovedside.knapper.korrigerMeldekort",
+  );
 
   // Bruk samme logikk som i skjemaet for å bestemme om arbeidssøkerspørsmål skal vises
   const skalViseArbeidssoker = skalViseArbeidssokerSporsmal(
@@ -227,28 +202,65 @@ export function UtvidetInfo({
         <Table.Body>
           {/* Dato og innsendings-info */}
           {periode.meldedato && (
-            <DetailRow label={labels.meldedato}>{formatDato(periode.meldedato)}</DetailRow>
+            <DetailRow
+              label={sanityTekst(
+                labels?.meldedato,
+                "hovedside.utvidetVisning.infoLabels.meldedato",
+              )}
+            >
+              {formatDato(periode.meldedato)}
+            </DetailRow>
           )}
 
           {periode.innsendtTidspunkt && (
-            <DetailRow label={erKorrigert ? labels.datoForKorrigering : labels.datoForInnsending}>
+            <DetailRow
+              label={
+                erKorrigert
+                  ? sanityTekst(
+                      labels?.datoForKorrigering,
+                      "hovedside.utvidetVisning.infoLabels.datoForKorrigering",
+                    )
+                  : sanityTekst(
+                      labels?.datoForInnsending,
+                      "hovedside.utvidetVisning.infoLabels.datoForInnsending",
+                    )
+              }
+            >
               {formatDatoUTC(periode.innsendtTidspunkt)}
             </DetailRow>
           )}
 
           {(erKorrigert || erSaksbehandler) && (
-            <DetailRow label={erKorrigert ? labels.korrigertAv : labels.innsendtAv}>
+            <DetailRow
+              label={
+                erKorrigert
+                  ? sanityTekst(
+                      labels?.korrigertAv,
+                      "hovedside.utvidetVisning.infoLabels.korrigertAv",
+                    )
+                  : sanityTekst(
+                      labels?.innsendtAv,
+                      "hovedside.utvidetVisning.infoLabels.innsendtAv",
+                    )
+              }
+            >
               {erSaksbehandler ? periode.kilde?.ident : periode.kilde?.rolle}
             </DetailRow>
           )}
 
           {/* Begrunnelse */}
           {periode.begrunnelse && (
-            <DetailRow label={labels.begrunnelse.label} alignTop>
+            <DetailRow
+              label={sanityTekst(
+                labels?.begrunnelse?.label,
+                "hovedside.utvidetVisning.infoLabels.begrunnelse.label",
+              )}
+              alignTop
+            >
               <TruncatedText
                 text={periode.begrunnelse}
-                visMer={labels.begrunnelse.visMer}
-                visMindre={labels.begrunnelse.visMindre}
+                visMer={labels?.begrunnelse?.visMer}
+                visMindre={labels?.begrunnelse?.visMindre}
               />
             </DetailRow>
           )}
@@ -257,7 +269,12 @@ export function UtvidetInfo({
           {periode.registrertArbeidssoker !== null &&
             periode.registrertArbeidssoker !== undefined &&
             skalViseArbeidssoker && (
-              <DetailRow label={labels.svarPaaArbeidssoekerregistrering}>
+              <DetailRow
+                label={sanityTekst(
+                  labels?.svarPaaArbeidssoekerregistrering,
+                  "hovedside.utvidetVisning.infoLabels.svarPaaArbeidssoekerregistrering",
+                )}
+              >
                 <Tag size="small" variant={erArbeidssoker ? "success" : "error"}>
                   {erArbeidssoker ? "Ja" : "Nei"}
                 </Tag>
@@ -267,12 +284,22 @@ export function UtvidetInfo({
           {/* Behandlingsbeløp */}
           {harBehandling && (
             <>
-              <DetailRow label={labels.beregnetBruttobelop}>
+              <DetailRow
+                label={sanityTekst(
+                  labels?.beregnetBruttobelop,
+                  "hovedside.utvidetVisning.infoLabels.beregnetBruttobelop",
+                )}
+              >
                 {behandlinger!.map((behandling) => (
                   <span key={behandling.id}>{NOK.format(behandling.verdi.verdi)} </span>
                 ))}
               </DetailRow>
-              <DetailRow label={labels.periodenBeregningenGjelderFor}>
+              <DetailRow
+                label={sanityTekst(
+                  labels?.periodenBeregningenGjelderFor,
+                  "hovedside.utvidetVisning.infoLabels.periodenBeregningenGjelderFor",
+                )}
+              >
                 {behandlinger!.map((behandling) => (
                   <span key={behandling.id}>
                     {behandling.gyldigFraOgMed &&
@@ -290,7 +317,7 @@ export function UtvidetInfo({
       {/* Varsler */}
       {erSendtForSent && (
         <Alert variant="warning" size="small">
-          {varsler.forSentInnsendt
+          {sanityTekst(varsler?.forSentInnsendt, "hovedside.varsler.forSentInnsendt")
             .replace("{{antall}}", String(antallDagerForSent))
             .replace("{{dager}}", pluraliserDager(antallDagerForSent))}
         </Alert>
@@ -298,31 +325,34 @@ export function UtvidetInfo({
 
       {erFraArena && !erKorrigeringAvArenaMeldekort && (
         <Alert variant="info" size="small">
-          {varsler.fraArena}
+          {sanityTekst(varsler?.fraArena, "hovedside.varsler.fraArena")}
         </Alert>
       )}
 
       {erKorrigeringAvArenaMeldekort && (
         <Alert variant="info" size="small">
-          {varsler.korrigeringAvArenaMeldekort}
+          {sanityTekst(
+            varsler?.korrigeringAvArenaMeldekort,
+            "hovedside.varsler.korrigeringAvArenaMeldekort",
+          )}
         </Alert>
       )}
 
       {erEtterregistrert && (
         <Alert variant="info" size="small">
-          {varsler.etterregistrert}
+          {sanityTekst(varsler?.etterregistrert, "hovedside.varsler.etterregistrert")}
         </Alert>
       )}
 
       {useVariantLabels && !kanEndres && (
         <Alert variant="info" size="small">
-          {varsler.kanIkkeEndres}
+          {sanityTekst(varsler?.kanIkkeEndres, "hovedside.varsler.kanIkkeEndres")}
         </Alert>
       )}
 
       {belopSamsvarerIkke && (
         <Alert variant="warning" size="small">
-          {varsler.belopSamsvarerIkke}
+          {sanityTekst(varsler?.belopSamsvarerIkke, "hovedside.varsler.belopSamsvarerIkke")}
         </Alert>
       )}
 

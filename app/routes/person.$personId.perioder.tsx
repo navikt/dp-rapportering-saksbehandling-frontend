@@ -5,6 +5,7 @@ import { useRouteLoaderData, useSearchParams } from "react-router";
 import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
 import { groupPeriodsByYear } from "~/components/meldekort-liste/utils";
 import type { loader as personLoader } from "~/routes/person.$personId";
+import { sanityTekst } from "~/sanity/utils";
 import styles from "~/styles/route-styles/perioder.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import { QUERY_PARAMS } from "~/utils/constants";
@@ -13,12 +14,6 @@ import { sortYearsDescending, ukenummer } from "~/utils/dato.utils";
 import { byggFulltNavn } from "~/utils/person.utils";
 
 import type { Route } from "./+types/person.$personId.perioder";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER = {
-  sidetittel: "Meldekort for {{navn}}",
-  listeOverskrift: "Meldekort for {{aar}}",
-};
 
 export async function loader({ request }: Route.LoaderArgs) {
   const variant = getABTestVariant(request);
@@ -114,10 +109,10 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
 
   const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
 
-  // Hent tekster fra Sanity med fallback
-  const sidetittel =
-    hovedsideData?.overskrift?.replace("{{navn}}", fulltNavn) ??
-    DEFAULT_TEKSTER.sidetittel.replace("{{navn}}", fulltNavn);
+  const sidetittel = sanityTekst(hovedsideData?.overskrift, "hovedside.overskrift").replace(
+    "{{navn}}",
+    fulltNavn,
+  );
 
   return (
     <div className={styles.perioderPageContainer}>
@@ -134,9 +129,10 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
           )}
           <Accordion size="small" indent={false}>
             {years.map((year) => {
-              const aarOverskrift =
-                hovedsideData?.listeOverskrift?.replace("{{aar}}", String(year)) ??
-                DEFAULT_TEKSTER.listeOverskrift.replace("{{aar}}", String(year));
+              const aarOverskrift = sanityTekst(
+                hovedsideData?.listeOverskrift,
+                "hovedside.listeOverskrift",
+              ).replace("{{aar}}", String(year));
               return (
                 <Accordion.Item
                   key={year}

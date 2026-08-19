@@ -1,6 +1,7 @@
 import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
 
 import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
+import { sanityTekst } from "~/sanity/utils";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { buildVariantURL } from "~/utils/ab-test.utils";
 import type {
@@ -14,13 +15,6 @@ import { KalenderOgAktiviteter } from "./components/kalenderOgAktiviteter/kalend
 import { UtvidetInfo } from "./components/utvidetInfo/UtvidetInfo";
 import { erPeriodeTilUtfylling, kanMeldekortSendes } from "./MeldekortVisning.helpers";
 import styles from "./meldekortVisning.module.css";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER = {
-  tomtMeldekort: "Dette meldekortet er ikke fylt ut enda.",
-  fyllUtKnapp: "Fyll ut meldekort",
-  ukeOverskrift: "Uke {{uker}}",
-};
 
 interface IProps {
   perioder: IRapporteringsperiode[];
@@ -55,12 +49,20 @@ export function MeldekortVisning({
     );
 
     // Hent tekster fra Sanity med fallback til defaults
-    const tomtMeldekortTekst =
-      hovedsideData?.utvidetVisning?.emptyCardMessage ?? DEFAULT_TEKSTER.tomtMeldekort;
-    const fyllUtKnapp = hovedsideData?.knapper?.fyllutMeldekort ?? DEFAULT_TEKSTER.fyllUtKnapp;
-    const ukeOverskrift =
-      hovedsideData?.utvidetVisning?.overskrift?.replace("{{uker}}", String(uker)) ??
-      DEFAULT_TEKSTER.ukeOverskrift.replace("{{uker}}", String(uker));
+    const tomtMeldekortTekst = sanityTekst(
+      hovedsideData?.utvidetVisning?.emptyCardMessage,
+      "hovedside.utvidetVisning.emptyCardMessage",
+    );
+    const fyllUtKnapp = sanityTekst(
+      hovedsideData?.knapper?.fyllutMeldekort,
+      "hovedside.knapper.fyllutMeldekort",
+    );
+    const ukeOverskrift = sanityTekst(
+      hovedsideData?.utvidetVisning?.overskrift,
+      "hovedside.utvidetVisning.overskrift",
+    )
+      .replace("{{uker}}", String(uker))
+      .replace("{{uke}}", String(uker));
 
     return (
       <section

@@ -9,35 +9,9 @@ import {
 } from "@navikt/ds-react";
 import { useRouteLoaderData } from "react-router";
 
-import type { IMeldekortOpprettMeldekortModal } from "~/sanity/modaler/opprett-meldekort-modal/types";
-import { deepMerge } from "~/utils/deep-merge.utils";
+import { sanityTekst } from "~/sanity/utils";
 
 import styles from "./opprettMeldekortModal.module.css";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER: IMeldekortOpprettMeldekortModal = {
-  tittel: "Opprett meldekort",
-  fraDato: {
-    label: "Fra dato",
-    helpText: "Velg startdato for perioden du vil opprette meldekort for",
-  },
-  tilDato: {
-    label: "Til dato",
-    helpText: "Velg sluttdato for perioden du vil opprette meldekort for",
-  },
-  forklaringstekst: "Basert på valgt dato, vil det opprettes {{antall}} nye meldekort.",
-  submitKnapp: "Opprett",
-  avbrytKnapp: "Avbryt",
-  infoBoks: {
-    tittel: "Info om meldekortsyklus",
-    tekst:
-      "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
-  },
-  feilmelding: {
-    tittel: "Kunne ikke opprette meldekort",
-    tekst: "Noe gikk galt ved opprettelse av meldekort. Prøv igjen senere.",
-  },
-};
 
 interface OpprettMeldekortModalProps {
   open: boolean;
@@ -52,7 +26,6 @@ export function OpprettMeldekortModal({
   onBekreft,
   brukerNavn,
 }: OpprettMeldekortModalProps) {
-  // Hent tekster fra Sanity med fallback
   let rootData;
   try {
     rootData = useRouteLoaderData("root");
@@ -60,7 +33,7 @@ export function OpprettMeldekortModal({
     rootData = null;
   }
 
-  const tekster = deepMerge(DEFAULT_TEKSTER, rootData?.sanity?.opprettMeldekortModal);
+  const tekster = rootData?.sanityData?.opprettMeldekortModal;
 
   const { datepickerProps, fromInputProps, toInputProps, reset } = useRangeDatepicker({
     fromDate: undefined,
@@ -80,8 +53,8 @@ export function OpprettMeldekortModal({
   }
 
   const tittelMedNavn = brukerNavn
-    ? tekster.tittel.replace("{{navn}}", brukerNavn)
-    : tekster.tittel;
+    ? sanityTekst(tekster?.tittel, "opprettMeldekortModal.tittel").replace("{{navn}}", brukerNavn)
+    : sanityTekst(tekster?.tittel, "opprettMeldekortModal.tittel");
 
   return (
     <Modal open={open} onClose={handleClose} aria-label={tittelMedNavn} size="medium">
@@ -95,38 +68,57 @@ export function OpprettMeldekortModal({
               <DatePicker.Input
                 size="small"
                 {...fromInputProps}
-                label={tekster.fraDato.label}
-                description={tekster.fraDato.helpText}
+                label={sanityTekst(tekster?.fraDato?.label, "opprettMeldekortModal.fraDato.label")}
+                description={sanityTekst(
+                  tekster?.fraDato?.helpText,
+                  "opprettMeldekortModal.fraDato.helpText",
+                )}
               />
               <DatePicker.Input
                 size="small"
                 {...toInputProps}
-                label={tekster.tilDato.label}
-                description={tekster.tilDato.helpText}
+                label={sanityTekst(tekster?.tilDato?.label, "opprettMeldekortModal.tilDato.label")}
+                description={sanityTekst(
+                  tekster?.tilDato?.helpText,
+                  "opprettMeldekortModal.tilDato.helpText",
+                )}
               />
             </VStack>
           </DatePicker>
-          <BodyShort>{tekster.forklaringstekst}</BodyShort>
+          <BodyShort>
+            {sanityTekst(tekster?.forklaringstekst, "opprettMeldekortModal.forklaringstekst")}
+          </BodyShort>
           <InfoCard data-color="info" size="small">
             <InfoCard.Header>
-              <InfoCard.Title>{tekster.infoBoks.tittel}</InfoCard.Title>
+              <InfoCard.Title>
+                {sanityTekst(tekster?.infoBoks?.tittel, "opprettMeldekortModal.infoBoks.tittel")}
+              </InfoCard.Title>
             </InfoCard.Header>
-            <InfoCard.Content>{tekster.infoBoks.tekst}</InfoCard.Content>
+            <InfoCard.Content>
+              {sanityTekst(tekster?.infoBoks?.tekst, "opprettMeldekortModal.infoBoks.tekst")}
+            </InfoCard.Content>
           </InfoCard>
           <InfoCard data-color="danger" size="small">
             <InfoCard.Header>
-              <InfoCard.Title>{tekster.feilmelding.tittel}</InfoCard.Title>
+              <InfoCard.Title>
+                {sanityTekst(
+                  tekster?.feilmelding?.tittel,
+                  "opprettMeldekortModal.feilmelding.tittel",
+                )}
+              </InfoCard.Title>
             </InfoCard.Header>
-            <InfoCard.Content>{tekster.feilmelding.tekst}</InfoCard.Content>
+            <InfoCard.Content>
+              {sanityTekst(tekster?.feilmelding?.tekst, "opprettMeldekortModal.feilmelding.tekst")}
+            </InfoCard.Content>
           </InfoCard>
         </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={handleBekreft} size="small">
-          {tekster.submitKnapp}
+          {sanityTekst(tekster?.submitKnapp, "opprettMeldekortModal.submitKnapp")}
         </Button>
         <Button variant="secondary" onClick={handleClose} size="small">
-          {tekster.avbrytKnapp}
+          {sanityTekst(tekster?.avbrytKnapp, "opprettMeldekortModal.avbrytKnapp")}
         </Button>
       </Modal.Footer>
     </Modal>

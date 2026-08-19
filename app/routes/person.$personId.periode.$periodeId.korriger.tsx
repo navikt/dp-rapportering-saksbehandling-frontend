@@ -17,13 +17,13 @@ import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import { sanityClient } from "~/sanity/client";
 import { korrigerQuery } from "~/sanity/sider/korriger/queries";
 import type { IMeldekortKorriger } from "~/sanity/sider/korriger/types";
+import { sanityTekst } from "~/sanity/utils";
 import stylesOriginal from "~/styles/route-styles/korriger.module.css";
 import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DatoFormat, formatterDato, formatterDatoUTC, ukenummer } from "~/utils/dato.utils";
-import { deepMerge } from "~/utils/deep-merge.utils";
 import { addDemoParamsToURL, buildURLWithDemoParams } from "~/utils/demo-params.utils";
 import {
   type IKorrigertDag,
@@ -33,68 +33,6 @@ import {
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import type { Route } from "../+types/root";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER: IMeldekortKorriger = {
-  overskrift: "Korriger meldekort",
-  underoverskrift: "Uke {{uker}} | {{periode}}",
-  gjeldendeMeldekort: {
-    overskrift: "Korrigering av følgende meldekort",
-    innsendtDato: "Meldekortet ble innsendt {{dato}}",
-    begrunnelseOverskrift: {
-      korrigering: "Begrunnelse for korrigering:",
-      manuellInnsending: "Begrunnelse for innsending:",
-    },
-  },
-  korrigeringsskjema: {
-    overskrift: "Registrer ny korrigering",
-    skjermleserHint:
-      "Gjør endringer i aktiviteter eller meldedato. Arbeid kan ikke kombineres med annet fravær enn «tiltak, kurs eller utdanning» på samme dag.",
-    datovelgerLabel: "Meldedato",
-    begrunnelseLabel: "Begrunnelse for korrigering",
-    begrunnelseFeilmelding: "Begrunnelse må fylles ut",
-  },
-  knapper: {
-    avbryt: "Avbryt korrigering",
-    fullfoer: "Fullfør korrigering",
-  },
-  skjermleserStatus: {
-    senderInn: "Sender inn korrigering...",
-    behandler: "Behandler korrigering...",
-    feilet: "Korrigering feilet",
-    suksess: "Korrigering sendt inn. Går tilbake til periodeoversikten...",
-  },
-};
-
-interface BekreftModalTekster {
-  avbryt: {
-    overskrift: string;
-    innhold: string;
-    bekreftKnapp: string;
-    avbrytKnapp: string;
-  };
-  fullfoer: {
-    overskrift: string;
-    innhold: string;
-    bekreftKnapp: string;
-    avbrytKnapp: string;
-  };
-}
-
-const DEFAULT_BEKREFT_MODAL: BekreftModalTekster = {
-  avbryt: {
-    overskrift: "Vil du avbryte korrigeringen?",
-    innhold: "Hvis du avbryter, vil ikke endringene du har gjort så langt korrigeres",
-    bekreftKnapp: "Ja, avbryt",
-    avbrytKnapp: "Nei, fortsett",
-  },
-  fullfoer: {
-    overskrift: "Vil du fullføre korrigeringen?",
-    innhold: 'Ved å trykke "Ja" vil korrigeringen sendes inn.',
-    bekreftKnapp: "Ja, fullfør",
-    avbrytKnapp: "Nei, avbryt",
-  },
-};
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
@@ -116,7 +54,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
         metric: "sanity_fetch_failed",
       },
     );
-    // Hvis fetch feiler, vil build-time data brukes fra mergeWithBuildTimeData
   }
 
   return { periode, saksbehandler, personId, variant, korrigerData };
@@ -131,22 +68,12 @@ export default function Periode() {
   const { showSuccess, showError } = useToast();
   const styles = variant === "B" ? stylesVariantB : stylesOriginal;
 
-  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const baseTekster = deepMerge(DEFAULT_TEKSTER, korrigerData);
-  // skjermleserStatus hentes fra varsler (har høyeste prioritet),
-  // fallback til baseTekster som allerede er merget med defaults + korrigerData
+  const tekster = korrigerData;
   const skjermleserStatus =
-    rootData?.sanityData?.varsler?.skjermleserStatus ?? baseTekster.skjermleserStatus;
-  const tekster = {
-    ...baseTekster,
-    skjermleserStatus,
-  };
+    rootData?.sanityData?.varsler?.skjermleserStatus ?? tekster?.skjermleserStatus;
 
   const varslerData = rootData?.sanityData?.varsler;
-  const bekreftModalTekster = deepMerge(DEFAULT_BEKREFT_MODAL, {
-    avbryt: rootData?.sanityData?.bekreftModal?.avbrytKorrigering,
-    fullfoer: rootData?.sanityData?.bekreftModal?.fullfoerKorrigering,
-  });
+  const bekreftModalTekster = rootData?.sanityData?.bekreftModal;
 
   const isMountedRef = useRef(true);
 
@@ -170,17 +97,23 @@ export default function Periode() {
       if (fetcher.data.error) {
         // Vis error toast med detaljert informasjon
         const title =
-          fetcher.data.title || varslerData?.feil.correctionFailedTitle || "Korrigering feilet";
+          fetcher.data.title ??
+          sanityTekst(
+            varslerData?.feil.correctionFailedTitle,
+            "varsler.feil.correctionFailedTitle",
+          );
         let message = fetcher.data.detail;
         if (fetcher.data.correlationId) {
-          const errorText = varslerData?.feil.errorText || "Feil-ID: {{id}}";
+          const errorText = sanityTekst(varslerData?.feil.errorText, "varsler.feil.errorText");
           const errorMessage = errorText.replace("{{id}}", fetcher.data.correlationId);
           message = message ? `${message}\n\n${errorMessage}` : errorMessage;
         }
         showError(title, message);
       } else if (fetcher.data.success) {
         // Vis toast først, deretter naviger
-        showSuccess(varslerData?.suksess.correctedSuccess || "Meldekortet ble korrigert");
+        showSuccess(
+          sanityTekst(varslerData?.suksess.correctedSuccess, "varsler.suksess.correctedSuccess"),
+        );
         setTimeout(() => {
           if (isMountedRef.current) {
             navigate(fetcher.data.redirectUrl);
@@ -250,36 +183,39 @@ export default function Periode() {
   // Format innsendtTidspunkt for display
   const formattertInnsendtTidspunkt = periode.innsendtTidspunkt
     ? formatterDatoUTC({ dato: periode.innsendtTidspunkt })
-    : "Ukjent tidspunkt";
+    : "";
 
   // Template-replacement for tekster
-  const underoverskrift = tekster.underoverskrift
+  const underoverskrift = sanityTekst(tekster?.underoverskrift, "korriger.underoverskrift")
     .replace("{{uker}}", String(uker))
+    .replace("{{uke}}", String(uker))
     .replace("{{periode}}", periode_tekst);
 
-  const innsendtDatoTekst = tekster.gjeldendeMeldekort.innsendtDato.replace(
-    "{{dato}}",
-    formattertInnsendtTidspunkt,
-  );
+  const innsendtDatoTekst = sanityTekst(
+    tekster?.gjeldendeMeldekort?.innsendtDato,
+    "korriger.gjeldendeMeldekort.innsendtDato",
+  ).replace("{{dato}}", formattertInnsendtTidspunkt);
 
   return (
     <div className={styles.korrigeringContainer}>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
-        {fetcher.state === "submitting" && tekster.skjermleserStatus.senderInn}
-        {fetcher.state === "loading" && tekster.skjermleserStatus.behandler}
+        {fetcher.state === "submitting" &&
+          sanityTekst(skjermleserStatus?.senderInn, "korriger.skjermleserStatus.senderInn")}
+        {fetcher.state === "loading" &&
+          sanityTekst(skjermleserStatus?.behandler, "korriger.skjermleserStatus.behandler")}
         {fetcher.state === "idle" &&
           fetcher.data &&
           fetcher.data.error &&
-          tekster.skjermleserStatus.feilet}
+          sanityTekst(skjermleserStatus?.feilet, "korriger.skjermleserStatus.feilet")}
         {fetcher.state === "idle" &&
           fetcher.data &&
           !fetcher.data.error &&
-          tekster.skjermleserStatus.suksess}
+          sanityTekst(skjermleserStatus?.suksess, "korriger.skjermleserStatus.suksess")}
       </div>
       <div className={styles.hvitContainer}>
         <div className={styles.maxWidth900}>
           <Heading level="1" size="medium">
-            {tekster.overskrift}
+            {sanityTekst(tekster?.overskrift, "korriger.overskrift")}
           </Heading>
           <BodyLong size="small">{underoverskrift}</BodyLong>
         </div>
@@ -287,7 +223,10 @@ export default function Periode() {
         <div className={`${styles.meldekortSeksjon} ${styles.maxWidth900}`}>
           <div className={styles.header}>
             <Heading level="2" size="small">
-              {tekster.gjeldendeMeldekort.overskrift}
+              {sanityTekst(
+                tekster?.gjeldendeMeldekort?.overskrift,
+                "korriger.gjeldendeMeldekort.overskrift",
+              )}
             </Heading>
             <BodyLong size="small">{innsendtDatoTekst}</BodyLong>
           </div>
@@ -300,8 +239,14 @@ export default function Periode() {
               <div className={styles.begrunnelseSeksjon}>
                 <Heading level="3" size="xsmall">
                   {erKorrigering
-                    ? tekster.gjeldendeMeldekort.begrunnelseOverskrift.korrigering
-                    : tekster.gjeldendeMeldekort.begrunnelseOverskrift.manuellInnsending}
+                    ? sanityTekst(
+                        tekster?.gjeldendeMeldekort?.begrunnelseOverskrift?.korrigering,
+                        "korriger.gjeldendeMeldekort.begrunnelseOverskrift.korrigering",
+                      )
+                    : sanityTekst(
+                        tekster?.gjeldendeMeldekort?.begrunnelseOverskrift?.manuellInnsending,
+                        "korriger.gjeldendeMeldekort.begrunnelseOverskrift.manuellInnsending",
+                      )}
                 </Heading>
                 <BodyShort size="small" className={styles.kompaktTekst}>
                   {periode.begrunnelse}
@@ -322,15 +267,24 @@ export default function Periode() {
         noValidate
       >
         <div className="sr-only" aria-live="polite">
-          {tekster.korrigeringsskjema.skjermleserHint}
+          {sanityTekst(
+            tekster?.korrigeringsskjema?.skjermleserHint,
+            "korriger.korrigeringsskjema.skjermleserHint",
+          )}
         </div>
         <div className={`${styles.skjema} ${styles.maxWidth900}`}>
           <div>
             <Heading level="2" size="small">
-              {tekster.korrigeringsskjema.overskrift}
+              {sanityTekst(
+                tekster?.korrigeringsskjema?.overskrift,
+                "korriger.korrigeringsskjema.overskrift",
+              )}
             </Heading>
             <BodyShort size="small" className="sr-only">
-              {tekster.korrigeringsskjema.skjermleserHint}
+              {sanityTekst(
+                tekster?.korrigeringsskjema?.skjermleserHint,
+                "korriger.korrigeringsskjema.skjermleserHint",
+              )}
             </BodyShort>
           </div>
           <div ref={skjema.refs.aktiviteterRef} tabIndex={-1}>
@@ -346,7 +300,10 @@ export default function Periode() {
             <DatePicker {...skjema.datepicker.datepickerProps}>
               <DatePicker.Input
                 {...skjema.datepicker.inputProps}
-                label={tekster.korrigeringsskjema.datovelgerLabel}
+                label={sanityTekst(
+                  tekster?.korrigeringsskjema?.datovelgerLabel,
+                  "korriger.korrigeringsskjema.datovelgerLabel",
+                )}
                 placeholder="dd.mm.åååå"
                 size="small"
                 onBlur={skjema.handlers.handleMeldedatoBlur}
@@ -355,7 +312,10 @@ export default function Periode() {
             <Textarea
               resize
               ref={skjema.refs.begrunnelseRef}
-              label={tekster.korrigeringsskjema.begrunnelseLabel}
+              label={sanityTekst(
+                tekster?.korrigeringsskjema?.begrunnelseLabel,
+                "korriger.korrigeringsskjema.begrunnelseLabel",
+              )}
               name="begrunnelse"
               size="small"
               value={skjema.state.begrunnelse}
@@ -363,7 +323,10 @@ export default function Periode() {
               onBlur={skjema.handlers.handleBegrunnelseBlur}
               error={
                 skjema.state.visValideringsfeil.begrunnelse
-                  ? tekster.korrigeringsskjema.begrunnelseFeilmelding
+                  ? sanityTekst(
+                      tekster?.korrigeringsskjema?.begrunnelseFeilmelding,
+                      "korriger.korrigeringsskjema.begrunnelseFeilmelding",
+                    )
                   : undefined
               }
               className={styles.begrunnelse}
@@ -380,7 +343,7 @@ export default function Periode() {
               size="small"
               disabled={fetcher.state === "submitting"}
             >
-              {tekster.knapper.avbryt}
+              {sanityTekst(tekster?.knapper?.avbryt, "korriger.knapper.avbryt")}
             </Button>
             <Button
               type="submit"
@@ -388,7 +351,7 @@ export default function Periode() {
               size="small"
               loading={fetcher.state === "submitting"}
             >
-              {tekster.knapper.fullfoer}
+              {sanityTekst(tekster?.knapper?.fullfoer, "korriger.knapper.fullfoer")}
             </Button>
           </div>
         </div>
@@ -398,23 +361,47 @@ export default function Periode() {
           type={skjema.state.modalType}
           tittel={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? bekreftModalTekster.avbryt.overskrift
-              : bekreftModalTekster.fullfoer.overskrift
+              ? sanityTekst(
+                  bekreftModalTekster?.avbrytKorrigering?.overskrift,
+                  "bekreftModal.avbrytKorrigering.overskrift",
+                )
+              : sanityTekst(
+                  bekreftModalTekster?.fullfoerKorrigering?.overskrift,
+                  "bekreftModal.fullfoerKorrigering.overskrift",
+                )
           }
           tekst={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? bekreftModalTekster.avbryt.innhold
-              : bekreftModalTekster.fullfoer.innhold
+              ? sanityTekst(
+                  bekreftModalTekster?.avbrytKorrigering?.innhold,
+                  "bekreftModal.avbrytKorrigering.innhold",
+                )
+              : sanityTekst(
+                  bekreftModalTekster?.fullfoerKorrigering?.innhold,
+                  "bekreftModal.fullfoerKorrigering.innhold",
+                )
           }
           bekreftTekst={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? bekreftModalTekster.avbryt.bekreftKnapp
-              : bekreftModalTekster.fullfoer.bekreftKnapp
+              ? sanityTekst(
+                  bekreftModalTekster?.avbrytKorrigering?.bekreftKnapp,
+                  "bekreftModal.avbrytKorrigering.bekreftKnapp",
+                )
+              : sanityTekst(
+                  bekreftModalTekster?.fullfoerKorrigering?.bekreftKnapp,
+                  "bekreftModal.fullfoerKorrigering.bekreftKnapp",
+                )
           }
           avbrytTekst={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? bekreftModalTekster.avbryt.avbrytKnapp
-              : bekreftModalTekster.fullfoer.avbrytKnapp
+              ? sanityTekst(
+                  bekreftModalTekster?.avbrytKorrigering?.avbrytKnapp,
+                  "bekreftModal.avbrytKorrigering.avbrytKnapp",
+                )
+              : sanityTekst(
+                  bekreftModalTekster?.fullfoerKorrigering?.avbrytKnapp,
+                  "bekreftModal.fullfoerKorrigering.avbrytKnapp",
+                )
           }
           onBekreft={skjema.handlers.handleBekreft}
         />
