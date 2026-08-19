@@ -26,7 +26,8 @@ export function sanityTekst(
   field: string,
   isDevelopment = import.meta.env.DEV ||
     import.meta.env.MODE === "test" ||
-    import.meta.env.VITEST === true,
+    import.meta.env.VITEST === true ||
+    (typeof process !== "undefined" && process.env.NODE_ENV !== "production"),
 ): string {
   if (value) return value;
 
