@@ -24,6 +24,7 @@ import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import { sanityClient } from "~/sanity/client";
 import { fyllUtQuery } from "~/sanity/sider/fyll-ut/queries";
+import type { IMeldekortFyllUt } from "~/sanity/sider/fyll-ut/types";
 import { sanityTekst } from "~/sanity/utils";
 import styles from "~/styles/route-styles/fyllUt.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
@@ -55,9 +56,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const variant = getABTestVariant(request);
 
   // Hent fyll-ut innhold fra Sanity
-  let fyllUtData = null;
+  let fyllUtData: IMeldekortFyllUt | null = null;
   try {
-    fyllUtData = await sanityClient.fetch(fyllUtQuery);
+    fyllUtData = await sanityClient.fetch<IMeldekortFyllUt>(fyllUtQuery);
   } catch (error) {
     logger.error(
       `Kunne ikke hente fyll-ut data fra Sanity for person.${personId}.periode.${params.periodeId}.fyll-ut`,

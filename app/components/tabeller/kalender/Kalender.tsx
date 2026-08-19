@@ -17,6 +17,14 @@ interface IProps {
   layout?: "horizontal" | "vertical";
 }
 
+function formatWeekLabel(weekLabel: string, weekNumber: string): string {
+  const template = weekLabel.trim();
+  const replaced = template.replaceAll("{{uke}}", weekNumber).replaceAll("{{uker}}", weekNumber);
+
+  if (template.length === 0) return weekNumber;
+  return replaced === template ? `${template} ${weekNumber}` : replaced;
+}
+
 function UkeRad({
   dager,
   ukenummer,
@@ -28,9 +36,7 @@ function UkeRad({
   hideWeekLabel?: boolean;
   weekLabel?: string;
 }) {
-  const formattedWeekLabel = (weekLabel ?? "")
-    .replace("{{uke}}", ukenummer)
-    .replace("{{uker}}", ukenummer);
+  const formattedWeekLabel = formatWeekLabel(weekLabel ?? "", ukenummer);
 
   return (
     <tr>
@@ -80,8 +86,6 @@ export function Kalender({
 
   const weekLabel = sanityTekst(kalenderData?.weekLabel, "kalender.weekLabel");
   const tableCaption = sanityTekst(kalenderData?.tableCaption, "kalender.tableCaption");
-  const formatWeekLabel = (weekNumber: string) =>
-    weekLabel.replace("{{uke}}", weekNumber).replace("{{uker}}", weekNumber);
 
   // Original: alltid vertikal layout (ukene stablet)
   if (variant === null) {
@@ -133,7 +137,7 @@ export function Kalender({
         <table className={stylesVariantB.kalenderTabellB}>
           {!hideWeekLabels && (
             <caption className={stylesVariantB.ukeCaption}>
-              <Label size="small">{formatWeekLabel(forsteUkenummer)}</Label>
+              <Label size="small">{formatWeekLabel(weekLabel, forsteUkenummer)}</Label>
             </caption>
           )}
           <thead>
@@ -160,7 +164,7 @@ export function Kalender({
         <table className={stylesVariantB.kalenderTabellB}>
           {!hideWeekLabels && (
             <caption className={stylesVariantB.ukeCaption}>
-              <Label size="small">{formatWeekLabel(andreUkenummer)}</Label>
+              <Label size="small">{formatWeekLabel(weekLabel, andreUkenummer)}</Label>
             </caption>
           )}
           <thead>

@@ -15,6 +15,10 @@ interface HeaderProps {
   headerData: IMeldekortHeader | null | undefined;
 }
 
+function a11yText(value: string | null | undefined, field: string, fallback: string): string {
+  return sanityTekst(value, field) || fallback;
+}
+
 const Header = ({ saksbehandler, headerData }: HeaderProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { skjulSensitiveOpplysninger, setSkjulSensitiveOpplysninger, tema, setTema } =
@@ -31,24 +35,33 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
     revalidator.revalidate();
   };
 
-  const userButtonAriaLabel = sanityTekst(
+  const userButtonAriaLabel = a11yText(
     headerData?.userButtonAriaLabel,
     "header.userButtonAriaLabel",
+    "Meny for {{name}}",
   ).replace("{{name}}", saksbehandler.givenName);
 
   return (
     <>
       <a href="#main-content" className={styles.skipLink}>
-        {sanityTekst(headerData?.skipLink, "header.skipLink")}
+        {a11yText(headerData?.skipLink, "header.skipLink", "Hopp til hovedinnhold")}
       </a>
       <InternalHeader
         role="banner"
-        aria-label={sanityTekst(headerData?.systemHeaderAriaLabel, "header.systemHeaderAriaLabel")}
+        aria-label={a11yText(
+          headerData?.systemHeaderAriaLabel,
+          "header.systemHeaderAriaLabel",
+          "Systemheader",
+        )}
         className={styles.header}
       >
         <InternalHeader.Title
           href={"/"}
-          aria-label={sanityTekst(headerData?.homeLinkAriaLabel, "header.homeLinkAriaLabel")}
+          aria-label={a11yText(
+            headerData?.homeLinkAriaLabel,
+            "header.homeLinkAriaLabel",
+            "Gå til forsiden",
+          )}
         >
           {sanityTekst(headerData?.homeLink, "header.homeLink")}
         </InternalHeader.Title>
@@ -64,7 +77,11 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
           />
           <Dropdown.Menu
             role="menu"
-            aria-label={sanityTekst(headerData?.dropdownAriaLabel, "header.dropdownAriaLabel")}
+            aria-label={a11yText(
+              headerData?.dropdownAriaLabel,
+              "header.dropdownAriaLabel",
+              "Brukermeny",
+            )}
             className={styles.dropdownMenu}
           >
             <Dropdown.Menu.List>
@@ -73,14 +90,16 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
                   checked={skjulSensitiveOpplysninger}
                   size="small"
                   onChange={(e) => handleSkjulSensitiveOpplysningerChange(e.target.checked)}
-                  description={sanityTekst(
+                  description={a11yText(
                     headerData?.sensitiveDataSwitchDescription,
                     "header.sensitiveDataSwitchDescription",
+                    "Anbefales for økt sikkerhet",
                   )}
                 >
-                  {sanityTekst(
+                  {a11yText(
                     headerData?.sensitiveDataSwitchLabel,
                     "header.sensitiveDataSwitchLabel",
+                    "Skjul sensitive opplysninger",
                   )}
                 </Switch>
               </Dropdown.Menu.List.Item>
@@ -100,8 +119,16 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
           onClick={toggleTheme}
           aria-label={
             tema === "dark"
-              ? sanityTekst(headerData?.darkThemeActive, "header.darkThemeActive")
-              : sanityTekst(headerData?.lightThemeActive, "header.lightThemeActive")
+              ? a11yText(
+                  headerData?.darkThemeActive,
+                  "header.darkThemeActive",
+                  "Mørkt tema er aktivt",
+                )
+              : a11yText(
+                  headerData?.lightThemeActive,
+                  "header.lightThemeActive",
+                  "Lyst tema er aktivt",
+                )
           }
           aria-pressed={tema === "dark"}
           icon={tema === "dark" ? <MoonIcon aria-hidden /> : <SunIcon aria-hidden />}

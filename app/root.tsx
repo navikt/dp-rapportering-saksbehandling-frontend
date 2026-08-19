@@ -229,14 +229,16 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   const rootData = useRouteLoaderData("root");
   const varslerData = rootData?.sanityData?.varsler;
 
-  let title: string = sanityTekst(
-    varslerData?.errorBoundary.generalErrorTitle,
-    "varsler.errorBoundary.generalErrorTitle",
-  );
-  let description: string = sanityTekst(
-    varslerData?.errorBoundary.defaultDescription,
-    "varsler.errorBoundary.defaultDescription",
-  );
+  let title: string =
+    sanityTekst(
+      varslerData?.errorBoundary.generalErrorTitle,
+      "varsler.errorBoundary.generalErrorTitle",
+    ) || "Beklager, det har skjedd en feil";
+  let description: string =
+    sanityTekst(
+      varslerData?.errorBoundary.defaultDescription,
+      "varsler.errorBoundary.defaultDescription",
+    ) || "Vi beklager, men noe gikk galt.";
   let detail: string | undefined = undefined;
   let errorId: string | undefined = undefined;
   let stack: string | undefined = undefined;
@@ -256,11 +258,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         ? sanityTekst(
             varslerData?.errorBoundary.notFoundTitle,
             "varsler.errorBoundary.notFoundTitle",
-          )
+          ) || "Siden du leter etter finnes ikke"
         : sanityTekst(
             varslerData?.errorBoundary.generalErrorTitle,
             "varsler.errorBoundary.generalErrorTitle",
-          );
+          ) || "Beklager, det har skjedd en feil";
     // Støtt både 'message' og 'error' som hovedmelding
     description = errorData.message || errorData.error || description;
     // Støtt både 'detail' og 'details' som detaljmelding
@@ -293,9 +295,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             {detail && <BodyShort spacing>{detail}</BodyShort>}
             {errorId && (
               <BodyShort size="small">
-                {sanityTekst(
-                  varslerData?.errorBoundary.errorText,
-                  "varsler.errorBoundary.errorText",
+                {(
+                  sanityTekst(
+                    varslerData?.errorBoundary.errorText,
+                    "varsler.errorBoundary.errorText",
+                  ) || "Feil-ID: {{id}}"
                 ).replace("{{id}}", errorId)}
               </BodyShort>
             )}

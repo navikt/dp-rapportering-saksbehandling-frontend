@@ -7,14 +7,15 @@ import { logger } from "~/models/logger.server";
 import { sanityClient } from "~/sanity/client";
 import { SanityDevWarning } from "~/sanity/components/SanityDevWarning";
 import { forsideQuery } from "~/sanity/sider/forside/queries";
+import type { IMeldekortForside } from "~/sanity/sider/forside/types";
 import { sanityDataMangler, sanityTekst } from "~/sanity/utils";
 import { usesMsw } from "~/utils/env.utils";
 
 export async function loader() {
-  let forsideData = null;
+  let forsideData: IMeldekortForside | null = null;
 
   try {
-    forsideData = await sanityClient.fetch(forsideQuery);
+    forsideData = await sanityClient.fetch<IMeldekortForside>(forsideQuery);
   } catch (error) {
     logger.error("Kunne ikke hente forsidedata fra Sanity for _index", {
       error,

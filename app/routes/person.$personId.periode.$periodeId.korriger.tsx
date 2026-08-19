@@ -16,6 +16,7 @@ import { hentPeriode } from "~/models/rapporteringsperiode.server";
 import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import { sanityClient } from "~/sanity/client";
 import { korrigerQuery } from "~/sanity/sider/korriger/queries";
+import type { IMeldekortKorriger } from "~/sanity/sider/korriger/types";
 import { sanityTekst } from "~/sanity/utils";
 import stylesOriginal from "~/styles/route-styles/korriger.module.css";
 import stylesVariantB from "~/styles/route-styles/korrigerVariantB.module.css";
@@ -41,9 +42,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const saksbehandler = await hentSaksbehandler(request);
   const variant = getABTestVariant(request);
 
-  let korrigerData = null;
+  let korrigerData: IMeldekortKorriger | null = null;
   try {
-    korrigerData = await sanityClient.fetch(korrigerQuery);
+    korrigerData = await sanityClient.fetch<IMeldekortKorriger>(korrigerQuery);
   } catch (error) {
     logger.error(
       `Kunne ikke hente korriger-data fra Sanity for person.${personId}.periode.${params.periodeId}.korriger`,
