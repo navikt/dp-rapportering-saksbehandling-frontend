@@ -98,6 +98,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   return {
     saksbehandler,
     tema,
+    sanityData,
     sanity: sanityData,
     env,
   };
@@ -153,7 +154,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const env = loaderData?.env ?? {};
   const saksbehandler = loaderData?.saksbehandler;
   const serverTema = loaderData?.tema;
-  const sanityData = loaderData?.sanity;
+  const sanityData = loaderData?.sanityData;
 
   return (
     <html lang="nb" suppressHydrationWarning data-theme={serverTema || undefined}>
@@ -226,7 +227,7 @@ export default function App() {
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   // Prøv å hente varsler data fra root loader
   const rootData = useRouteLoaderData("root");
-  const varslerData = rootData?.sanity?.varsler;
+  const varslerData = rootData?.sanityData?.varsler;
 
   // Default tekster som fallback
   const DEFAULT_TITLES = {
