@@ -1,6 +1,7 @@
 import { Table } from "@navikt/ds-react";
 
 import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
+import { sanityTekst } from "~/sanity/utils";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
 import { getTogglePlacement } from "~/utils/ab-test.utils";
 import type { IBehandlingerPerPeriode } from "~/utils/behandlingsresultat.types";
@@ -8,16 +9,6 @@ import type { IRapporteringsperiode, TAnsvarligSystem } from "~/utils/types";
 
 import { MeldekortRad } from "./components/rad/MeldekortRad";
 import styles from "./meldekortListe.module.css";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_KOLONNER = {
-  uke: "Uke",
-  dato: "Dato",
-  status: "Status",
-  aktiviteter: "Aktiviteter",
-  meldedato: "Meldedato",
-  frist: "Frist",
-};
 
 interface IProps {
   perioder: IRapporteringsperiode[];
@@ -42,17 +33,17 @@ export function MeldekortListe({
   const togglePlacement = getTogglePlacement(variant ?? null);
 
   // Kombiner defaults med Sanity-data - Sanity overstyrer, defaults fyller inn hull
-  const kolonner = { ...DEFAULT_KOLONNER, ...(hovedsideData?.tabellKolonner ?? {}) };
+  const kolonner = hovedsideData?.tabellKolonner;
 
   // Original layout for null/A/C: toggle left with empty first column
   // New layout for variant B: toggle right with empty last column
   const basisKolonner = [
-    kolonner.uke,
-    kolonner.dato,
-    kolonner.status,
-    kolonner.aktiviteter,
-    kolonner.meldedato,
-    kolonner.frist,
+    sanityTekst(kolonner?.uke, "hovedside.tabellKolonner.uke"),
+    sanityTekst(kolonner?.dato, "hovedside.tabellKolonner.dato"),
+    sanityTekst(kolonner?.status, "hovedside.tabellKolonner.status"),
+    sanityTekst(kolonner?.aktiviteter, "hovedside.tabellKolonner.aktiviteter"),
+    sanityTekst(kolonner?.meldedato, "hovedside.tabellKolonner.meldedato"),
+    sanityTekst(kolonner?.frist, "hovedside.tabellKolonner.frist"),
   ];
 
   const KOLONNE_TITLER = togglePlacement === "right" ? basisKolonner : ["", ...basisKolonner];

@@ -122,7 +122,7 @@ describe("MeldekortVisning", () => {
         />,
       );
 
-      const knapp = screen.getByRole("button", { name: /fyll ut meldekort/i });
+      const knapp = screen.getByRole("button", { name: "Fyll ut meldekort" });
       expect(knapp).toBeInTheDocument();
       expect(knapp).toHaveAttribute("href", "/person/123/periode/test-1/fyll-ut");
     });
@@ -378,7 +378,9 @@ describe("MeldekortVisning", () => {
         />,
       );
 
-      const knapp = screen.getByRole("button", { name: /fyll ut meldekort/i });
+      const knapp = screen.getByRole("button", {
+        name: "[Mangler Sanity: hovedside.knapper.fyllutMeldekort]",
+      });
       expect(knapp).toHaveAttribute("href", "/person/undefined/periode/test-1/fyll-ut");
     });
   });
