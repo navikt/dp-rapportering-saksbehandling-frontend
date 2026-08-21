@@ -20,3 +20,27 @@ export function sanityDataMangler<T extends Record<string, unknown>>(
     );
   });
 }
+
+function isDemoRuntime(): boolean {
+  return typeof window !== "undefined" && window.env?.RUNTIME_ENVIRONMENT === "demo";
+}
+
+function skalViseManglerSanityTekst(): boolean {
+  return (
+    import.meta.env.DEV ||
+    import.meta.env.MODE === "test" ||
+    import.meta.env.VITEST === true ||
+    (typeof process !== "undefined" && process.env.NODE_ENV !== "production") ||
+    isDemoRuntime()
+  );
+}
+
+export function sanityTekst(
+  value: string | null | undefined,
+  field: string,
+  showMissingSanityText = skalViseManglerSanityTekst(),
+): string {
+  if (value) return value;
+
+  return showMissingSanityText ? `[Mangler Sanity: ${field}]` : "";
+}

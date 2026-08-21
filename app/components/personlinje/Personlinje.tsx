@@ -7,6 +7,7 @@ import {
 import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useMemo, useState } from "react";
+import { useRevalidator } from "react-router";
 
 import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
 import { deepMerge } from "~/utils/deep-merge.utils";
@@ -35,6 +36,7 @@ const DEFAULT_PERSONLINJE: IMeldekortPersonlinje = {
 
 interface IProps {
   person: IPerson;
+  personId?: string;
   perioder?: IRapporteringsperiode[];
   arbeidssokerperioder?: IArbeidssokerperiode[];
   personlinjeData?: IMeldekortPersonlinje | null;
@@ -43,11 +45,13 @@ interface IProps {
 
 export default function Personlinje({
   person,
+  personId,
   perioder = [],
   arbeidssokerperioder = [],
   personlinjeData,
   visOpprettMeldekort = false,
 }: IProps) {
+  const revalidator = useRevalidator();
   const fulltNavn = byggFulltNavn(person.fornavn, person.mellomnavn, person.etternavn);
   const [modalOpen, setModalOpen] = useState(false);
   const [opprettModalOpen, setOpprettModalOpen] = useState(false);
@@ -204,7 +208,9 @@ export default function Personlinje({
       <OpprettMeldekortModal
         open={opprettModalOpen}
         onClose={() => setOpprettModalOpen(false)}
+        onBekreft={() => revalidator.revalidate()}
         brukerNavn={fulltNavn}
+        personId={personId}
       />
     </section>
   );

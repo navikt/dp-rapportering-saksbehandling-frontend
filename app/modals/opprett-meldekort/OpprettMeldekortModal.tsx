@@ -1,4 +1,5 @@
 import {
+  Alert,
   BodyShort,
   Button,
   DatePicker,
@@ -7,43 +8,27 @@ import {
   useRangeDatepicker,
   VStack,
 } from "@navikt/ds-react";
-import { useRouteLoaderData } from "react-router";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import { useFetcher, useRouteLoaderData } from "react-router";
 
-import type { IMeldekortOpprettMeldekortModal } from "~/sanity/modaler/opprett-meldekort-modal/types";
-import { deepMerge } from "~/utils/deep-merge.utils";
+import { sanityTekst } from "~/sanity/utils";
+import { getTodayIsoDate } from "~/utils/dato.utils";
 
+import {
+  buildOpprettMeldekortFormData,
+  type IOpprettMeldekortPayload,
+  type IOpprettMeldekortResponse,
+  toOpprettMeldekortErrorMessage,
+} from "./opprettMeldekortModal.helpers";
 import styles from "./opprettMeldekortModal.module.css";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER: IMeldekortOpprettMeldekortModal = {
-  tittel: "Opprett meldekort",
-  fraDato: {
-    label: "Fra dato",
-    helpText: "Velg startdato for perioden du vil opprette meldekort for",
-  },
-  tilDato: {
-    label: "Til dato",
-    helpText: "Velg sluttdato for perioden du vil opprette meldekort for",
-  },
-  forklaringstekst: "Basert på valgt dato, vil det opprettes {{antall}} nye meldekort.",
-  submitKnapp: "Opprett",
-  avbrytKnapp: "Avbryt",
-  infoBoks: {
-    tittel: "Info om meldekortsyklus",
-    tekst:
-      "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
-  },
-  feilmelding: {
-    tittel: "Kunne ikke opprette meldekort",
-    tekst: "Noe gikk galt ved opprettelse av meldekort. Prøv igjen senere.",
-  },
-};
 
 interface OpprettMeldekortModalProps {
   open: boolean;
   onClose: () => void;
   onBekreft?: () => void;
   brukerNavn?: string;
+  personId?: string;
 }
 
 export function OpprettMeldekortModal({
@@ -51,6 +36,7 @@ export function OpprettMeldekortModal({
   onClose,
   onBekreft,
   brukerNavn,
+  personId,
 }: OpprettMeldekortModalProps) {
   // Hent tekster fra Sanity med fallback
   let rootData;
@@ -60,29 +46,81 @@ export function OpprettMeldekortModal({
     rootData = null;
   }
 
-  const tekster = deepMerge(DEFAULT_TEKSTER, rootData?.sanity?.opprettMeldekortModal);
+  const tekster = rootData?.sanityData?.opprettMeldekortModal;
+  const [actionError, setActionError] = useState<string | undefined>();
+  const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
+  const fetcher = useFetcher<IOpprettMeldekortResponse>();
 
-  const { datepickerProps, fromInputProps, toInputProps, reset } = useRangeDatepicker({
-    fromDate: undefined,
-    toDate: undefined,
-  });
+  const { datepickerProps, fromInputProps, toInputProps, reset, selectedRange } =
+    useRangeDatepicker({
+      fromDate: undefined,
+      toDate: new Date(),
+    });
+
+  function resetFormState() {
+    setActionError(undefined);
+    setHasPendingSubmission(false);
+    reset();
+  }
+
+  useEffect(() => {
+    if (!hasPendingSubmission || fetcher.state !== "idle" || !fetcher.data) {
+      return;
+    }
+
+    setHasPendingSubmission(false);
+
+    if (fetcher.data.success) {
+      onBekreft?.();
+      resetFormState();
+      onClose();
+      return;
+    }
+
+    setActionError(toOpprettMeldekortErrorMessage(fetcher.data));
+  }, [hasPendingSubmission, fetcher.state, fetcher.data, onBekreft, onClose]);
 
   function handleBekreft() {
-    if (onBekreft) {
-      onBekreft();
+    if (!selectedRange?.from || !selectedRange.to) {
+      setActionError("Velg fra- og til-dato.");
+      return;
     }
-    handleClose();
+
+    if (!personId) {
+      setActionError("Mangler personId.");
+      return;
+    }
+
+    setActionError(undefined);
+    const fraOgMed = format(selectedRange.from, "yyyy-MM-dd");
+    const tilOgMed = format(selectedRange.to, "yyyy-MM-dd");
+    const today = getTodayIsoDate();
+
+    if (fraOgMed > today || tilOgMed > today) {
+      setActionError("Fra-dato og til-dato kan ikke være frem i tid.");
+      return;
+    }
+
+    const payload: IOpprettMeldekortPayload = { personId, fraOgMed, tilOgMed };
+
+    setHasPendingSubmission(true);
+    fetcher.submit(buildOpprettMeldekortFormData(payload), {
+      method: "post",
+      action: "/api/opprett-meldekort",
+    });
   }
 
   function handleClose() {
-    reset();
+    resetFormState();
     onClose();
   }
 
-  const tittelMedNavn = brukerNavn
-    ? tekster.tittel.replace("{{navn}}", brukerNavn)
-    : tekster.tittel;
-
+  const tittel = sanityTekst(tekster?.tittel, "opprettMeldekortModal.tittel");
+  const tittelMedNavn = brukerNavn ? tittel.replace("{{navn}}", brukerNavn) : tittel;
+  const forklaringstekst = sanityTekst(
+    tekster?.forklaringstekst,
+    "opprettMeldekortModal.forklaringstekst",
+  );
   return (
     <Modal open={open} onClose={handleClose} aria-label={tittelMedNavn} size="medium">
       <Modal.Header>
@@ -95,38 +133,68 @@ export function OpprettMeldekortModal({
               <DatePicker.Input
                 size="small"
                 {...fromInputProps}
-                label={tekster.fraDato.label}
-                description={tekster.fraDato.helpText}
+                label={sanityTekst(tekster?.fraDato?.label, "opprettMeldekortModal.fraDato.label")}
+                description={sanityTekst(
+                  tekster?.fraDato?.helpText,
+                  "opprettMeldekortModal.fraDato.helpText",
+                )}
               />
               <DatePicker.Input
                 size="small"
                 {...toInputProps}
-                label={tekster.tilDato.label}
-                description={tekster.tilDato.helpText}
+                label={sanityTekst(tekster?.tilDato?.label, "opprettMeldekortModal.tilDato.label")}
+                description={sanityTekst(
+                  tekster?.tilDato?.helpText,
+                  "opprettMeldekortModal.tilDato.helpText",
+                )}
               />
             </VStack>
           </DatePicker>
-          <BodyShort>{tekster.forklaringstekst}</BodyShort>
+          {actionError && <Alert variant="error">{actionError}</Alert>}
+          <BodyShort>{forklaringstekst}</BodyShort>
           <InfoCard data-color="info" size="small">
             <InfoCard.Header>
-              <InfoCard.Title>{tekster.infoBoks.tittel}</InfoCard.Title>
+              <InfoCard.Title>
+                {sanityTekst(tekster?.infoBoks?.tittel, "opprettMeldekortModal.infoBoks.tittel")}
+              </InfoCard.Title>
             </InfoCard.Header>
-            <InfoCard.Content>{tekster.infoBoks.tekst}</InfoCard.Content>
+            <InfoCard.Content>
+              <BodyShort>
+                {sanityTekst(tekster?.infoBoks?.tekst, "opprettMeldekortModal.infoBoks.tekst")}
+              </BodyShort>
+            </InfoCard.Content>
           </InfoCard>
           <InfoCard data-color="danger" size="small">
             <InfoCard.Header>
-              <InfoCard.Title>{tekster.feilmelding.tittel}</InfoCard.Title>
+              <InfoCard.Title>
+                {sanityTekst(
+                  tekster?.feilmelding?.tittel,
+                  "opprettMeldekortModal.feilmelding.tittel",
+                )}
+              </InfoCard.Title>
             </InfoCard.Header>
-            <InfoCard.Content>{tekster.feilmelding.tekst}</InfoCard.Content>
+            <InfoCard.Content>
+              {sanityTekst(tekster?.feilmelding?.tekst, "opprettMeldekortModal.feilmelding.tekst")}
+            </InfoCard.Content>
           </InfoCard>
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={handleBekreft} size="small">
-          {tekster.submitKnapp}
+        <Button
+          variant="primary"
+          onClick={handleBekreft}
+          size="small"
+          loading={hasPendingSubmission && fetcher.state !== "idle"}
+        >
+          {sanityTekst(tekster?.submitKnapp, "opprettMeldekortModal.submitKnapp")}
         </Button>
-        <Button variant="secondary" onClick={handleClose} size="small">
-          {tekster.avbrytKnapp}
+        <Button
+          variant="secondary"
+          onClick={handleClose}
+          size="small"
+          disabled={hasPendingSubmission && fetcher.state !== "idle"}
+        >
+          {sanityTekst(tekster?.avbrytKnapp, "opprettMeldekortModal.avbrytKnapp")}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -46,6 +46,8 @@ export function getEnv<T>(key: keyof IEnv): T {
 
 export const isLocalhost = getEnv("IS_LOCALHOST") === "true";
 
-export const usesMsw = getEnv("USE_MSW") === "true";
+const isDemo = getEnv("RUNTIME_ENVIRONMENT") === "demo";
 
-export const isLocalOrDemo = isLocalhost || usesMsw;
+export const usesMsw = getEnv("USE_MSW") === "true" || isLocalhost || isDemo;
+
+export const isLocalOrDemo = isLocalhost || isDemo;

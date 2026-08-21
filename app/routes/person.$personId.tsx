@@ -81,6 +81,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     }
 
     return {
+      personId: params.personId,
       person,
       perioder,
       arbeidssokerperioder,
@@ -110,7 +111,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
           message: originalData.message || originalData.error,
           detail: originalData.detail || originalData.details,
           errorId: originalData.errorId || originalData.correlationId,
-          personContext: { person, showDemoTools, visOpprettMeldekort },
+          personContext: { personId: params.personId, person, showDemoTools, visOpprettMeldekort },
         }),
         {
           status: error.status,
@@ -127,7 +128,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 export default function Rapportering() {
-  const { person, perioder, arbeidssokerperioder, showDemoTools, visOpprettMeldekort } =
+  const { personId, person, perioder, arbeidssokerperioder, showDemoTools, visOpprettMeldekort } =
     useLoaderData<typeof loader>();
   const rootData = useRouteLoaderData("root");
   const personlinjeData = rootData?.sanity?.personlinje;
@@ -136,6 +137,7 @@ export default function Rapportering() {
     <>
       <aside aria-label="Informasjon om valgt person" className={styles.personInformasjon}>
         <Personlinje
+          personId={personId}
           person={person}
           perioder={perioder}
           arbeidssokerperioder={arbeidssokerperioder}
@@ -166,7 +168,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let detail: string | undefined = undefined;
   let errorId: string | undefined = undefined;
   let personContext:
-    | { person: IPerson; showDemoTools: boolean; visOpprettMeldekort?: boolean }
+    | { personId: string; person: IPerson; showDemoTools: boolean; visOpprettMeldekort?: boolean }
     | undefined = undefined;
 
   if (isRouteErrorResponse(error)) {
@@ -177,7 +179,12 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       error?: string;
       detail?: string;
       details?: string;
-      personContext?: { person: IPerson; showDemoTools: boolean; visOpprettMeldekort?: boolean };
+      personContext?: {
+        personId: string;
+        person: IPerson;
+        showDemoTools: boolean;
+        visOpprettMeldekort?: boolean;
+      };
     };
 
     title =
@@ -205,6 +212,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       {personContext?.person && (
         <aside aria-label="Informasjon om valgt person" className={styles.personInformasjon}>
           <Personlinje
+            personId={personContext.personId}
             person={personContext.person}
             perioder={[]}
             arbeidssokerperioder={[]}

@@ -14,6 +14,19 @@ import type {
   ISendInnMeldekort,
 } from "~/utils/types";
 
+export interface IOpprettMeldekortRequest {
+  fraOgMed: string;
+  tilOgMed: string;
+  simulering: boolean;
+}
+
+export interface IOpprettMeldekortResponse {
+  perioder: Array<{
+    fraOgMed: string;
+    tilOgMed: string;
+  }>;
+}
+
 /**
  * Henter arbeidssøkerperioder for en person
  */
@@ -88,6 +101,40 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
     },
     "Henting av rapporteringsperiode",
     { personId, periodeId },
+  );
+}
+
+/** Oppretter ett eller flere meldekort for en person. */
+export async function opprettMeldekort({
+  request,
+  personId,
+  fraOgMed,
+  tilOgMed,
+}: {
+  request: Request;
+  personId: string;
+  fraOgMed: string;
+  tilOgMed: string;
+}): Promise<IOpprettMeldekortResponse> {
+  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort`;
+  const url = new URL(baseUrl);
+  Object.entries(getDemoParams(request)).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+
+  return httpRequest<IOpprettMeldekortResponse>(
+    url.toString(),
+    {
+      method: "POST",
+      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      body: JSON.stringify({
+        fraOgMed,
+        tilOgMed,
+        simulering: false,
+      } satisfies IOpprettMeldekortRequest),
+    },
+    "Opprettelse av meldekort",
+    { personId, fraOgMed, tilOgMed },
   );
 }
 

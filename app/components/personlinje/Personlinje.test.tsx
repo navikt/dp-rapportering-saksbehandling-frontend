@@ -1,14 +1,38 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { createRoutesStub } from "react-router";
+import { describe, expect, it, vi } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 import type { IPerson } from "~/utils/types";
 
 import Personlinje from "./Personlinje";
 
+vi.mock("react-router", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("react-router")>();
+  return {
+    ...actual,
+    useRouteLoaderData: () => ({
+      sanityData: {
+        opprettMeldekortModal: {
+          tittel: "Opprett meldekort",
+          submitKnapp: "Opprett",
+          avbrytKnapp: "Avbryt",
+        },
+      },
+    }),
+  };
+});
+
 function renderWithProviders(ui: React.ReactElement) {
-  return render(<SaksbehandlerProvider>{ui}</SaksbehandlerProvider>);
+  const Stub = createRoutesStub([
+    {
+      path: "/",
+      Component: () => <SaksbehandlerProvider>{ui}</SaksbehandlerProvider>,
+    },
+  ]);
+
+  return render(<Stub initialEntries={["/"]} />);
 }
 
 const mockPerson: IPerson = {

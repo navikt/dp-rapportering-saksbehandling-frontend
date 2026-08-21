@@ -193,6 +193,10 @@ export function konverterFraISO8601Varighet(varighet?: string | null): number | 
   }
 }
 
+export function getTodayIsoDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 /**
  * Grupperer objekter etter år basert på en dato-property
  * @param items - Array av objekter som skal grupperes

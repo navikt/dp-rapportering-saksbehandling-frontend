@@ -16,7 +16,15 @@ export const handlers = [
 
 export const server = setupServer(...handlers);
 
+let isMockServerStarted = false;
+
 export function startMockServer(server: SetupServer) {
+  if (isMockServerStarted) {
+    return;
+  }
+
+  isMockServerStarted = true;
+
   server.listen({
     onUnhandledRequest(request, print) {
       const url = new URL(request.url);

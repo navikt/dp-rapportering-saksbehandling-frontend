@@ -1,14 +1,61 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { createRoutesStub } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 
 import { OpprettMeldekortModal } from "./OpprettMeldekortModal";
+import type { IOpprettMeldekortResponse } from "./opprettMeldekortModal.helpers";
 
-// Helper function to render with required providers
-function renderWithProviders(ui: React.ReactElement) {
-  return render(<SaksbehandlerProvider>{ui}</SaksbehandlerProvider>);
+const sanityTekster = {
+  tittel: "Opprett meldekort",
+  fraDato: {
+    label: "Fra dato",
+    helpText: "Velg startdato for perioden du vil opprette meldekort for",
+  },
+  tilDato: {
+    label: "Til dato",
+    helpText: "Velg sluttdato for perioden du vil opprette meldekort for",
+  },
+  forklaringstekst: "Velg periode for meldekortet",
+  submitKnapp: "Opprett",
+  avbrytKnapp: "Avbryt",
+  infoBoks: {
+    tittel: "Info om meldekortsyklus",
+    tekst:
+      "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
+  },
+  feilmelding: {
+    tittel: "Feil",
+    tekst: "Noe gikk galt",
+  },
+};
+
+vi.mock("react-router", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("react-router")>();
+  return {
+    ...actual,
+    useRouteLoaderData: () => ({ sanityData: { opprettMeldekortModal: sanityTekster } }),
+  };
+});
+
+function renderWithProviders(
+  ui: React.ReactElement,
+  actionResponse: IOpprettMeldekortResponse = { success: true },
+) {
+  const Stub = createRoutesStub([
+    {
+      path: "/",
+      Component: () => <SaksbehandlerProvider>{ui}</SaksbehandlerProvider>,
+    },
+    {
+      path: "/api/opprett-meldekort",
+      action: () => actionResponse,
+    },
+  ]);
+
+  return render(<Stub initialEntries={["/"]} />);
 }
 
 describe("OpprettMeldekortModal", () => {
@@ -74,20 +121,90 @@ describe("OpprettMeldekortModal", () => {
     expect(opprettButton).toBeInTheDocument();
   });
 
-  it("skal kalle onBekreft og onClose når opprett-knappen klikkes", async () => {
+  it("skal vise valideringsfeil når dato ikke er valgt", async () => {
     const user = userEvent.setup();
     const onBekreftMock = vi.fn();
     const onCloseMock = vi.fn();
 
     renderWithProviders(
-      <OpprettMeldekortModal open={true} onClose={onCloseMock} onBekreft={onBekreftMock} />,
+      <OpprettMeldekortModal
+        open={true}
+        onClose={onCloseMock}
+        onBekreft={onBekreftMock}
+        personId="123"
+      />,
     );
 
-    const opprettButton = screen.getByRole("button", { name: "Opprett" });
-    await user.click(opprettButton);
+    await user.click(screen.getByRole("button", { name: "Opprett" }));
 
-    expect(onBekreftMock).toHaveBeenCalledTimes(1);
+    expect(await screen.findByText("Velg fra- og til-dato.")).toBeInTheDocument();
+    expect(onBekreftMock).not.toHaveBeenCalled();
+    expect(onCloseMock).not.toHaveBeenCalled();
+  });
+
+  it("skal vise valideringsfeil når personId mangler", async () => {
+    const user = userEvent.setup();
+    const onCloseMock = vi.fn();
+
+    renderWithProviders(<OpprettMeldekortModal open={true} onClose={onCloseMock} />);
+
+    await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
+    await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
+    await user.click(screen.getByRole("button", { name: "Opprett" }));
+
+    expect(await screen.findByText("Mangler personId.")).toBeInTheDocument();
+    expect(onCloseMock).not.toHaveBeenCalled();
+  });
+
+  it("skal kalle onBekreft og onClose når opprettelsen lykkes", async () => {
+    const user = userEvent.setup();
+    const onBekreftMock = vi.fn();
+    const onCloseMock = vi.fn();
+
+    renderWithProviders(
+      <OpprettMeldekortModal
+        open={true}
+        onClose={onCloseMock}
+        onBekreft={onBekreftMock}
+        personId="123"
+      />,
+    );
+
+    await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
+    await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
+    await user.click(screen.getByRole("button", { name: "Opprett" }));
+
+    await waitFor(
+      () => {
+        expect(onBekreftMock).toHaveBeenCalledTimes(1);
+      },
+      { timeout: 5000 },
+    );
     expect(onCloseMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("skal vise feilmelding når opprettelsen feiler", async () => {
+    const user = userEvent.setup();
+    const onCloseMock = vi.fn();
+
+    renderWithProviders(
+      <OpprettMeldekortModal open={true} onClose={onCloseMock} personId="123" />,
+      {
+        error: "Kunne ikke opprette meldekort",
+        detail: "Ugyldig periode",
+      },
+    );
+
+    await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
+    await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
+    await user.click(screen.getByRole("button", { name: "Opprett" }));
+
+    expect(
+      await screen.findByText("Kunne ikke opprette meldekort: Ugyldig periode", undefined, {
+        timeout: 5000,
+      }),
+    ).toBeInTheDocument();
+    expect(onCloseMock).not.toHaveBeenCalled();
   });
 
   it("skal vise brukernavn i tittel når det er oppgitt", () => {
@@ -95,7 +212,6 @@ describe("OpprettMeldekortModal", () => {
       <OpprettMeldekortModal open={true} onClose={vi.fn()} brukerNavn="Ola Nordmann" />,
     );
 
-    // Assuming the title template uses {{navn}} placeholder
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeInTheDocument();
   });
@@ -114,19 +230,6 @@ describe("OpprettMeldekortModal", () => {
 
     const modalContent = container.querySelector('[class*="modal"]');
     expect(modalContent).toBeInTheDocument();
-  });
-
-  it("skal ikke kalle onBekreft hvis det ikke er definert", async () => {
-    const user = userEvent.setup();
-    const onCloseMock = vi.fn();
-
-    renderWithProviders(<OpprettMeldekortModal open={true} onClose={onCloseMock} />);
-
-    const opprettButton = screen.getByRole("button", { name: "Opprett" });
-    await user.click(opprettButton);
-
-    // Should only close, not throw error
-    expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 
   it("skal vise hjelpetekst for fra-dato felt", () => {
@@ -149,7 +252,6 @@ describe("OpprettMeldekortModal", () => {
     it("skal bruke useRangeDatepicker for dato-valg", () => {
       renderWithProviders(<OpprettMeldekortModal open={true} onClose={vi.fn()} />);
 
-      // Verify that both date inputs are present and part of a range picker
       const fromInput = screen.getByLabelText("Fra dato");
       const toInput = screen.getByLabelText("Til dato");
 
