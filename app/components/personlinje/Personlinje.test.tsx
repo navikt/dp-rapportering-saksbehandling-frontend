@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { createRoutesStub } from "react-router";
 import { describe, expect, it } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
@@ -9,7 +10,14 @@ import type { IPerson } from "~/utils/types";
 import Personlinje from "./Personlinje";
 
 function renderWithProviders(ui: React.ReactElement) {
-  return render(<SaksbehandlerProvider>{ui}</SaksbehandlerProvider>);
+  const Stub = createRoutesStub([
+    {
+      path: "/",
+      Component: () => <SaksbehandlerProvider>{ui}</SaksbehandlerProvider>,
+    },
+  ]);
+
+  return render(<Stub initialEntries={["/"]} />);
 }
 
 const mockPerson: IPerson = {

@@ -1,3 +1,5 @@
+import { getEnv } from "~/utils/env.utils";
+
 /**
  * Sjekker om Sanity-data mangler eller er ufullstendig.
  * Returnerer true hvis objektet er null/undefined eller hvis noen required felter mangler.
@@ -21,15 +23,26 @@ export function sanityDataMangler<T extends Record<string, unknown>>(
   });
 }
 
+function isDemoRuntime(): boolean {
+  return getEnv("RUNTIME_ENVIRONMENT") === "demo";
+}
+
+function skalViseManglerSanityTekst(): boolean {
+  return (
+    import.meta.env.DEV ||
+    import.meta.env.MODE === "test" ||
+    import.meta.env.VITEST === true ||
+    (typeof process !== "undefined" && process.env.NODE_ENV !== "production") ||
+    isDemoRuntime()
+  );
+}
+
 export function sanityTekst(
   value: string | null | undefined,
   field: string,
-  isDevelopment = import.meta.env.DEV ||
-    import.meta.env.MODE === "test" ||
-    import.meta.env.VITEST === true ||
-    (typeof process !== "undefined" && process.env.NODE_ENV !== "production"),
+  showMissingSanityText = skalViseManglerSanityTekst(),
 ): string {
   if (value) return value;
 
-  return isDevelopment ? `[Mangler Sanity: ${field}]` : "";
+  return showMissingSanityText ? `[Mangler Sanity: ${field}]` : "";
 }

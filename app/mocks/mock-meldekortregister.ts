@@ -1,15 +1,111 @@
+import { addDays } from "date-fns";
 import { http, HttpResponse } from "msw";
 
 import { logger } from "~/models/logger.server";
+import { OPPRETTET_AV } from "~/utils/constants";
 import { getDemoAction, getDemoStatus } from "~/utils/demo-params.utils";
 import { getEnv } from "~/utils/env.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IPeriode, IRapporteringsperiode } from "~/utils/types";
 
 import type { withDb } from "./db";
 import { getDatabase } from "./db.utils";
+import { lagPeriodeDatoFor, lagRapporteringsperiode } from "./mock.utils";
 
 export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
   return [
+    http.post(
+      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort`,
+      async ({ params, request, cookies }) => {
+        const db = database || (await getDatabase(cookies));
+        const personId = params.personId as string;
+        let body: {
+          fraOgMed: string;
+          tilOgMed: string;
+          simulering?: boolean;
+        };
+
+        try {
+          body = (await request.json()) as {
+            fraOgMed: string;
+            tilOgMed: string;
+            simulering?: boolean;
+          };
+        } catch (error) {
+          logger.error("[mock meldekortregister]: Klarte ikke lese request body ved oppretting", {
+            personId,
+            error,
+          });
+
+          return HttpResponse.json(
+            {
+              title: "Ugyldig request",
+              status: 400,
+              detail: "Klarte ikke lese request body.",
+              correlationId: "invalid-request-body-error",
+              errorType: "BAD_REQUEST",
+            },
+            { status: 400 },
+          );
+        }
+
+        const person = db.hentPerson(personId);
+        if (!person) {
+          logger.error(
+            `[mock meldekortregister]: Fant ikke person ${personId} ved oppretting av meldekort`,
+          );
+          return HttpResponse.json(
+            {
+              title: "Person ikke funnet",
+              status: 404,
+              detail: `Fant ikke person med ID ${personId}`,
+              correlationId: "person-not-found-error",
+              errorType: "NOT_FOUND",
+            },
+            { status: 404 },
+          );
+        }
+
+        if (body.fraOgMed > body.tilOgMed) {
+          return HttpResponse.json(
+            {
+              title: "Ugyldig datointervall",
+              status: 422,
+              detail: "Fra-dato må være før eller lik til-dato.",
+            },
+            { status: 422 },
+          );
+        }
+
+        logger.info(
+          `[mock meldekortregister]: Opprett meldekort for person ${personId} (${body.fraOgMed} til ${body.tilOgMed})`,
+        );
+
+        const perioder: IPeriode[] = [];
+        let periode = lagPeriodeDatoFor(new Date(body.fraOgMed));
+
+        while (periode.fraOgMed <= body.tilOgMed) {
+          perioder.push(periode);
+          periode = lagPeriodeDatoFor(addDays(new Date(periode.tilOgMed), 1));
+        }
+
+        if (!body.simulering) {
+          for (const nyPeriode of perioder) {
+            db.opprettPeriode(
+              lagRapporteringsperiode(
+                {
+                  periode: nyPeriode,
+                  opprettetAv: OPPRETTET_AV.Dagpenger,
+                },
+                person,
+              ),
+            );
+          }
+        }
+
+        return HttpResponse.json({ perioder });
+      },
+    ),
+
     http.get(
       `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId`,
       async ({ cookies, params, request }) => {

@@ -1,4 +1,5 @@
 import {
+  Alert,
   BodyShort,
   Button,
   DatePicker,
@@ -7,10 +8,20 @@ import {
   useRangeDatepicker,
   VStack,
 } from "@navikt/ds-react";
-import { useRouteLoaderData } from "react-router";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import { useFetcher, useRouteLoaderData } from "react-router";
 
 import { sanityTekst } from "~/sanity/utils";
+import { getTodayIsoDate } from "~/utils/dato.utils";
+import { addDemoParamsToURL } from "~/utils/demo-params.utils";
 
+import {
+  buildOpprettMeldekortFormData,
+  type IOpprettMeldekortPayload,
+  type IOpprettMeldekortResponse,
+  toOpprettMeldekortErrorMessage,
+} from "./opprettMeldekortModal.helpers";
 import styles from "./opprettMeldekortModal.module.css";
 
 interface OpprettMeldekortModalProps {
@@ -18,6 +29,7 @@ interface OpprettMeldekortModalProps {
   onClose: () => void;
   onBekreft?: () => void;
   brukerNavn?: string;
+  personId?: string;
 }
 
 export function OpprettMeldekortModal({
@@ -25,7 +37,9 @@ export function OpprettMeldekortModal({
   onClose,
   onBekreft,
   brukerNavn,
+  personId,
 }: OpprettMeldekortModalProps) {
+  // Hent tekster fra Sanity med fallback
   let rootData;
   try {
     rootData = useRouteLoaderData("root");
@@ -34,28 +48,83 @@ export function OpprettMeldekortModal({
   }
 
   const tekster = rootData?.sanityData?.opprettMeldekortModal;
+  const [actionError, setActionError] = useState<string | undefined>();
+  const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
+  const fetcher = useFetcher<IOpprettMeldekortResponse>();
 
-  const { datepickerProps, fromInputProps, toInputProps, reset } = useRangeDatepicker({
-    fromDate: undefined,
-    toDate: undefined,
-  });
+  const { datepickerProps, fromInputProps, toInputProps, reset, selectedRange } =
+    useRangeDatepicker({
+      fromDate: undefined,
+      toDate: new Date(),
+    });
+
+  function resetFormState() {
+    setActionError(undefined);
+    setHasPendingSubmission(false);
+    reset();
+  }
+
+  useEffect(() => {
+    if (!hasPendingSubmission || fetcher.state !== "idle" || !fetcher.data) {
+      return;
+    }
+
+    setHasPendingSubmission(false);
+
+    if (fetcher.data.success) {
+      onBekreft?.();
+      resetFormState();
+      onClose();
+      return;
+    }
+
+    setActionError(toOpprettMeldekortErrorMessage(fetcher.data));
+  }, [hasPendingSubmission, fetcher.state, fetcher.data, onBekreft, onClose]);
 
   function handleBekreft() {
-    if (onBekreft) {
-      onBekreft();
+    if (!selectedRange?.from || !selectedRange.to) {
+      setActionError("Velg fra- og til-dato.");
+      return;
     }
-    handleClose();
+
+    if (!personId) {
+      setActionError("Mangler personId.");
+      return;
+    }
+
+    setActionError(undefined);
+    const fraOgMed = format(selectedRange.from, "yyyy-MM-dd");
+    const tilOgMed = format(selectedRange.to, "yyyy-MM-dd");
+    const today = getTodayIsoDate();
+
+    if (fraOgMed > today || tilOgMed > today) {
+      setActionError("Fra-dato og til-dato kan ikke være frem i tid.");
+      return;
+    }
+
+    const payload: IOpprettMeldekortPayload = { personId, fraOgMed, tilOgMed };
+
+    const actionUrl = new URL("/api/opprett-meldekort", window.location.origin);
+    addDemoParamsToURL(actionUrl);
+
+    setHasPendingSubmission(true);
+    fetcher.submit(buildOpprettMeldekortFormData(payload), {
+      method: "post",
+      action: actionUrl.pathname + actionUrl.search,
+    });
   }
 
   function handleClose() {
-    reset();
+    resetFormState();
     onClose();
   }
 
-  const tittelMedNavn = brukerNavn
-    ? sanityTekst(tekster?.tittel, "opprettMeldekortModal.tittel").replace("{{navn}}", brukerNavn)
-    : sanityTekst(tekster?.tittel, "opprettMeldekortModal.tittel");
-
+  const tittel = sanityTekst(tekster?.tittel, "opprettMeldekortModal.tittel");
+  const tittelMedNavn = brukerNavn ? tittel.replace("{{navn}}", brukerNavn) : tittel;
+  const forklaringstekst = sanityTekst(
+    tekster?.forklaringstekst,
+    "opprettMeldekortModal.forklaringstekst",
+  );
   return (
     <Modal open={open} onClose={handleClose} aria-label={tittelMedNavn} size="medium">
       <Modal.Header>
@@ -85,9 +154,8 @@ export function OpprettMeldekortModal({
               />
             </VStack>
           </DatePicker>
-          <BodyShort>
-            {sanityTekst(tekster?.forklaringstekst, "opprettMeldekortModal.forklaringstekst")}
-          </BodyShort>
+          {actionError && <Alert variant="error">{actionError}</Alert>}
+          <BodyShort>{forklaringstekst}</BodyShort>
           <InfoCard data-color="info" size="small">
             <InfoCard.Header>
               <InfoCard.Title>
@@ -95,7 +163,9 @@ export function OpprettMeldekortModal({
               </InfoCard.Title>
             </InfoCard.Header>
             <InfoCard.Content>
-              {sanityTekst(tekster?.infoBoks?.tekst, "opprettMeldekortModal.infoBoks.tekst")}
+              <BodyShort>
+                {sanityTekst(tekster?.infoBoks?.tekst, "opprettMeldekortModal.infoBoks.tekst")}
+              </BodyShort>
             </InfoCard.Content>
           </InfoCard>
           <InfoCard data-color="danger" size="small">
@@ -114,10 +184,20 @@ export function OpprettMeldekortModal({
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={handleBekreft} size="small">
+        <Button
+          variant="primary"
+          onClick={handleBekreft}
+          size="small"
+          loading={hasPendingSubmission && fetcher.state !== "idle"}
+        >
           {sanityTekst(tekster?.submitKnapp, "opprettMeldekortModal.submitKnapp")}
         </Button>
-        <Button variant="secondary" onClick={handleClose} size="small">
+        <Button
+          variant="secondary"
+          onClick={handleClose}
+          size="small"
+          disabled={hasPendingSubmission && fetcher.state !== "idle"}
+        >
           {sanityTekst(tekster?.avbrytKnapp, "opprettMeldekortModal.avbrytKnapp")}
         </Button>
       </Modal.Footer>

@@ -15,7 +15,7 @@ unleash:
   environment: development
 
 runtime_environment: "demo"
-sanity_datasett: "development"
+sanity_datasett: "production"
 
 azure:
   tenant: trygdeetaten.no

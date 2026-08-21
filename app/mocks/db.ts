@@ -27,6 +27,10 @@ function hentRapporteringsperiodeMedId(db: Database, id: string) {
   return db.rapporteringsperioder.findFirst((q) => q.where({ id: id })) as IRapporteringsperiode;
 }
 
+function opprettPeriode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
+  return db.rapporteringsperioder.create(rapporteringsperiode);
+}
+
 function korrigerPeriode(db: Database, rapporteringsperiode: IRapporteringsperiode) {
   const id = uuidv7();
 
@@ -137,6 +141,8 @@ export function withDb(db: Database) {
     hentSaksbehandler: (saksbehandlerId: string) => hentSaksbehandler(db, saksbehandlerId),
     korrigerPeriode: (rapporteringsperiode: IRapporteringsperiode) =>
       korrigerPeriode(db, rapporteringsperiode),
+    opprettPeriode: (rapporteringsperiode: IRapporteringsperiode) =>
+      opprettPeriode(db, rapporteringsperiode),
     oppdaterPeriode: (periodeId: string, oppdateringer: IRapporteringsperiode) =>
       oppdaterPeriode(db, periodeId, oppdateringer),
     periodeKanIkkeLengerSendes: (periodeId: string) => periodeKanIkkeLengerSendes(db, periodeId),

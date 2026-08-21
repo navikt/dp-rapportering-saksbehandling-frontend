@@ -11,10 +11,9 @@ interface EnvContextType {
 const EnvContext = createContext<EnvContextType | null>(null);
 
 export function EnvProvider({ children, env }: { children: React.ReactNode; env: Partial<IEnv> }) {
-  // Sett klient-env cache ved mount og når env endres
+  setClientEnv(env);
+
   useEffect(() => {
-    setClientEnv(env);
-    // Initialiser Faro etter at env er tilgjengelig
     initFaro();
   }, [env]);
 
