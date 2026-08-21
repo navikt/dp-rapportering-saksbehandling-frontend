@@ -1,3 +1,5 @@
+import { getEnv } from "~/utils/env.utils";
+
 /**
  * Sjekker om Sanity-data mangler eller er ufullstendig.
  * Returnerer true hvis objektet er null/undefined eller hvis noen required felter mangler.
@@ -22,7 +24,7 @@ export function sanityDataMangler<T extends Record<string, unknown>>(
 }
 
 function isDemoRuntime(): boolean {
-  return typeof window !== "undefined" && window.env?.RUNTIME_ENVIRONMENT === "demo";
+  return getEnv("RUNTIME_ENVIRONMENT") === "demo";
 }
 
 function skalViseManglerSanityTekst(): boolean {

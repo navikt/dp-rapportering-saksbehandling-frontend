@@ -1,12 +1,15 @@
+import { addDays } from "date-fns";
 import { http, HttpResponse } from "msw";
 
 import { logger } from "~/models/logger.server";
+import { OPPRETTET_AV } from "~/utils/constants";
 import { getDemoAction, getDemoStatus } from "~/utils/demo-params.utils";
 import { getEnv } from "~/utils/env.utils";
-import type { IRapporteringsperiode } from "~/utils/types";
+import type { IPeriode, IRapporteringsperiode } from "~/utils/types";
 
 import type { withDb } from "./db";
 import { getDatabase } from "./db.utils";
+import { lagPeriodeDatoFor, lagRapporteringsperiode } from "./mock.utils";
 
 export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
   return [
@@ -77,14 +80,29 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           `[mock meldekortregister]: Opprett meldekort for person ${personId} (${body.fraOgMed} til ${body.tilOgMed})`,
         );
 
-        return HttpResponse.json({
-          perioder: [
-            {
-              fraOgMed: body.fraOgMed,
-              tilOgMed: body.tilOgMed,
-            },
-          ],
-        });
+        const perioder: IPeriode[] = [];
+        let periode = lagPeriodeDatoFor(new Date(body.fraOgMed));
+
+        while (periode.fraOgMed <= body.tilOgMed) {
+          perioder.push(periode);
+          periode = lagPeriodeDatoFor(addDays(new Date(periode.tilOgMed), 1));
+        }
+
+        if (!body.simulering) {
+          for (const nyPeriode of perioder) {
+            db.opprettPeriode(
+              lagRapporteringsperiode(
+                {
+                  periode: nyPeriode,
+                  opprettetAv: OPPRETTET_AV.Dagpenger,
+                },
+                person,
+              ),
+            );
+          }
+        }
+
+        return HttpResponse.json({ perioder });
       },
     ),
 

@@ -1,4 +1,4 @@
-import { getISOWeek } from "date-fns";
+import { format, getISOWeek } from "date-fns";
 import { parse, serialize } from "tinyduration";
 
 import type { IPeriode, IRapporteringsperiode } from "./types";
@@ -194,7 +194,7 @@ export function konverterFraISO8601Varighet(varighet?: string | null): number | 
 }
 
 export function getTodayIsoDate(): string {
-  return new Date().toISOString().slice(0, 10);
+  return format(new Date(), "yyyy-MM-dd");
 }
 
 /**

@@ -50,4 +50,4 @@ const isDemo = getEnv("RUNTIME_ENVIRONMENT") === "demo";
 
 export const usesMsw = getEnv("USE_MSW") === "true" || isLocalhost || isDemo;
 
-export const isLocalOrDemo = isLocalhost || isDemo;
+export const isLocalOrDemo = usesMsw;
