@@ -81,7 +81,7 @@
   },
   "engines": {
     "node": ">=25",
-    "pnpm": ">=10"
+    "pnpm": ">=11"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
