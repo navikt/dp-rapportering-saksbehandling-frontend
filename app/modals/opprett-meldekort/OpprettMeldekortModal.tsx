@@ -14,6 +14,7 @@ import { useFetcher, useRouteLoaderData } from "react-router";
 
 import { sanityTekst } from "~/sanity/utils";
 import { getTodayIsoDate } from "~/utils/dato.utils";
+import { addDemoParamsToURL } from "~/utils/demo-params.utils";
 
 import {
   buildOpprettMeldekortFormData,
@@ -103,10 +104,13 @@ export function OpprettMeldekortModal({
 
     const payload: IOpprettMeldekortPayload = { personId, fraOgMed, tilOgMed };
 
+    const actionUrl = new URL("/api/opprett-meldekort", window.location.origin);
+    addDemoParamsToURL(actionUrl);
+
     setHasPendingSubmission(true);
     fetcher.submit(buildOpprettMeldekortFormData(payload), {
       method: "post",
-      action: "/api/opprett-meldekort",
+      action: actionUrl.pathname + actionUrl.search,
     });
   }
 

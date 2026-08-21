@@ -16,7 +16,7 @@ unleash:
   environment: production
 
 runtime_environment: "production"
-sanity_datasett: "development"
+sanity_datasett: "production"
 
 azure:
   tenant: nav.no

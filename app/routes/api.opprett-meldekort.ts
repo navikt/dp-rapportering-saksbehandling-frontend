@@ -28,7 +28,16 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     const formData = await request.formData();
-    const input = requestSchema.parse(Object.fromEntries(formData));
+    const parsed = requestSchema.safeParse(Object.fromEntries(formData));
+
+    if (!parsed.success) {
+      return Response.json(
+        { error: "Ugyldig forespørsel.", detail: parsed.error.issues[0]?.message, status: 422 },
+        { status: 422 },
+      );
+    }
+
+    const input = parsed.data;
 
     logger.info("[api.opprett-meldekort] Mottok opprett-foresporsel", {
       personId: input.personId,
