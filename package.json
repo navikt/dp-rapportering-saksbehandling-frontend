@@ -28,7 +28,7 @@
     "@react-router/fs-routes": "^8.3.0",
     "@react-router/node": "^8.3.0",
     "@react-router/serve": "^8.3.0",
-    "@sanity/client": "^7.26.2",
+    "@sanity/client": "^8.2.0",
     "classnames": "^2.5.1",
     "date-fns": "^4.4.0",
     "groq": "^6.9.2",
@@ -56,7 +56,7 @@
     "@testing-library/user-event": "^14.6.4",
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/eslint-plugin-jsx-a11y": "^6.10.1",
-    "@types/node": "^25.9.5",
+    "@types/node": "^26.0.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "cross-env": "^10.1.0",
@@ -70,7 +70,7 @@
     "globals": "^17.11.0",
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.0",
     "lint-staged": "^17.3.0",
     "playwright": "^1.62.1",
     "prettier": "3.9.6",
@@ -80,7 +80,7 @@
     "vitest": "^4.1.10"
   },
   "engines": {
-    "node": ">=26",
+    "node": ">=24",
     "pnpm": ">=11"
   },
   "lint-staged": {

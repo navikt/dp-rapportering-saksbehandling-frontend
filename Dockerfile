@@ -1,4 +1,4 @@
-FROM node:26-alpine AS node
+FROM node:26-alpine@sha256:aadf416b2cdce311a8811ba3f0608a61b77dbf997500e2eafe781b51f6a0b019 AS node
 RUN npm install -g corepack@latest --force && \
     corepack enable && \
     corepack prepare pnpm@11.21.0 --activate
