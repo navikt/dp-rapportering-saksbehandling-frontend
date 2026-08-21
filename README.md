@@ -24,13 +24,13 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
 - **Mocking**: MSW (Mock Service Worker) for utvikling
 - **Testing**: Vitest + Testing Library (enhetstester) og Playwright (e2e-tester)
 - **Deployment**: NAIS på Google Cloud Platform
-- **Node.js**: Versjon 25+ (se `.nvmrc`)
+- **Node.js**: Versjon 26+ (se `.nvmrc`)
 
 ## Kom i gang
 
 ### Forutsetninger
 
-- Node.js v25+ (sjekk `.nvmrc` for eksakt versjon)
+- Node.js v26+ (sjekk `.nvmrc` for eksakt versjon)
 - pnpm
 - VS Code med Prettier-plugin anbefales
 
