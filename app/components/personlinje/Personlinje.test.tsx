@@ -38,7 +38,10 @@ const personlinjeData: IMeldekortPersonlinje = {
   genderLabel: "Kjønn:",
   citizenshipLabel: "Statsborgerskap:",
   historyButton: "Historikk",
-  createReportCardButton: "Opprett meldekort",
+  createReportCardButton: {
+    label: "Opprett meldekort",
+    description: "Det kan ikke opprettes meldekort manuelt for brukere i Arena",
+  },
 };
 
 describe("Personlinje", () => {
@@ -194,6 +197,37 @@ describe("Personlinje", () => {
       expect(
         screen.queryByRole("dialog", { name: "[Mangler Sanity: opprettMeldekortModal.tittel]" }),
       ).not.toBeInTheDocument();
+    });
+
+    it("skal deaktivere opprett meldekort knapp for brukere i Arena", () => {
+      renderWithProviders(
+        <Personlinje
+          person={{ ...mockPerson, ansvarligSystem: "ARENA" }}
+          personlinjeData={personlinjeData}
+          visOpprettMeldekort
+        />,
+      );
+
+      screen.getAllByRole("button", { name: "Opprett meldekort" }).forEach((knapp) => {
+        expect(knapp).toBeDisabled();
+      });
+    });
+
+    it("skal vise forklaring når knappen er deaktivert for Arena", async () => {
+      const user = userEvent.setup();
+      renderWithProviders(
+        <Personlinje
+          person={{ ...mockPerson, ansvarligSystem: "ARENA" }}
+          personlinjeData={personlinjeData}
+          visOpprettMeldekort
+        />,
+      );
+
+      await user.click(screen.getAllByRole("button", { name: "Mer informasjon" })[0]);
+
+      expect(
+        await screen.findAllByText("Det kan ikke opprettes meldekort manuelt for brukere i Arena"),
+      ).not.toHaveLength(0);
     });
   });
 
