@@ -2,7 +2,7 @@
   "name": "dp-rapportering-saksbehandling-frontend",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.1.2",
+  "packageManager": "pnpm@11.21.0",
   "scripts": {
     "build": "react-router build",
     "dev": "cross-env react-router dev",
@@ -81,7 +81,7 @@
   },
   "engines": {
     "node": ">=25",
-    "pnpm": ">=10"
+    "pnpm": ">=11"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
