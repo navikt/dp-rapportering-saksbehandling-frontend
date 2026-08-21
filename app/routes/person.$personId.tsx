@@ -131,7 +131,7 @@ export default function Rapportering() {
   const { personId, person, perioder, arbeidssokerperioder, showDemoTools, visOpprettMeldekort } =
     useLoaderData<typeof loader>();
   const rootData = useRouteLoaderData("root");
-  const personlinjeData = rootData?.sanity?.personlinje;
+  const personlinjeData = rootData?.sanityData?.personlinje;
 
   return (
     <>
@@ -161,7 +161,7 @@ export default function Rapportering() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   const rootData = useRouteLoaderData("root");
-  const personlinjeData = rootData?.sanity?.personlinje;
+  const personlinjeData = rootData?.sanityData?.personlinje;
 
   let title: string = "Det har skjedd en feil";
   let description: string = "Vi beklager, men noe gikk galt.";

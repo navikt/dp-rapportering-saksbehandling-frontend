@@ -25,6 +25,7 @@ import { hentSaksbehandler } from "~/models/saksbehandler.server";
 import { sanityClient } from "~/sanity/client";
 import { fyllUtQuery } from "~/sanity/sider/fyll-ut/queries";
 import type { IMeldekortFyllUt } from "~/sanity/sider/fyll-ut/types";
+import { sanityTekst } from "~/sanity/utils";
 import styles from "~/styles/route-styles/fyllUt.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import {
@@ -36,7 +37,6 @@ import {
   ROLLE,
 } from "~/utils/constants";
 import { DatoFormat, formatterDato, ukenummer } from "~/utils/dato.utils";
-import { deepMerge } from "~/utils/deep-merge.utils";
 import { addDemoParamsToURL, buildURLWithDemoParams } from "~/utils/demo-params.utils";
 import {
   type IKorrigertDag,
@@ -46,64 +46,6 @@ import {
 import type { ISendInnMeldekort } from "~/utils/types";
 
 import type { Route } from "./+types/person.$personId.periode.$periodeId.fyll-ut";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER: IMeldekortFyllUt = {
-  overskrift: "Fyll ut meldekort",
-  underoverskrift: "Uke {{uker}} | {{periode}}",
-  infovarsler: {
-    arenaVarsel: "Dette meldekortet er opprettet i Arena",
-    etterregistrertVarsel: "Dette meldekortet er etterregistrert",
-  },
-  utfyllingsskjema: {
-    datovelgerLabel: "Sett meldedato",
-    arbeidssoekerSpoersmaal: {
-      tittel: "Registrert som arbeidssøker de neste 14 dagene?",
-      ja: "Ja",
-      nei: "Nei",
-    },
-    begrunnelseLabel: "Begrunnelse",
-  },
-  feilmeldinger: {
-    datovelgerFeil: "Meldedato må fylles ut",
-    arbeidssoekerFeil: "Du må svare på om du er registrert som arbeidssøker",
-    begrunnelseFeil: "Begrunnelse må fylles ut",
-  },
-  knapper: {
-    avbryt: "Avbryt utfylling",
-    sendInn: "Send inn meldekort",
-  },
-};
-
-interface BekreftModalTekster {
-  avbryt: {
-    overskrift: string;
-    innhold: string;
-    bekreftKnapp: string;
-    avbrytKnapp: string;
-  };
-  fullfoer: {
-    overskrift: string;
-    innhold: string;
-    bekreftKnapp: string;
-    avbrytKnapp: string;
-  };
-}
-
-const DEFAULT_BEKREFT_MODAL: BekreftModalTekster = {
-  avbryt: {
-    overskrift: "Vil du avbryte utfyllingen?",
-    innhold: "Hvis du avbryter, vil ikke det du har fylt ut så langt lagres",
-    bekreftKnapp: "Ja, avbryt",
-    avbrytKnapp: "Nei, fortsett",
-  },
-  fullfoer: {
-    overskrift: "Vil du fullføre utfyllingen?",
-    innhold: 'Ved å trykke "Ja" vil utfyllingen sendes inn.',
-    bekreftKnapp: "Ja, send inn",
-    avbrytKnapp: "Nei, avbryt",
-  },
-};
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
@@ -126,7 +68,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
         metric: "sanity_fetch_failed",
       },
     );
-    // Hvis fetch feiler, vil build-time data brukes fra mergeWithBuildTimeData
   }
 
   return { periode, saksbehandler, personId, variant, fyllUtData };
@@ -144,12 +85,8 @@ export default function FyllUtPeriode() {
   const erFraArena = periode.opprettetAv === OPPRETTET_AV.Arena;
   const erEtterregistrert = periode.type === MELDEKORT_TYPE.ETTERREGISTRERT;
 
-  // Bruk Sanity-data hvis tilgjengelig, ellers bruk defaults
-  const tekster = deepMerge(DEFAULT_TEKSTER, fyllUtData);
-  const bekreftModalTekster = deepMerge(DEFAULT_BEKREFT_MODAL, {
-    avbryt: rootData?.sanityData?.bekreftModal?.avbrytUtfylling,
-    fullfoer: rootData?.sanityData?.bekreftModal?.fullfoerUtfylling,
-  });
+  const tekster = fyllUtData;
+  const bekreftModalTekster = rootData?.sanityData?.bekreftModal;
 
   const [dager, setDager] = useState<IKorrigertDag[]>(
     periode.dager.map(konverterTimerFraISO8601Varighet),
@@ -169,17 +106,23 @@ export default function FyllUtPeriode() {
       if (fetcher.data.error) {
         // Vis error toast med detaljert informasjon
         const title =
-          fetcher.data.title || varslerData?.feil.submissionFailedTitle || "Innsending feilet";
+          fetcher.data.title ??
+          sanityTekst(
+            varslerData?.feil.submissionFailedTitle,
+            "varsler.feil.submissionFailedTitle",
+          );
         let message = fetcher.data.detail;
         if (fetcher.data.correlationId) {
-          const errorText = varslerData?.feil.errorText || "Feil-ID: {{id}}";
+          const errorText = sanityTekst(varslerData?.feil.errorText, "varsler.feil.errorText");
           const errorMessage = errorText.replace("{{id}}", fetcher.data.correlationId);
           message = message ? `${message}\n\n${errorMessage}` : errorMessage;
         }
         showError(title, message);
       } else if (fetcher.data.success) {
         // Vis toast først, deretter naviger
-        showSuccess(varslerData?.suksess.submittedSuccess || "Meldekortet ble sendt inn");
+        showSuccess(
+          sanityTekst(varslerData?.suksess.submittedSuccess, "varsler.suksess.submittedSuccess"),
+        );
         setTimeout(() => {
           if (isMountedRef.current) {
             navigate(fetcher.data.redirectUrl);
@@ -245,8 +188,9 @@ export default function FyllUtPeriode() {
   const formattertTilOgMed = formatterDato({ dato: tilOgMed, format: DatoFormat.Kort });
 
   // Generer underoverskrift med template variables
-  const underoverskriftTekst = tekster.underoverskrift
+  const underoverskriftTekst = sanityTekst(tekster?.underoverskrift, "fyllUt.underoverskrift")
     .replace("{{uker}}", String(ukenummer(periode)))
+    .replace("{{uke}}", String(ukenummer(periode)))
     .replace("{{periode}}", `${formattertFraOgMed} - ${formattertTilOgMed}`);
 
   const skjemaClass = styles.skjema;
@@ -255,36 +199,45 @@ export default function FyllUtPeriode() {
     <section aria-labelledby="fyll-ut-heading" className={styles.fyllUtContainer}>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {fetcher.state === "submitting" &&
-          (varslerData?.skjermleserStatus.senderInn || "Sender inn meldekort...")}
+          sanityTekst(
+            varslerData?.skjermleserStatus.senderInn,
+            "varsler.skjermleserStatus.senderInn",
+          )}
         {fetcher.state === "loading" &&
-          (varslerData?.skjermleserStatus.behandler || "Behandler meldekort...")}
+          sanityTekst(
+            varslerData?.skjermleserStatus.behandler,
+            "varsler.skjermleserStatus.behandler",
+          )}
         {fetcher.state === "idle" &&
           fetcher.data &&
           fetcher.data.error &&
-          (varslerData?.skjermleserStatus.feilet || "Innsending feilet")}
+          sanityTekst(varslerData?.skjermleserStatus.feilet, "varsler.skjermleserStatus.feilet")}
         {fetcher.state === "idle" &&
           fetcher.data &&
           !fetcher.data.error &&
-          "Meldekort sendt inn. Går tilbake til periodeoversikten..."}
+          sanityTekst(varslerData?.skjermleserStatus.suksess, "varsler.skjermleserStatus.suksess")}
       </div>
 
       <div className={skjemaClass}>
         <div className={styles.title}>
           <Heading level="1" size="medium" id="fyll-ut-heading">
-            {tekster.overskrift}
+            {sanityTekst(tekster?.overskrift, "fyllUt.overskrift")}
           </Heading>
           <BodyLong size="small">{underoverskriftTekst}</BodyLong>
         </div>
 
         {erFraArena && (
           <Alert variant="info" size="small">
-            {tekster.infovarsler.arenaVarsel}
+            {sanityTekst(tekster?.infovarsler?.arenaVarsel, "fyllUt.infovarsler.arenaVarsel")}
           </Alert>
         )}
 
         {erEtterregistrert && (
           <Alert variant="info" size="small">
-            {tekster.infovarsler.etterregistrertVarsel}
+            {sanityTekst(
+              tekster?.infovarsler?.etterregistrertVarsel,
+              "fyllUt.infovarsler.etterregistrertVarsel",
+            )}
           </Alert>
         )}
 
@@ -310,13 +263,19 @@ export default function FyllUtPeriode() {
                 <DatePicker.Input
                   {...skjema.datepicker.inputProps}
                   ref={skjema.refs.meldedatoRef}
-                  label={tekster.utfyllingsskjema.datovelgerLabel}
+                  label={sanityTekst(
+                    tekster?.utfyllingsskjema?.datovelgerLabel,
+                    "fyllUt.utfyllingsskjema.datovelgerLabel",
+                  )}
                   placeholder="dd.mm.åååå"
                   size="small"
                   onBlur={skjema.handlers.handleMeldedatoBlur}
                   error={
                     skjema.state.visValideringsfeil.meldedato
-                      ? tekster.feilmeldinger.datovelgerFeil
+                      ? sanityTekst(
+                          tekster?.feilmeldinger?.datovelgerFeil,
+                          "fyllUt.feilmeldinger.datovelgerFeil",
+                        )
                       : undefined
                   }
                 />
@@ -325,20 +284,32 @@ export default function FyllUtPeriode() {
                 <RadioGroup
                   readOnly={erEtterregistrert}
                   size="small"
-                  legend={tekster.utfyllingsskjema.arbeidssoekerSpoersmaal.tittel}
+                  legend={sanityTekst(
+                    tekster?.utfyllingsskjema?.arbeidssoekerSpoersmaal?.tittel,
+                    "fyllUt.utfyllingsskjema.arbeidssoekerSpoersmaal.tittel",
+                  )}
                   error={
                     skjema.state.visValideringsfeil.arbeidssoker
-                      ? tekster.feilmeldinger.arbeidssoekerFeil
+                      ? sanityTekst(
+                          tekster?.feilmeldinger?.arbeidssoekerFeil,
+                          "fyllUt.feilmeldinger.arbeidssoekerFeil",
+                        )
                       : undefined
                   }
                   value={skjema.state.registrertArbeidssoker?.toString() || ""}
                   onChange={(val) => skjema.handlers.handleArbeidssokerChange(val === "true")}
                 >
                   <Radio ref={skjema.refs.arbeidssokerRef} value="true">
-                    {tekster.utfyllingsskjema.arbeidssoekerSpoersmaal.ja}
+                    {sanityTekst(
+                      tekster?.utfyllingsskjema?.arbeidssoekerSpoersmaal?.ja,
+                      "fyllUt.utfyllingsskjema.arbeidssoekerSpoersmaal.ja",
+                    )}
                   </Radio>
                   <Radio value="false">
-                    {tekster.utfyllingsskjema.arbeidssoekerSpoersmaal.nei}
+                    {sanityTekst(
+                      tekster?.utfyllingsskjema?.arbeidssoekerSpoersmaal?.nei,
+                      "fyllUt.utfyllingsskjema.arbeidssoekerSpoersmaal.nei",
+                    )}
                   </Radio>
                 </RadioGroup>
               )}
@@ -346,11 +317,17 @@ export default function FyllUtPeriode() {
                 resize
                 ref={skjema.refs.begrunnelseRef}
                 size="small"
-                label={tekster.utfyllingsskjema.begrunnelseLabel}
+                label={sanityTekst(
+                  tekster?.utfyllingsskjema?.begrunnelseLabel,
+                  "fyllUt.utfyllingsskjema.begrunnelseLabel",
+                )}
                 name="begrunnelse"
                 error={
                   skjema.state.visValideringsfeil.begrunnelse
-                    ? tekster.feilmeldinger.begrunnelseFeil
+                    ? sanityTekst(
+                        tekster?.feilmeldinger?.begrunnelseFeil,
+                        "fyllUt.feilmeldinger.begrunnelseFeil",
+                      )
                     : undefined
                 }
                 value={skjema.state.begrunnelse}
@@ -371,7 +348,7 @@ export default function FyllUtPeriode() {
               onClick={skjema.handlers.handleAvbryt}
               disabled={fetcher.state === "submitting"}
             >
-              {tekster.knapper.avbryt}
+              {sanityTekst(tekster?.knapper?.avbryt, "fyllUt.knapper.avbryt")}
             </Button>
             <Button
               type="submit"
@@ -379,7 +356,7 @@ export default function FyllUtPeriode() {
               size="small"
               loading={fetcher.state === "submitting"}
             >
-              {tekster.knapper.sendInn}
+              {sanityTekst(tekster?.knapper?.sendInn, "fyllUt.knapper.sendInn")}
             </Button>
           </div>
         </fetcher.Form>
@@ -390,23 +367,47 @@ export default function FyllUtPeriode() {
           type={skjema.state.modalType}
           tittel={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? bekreftModalTekster.avbryt.overskrift
-              : bekreftModalTekster.fullfoer.overskrift
+              ? sanityTekst(
+                  bekreftModalTekster?.avbrytUtfylling?.overskrift,
+                  "bekreftModal.avbrytUtfylling.overskrift",
+                )
+              : sanityTekst(
+                  bekreftModalTekster?.fullfoerUtfylling?.overskrift,
+                  "bekreftModal.fullfoerUtfylling.overskrift",
+                )
           }
           tekst={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? bekreftModalTekster.avbryt.innhold
-              : bekreftModalTekster.fullfoer.innhold
+              ? sanityTekst(
+                  bekreftModalTekster?.avbrytUtfylling?.innhold,
+                  "bekreftModal.avbrytUtfylling.innhold",
+                )
+              : sanityTekst(
+                  bekreftModalTekster?.fullfoerUtfylling?.innhold,
+                  "bekreftModal.fullfoerUtfylling.innhold",
+                )
           }
           bekreftTekst={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? bekreftModalTekster.avbryt.bekreftKnapp
-              : bekreftModalTekster.fullfoer.bekreftKnapp
+              ? sanityTekst(
+                  bekreftModalTekster?.avbrytUtfylling?.bekreftKnapp,
+                  "bekreftModal.avbrytUtfylling.bekreftKnapp",
+                )
+              : sanityTekst(
+                  bekreftModalTekster?.fullfoerUtfylling?.bekreftKnapp,
+                  "bekreftModal.fullfoerUtfylling.bekreftKnapp",
+                )
           }
           avbrytTekst={
             skjema.state.modalType === MODAL_ACTION_TYPE.AVBRYT
-              ? bekreftModalTekster.avbryt.avbrytKnapp
-              : bekreftModalTekster.fullfoer.avbrytKnapp
+              ? sanityTekst(
+                  bekreftModalTekster?.avbrytUtfylling?.avbrytKnapp,
+                  "bekreftModal.avbrytUtfylling.avbrytKnapp",
+                )
+              : sanityTekst(
+                  bekreftModalTekster?.fullfoerUtfylling?.avbrytKnapp,
+                  "bekreftModal.fullfoerUtfylling.avbrytKnapp",
+                )
           }
           onBekreft={skjema.handlers.handleBekreft}
         />

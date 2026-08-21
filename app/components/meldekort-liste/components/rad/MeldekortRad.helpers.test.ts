@@ -36,6 +36,15 @@ describe("MeldekortRad.helpers", () => {
     registrertArbeidssoker: null,
   };
 
+  const statuser = {
+    tilUtfylling: "Klar til utfylling",
+    innsendt: "Innsendt",
+    meldekortOpprettet: "Meldekort opprettet",
+    korrigering: "Korrigering",
+    korrigert: "Korrigert",
+    arena: "Arena",
+  };
+
   describe("HIGHLIGHT_DURATION_MS", () => {
     it("skal være definert som en konstant", () => {
       expect(HIGHLIGHT_DURATION_MS).toBe(3600);
@@ -49,7 +58,7 @@ describe("MeldekortRad.helpers", () => {
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
       };
 
-      const result = getStatusConfig(periode);
+      const result = getStatusConfig(periode, undefined, statuser);
 
       expect(result).toEqual({
         text: "Innsendt",
@@ -64,7 +73,7 @@ describe("MeldekortRad.helpers", () => {
         status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
       };
 
-      const result = getStatusConfig(periode);
+      const result = getStatusConfig(periode, undefined, statuser);
 
       expect(result).toEqual({
         text: "Klar til utfylling",
@@ -79,7 +88,7 @@ describe("MeldekortRad.helpers", () => {
         status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
       };
 
-      const result = getStatusConfig(periode);
+      const result = getStatusConfig(periode, undefined, statuser);
 
       expect(result).toEqual({
         text: "Meldekort opprettet",

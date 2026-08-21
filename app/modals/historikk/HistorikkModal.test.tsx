@@ -4,7 +4,36 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 
+const mockUseRouteLoaderData = vi.hoisted(() => vi.fn());
+
+vi.mock("react-router", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("react-router")>()),
+  useRouteLoaderData: mockUseRouteLoaderData,
+}));
+
 import { HistorikkModal, type IHendelse } from "./HistorikkModal";
+
+mockUseRouteLoaderData.mockReturnValue({
+  sanityData: {
+    historikkModal: {
+      overskrift: "Historikk",
+      prosessAriaLabel: "Meldekort for {{aar}}",
+      hendelsetyper: {
+        registrert: "Registrert som arbeidssøker",
+        avregistrert: "Avregistrert som arbeidssøker",
+      },
+      innsendt: "Innsendt: {{dato}}, kl. {{tid}}",
+      typeLabels: { elektronisk: "Elektronisk", manuell: "Manuell" },
+      tags: { forSentInnsendt: "Innsendt etter fristen", korrigert: "Korrigert" },
+      fristLabel: "Frist: {{dato}}",
+      feilmeldinger: {
+        ingenData: "Fant hverken meldekort eller arbeidssøkerstatus knyttet til denne personen",
+        ingenMeldekort: "Fant ingen meldekort knyttet til denne personen",
+        ingenStatus: "Fant ingen arbeidssøkerstatus knyttet til denne personen",
+      },
+    },
+  },
+});
 
 // Helper function to render with required providers
 function renderWithProviders(ui: React.ReactElement) {

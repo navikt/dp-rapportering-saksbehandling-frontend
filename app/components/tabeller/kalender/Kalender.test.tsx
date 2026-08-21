@@ -164,7 +164,7 @@ describe("Kalender", () => {
     it("skal ha caption for skjermlesere", () => {
       render(<Kalender periode={mockPeriode} />);
 
-      const caption = screen.getByText("Oversikt over rapporterte dager for uke 1 og 2");
+      const caption = screen.getByText("[Mangler Sanity: kalender.tableCaption]");
       expect(caption).toBeInTheDocument();
       expect(caption).toHaveClass("sr-only");
     });

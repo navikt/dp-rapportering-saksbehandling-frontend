@@ -60,7 +60,7 @@ import { fetchGlobalSanityData } from "~/sanity/fetchGlobalData";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const sanityData = await fetchGlobalSanityData();
-  return { sanity: sanityData };
+  return { sanityData };
 }
 ```
 
@@ -68,15 +68,12 @@ Komponenter kan bruke `useGlobalSanityData()` hook for å få tilgang til disse 
 
 ```typescript
 import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
-import { deepMerge } from "~/utils/deep-merge.utils";
+import { sanityTekst } from "~/sanity/utils";
 
 function MinKomponent() {
   const sanityData = useGlobalSanityData();
 
-  // Merge Sanity-data med hardkodede defaults
-  const tekster = deepMerge(DEFAULT_TEKSTER, sanityData?.header);
-
-  return <div>{tekster.tittel}</div>;
+  return <div>{sanityTekst(sanityData?.header?.tittel, "header.tittel")}</div>;
 }
 ```
 

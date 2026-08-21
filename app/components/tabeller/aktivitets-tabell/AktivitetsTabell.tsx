@@ -3,8 +3,9 @@ import classNames from "classnames";
 import { uuidv7 } from "uuidv7";
 
 import { useGlobalSanityData } from "~/hooks/useGlobalSanityData";
+import { sanityTekst } from "~/sanity/utils";
 import type { ABTestVariant } from "~/utils/ab-test.utils";
-import { AKTIVITET_LABELS_LANG, AKTIVITET_TYPE } from "~/utils/constants";
+import { AKTIVITET_TYPE } from "~/utils/constants";
 import { formatterDag, hentUkedag, hentUkerFraPeriode } from "~/utils/dato.utils";
 import type { IPeriode, TAktivitetType } from "~/utils/types";
 
@@ -125,46 +126,49 @@ export function AktivitetsTabell({ dager, setKorrigerteDager, periode, variant =
 
   // Hent aktivitetstabell-tekster fra Sanity
   const aktivitetstabellData = sanityData?.aktivitetstabell;
-  const DEFAULT_TEKSTER = {
-    fieldsetLegend: "Fyll ut aktiviteter for perioden",
-    aktiviteterCaption: "Aktivitet",
-    sumCaption: "Oppsummering",
-    weekCaption: "Uke {{ukenummer}}",
-  };
-
-  const fieldsetLegend = aktivitetstabellData?.fieldsetLegend ?? DEFAULT_TEKSTER.fieldsetLegend;
+  const fieldsetLegend = sanityTekst(
+    aktivitetstabellData?.fieldsetLegend,
+    "aktivitetstabell.fieldsetLegend",
+  );
 
   // Funksjon for å pluralisere enhet basert på Sanity-data
   const pluraliser = (antall: number, type: TAktivitetType): string => {
     if (type === AKTIVITET_TYPE.Arbeid) {
       // For arbeid bruker vi alltid "timer" (plural)
-      return aktivitetstabellData?.enheter.hours.plural ?? "timer";
+      return sanityTekst(
+        aktivitetstabellData?.enheter?.hours?.plural,
+        "aktivitetstabell.enheter.hours.plural",
+      );
     }
     // For andre aktiviteter bruker vi dag/dager basert på antall
     if (antall === 1) {
-      return aktivitetstabellData?.enheter.days.singular ?? "dag";
+      return sanityTekst(
+        aktivitetstabellData?.enheter?.days?.singular,
+        "aktivitetstabell.enheter.days.singular",
+      );
     }
-    return aktivitetstabellData?.enheter.days.plural ?? "dager";
+    return sanityTekst(
+      aktivitetstabellData?.enheter?.days?.plural,
+      "aktivitetstabell.enheter.days.plural",
+    );
   };
 
-  // Bruk Sanity-data (lang versjon) hvis tilgjengelig, ellers fallback til constants
   const aktiviteter = [
     {
       type: AKTIVITET_TYPE.Arbeid,
-      label: sanityData?.aktiviteter?.jobb.lang ?? AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Arbeid],
+      label: sanityTekst(sanityData?.aktiviteter?.jobb?.lang, "aktiviteter.jobb.lang"),
     },
     {
       type: AKTIVITET_TYPE.Syk,
-      label: sanityData?.aktiviteter?.syk.lang ?? AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Syk],
+      label: sanityTekst(sanityData?.aktiviteter?.syk?.lang, "aktiviteter.syk.lang"),
     },
     {
       type: AKTIVITET_TYPE.Fravaer,
-      label: sanityData?.aktiviteter?.ferie.lang ?? AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Fravaer],
+      label: sanityTekst(sanityData?.aktiviteter?.ferie?.lang, "aktiviteter.ferie.lang"),
     },
     {
       type: AKTIVITET_TYPE.Utdanning,
-      label:
-        sanityData?.aktiviteter?.utdanning.lang ?? AKTIVITET_LABELS_LANG[AKTIVITET_TYPE.Utdanning],
+      label: sanityTekst(sanityData?.aktiviteter?.utdanning?.lang, "aktiviteter.utdanning.lang"),
     },
   ];
 

@@ -2,35 +2,10 @@ import { CheckmarkIcon, XMarkIcon } from "@navikt/aksel-icons";
 import { Accordion, Alert, BodyShort, Heading, Modal, Process, Tag } from "@navikt/ds-react";
 import { useRouteLoaderData } from "react-router";
 
-import type { IMeldekortHistorikkModal } from "~/sanity/modaler/historikk-modal/types";
+import { sanityTekst } from "~/sanity/utils";
 import { groupByYear, sortYearsDescending } from "~/utils/dato.utils";
 
 import styles from "./historikkModal.module.css";
-
-// Default tekster som fallback hvis Sanity-data ikke er tilgjengelig
-const DEFAULT_TEKSTER: IMeldekortHistorikkModal = {
-  overskrift: "Historikk",
-  prosessAriaLabel: "Meldekort for {{aar}}",
-  hendelsetyper: {
-    registrert: "Registrert som arbeidssøker",
-    avregistrert: "Avregistrert som arbeidssøker",
-  },
-  innsendt: "Innsendt: {{dato}}, kl. {{tid}}",
-  typeLabels: {
-    elektronisk: "Elektronisk",
-    manuell: "Manuell",
-  },
-  tags: {
-    forSentInnsendt: "Innsendt etter fristen",
-    korrigert: "Korrigert",
-  },
-  fristLabel: "Frist: {{dato}}",
-  feilmeldinger: {
-    ingenData: "Fant hverken meldekort eller arbeidssøkerstatus knyttet til denne personen",
-    ingenMeldekort: "Fant ingen meldekort knyttet til denne personen",
-    ingenStatus: "Fant ingen arbeidssøkerstatus knyttet til denne personen",
-  },
-};
 
 export interface IHendelse {
   dato: Date;
@@ -50,12 +25,6 @@ interface HistorikkModalProps {
   hendelser: IHendelse[];
 }
 
-// Konstanter for event-typer (for bakoverkompatibilitet med tester)
-export const EVENT_TYPES = {
-  REGISTERED: DEFAULT_TEKSTER.hendelsetyper.registrert,
-  UNREGISTERED: DEFAULT_TEKSTER.hendelsetyper.avregistrert,
-} as const;
-
 function getBullet(event: string, registrertTekst: string, avregistrertTekst: string) {
   const isRegistered = event === registrertTekst;
   const isUnregistered = event === avregistrertTekst;
@@ -72,14 +41,13 @@ function getBullet(event: string, registrertTekst: string, avregistrertTekst: st
 }
 
 export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps) {
-  // Hent tekster fra Sanity med fallback (safe for tests)
   let rootData;
   try {
     rootData = useRouteLoaderData("root");
   } catch {
     rootData = null;
   }
-  const tekster = rootData?.sanityData?.historikkModal ?? DEFAULT_TEKSTER;
+  const tekster = rootData?.sanityData?.historikkModal;
 
   const hendelserEtterAar = groupByYear(hendelser, (hendelse) => hendelse.dato);
   const sortedYears = sortYearsDescending(hendelserEtterAar);
@@ -91,10 +59,16 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
 
   const feilMelding =
     !harMeldekort && !harArbeidssokerperioder
-      ? tekster.feilmeldinger.ingenData
+      ? sanityTekst(tekster?.feilmeldinger?.ingenData, "historikkModal.feilmeldinger.ingenData")
       : !harMeldekort
-        ? tekster.feilmeldinger.ingenMeldekort
-        : tekster.feilmeldinger.ingenStatus;
+        ? sanityTekst(
+            tekster?.feilmeldinger?.ingenMeldekort,
+            "historikkModal.feilmeldinger.ingenMeldekort",
+          )
+        : sanityTekst(
+            tekster?.feilmeldinger?.ingenStatus,
+            "historikkModal.feilmeldinger.ingenStatus",
+          );
 
   return (
     <Modal
@@ -106,7 +80,7 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
     >
       <Modal.Header>
         <Heading level="1" size="small" id="historikk-heading">
-          {tekster.overskrift}
+          {sanityTekst(tekster?.overskrift, "historikkModal.overskrift")}
         </Heading>
       </Modal.Header>
       <Modal.Body>
@@ -117,19 +91,30 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
               <Accordion.Item key={year} defaultOpen={index === 0}>
                 <Accordion.Header>{year}</Accordion.Header>
                 <Accordion.Content>
-                  <Process aria-label={tekster.prosessAriaLabel.replace("{{aar}}", String(year))}>
+                  <Process
+                    aria-label={sanityTekst(
+                      tekster?.prosessAriaLabel,
+                      "historikkModal.prosessAriaLabel",
+                    ).replace("{{aar}}", String(year))}
+                  >
                     {hendelserEtterAar[year].map((hendelse, id) => {
                       const visningDatoTekst =
                         hendelse.kategori === "Meldekort"
-                          ? tekster.innsendt
+                          ? sanityTekst(tekster?.innsendt, "historikkModal.innsendt")
                               .replace("{{dato}}", hendelse.innsendtDato)
                               .replace("{{tid}}", hendelse.time)
                           : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
 
                       const bullet = getBullet(
                         hendelse.event,
-                        tekster.hendelsetyper.registrert,
-                        tekster.hendelsetyper.avregistrert,
+                        sanityTekst(
+                          tekster?.hendelsetyper?.registrert,
+                          "historikkModal.hendelsetyper.registrert",
+                        ),
+                        sanityTekst(
+                          tekster?.hendelsetyper?.avregistrert,
+                          "historikkModal.hendelsetyper.avregistrert",
+                        ),
                       );
 
                       // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
@@ -150,28 +135,40 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
                           {hendelse.type && (
                             <BodyShort size="small">
                               {hendelse.type === "Elektronisk"
-                                ? tekster.typeLabels.elektronisk
+                                ? sanityTekst(
+                                    tekster?.typeLabels?.elektronisk,
+                                    "historikkModal.typeLabels.elektronisk",
+                                  )
                                 : hendelse.type === "Manuell"
-                                  ? tekster.typeLabels.manuell
+                                  ? sanityTekst(
+                                      tekster?.typeLabels?.manuell,
+                                      "historikkModal.typeLabels.manuell",
+                                    )
                                   : hendelse.type}
                             </BodyShort>
                           )}
                           {hendelse.erSendtForSent && (
                             <>
                               <BodyShort size="small">
-                                {tekster.fristLabel.replace(
-                                  "{{dato}}",
-                                  hendelse.sisteFristForTrekk || "",
-                                )}
+                                {sanityTekst(
+                                  tekster?.fristLabel,
+                                  "historikkModal.fristLabel",
+                                ).replace("{{dato}}", hendelse.sisteFristForTrekk || "")}
                               </BodyShort>
                               <Tag data-color="danger" variant="outline" size="xsmall">
-                                {tekster.tags.forSentInnsendt}
+                                {sanityTekst(
+                                  tekster?.tags?.forSentInnsendt,
+                                  "historikkModal.tags.forSentInnsendt",
+                                )}
                               </Tag>
                             </>
                           )}
                           {hendelse.hendelseType === "Korrigert" && (
                             <Tag data-color="warning" variant="outline" size="small">
-                              {tekster.tags.korrigert}
+                              {sanityTekst(
+                                tekster?.tags?.korrigert,
+                                "historikkModal.tags.korrigert",
+                              )}
                             </Tag>
                           )}
                         </Process.Event>

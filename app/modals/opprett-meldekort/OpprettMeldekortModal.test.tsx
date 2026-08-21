@@ -5,39 +5,42 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 
+const mockUseRouteLoaderData = vi.hoisted(() => vi.fn());
+
+vi.mock("react-router", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("react-router")>()),
+  useRouteLoaderData: mockUseRouteLoaderData,
+}));
+
 import { OpprettMeldekortModal } from "./OpprettMeldekortModal";
 import type { IOpprettMeldekortResponse } from "./opprettMeldekortModal.helpers";
 
-const sanityTekster = {
-  tittel: "Opprett meldekort",
-  fraDato: {
-    label: "Fra dato",
-    helpText: "Velg startdato for perioden du vil opprette meldekort for",
+mockUseRouteLoaderData.mockReturnValue({
+  sanityData: {
+    opprettMeldekortModal: {
+      tittel: "Opprett meldekort",
+      fraDato: {
+        label: "Fra dato",
+        helpText: "Velg startdato for perioden du vil opprette meldekort for",
+      },
+      tilDato: {
+        label: "Til dato",
+        helpText: "Velg sluttdato for perioden du vil opprette meldekort for",
+      },
+      forklaringstekst: "Basert på valgt dato, vil det opprettes {{antall}} nye meldekort.",
+      submitKnapp: "Opprett",
+      avbrytKnapp: "Avbryt",
+      infoBoks: {
+        tittel: "Info om meldekortsyklus",
+        tekst:
+          "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
+      },
+      feilmelding: {
+        tittel: "Kunne ikke opprette meldekort",
+        tekst: "Noe gikk galt ved opprettelse av meldekort. Prøv igjen senere.",
+      },
+    },
   },
-  tilDato: {
-    label: "Til dato",
-    helpText: "Velg sluttdato for perioden du vil opprette meldekort for",
-  },
-  forklaringstekst: "Velg periode for meldekortet",
-  submitKnapp: "Opprett",
-  avbrytKnapp: "Avbryt",
-  infoBoks: {
-    tittel: "Info om meldekortsyklus",
-    tekst:
-      "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
-  },
-  feilmelding: {
-    tittel: "Feil",
-    tekst: "Noe gikk galt",
-  },
-};
-
-vi.mock("react-router", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("react-router")>();
-  return {
-    ...actual,
-    useRouteLoaderData: () => ({ sanityData: { opprettMeldekortModal: sanityTekster } }),
-  };
 });
 
 function renderWithProviders(

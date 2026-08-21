@@ -3,7 +3,34 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 
-import { EVENT_TYPES, HistorikkModal, type IHendelse } from "./HistorikkModal";
+const mockUseRouteLoaderData = vi.hoisted(() => vi.fn());
+
+vi.mock("react-router", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("react-router")>()),
+  useRouteLoaderData: mockUseRouteLoaderData,
+}));
+
+import { HistorikkModal, type IHendelse } from "./HistorikkModal";
+
+const historikkModalTekster = {
+  overskrift: "Historikk",
+  prosessAriaLabel: "Meldekort for {{aar}}",
+  hendelsetyper: {
+    registrert: "Registrert som arbeidssøker",
+    avregistrert: "Avregistrert som arbeidssøker",
+  },
+  innsendt: "Innsendt: {{dato}}, kl. {{tid}}",
+  typeLabels: { elektronisk: "Elektronisk", manuell: "Manuell" },
+  tags: { forSentInnsendt: "Innsendt etter fristen", korrigert: "Korrigert" },
+  fristLabel: "Frist: {{dato}}",
+  feilmeldinger: {
+    ingenData: "Ingen data",
+    ingenMeldekort: "Ingen meldekort",
+    ingenStatus: "Ingen status",
+  },
+};
+
+mockUseRouteLoaderData.mockReturnValue({ sanityData: { historikkModal: historikkModalTekster } });
 
 // Helper function to render with required providers
 function renderWithProviders(ui: React.ReactElement) {
@@ -84,7 +111,7 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         dato: new Date("2024-01-15T00:00:00"),
         innsendtDato: "15.01.2024",
         time: "--:--",
-        event: EVENT_TYPES.REGISTERED,
+        event: historikkModalTekster.hendelsetyper.registrert,
         kategori: "System",
       };
 
@@ -92,7 +119,7 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         <HistorikkModal open={true} onClose={vi.fn()} hendelser={[registrertHendelse]} />,
       );
 
-      expect(screen.getByText(EVENT_TYPES.REGISTERED)).toBeInTheDocument();
+      expect(screen.getByText(historikkModalTekster.hendelsetyper.registrert)).toBeInTheDocument();
       expect(screen.getByText("15.01.2024, kl. --:--")).toBeInTheDocument();
     });
   });
@@ -103,7 +130,7 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         dato: new Date("2024-03-15T00:00:00"),
         innsendtDato: "15.03.2024",
         time: "--:--",
-        event: EVENT_TYPES.UNREGISTERED,
+        event: historikkModalTekster.hendelsetyper.avregistrert,
         kategori: "System",
       };
 
@@ -111,7 +138,9 @@ describe("HistorikkModal - Hendelsesvisning", () => {
         <HistorikkModal open={true} onClose={vi.fn()} hendelser={[avregistrertHendelse]} />,
       );
 
-      expect(screen.getByText(EVENT_TYPES.UNREGISTERED)).toBeInTheDocument();
+      expect(
+        screen.getByText(historikkModalTekster.hendelsetyper.avregistrert),
+      ).toBeInTheDocument();
       expect(screen.getByText("15.03.2024, kl. --:--")).toBeInTheDocument();
     });
   });
