@@ -11,7 +11,6 @@ interface EnvContextType {
 const EnvContext = createContext<EnvContextType | null>(null);
 
 export function EnvProvider({ children, env }: { children: React.ReactNode; env: Partial<IEnv> }) {
-  // Må settes under render, ikke i useEffect, ellers ser første klient-render andre verdier enn SSR
   setClientEnv(env);
 
   useEffect(() => {
