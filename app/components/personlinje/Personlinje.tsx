@@ -4,13 +4,14 @@ import {
   FigureOutwardFillIcon,
   SilhouetteFillIcon,
 } from "@navikt/aksel-icons";
-import { BodyShort, Button, CopyButton } from "@navikt/ds-react";
+import { BodyShort, Button, CopyButton, HelpText } from "@navikt/ds-react";
 import classNames from "classnames";
 import { useMemo, useState } from "react";
 import { useRevalidator } from "react-router";
 
 import type { IMeldekortPersonlinje } from "~/sanity/fellesKomponenter/personlinje/types";
 import { sanityTekst } from "~/sanity/utils";
+import { ANSVARLIG_SYSTEM } from "~/utils/constants";
 import { byggFulltNavn } from "~/utils/person.utils";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
@@ -57,6 +58,35 @@ export default function Personlinje({
       ...transformPerioderToHistoryEvents(perioder),
     ].sort((a, b) => (a.dato < b.dato ? 1 : -1));
   }, [perioder, arbeidssokerperioder]);
+
+  const erArenaBruker = person.ansvarligSystem === ANSVARLIG_SYSTEM.ARENA;
+
+  function opprettMeldekortKnapp(size: "xsmall" | "small") {
+    return (
+      <div className={styles.opprettMeldekortKnapp}>
+        <Button
+          data-color="neutral"
+          variant="secondary"
+          size={size}
+          disabled={erArenaBruker}
+          onClick={() => setOpprettModalOpen(true)}
+        >
+          {sanityTekst(
+            texts?.createReportCardButton?.label,
+            "personlinje.createReportCardButton.label",
+          )}
+        </Button>
+        {erArenaBruker && (
+          <HelpText placement="left">
+            {sanityTekst(
+              texts?.createReportCardButton?.description,
+              "personlinje.createReportCardButton.description",
+            )}
+          </HelpText>
+        )}
+      </div>
+    );
+  }
 
   return (
     <section
@@ -162,18 +192,7 @@ export default function Personlinje({
                 {sanityTekst(texts?.historyButton, "personlinje.historyButton")}
               </Button>
             </div>
-            {visOpprettMeldekort && (
-              <div>
-                <Button
-                  data-color="neutral"
-                  variant="secondary"
-                  size="xsmall"
-                  onClick={() => setOpprettModalOpen(true)}
-                >
-                  {sanityTekst(texts?.createReportCardButton, "personlinje.createReportCardButton")}
-                </Button>
-              </div>
-            )}
+            {visOpprettMeldekort && <div>{opprettMeldekortKnapp("xsmall")}</div>}
           </div>
         </div>
       </div>
@@ -186,16 +205,7 @@ export default function Personlinje({
         >
           {sanityTekst(texts?.historyButton, "personlinje.historyButton")}
         </Button>
-        {visOpprettMeldekort && (
-          <Button
-            data-color="neutral"
-            variant="secondary"
-            size="small"
-            onClick={() => setOpprettModalOpen(true)}
-          >
-            {sanityTekst(texts?.createReportCardButton, "personlinje.createReportCardButton")}
-          </Button>
-        )}
+        {visOpprettMeldekort && opprettMeldekortKnapp("small")}
       </div>
       <HistorikkModal open={modalOpen} onClose={() => setModalOpen(false)} hendelser={events} />
       <OpprettMeldekortModal

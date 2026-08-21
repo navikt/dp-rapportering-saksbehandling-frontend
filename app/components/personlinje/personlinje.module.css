@@ -133,6 +133,13 @@
   }
 }
 
+.opprettMeldekortKnapp {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--ax-space-4);
+}
+
 .infoElement {
   display: flex;
   align-items: center;
