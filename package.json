@@ -2,7 +2,7 @@
   "name": "dp-rapportering-saksbehandling-frontend",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.1.2",
+  "packageManager": "pnpm@11.21.0",
   "scripts": {
     "build": "react-router build",
     "dev": "cross-env react-router dev",
@@ -24,7 +24,7 @@
     "@navikt/ds-css": "^8.16.1",
     "@navikt/ds-react": "^8.16.1",
     "@navikt/oasis": "^4.1.4",
-    "@portabletext/react": "^7.0.1",
+    "@portabletext/react": "^8.0.0",
     "@react-router/fs-routes": "^8.3.0",
     "@react-router/node": "^8.3.0",
     "@react-router/serve": "^8.3.0",
@@ -56,7 +56,7 @@
     "@testing-library/user-event": "^14.6.4",
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/eslint-plugin-jsx-a11y": "^6.10.1",
-    "@types/node": "^25.8.0",
+    "@types/node": "^25.9.5",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "cross-env": "^10.1.0",
@@ -67,7 +67,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-simple-import-sort": "^14.0.0",
-    "globals": "^17.10.0",
+    "globals": "^17.11.0",
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
     "jsdom": "^29.1.1",
@@ -80,8 +80,8 @@
     "vitest": "^4.1.10"
   },
   "engines": {
-    "node": ">=25",
-    "pnpm": ">=10"
+    "node": ">=24",
+    "pnpm": ">=11"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
