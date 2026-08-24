@@ -49,7 +49,10 @@ describe("fetchGlobalSanityData", () => {
     genderLabel: "Kjønn",
     citizenshipLabel: "Statsborgerskap",
     historyButton: "Historikk",
-    createReportCardButton: "Opprett meldekort",
+    createReportCardButton: {
+      label: "Opprett meldekort",
+      description: "Det kan ikke opprettes meldekort manuelt for brukere i Arena",
+    },
   };
 
   const mockBekreftModalData: IMeldekortBekreftModal = {

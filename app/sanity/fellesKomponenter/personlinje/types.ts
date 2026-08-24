@@ -1,3 +1,8 @@
+export interface IMeldekortPersonlinjeKnapp {
+  label: string;
+  description: string;
+}
+
 export interface IMeldekortPersonlinje {
   sectionAriaLabel: string;
   birthNumberLabel: string;
@@ -5,5 +10,5 @@ export interface IMeldekortPersonlinje {
   genderLabel: string;
   citizenshipLabel: string;
   historyButton: string;
-  createReportCardButton: string;
+  createReportCardButton: IMeldekortPersonlinjeKnapp;
 }
