@@ -6,7 +6,6 @@ import {
   InfoCard,
   Modal,
   useRangeDatepicker,
-  VStack,
 } from "@navikt/ds-react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
@@ -49,6 +48,7 @@ export function OpprettMeldekortModal({
 
   const tekster = rootData?.sanityData?.opprettMeldekortModal;
   const [actionError, setActionError] = useState<string | undefined>();
+  const [visDatoFeil, setVisDatoFeil] = useState(false);
   const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
   const fetcher = useFetcher<IOpprettMeldekortResponse>();
 
@@ -60,6 +60,7 @@ export function OpprettMeldekortModal({
 
   function resetFormState() {
     setActionError(undefined);
+    setVisDatoFeil(false);
     setHasPendingSubmission(false);
     reset();
   }
@@ -83,9 +84,12 @@ export function OpprettMeldekortModal({
 
   function handleBekreft() {
     if (!selectedRange?.from || !selectedRange.to) {
-      setActionError("Velg fra- og til-dato.");
+      setVisDatoFeil(true);
+      setActionError(undefined);
       return;
     }
+
+    setVisDatoFeil(false);
 
     if (!personId) {
       setActionError("Mangler personId.");
@@ -133,7 +137,7 @@ export function OpprettMeldekortModal({
       <Modal.Body>
         <div className={styles.content}>
           <DatePicker {...datepickerProps}>
-            <VStack gap="space-16">
+            <div className={styles.datepickers}>
               <DatePicker.Input
                 size="small"
                 {...fromInputProps}
@@ -142,6 +146,7 @@ export function OpprettMeldekortModal({
                   tekster?.fraDato?.helpText,
                   "opprettMeldekortModal.fraDato.helpText",
                 )}
+                error={visDatoFeil && !selectedRange?.from ? "Du må velge dato" : undefined}
               />
               <DatePicker.Input
                 size="small"
@@ -151,8 +156,9 @@ export function OpprettMeldekortModal({
                   tekster?.tilDato?.helpText,
                   "opprettMeldekortModal.tilDato.helpText",
                 )}
+                error={visDatoFeil && !selectedRange?.to ? "Du må velge dato" : undefined}
               />
-            </VStack>
+            </div>
           </DatePicker>
           {actionError && <Alert variant="error">{actionError}</Alert>}
           <BodyShort>{forklaringstekst}</BodyShort>
