@@ -12,6 +12,7 @@ export interface IOpprettMeldekortPayload {
   personId: string;
   fraOgMed: string;
   tilOgMed: string;
+  simulering: boolean;
 }
 
 export function buildOpprettMeldekortFormData(payload: IOpprettMeldekortPayload): FormData {
@@ -19,6 +20,7 @@ export function buildOpprettMeldekortFormData(payload: IOpprettMeldekortPayload)
   formData.set("personId", payload.personId);
   formData.set("fraOgMed", payload.fraOgMed);
   formData.set("tilOgMed", payload.tilOgMed);
+  formData.set("simulering", payload.simulering ? "true" : "false");
 
   return formData;
 }

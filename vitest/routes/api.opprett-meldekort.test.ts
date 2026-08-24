@@ -16,7 +16,9 @@ vi.mock("~/models/logger.server", () => ({
 
 function lagRequest(felter: Record<string, string>, method = "POST") {
   const formData = new FormData();
-  Object.entries(felter).forEach(([key, value]) => formData.append(key, value));
+  Object.entries({ simulering: "false", ...felter }).forEach(([key, value]) =>
+    formData.append(key, value),
+  );
 
   return new Request("http://localhost/api/opprett-meldekort", { method, body: formData });
 }
@@ -115,6 +117,33 @@ describe("api.opprett-meldekort", () => {
     );
 
     await expect(response.json()).resolves.toMatchObject({ success: true });
+  });
+
+  it("videreformidler simulering:true til opprettMeldekort uten å opprette noe", async () => {
+    const perioder = [{ fraOgMed: "2025-01-06", tilOgMed: "2025-01-19" }];
+    opprettMeldekort.mockResolvedValue({ perioder });
+
+    const response = await kjorAction(
+      lagRequest({
+        personId: "123",
+        fraOgMed: "2025-01-06",
+        tilOgMed: "2025-01-19",
+        simulering: "true",
+      }),
+    );
+
+    expect(opprettMeldekort).toHaveBeenCalledWith(expect.objectContaining({ simulering: true }));
+    await expect(response.json()).resolves.toEqual({ success: true, perioder });
+  });
+
+  it("sender simulering:false når feltet er false", async () => {
+    opprettMeldekort.mockResolvedValue({ perioder: [] });
+
+    await kjorAction(
+      lagRequest({ personId: "123", fraOgMed: "2025-01-06", tilOgMed: "2025-01-19" }),
+    );
+
+    expect(opprettMeldekort).toHaveBeenCalledWith(expect.objectContaining({ simulering: false }));
   });
 
   it("videreformidler feilrespons fra backend", async () => {

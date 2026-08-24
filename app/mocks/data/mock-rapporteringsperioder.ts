@@ -436,6 +436,54 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     },
   ],
 
+  // Brukers meldekort stanset for ca. 3 måneder siden. Ingen perioder etter
+  // det——behøves for å teste "opprett meldekort" for perioder som mangler.
+  // Hardkodede ID-er for demo-miljø slik at URL-er kan deles og overlever HMR-reseeding.
+  [ScenarioType.STOPPET_FOR_3_MANEDER]: [
+    {
+      periode: {
+        id: "019a6ded-0100-7000-a000-000000000001",
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 19,
+      aktiviteter: lagArbeidUker("7.5"),
+    },
+    {
+      periode: {
+        id: "019a6ded-0100-7000-a000-000000000002",
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 17,
+      aktiviteter: lagAlternerendeArbeidsUker("4"),
+    },
+    {
+      periode: {
+        id: "019a6ded-0100-7000-a000-000000000003",
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 15,
+    },
+    {
+      periode: {
+        id: "019a6ded-0100-7000-a000-000000000004",
+        status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
+        registrertArbeidssoker: true,
+        kanSendes: false,
+        kanEndres: true,
+      },
+      ukerFraIDag: 13,
+    },
+  ],
+
   [ScenarioType.FULL_DEMO]: [
     // Arena meldekort innsendt med aktiviteter
     // Hardkodet ID for demo-miljø slik at URL-er kan deles

@@ -35,11 +35,12 @@ class SessionRecord {
 
       // Lag personer med perioder
       for (const personData of mockPersons) {
-        const createdPerson = (await db.personer.create(personData)) as IPerson;
+        const { scenario, ...person } = personData;
+        const createdPerson = (await db.personer.create(person)) as IPerson;
 
-        // Generer perioder basert på FULL_DEMO scenario
+        // Generer perioder basert på personens scenario (default FULL_DEMO)
         const periods = hentRapporteringsperioderForScenario(
-          ScenarioType.FULL_DEMO,
+          scenario ?? ScenarioType.FULL_DEMO,
           createdPerson,
           createdSaksbehandler,
         );

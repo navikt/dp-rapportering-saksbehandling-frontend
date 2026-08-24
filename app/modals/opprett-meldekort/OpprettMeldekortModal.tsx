@@ -15,6 +15,7 @@ import { sanityTekst } from "~/sanity/utils";
 import { getTodayIsoDate } from "~/utils/dato.utils";
 import { addDemoParamsToURL } from "~/utils/demo-params.utils";
 
+import { OpprettMeldekortInfoBoks } from "./components/OpprettMeldekortInfoBoks";
 import {
   buildOpprettMeldekortFormData,
   type IOpprettMeldekortPayload,
@@ -38,7 +39,6 @@ export function OpprettMeldekortModal({
   brukerNavn,
   personId,
 }: OpprettMeldekortModalProps) {
-  // Hent tekster fra Sanity med fallback
   let rootData;
   try {
     rootData = useRouteLoaderData("root");
@@ -51,6 +51,7 @@ export function OpprettMeldekortModal({
   const [visDatoFeil, setVisDatoFeil] = useState(false);
   const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
   const fetcher = useFetcher<IOpprettMeldekortResponse>();
+  const simuleringFetcher = useFetcher<IOpprettMeldekortResponse>();
 
   const { datepickerProps, fromInputProps, toInputProps, reset, selectedRange } =
     useRangeDatepicker({
@@ -63,6 +64,12 @@ export function OpprettMeldekortModal({
     setVisDatoFeil(false);
     setHasPendingSubmission(false);
     reset();
+  }
+
+  function byggOpprettMeldekortActionUrl(): string {
+    const actionUrl = new URL("/api/opprett-meldekort", window.location.origin);
+    addDemoParamsToURL(actionUrl);
+    return actionUrl.pathname + actionUrl.search;
   }
 
   useEffect(() => {
@@ -81,6 +88,27 @@ export function OpprettMeldekortModal({
 
     setActionError(toOpprettMeldekortErrorMessage(fetcher.data));
   }, [hasPendingSubmission, fetcher.state, fetcher.data, onBekreft, onClose]);
+
+  // Simuler opprettelsen så snart begge datoer er valgt, for å vise hvilke perioder som opprettes
+  useEffect(() => {
+    if (!personId || !selectedRange?.from || !selectedRange.to) {
+      return;
+    }
+
+    const fraOgMed = format(selectedRange.from, "yyyy-MM-dd");
+    const tilOgMed = format(selectedRange.to, "yyyy-MM-dd");
+    const today = getTodayIsoDate();
+    const erGyldigPeriode = fraOgMed <= tilOgMed && fraOgMed <= today && tilOgMed <= today;
+
+    if (!erGyldigPeriode) {
+      return;
+    }
+
+    simuleringFetcher.submit(
+      buildOpprettMeldekortFormData({ personId, fraOgMed, tilOgMed, simulering: true }),
+      { method: "post", action: byggOpprettMeldekortActionUrl() },
+    );
+  }, [personId, selectedRange?.from, selectedRange?.to]);
 
   function handleBekreft() {
     if (!selectedRange?.from || !selectedRange.to) {
@@ -106,15 +134,12 @@ export function OpprettMeldekortModal({
       return;
     }
 
-    const payload: IOpprettMeldekortPayload = { personId, fraOgMed, tilOgMed };
-
-    const actionUrl = new URL("/api/opprett-meldekort", window.location.origin);
-    addDemoParamsToURL(actionUrl);
+    const payload: IOpprettMeldekortPayload = { personId, fraOgMed, tilOgMed, simulering: false };
 
     setHasPendingSubmission(true);
     fetcher.submit(buildOpprettMeldekortFormData(payload), {
       method: "post",
-      action: actionUrl.pathname + actionUrl.search,
+      action: byggOpprettMeldekortActionUrl(),
     });
   }
 
@@ -129,6 +154,17 @@ export function OpprettMeldekortModal({
     tekster?.forklaringstekst,
     "opprettMeldekortModal.forklaringstekst",
   );
+
+  const simulertePerioder =
+    selectedRange?.from && selectedRange.to && simuleringFetcher.data?.success
+      ? (simuleringFetcher.data.perioder ?? [])
+      : [];
+
+  const infoBoksTekst = sanityTekst(
+    tekster?.infoBoks?.tekst,
+    "opprettMeldekortModal.infoBoks.tekst",
+  ).replace("{{antall}}", String(simulertePerioder.length));
+
   return (
     <Modal open={open} onClose={handleClose} aria-label={tittelMedNavn} size="medium">
       <Modal.Header>
@@ -162,18 +198,11 @@ export function OpprettMeldekortModal({
           </DatePicker>
           {actionError && <Alert variant="error">{actionError}</Alert>}
           <BodyShort>{forklaringstekst}</BodyShort>
-          <InfoCard data-color="info" size="small">
-            <InfoCard.Header>
-              <InfoCard.Title>
-                {sanityTekst(tekster?.infoBoks?.tittel, "opprettMeldekortModal.infoBoks.tittel")}
-              </InfoCard.Title>
-            </InfoCard.Header>
-            <InfoCard.Content>
-              <BodyShort>
-                {sanityTekst(tekster?.infoBoks?.tekst, "opprettMeldekortModal.infoBoks.tekst")}
-              </BodyShort>
-            </InfoCard.Content>
-          </InfoCard>
+          <OpprettMeldekortInfoBoks
+            tittel={sanityTekst(tekster?.infoBoks?.tittel, "opprettMeldekortModal.infoBoks.tittel")}
+            tekst={infoBoksTekst}
+            perioder={simulertePerioder}
+          />
           <InfoCard data-color="danger" size="small">
             <InfoCard.Header>
               <InfoCard.Title>

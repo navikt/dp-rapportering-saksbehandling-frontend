@@ -1,0 +1,35 @@
+.informationContent {
+  display: grid;
+  gap: var(--ax-space-16);
+}
+
+.periodeTabellWrapper {
+  padding: var(--ax-space-6) var(--ax-space-12);
+}
+
+.periodeTabell {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.periodeTabell th,
+.periodeTabell td {
+  padding: 0 var(--ax-space-8);
+  text-align: left;
+}
+
+.periodeTabell th {
+  font-weight: 600;
+}
+
+.periodeTabell tbody tr:nth-child(even) {
+  background: var(--ax-bg-info-soft);
+}
+
+.ukenummerKolonne {
+  width: 33%;
+}
+
+.periodeKolonne {
+  width: 67%;
+}

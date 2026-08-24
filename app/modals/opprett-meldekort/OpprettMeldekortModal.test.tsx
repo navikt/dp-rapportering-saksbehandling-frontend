@@ -32,8 +32,7 @@ mockUseRouteLoaderData.mockReturnValue({
       avbrytKnapp: "Avbryt",
       infoBoks: {
         tittel: "Info om meldekortsyklus",
-        tekst:
-          "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
+        tekst: "Dette vil opprette {{antall}} meldekort.",
       },
       feilmelding: {
         tittel: "Kunne ikke opprette meldekort",
@@ -110,11 +109,7 @@ describe("OpprettMeldekortModal", () => {
     renderWithProviders(<OpprettMeldekortModal open={true} onClose={vi.fn()} />);
 
     expect(screen.getByText("Info om meldekortsyklus")).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Dette vil opprette 0 meldekort.")).toBeInTheDocument();
   });
 
   it("skal vise opprett-knapp", () => {
@@ -260,6 +255,56 @@ describe("OpprettMeldekortModal", () => {
 
       expect(fromInput).toBeInTheDocument();
       expect(toInput).toBeInTheDocument();
+    });
+  });
+
+  describe("Simulering av opprettelse", () => {
+    function renderMedSimulering(ui: React.ReactElement) {
+      const Stub = createRoutesStub([
+        {
+          path: "/",
+          Component: () => <SaksbehandlerProvider>{ui}</SaksbehandlerProvider>,
+        },
+        {
+          path: "/api/opprett-meldekort",
+          action: async ({ request }) => {
+            const formData = await request.formData();
+
+            if (formData.get("simulering") === "true") {
+              return {
+                success: true,
+                perioder: [{ fraOgMed: "2025-01-06", tilOgMed: "2025-01-19" }],
+              };
+            }
+
+            return { success: true };
+          },
+        },
+      ]);
+
+      return render(<Stub initialEntries={["/"]} />);
+    }
+
+    it("skal simulere opprettelsen når begge datoer er valgt og vise forh\u00e5ndsvisning", async () => {
+      const user = userEvent.setup();
+      renderMedSimulering(<OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />);
+
+      await user.type(screen.getByLabelText("Fra dato"), "06.01.2025");
+      await user.type(screen.getByLabelText("Til dato"), "19.01.2025");
+
+      expect(await screen.findByText("Dette vil opprette 1 meldekort.")).toBeInTheDocument();
+      expect(screen.getByRole("columnheader", { name: "Ukenummer" })).toBeInTheDocument();
+      expect(screen.getByRole("columnheader", { name: "Periode" })).toBeInTheDocument();
+      expect(screen.getByText(/06.01.2025.*19.01.2025/)).toBeInTheDocument();
+    });
+
+    it("skal ikke vise forhåndsvisning når kun én dato er valgt", async () => {
+      const user = userEvent.setup();
+      renderMedSimulering(<OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />);
+
+      await user.type(screen.getByLabelText("Fra dato"), "06.01.2025");
+
+      expect(screen.getByText("Dette vil opprette 0 meldekort.")).toBeInTheDocument();
     });
   });
 });

@@ -9,6 +9,7 @@ const requestSchema = z.object({
   personId: z.string().min(1),
   fraOgMed: z.iso.date(),
   tilOgMed: z.iso.date(),
+  simulering: z.literal(["true", "false"]).transform((value) => value === "true"),
 });
 
 export async function loader() {
@@ -43,6 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
       personId: input.personId,
       fraOgMed: input.fraOgMed,
       tilOgMed: input.tilOgMed,
+      simulering: input.simulering,
     });
 
     if (input.fraOgMed > input.tilOgMed) {
@@ -65,11 +67,13 @@ export async function action({ request }: ActionFunctionArgs) {
       personId: input.personId,
       fraOgMed: input.fraOgMed,
       tilOgMed: input.tilOgMed,
+      simulering: input.simulering,
     });
 
     logger.info("[api.opprett-meldekort] Opprett meldekort fullfort", {
       personId: input.personId,
       antallPerioder: result.perioder?.length ?? 0,
+      simulering: input.simulering,
     });
 
     return Response.json({ success: true, ...result });
