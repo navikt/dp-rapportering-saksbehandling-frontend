@@ -140,7 +140,7 @@ describe("OpprettMeldekortModal", () => {
 
     await user.click(screen.getByRole("button", { name: "Opprett" }));
 
-    expect(await screen.findByText("Velg fra- og til-dato.")).toBeInTheDocument();
+    expect(await screen.findAllByText("Du må velge dato")).toHaveLength(2);
     expect(onBekreftMock).not.toHaveBeenCalled();
     expect(onCloseMock).not.toHaveBeenCalled();
   });
