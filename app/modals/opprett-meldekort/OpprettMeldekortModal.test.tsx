@@ -5,6 +5,10 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 
+function harTekst(forventetTekst: string) {
+  return (_content: string, element: Element | null) => element?.textContent === forventetTekst;
+}
+
 const mockUseRouteLoaderData = vi.hoisted(() => vi.fn());
 
 vi.mock("react-router", async (importOriginal) => ({
@@ -32,8 +36,7 @@ mockUseRouteLoaderData.mockReturnValue({
       avbrytKnapp: "Avbryt",
       infoBoks: {
         tittel: "Info om meldekortsyklus",
-        tekst:
-          "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
+        tekst: "Dette vil opprette {{antall}} meldekort.",
       },
       feilmelding: {
         tittel: "Kunne ikke opprette meldekort",
@@ -106,15 +109,10 @@ describe("OpprettMeldekortModal", () => {
     expect(screen.getByLabelText("Til dato")).toBeInTheDocument();
   });
 
-  it("skal vise info-boks med informasjon om meldekortsyklus", () => {
+  it("skal ikke vise info-boks når ingen perioder er simulert", () => {
     renderWithProviders(<OpprettMeldekortModal open={true} onClose={vi.fn()} />);
 
-    expect(screen.getByText("Info om meldekortsyklus")).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "Nye meldekort opprettes i samme syklus som den bruker allerede har. Meldekort opprettes hver 14. dag.",
-      ),
-    ).toBeInTheDocument();
+    expect(screen.queryByText("Info om meldekortsyklus")).not.toBeInTheDocument();
   });
 
   it("skal vise opprett-knapp", () => {
@@ -260,6 +258,136 @@ describe("OpprettMeldekortModal", () => {
 
       expect(fromInput).toBeInTheDocument();
       expect(toInput).toBeInTheDocument();
+    });
+  });
+
+  describe("Simulering av opprettelse", () => {
+    function renderMedSimulering(ui: React.ReactElement) {
+      const Stub = createRoutesStub([
+        {
+          path: "/",
+          Component: () => <SaksbehandlerProvider>{ui}</SaksbehandlerProvider>,
+        },
+        {
+          path: "/api/opprett-meldekort",
+          action: async ({ request }) => {
+            const formData = await request.formData();
+
+            if (formData.get("simulering") === "true") {
+              return {
+                success: true,
+                perioder: [{ fraOgMed: "2025-01-06", tilOgMed: "2025-01-19" }],
+              };
+            }
+
+            return { success: true };
+          },
+        },
+      ]);
+
+      return render(<Stub initialEntries={["/"]} />);
+    }
+
+    it("skal simulere opprettelsen når begge datoer er valgt og vise forhåndsvisning", async () => {
+      const user = userEvent.setup();
+      renderMedSimulering(<OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />);
+
+      await user.type(screen.getByLabelText("Fra dato"), "06.01.2025");
+      await user.type(screen.getByLabelText("Til dato"), "19.01.2025");
+
+      expect(
+        await screen.findByText(harTekst("Dette vil opprette 1 meldekort.")),
+      ).toBeInTheDocument();
+      expect(screen.getByRole("columnheader", { name: "Ukenummer" })).toBeInTheDocument();
+      expect(screen.getByRole("columnheader", { name: "Periode" })).toBeInTheDocument();
+      expect(screen.getByText(/06.01.2025.*19.01.2025/)).toBeInTheDocument();
+    });
+
+    it("skal ikke vise forhåndsvisning når kun én dato er valgt", async () => {
+      const user = userEvent.setup();
+      renderMedSimulering(<OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />);
+
+      await user.type(screen.getByLabelText("Fra dato"), "06.01.2025");
+
+      expect(screen.queryByText("Info om meldekortsyklus")).not.toBeInTheDocument();
+    });
+
+    it("skal vise lastestatus mens simuleringen pågår", async () => {
+      const user = userEvent.setup();
+      let løsSimulering: (() => void) | undefined;
+      const simuleringPromise = new Promise<void>((resolve) => {
+        løsSimulering = resolve;
+      });
+
+      const Stub = createRoutesStub([
+        {
+          path: "/",
+          Component: () => (
+            <SaksbehandlerProvider>
+              <OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />
+            </SaksbehandlerProvider>
+          ),
+        },
+        {
+          path: "/api/opprett-meldekort",
+          action: async () => {
+            await simuleringPromise;
+            return {
+              success: true,
+              perioder: [{ fraOgMed: "2025-01-06", tilOgMed: "2025-01-19" }],
+            };
+          },
+        },
+      ]);
+
+      render(<Stub initialEntries={["/"]} />);
+
+      await user.type(screen.getByLabelText("Fra dato"), "06.01.2025");
+      await user.type(screen.getByLabelText("Til dato"), "19.01.2025");
+
+      expect(
+        await screen.findByTestId("opprett-meldekort-simulering-skeleton"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(harTekst("Dette vil opprette 1 meldekort.")),
+      ).not.toBeInTheDocument();
+
+      løsSimulering?.();
+
+      expect(
+        await screen.findByText(harTekst("Dette vil opprette 1 meldekort.")),
+      ).toBeInTheDocument();
+      expect(screen.queryByTestId("opprett-meldekort-simulering-skeleton")).not.toBeInTheDocument();
+    });
+
+    it("skal ikke vise info-boks når simuleringen feiler", async () => {
+      const user = userEvent.setup();
+      const Stub = createRoutesStub([
+        {
+          path: "/",
+          Component: () => (
+            <SaksbehandlerProvider>
+              <OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />
+            </SaksbehandlerProvider>
+          ),
+        },
+        {
+          path: "/api/opprett-meldekort",
+          action: async () => ({ error: "Kunne ikke beregne", status: 500 }),
+        },
+      ]);
+
+      render(<Stub initialEntries={["/"]} />);
+
+      await user.type(screen.getByLabelText("Fra dato"), "06.01.2025");
+      await user.type(screen.getByLabelText("Til dato"), "19.01.2025");
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId("opprett-meldekort-simulering-skeleton"),
+        ).not.toBeInTheDocument();
+      });
+      expect(screen.queryByText("Info om meldekortsyklus")).not.toBeInTheDocument();
     });
   });
 });

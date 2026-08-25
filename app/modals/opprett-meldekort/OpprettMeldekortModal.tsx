@@ -3,23 +3,27 @@ import {
   BodyShort,
   Button,
   DatePicker,
-  InfoCard,
   Modal,
+  Skeleton,
   useRangeDatepicker,
 } from "@navikt/ds-react";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFetcher, useRouteLoaderData } from "react-router";
 
 import { sanityTekst } from "~/sanity/utils";
 import { getTodayIsoDate } from "~/utils/dato.utils";
-import { addDemoParamsToURL } from "~/utils/demo-params.utils";
 
+import { OpprettMeldekortInfoBoks } from "./components/OpprettMeldekortInfoBoks";
 import {
   buildOpprettMeldekortFormData,
+  byggOpprettMeldekortActionUrl,
+  erSammePeriode,
   type IOpprettMeldekortPayload,
   type IOpprettMeldekortResponse,
+  type IPeriodeIntervall,
   toOpprettMeldekortErrorMessage,
+  utledGyldigPeriode,
 } from "./opprettMeldekortModal.helpers";
 import styles from "./opprettMeldekortModal.module.css";
 
@@ -38,7 +42,6 @@ export function OpprettMeldekortModal({
   brukerNavn,
   personId,
 }: OpprettMeldekortModalProps) {
-  // Hent tekster fra Sanity med fallback
   let rootData;
   try {
     rootData = useRouteLoaderData("root");
@@ -51,6 +54,10 @@ export function OpprettMeldekortModal({
   const [visDatoFeil, setVisDatoFeil] = useState(false);
   const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
   const fetcher = useFetcher<IOpprettMeldekortResponse>();
+  const simuleringFetcher = useFetcher<IOpprettMeldekortResponse>();
+
+  const [simulertRange, setSimulertRange] = useState<IPeriodeIntervall | null>(null);
+  const ventendeRangeRef = useRef<IPeriodeIntervall | null>(null);
 
   const { datepickerProps, fromInputProps, toInputProps, reset, selectedRange } =
     useRangeDatepicker({
@@ -64,6 +71,8 @@ export function OpprettMeldekortModal({
     setHasPendingSubmission(false);
     reset();
   }
+
+  const valgtPeriode = utledGyldigPeriode(selectedRange);
 
   useEffect(() => {
     if (!hasPendingSubmission || fetcher.state !== "idle" || !fetcher.data) {
@@ -81,6 +90,34 @@ export function OpprettMeldekortModal({
 
     setActionError(toOpprettMeldekortErrorMessage(fetcher.data));
   }, [hasPendingSubmission, fetcher.state, fetcher.data, onBekreft, onClose]);
+
+  function startSimuleringAvMeldekortOpprettelse() {
+    if (!personId || !valgtPeriode) {
+      ventendeRangeRef.current = null;
+      return;
+    }
+
+    ventendeRangeRef.current = valgtPeriode;
+
+    simuleringFetcher.submit(
+      buildOpprettMeldekortFormData({ personId, ...valgtPeriode, simulering: true }),
+      { method: "post", action: byggOpprettMeldekortActionUrl() },
+    );
+  }
+
+  useEffect(startSimuleringAvMeldekortOpprettelse, [
+    personId,
+    valgtPeriode?.fraOgMed,
+    valgtPeriode?.tilOgMed,
+  ]);
+
+  useEffect(() => {
+    if (simuleringFetcher.state !== "idle" || !simuleringFetcher.data) {
+      return;
+    }
+
+    setSimulertRange(ventendeRangeRef.current);
+  }, [simuleringFetcher.state, simuleringFetcher.data]);
 
   function handleBekreft() {
     if (!selectedRange?.from || !selectedRange.to) {
@@ -106,15 +143,12 @@ export function OpprettMeldekortModal({
       return;
     }
 
-    const payload: IOpprettMeldekortPayload = { personId, fraOgMed, tilOgMed };
-
-    const actionUrl = new URL("/api/opprett-meldekort", window.location.origin);
-    addDemoParamsToURL(actionUrl);
+    const payload: IOpprettMeldekortPayload = { personId, fraOgMed, tilOgMed, simulering: false };
 
     setHasPendingSubmission(true);
     fetcher.submit(buildOpprettMeldekortFormData(payload), {
       method: "post",
-      action: actionUrl.pathname + actionUrl.search,
+      action: byggOpprettMeldekortActionUrl(),
     });
   }
 
@@ -129,6 +163,20 @@ export function OpprettMeldekortModal({
     tekster?.forklaringstekst,
     "opprettMeldekortModal.forklaringstekst",
   );
+
+  const lasterSimulering =
+    Boolean(personId) && valgtPeriode !== null && simuleringFetcher.state !== "idle";
+
+  const simulertePerioder =
+    erSammePeriode(simulertRange, valgtPeriode) && simuleringFetcher.data?.success
+      ? (simuleringFetcher.data.perioder ?? [])
+      : [];
+
+  const infoBoksTekst = sanityTekst(
+    tekster?.infoBoks?.tekst,
+    "opprettMeldekortModal.infoBoks.tekst",
+  );
+
   return (
     <Modal open={open} onClose={handleClose} aria-label={tittelMedNavn} size="medium">
       <Modal.Header>
@@ -162,31 +210,24 @@ export function OpprettMeldekortModal({
           </DatePicker>
           {actionError && <Alert variant="error">{actionError}</Alert>}
           <BodyShort>{forklaringstekst}</BodyShort>
-          <InfoCard data-color="info" size="small">
-            <InfoCard.Header>
-              <InfoCard.Title>
-                {sanityTekst(tekster?.infoBoks?.tittel, "opprettMeldekortModal.infoBoks.tittel")}
-              </InfoCard.Title>
-            </InfoCard.Header>
-            <InfoCard.Content>
-              <BodyShort>
-                {sanityTekst(tekster?.infoBoks?.tekst, "opprettMeldekortModal.infoBoks.tekst")}
-              </BodyShort>
-            </InfoCard.Content>
-          </InfoCard>
-          <InfoCard data-color="danger" size="small">
-            <InfoCard.Header>
-              <InfoCard.Title>
-                {sanityTekst(
-                  tekster?.feilmelding?.tittel,
-                  "opprettMeldekortModal.feilmelding.tittel",
-                )}
-              </InfoCard.Title>
-            </InfoCard.Header>
-            <InfoCard.Content>
-              {sanityTekst(tekster?.feilmelding?.tekst, "opprettMeldekortModal.feilmelding.tekst")}
-            </InfoCard.Content>
-          </InfoCard>
+          {lasterSimulering && (
+            <Skeleton
+              variant="rounded"
+              width="100%"
+              height="5rem"
+              data-testid="opprett-meldekort-simulering-skeleton"
+            />
+          )}
+          {simulertePerioder.length > 0 && (
+            <OpprettMeldekortInfoBoks
+              tittel={sanityTekst(
+                tekster?.infoBoks?.tittel,
+                "opprettMeldekortModal.infoBoks.tittel",
+              )}
+              tekst={infoBoksTekst}
+              perioder={simulertePerioder}
+            />
+          )}
         </div>
       </Modal.Body>
       <Modal.Footer>

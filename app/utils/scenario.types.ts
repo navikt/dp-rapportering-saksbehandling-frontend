@@ -7,6 +7,7 @@ export enum ScenarioType {
   FLERE_BEREGNEDE = "flere_beregnede",
   FULL_DEMO = "FULL_DEMO",
   ARENA_MELDEKORT = "ARENA_MELDEKORT",
+  STOPPET_FOR_3_MANEDER = "stoppet_for_3_maneder",
 }
 
 export interface IScenario {
@@ -42,5 +43,9 @@ export const SCENARIOS: IScenario[] = [
   {
     type: ScenarioType.ARENA_MELDEKORT,
     tittel: "Meldekort migrert fra Arena",
+  },
+  {
+    type: ScenarioType.STOPPET_FOR_3_MANEDER,
+    tittel: "Siste meldekort for 3 måneder siden",
   },
 ];
