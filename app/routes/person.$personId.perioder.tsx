@@ -43,9 +43,13 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
 
   // Håndter announcement for skjermlesere når en periode er oppdatert
   useEffect(() => {
-    const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
-    if (oppdatertId) {
-      const periode = perioder.find((p) => p.id === oppdatertId);
+    const oppdaterteIder = searchParams.get(QUERY_PARAMS.OPPDATERT)?.split(",") ?? [];
+    if (oppdaterteIder.length > 0) {
+      const periode = perioder.find(
+        (p) =>
+          oppdaterteIder.includes(p.id) ||
+          oppdaterteIder.includes(`${p.periode.fraOgMed}_${p.periode.tilOgMed}`),
+      );
 
       if (periode) {
         const erKorrigering = periode.originalMeldekortId;
@@ -61,7 +65,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
             newSearchParams.delete(QUERY_PARAMS.OPPDATERT);
             setSearchParams(newSearchParams, { replace: true });
           }
-        }, 0);
+        }, 100);
 
         // fjern melding etter 5 sekunder
         const messageTimeout = setTimeout(() => {

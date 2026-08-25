@@ -37,6 +37,13 @@ export function getStatusConfig(
     return { text: sanityTekst(statuser?.tilUtfylling, "statuser.tilUtfylling"), variant: "info" };
   }
 
+  if (periode.opprettetAvNavIdent) {
+    return {
+      text: sanityTekst(statuser?.meldekortOpprettet, "statuser.meldekortOpprettet"),
+      variant: "neutral",
+    };
+  }
+
   return {
     text: sanityTekst(statuser?.meldekortOpprettet, "statuser.meldekortOpprettet"),
     variant: "neutral",

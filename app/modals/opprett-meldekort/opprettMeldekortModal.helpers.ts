@@ -5,9 +5,11 @@ import { addDemoParamsToURL } from "~/utils/demo-params.utils";
 
 export interface IOpprettMeldekortResponse {
   success?: boolean;
+  redirectUrl?: string;
   error?: string;
   detail?: string;
   perioder?: Array<{
+    id?: string;
     fraOgMed: string;
     tilOgMed: string;
   }>;

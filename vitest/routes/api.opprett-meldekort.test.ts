@@ -95,7 +95,7 @@ describe("api.opprett-meldekort", () => {
   });
 
   it("oppretter meldekort og returnerer perioder ved suksess", async () => {
-    const perioder = [{ fraOgMed: "2025-01-06", tilOgMed: "2025-01-19" }];
+    const perioder = [{ id: "periode-1", fraOgMed: "2025-01-06", tilOgMed: "2025-01-19" }];
     opprettMeldekort.mockResolvedValue({ perioder });
 
     const response = await kjorAction(
@@ -105,7 +105,11 @@ describe("api.opprett-meldekort", () => {
     expect(opprettMeldekort).toHaveBeenCalledWith(
       expect.objectContaining({ personId: "123", fraOgMed: "2025-01-06", tilOgMed: "2025-01-19" }),
     );
-    await expect(response.json()).resolves.toEqual({ success: true, perioder });
+    await expect(response.json()).resolves.toEqual({
+      success: true,
+      perioder,
+      redirectUrl: "/person/123/perioder?oppdatert=periode-1",
+    });
   });
 
   it("godtar dagens dato", async () => {
@@ -133,7 +137,11 @@ describe("api.opprett-meldekort", () => {
     );
 
     expect(opprettMeldekort).toHaveBeenCalledWith(expect.objectContaining({ simulering: true }));
-    await expect(response.json()).resolves.toEqual({ success: true, perioder });
+    await expect(response.json()).resolves.toEqual({
+      success: true,
+      perioder,
+      redirectUrl: "/person/123/perioder",
+    });
   });
 
   it("sender simulering:false når feltet er false", async () => {

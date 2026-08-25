@@ -88,13 +88,14 @@ export function MeldekortRad({
 
   // Highlight-effekt når meldekort er oppdatert
   useEffect(() => {
-    const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
-    if (oppdatertId === periode.id) {
+    const oppdaterteIder = searchParams.get(QUERY_PARAMS.OPPDATERT)?.split(",") ?? [];
+    const periodeNokkel = `${periode.periode.fraOgMed}_${periode.periode.tilOgMed}`;
+    if (oppdaterteIder.includes(periode.id) || oppdaterteIder.includes(periodeNokkel)) {
       setIsHighlighted(true);
       const timer = setTimeout(() => setIsHighlighted(false), HIGHLIGHT_DURATION_MS);
       return () => clearTimeout(timer);
     }
-  }, [searchParams, periode.id]);
+  }, [searchParams, periode.id, periode.periode.fraOgMed, periode.periode.tilOgMed]);
 
   // Auto-åpne, scroll og highlight når meldekort matcher URL (kun ved første lasting)
   useEffect(() => {
