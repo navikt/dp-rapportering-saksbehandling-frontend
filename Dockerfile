@@ -1,7 +1,7 @@
 FROM node:26-alpine@sha256:aadf416b2cdce311a8811ba3f0608a61b77dbf997500e2eafe781b51f6a0b019 AS node
 RUN npm install -g corepack@latest --force && \
     corepack enable && \
-    corepack prepare pnpm@11.21.0 --activate
+    corepack prepare pnpm@11.23.0 --activate
 RUN pnpm config set @navikt:registry=https://npm.pkg.github.com
 
 
@@ -41,7 +41,7 @@ COPY --from=app-build /app/build /
 
 
 # runtime
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:26@sha256:5b01fa5cff2dbc4875c4f9bf600eb5d15144a4234a9a9c864bbc095f5e425643 AS runtime
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:26@sha256:f364de5882b104670994050304468689cfaff3ff9cd36de6544898e14f2e0b64 AS runtime
 WORKDIR /app
 
 ARG NODE_ENV=production

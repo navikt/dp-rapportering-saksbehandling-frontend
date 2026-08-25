@@ -104,19 +104,18 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
   );
 }
 
-/** Oppretter ett eller flere meldekort for en person. Med simulering:true opprettes ingenting, kun forhåndsvisning av periodene. */
 export async function opprettMeldekort({
   request,
   personId,
   fraOgMed,
   tilOgMed,
-  simulering = false,
+  simulering,
 }: {
   request: Request;
   personId: string;
   fraOgMed: string;
   tilOgMed: string;
-  simulering?: boolean;
+  simulering: boolean;
 }): Promise<IOpprettMeldekortResponse> {
   const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort`;
   const url = new URL(baseUrl);
