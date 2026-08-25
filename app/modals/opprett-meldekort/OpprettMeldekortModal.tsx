@@ -3,24 +3,27 @@ import {
   BodyShort,
   Button,
   DatePicker,
-  InfoCard,
   Modal,
+  Skeleton,
   useRangeDatepicker,
 } from "@navikt/ds-react";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFetcher, useRouteLoaderData } from "react-router";
 
 import { sanityTekst } from "~/sanity/utils";
 import { getTodayIsoDate } from "~/utils/dato.utils";
-import { addDemoParamsToURL } from "~/utils/demo-params.utils";
 
 import { OpprettMeldekortInfoBoks } from "./components/OpprettMeldekortInfoBoks";
 import {
   buildOpprettMeldekortFormData,
+  byggOpprettMeldekortActionUrl,
+  erSammePeriode,
   type IOpprettMeldekortPayload,
   type IOpprettMeldekortResponse,
+  type IPeriodeIntervall,
   toOpprettMeldekortErrorMessage,
+  utledGyldigPeriode,
 } from "./opprettMeldekortModal.helpers";
 import styles from "./opprettMeldekortModal.module.css";
 
@@ -53,6 +56,9 @@ export function OpprettMeldekortModal({
   const fetcher = useFetcher<IOpprettMeldekortResponse>();
   const simuleringFetcher = useFetcher<IOpprettMeldekortResponse>();
 
+  const [simulertRange, setSimulertRange] = useState<IPeriodeIntervall | null>(null);
+  const ventendeRangeRef = useRef<IPeriodeIntervall | null>(null);
+
   const { datepickerProps, fromInputProps, toInputProps, reset, selectedRange } =
     useRangeDatepicker({
       fromDate: undefined,
@@ -66,11 +72,7 @@ export function OpprettMeldekortModal({
     reset();
   }
 
-  function byggOpprettMeldekortActionUrl(): string {
-    const actionUrl = new URL("/api/opprett-meldekort", window.location.origin);
-    addDemoParamsToURL(actionUrl);
-    return actionUrl.pathname + actionUrl.search;
-  }
+  const valgtPeriode = utledGyldigPeriode(selectedRange);
 
   useEffect(() => {
     if (!hasPendingSubmission || fetcher.state !== "idle" || !fetcher.data) {
@@ -89,26 +91,33 @@ export function OpprettMeldekortModal({
     setActionError(toOpprettMeldekortErrorMessage(fetcher.data));
   }, [hasPendingSubmission, fetcher.state, fetcher.data, onBekreft, onClose]);
 
-  // Simuler opprettelsen så snart begge datoer er valgt, for å vise hvilke perioder som opprettes
-  useEffect(() => {
-    if (!personId || !selectedRange?.from || !selectedRange.to) {
+  function startSimuleringAvMeldekortOpprettelse() {
+    if (!personId || !valgtPeriode) {
+      ventendeRangeRef.current = null;
       return;
     }
 
-    const fraOgMed = format(selectedRange.from, "yyyy-MM-dd");
-    const tilOgMed = format(selectedRange.to, "yyyy-MM-dd");
-    const today = getTodayIsoDate();
-    const erGyldigPeriode = fraOgMed <= tilOgMed && fraOgMed <= today && tilOgMed <= today;
-
-    if (!erGyldigPeriode) {
-      return;
-    }
+    ventendeRangeRef.current = valgtPeriode;
 
     simuleringFetcher.submit(
-      buildOpprettMeldekortFormData({ personId, fraOgMed, tilOgMed, simulering: true }),
+      buildOpprettMeldekortFormData({ personId, ...valgtPeriode, simulering: true }),
       { method: "post", action: byggOpprettMeldekortActionUrl() },
     );
-  }, [personId, selectedRange?.from, selectedRange?.to]);
+  }
+
+  useEffect(startSimuleringAvMeldekortOpprettelse, [
+    personId,
+    valgtPeriode?.fraOgMed,
+    valgtPeriode?.tilOgMed,
+  ]);
+
+  useEffect(() => {
+    if (simuleringFetcher.state !== "idle" || !simuleringFetcher.data) {
+      return;
+    }
+
+    setSimulertRange(ventendeRangeRef.current);
+  }, [simuleringFetcher.state, simuleringFetcher.data]);
 
   function handleBekreft() {
     if (!selectedRange?.from || !selectedRange.to) {
@@ -155,15 +164,18 @@ export function OpprettMeldekortModal({
     "opprettMeldekortModal.forklaringstekst",
   );
 
+  const lasterSimulering =
+    Boolean(personId) && valgtPeriode !== null && !erSammePeriode(simulertRange, valgtPeriode);
+
   const simulertePerioder =
-    selectedRange?.from && selectedRange.to && simuleringFetcher.data?.success
+    erSammePeriode(simulertRange, valgtPeriode) && simuleringFetcher.data?.success
       ? (simuleringFetcher.data.perioder ?? [])
       : [];
 
   const infoBoksTekst = sanityTekst(
     tekster?.infoBoks?.tekst,
     "opprettMeldekortModal.infoBoks.tekst",
-  ).replace("{{antall}}", String(simulertePerioder.length));
+  );
 
   return (
     <Modal open={open} onClose={handleClose} aria-label={tittelMedNavn} size="medium">
@@ -198,24 +210,24 @@ export function OpprettMeldekortModal({
           </DatePicker>
           {actionError && <Alert variant="error">{actionError}</Alert>}
           <BodyShort>{forklaringstekst}</BodyShort>
-          <OpprettMeldekortInfoBoks
-            tittel={sanityTekst(tekster?.infoBoks?.tittel, "opprettMeldekortModal.infoBoks.tittel")}
-            tekst={infoBoksTekst}
-            perioder={simulertePerioder}
-          />
-          <InfoCard data-color="danger" size="small">
-            <InfoCard.Header>
-              <InfoCard.Title>
-                {sanityTekst(
-                  tekster?.feilmelding?.tittel,
-                  "opprettMeldekortModal.feilmelding.tittel",
-                )}
-              </InfoCard.Title>
-            </InfoCard.Header>
-            <InfoCard.Content>
-              {sanityTekst(tekster?.feilmelding?.tekst, "opprettMeldekortModal.feilmelding.tekst")}
-            </InfoCard.Content>
-          </InfoCard>
+          {lasterSimulering && (
+            <Skeleton
+              variant="rounded"
+              width="100%"
+              height="5rem"
+              data-testid="opprett-meldekort-simulering-skeleton"
+            />
+          )}
+          {simulertePerioder.length > 0 && (
+            <OpprettMeldekortInfoBoks
+              tittel={sanityTekst(
+                tekster?.infoBoks?.tittel,
+                "opprettMeldekortModal.infoBoks.tittel",
+              )}
+              tekst={infoBoksTekst}
+              perioder={simulertePerioder}
+            />
+          )}
         </div>
       </Modal.Body>
       <Modal.Footer>

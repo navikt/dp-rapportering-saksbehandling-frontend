@@ -438,7 +438,9 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
 
   // Brukers meldekort stanset for ca. 3 måneder siden. Ingen perioder etter
   // det——behøves for å teste "opprett meldekort" for perioder som mangler.
-  // Hardkodede ID-er for demo-miljø slik at URL-er kan deles og overlever HMR-reseeding.
+  // Hardkodede ID-er for demo-miljø slik at URL-er kan deles: i dev-modus laster Vite på nytt
+  // og genererer nye data ved hvert filsave, så uten faste ID-er ville periode-URL-er sluttet
+  // å fungere hver gang man lagrer en fil mens man ser på denne brukeren.
   [ScenarioType.STOPPET_FOR_3_MANEDER]: [
     {
       periode: {
@@ -518,6 +520,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // Arena meldekort innsendt (etterregistrert)
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000002",
         opprettetAv: OPPRETTET_AV.Arena,
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
@@ -545,6 +548,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 5. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000003",
         opprettetAv: OPPRETTET_AV.Arena,
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
@@ -573,6 +577,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 6. Ferdig beregnet, Syk torsdag uke 22, Sendt inn en dag etter fristen
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000004",
         opprettetAv: OPPRETTET_AV.Arena,
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
@@ -645,6 +650,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 9. Ferdig beregnet, Arbeid 4 timer hver onsdag
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000005",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -671,6 +677,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 10. Ferdig beregnet, Arbeid 4 timer hver onsdag
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000006",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -697,6 +704,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 11. Ferdig beregnet, ingen aktiviteter
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000007",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -727,6 +735,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 12. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000008",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -753,6 +762,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 13. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000009",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -779,6 +789,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 14. Ferdig beregnet,  ingen aktiviteter
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-00000000000a",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -789,6 +800,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 15. Ferdig beregnet,  ingen aktiviteter
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-00000000000b",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -844,6 +856,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 18. Ferdig beregnet, ingen aktiviteter
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-00000000000c",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -854,6 +867,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 19. Ferdig beregnet,  Arbeid 4 timer hver onsdag
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-00000000000d",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -890,6 +904,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 21. Ferdig beregnet,  Arbeid 4 timer hver onsdag
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-00000000000f",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -916,6 +931,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 22. Ferdig beregnet,  ingen aktiviteter
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000010",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -927,6 +943,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 23. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000011",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -953,6 +970,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 24. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000012",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -979,6 +997,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 25. Ferdig beregnet, Utdanning onsdag, Jobb tirsdag/torsdag 2h, Syk fredag uke 2
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000013",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -1005,6 +1024,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 26. Ferdig beregnet, Arbeid 4 timer hver onsdag
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000014",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -1031,6 +1051,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 27.
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000015",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -1041,6 +1062,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 28.
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000016",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -1051,6 +1073,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 29.
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000017",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -1061,6 +1084,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 30.
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000018",
         status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
         registrertArbeidssoker: true,
         kanSendes: false,
@@ -1071,6 +1095,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 32. Nyeste innsendte meldekort
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-000000000019",
         status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
         kanSendes: true,
         kanEndres: false,
@@ -1081,6 +1106,7 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
     // 33. Opprettet meldekort
     {
       periode: {
+        id: "019a6dee-0000-7000-a000-00000000001a",
         status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
         kanSendes: false,
         kanEndres: false, // Kan ikke endres fordi den ikke er innsendt ennå

@@ -12,7 +12,7 @@ import { mockSaksbehandler } from "./data/mock-saksbehandler";
 
 export type Database = ReturnType<SessionRecord["createDatabase"]>;
 
-type SessionMap = Map<string, Database>;
+type SessionMap = Map<string, Promise<Database>>;
 
 class SessionRecord {
   private sessions: SessionMap;
@@ -21,57 +21,64 @@ class SessionRecord {
     this.sessions = new Map();
   }
 
-  public async getDatabase(
-    sessionId: string,
-  ): Promise<ReturnType<SessionRecord["createDatabase"]>> {
-    if (!this.sessions.has(sessionId)) {
-      const db = this.createDatabase();
+  public async getDatabase(sessionId: string): Promise<Database> {
+    let pendingDatabase = this.sessions.get(sessionId);
 
-      this.sessions.set(sessionId, db);
-
-      const createdSaksbehandler = (await db.saksbehandlere.create(
-        mockSaksbehandler,
-      )) as ISaksbehandler;
-
-      // Lag personer med perioder
-      for (const personData of mockPersons) {
-        const { scenario, ...person } = personData;
-        const createdPerson = (await db.personer.create(person)) as IPerson;
-
-        // Generer perioder basert på personens scenario (default FULL_DEMO)
-        const periods = hentRapporteringsperioderForScenario(
-          scenario ?? ScenarioType.FULL_DEMO,
-          createdPerson,
-          createdSaksbehandler,
-        );
-
-        await Promise.all(
-          periods.map((rapporteringsperiode) => {
-            db.rapporteringsperioder.create(rapporteringsperiode);
-          }),
-        );
-
-        const arbeidssokerperioder = hentArbeidssokerperioder(periods, createdPerson, true);
-
-        await Promise.all(
-          arbeidssokerperioder.map((arbeidssokerperiode) =>
-            db.arbeidssokerperioder.create(arbeidssokerperiode),
-          ),
-        );
-
-        const behandlingsresultat = hentBehandlingsresultat(
-          createdPerson,
-          periods,
-          arbeidssokerperioder,
-        );
-
-        await Promise.all(
-          behandlingsresultat.map((behandling) => db.behandlingsresultat.create(behandling)),
-        );
-      }
+    if (!pendingDatabase) {
+      pendingDatabase = this.seedDatabase();
+      // Registrer promisen før seeding er ferdig, så samtidige loadere (root, person, perioder)
+      // venter på samme seeding i stedet for å lese en halvferdig database.
+      this.sessions.set(sessionId, pendingDatabase);
     }
 
-    return this.sessions.get(sessionId)!;
+    return pendingDatabase;
+  }
+
+  private async seedDatabase(): Promise<Database> {
+    const db = this.createDatabase();
+
+    const createdSaksbehandler = (await db.saksbehandlere.create(
+      mockSaksbehandler,
+    )) as ISaksbehandler;
+
+    // Lag personer med perioder
+    for (const personData of mockPersons) {
+      const { scenario, ...person } = personData;
+      const createdPerson = (await db.personer.create(person)) as IPerson;
+
+      // Generer perioder basert på personens scenario (default FULL_DEMO)
+      const periods = hentRapporteringsperioderForScenario(
+        scenario ?? ScenarioType.FULL_DEMO,
+        createdPerson,
+        createdSaksbehandler,
+      );
+
+      await Promise.all(
+        periods.map((rapporteringsperiode) => {
+          db.rapporteringsperioder.create(rapporteringsperiode);
+        }),
+      );
+
+      const arbeidssokerperioder = hentArbeidssokerperioder(periods, createdPerson, true);
+
+      await Promise.all(
+        arbeidssokerperioder.map((arbeidssokerperiode) =>
+          db.arbeidssokerperioder.create(arbeidssokerperiode),
+        ),
+      );
+
+      const behandlingsresultat = hentBehandlingsresultat(
+        createdPerson,
+        periods,
+        arbeidssokerperioder,
+      );
+
+      await Promise.all(
+        behandlingsresultat.map((behandling) => db.behandlingsresultat.create(behandling)),
+      );
+    }
+
+    return db;
   }
 
   private createDatabase() {
