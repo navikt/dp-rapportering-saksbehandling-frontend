@@ -8,6 +8,7 @@ export enum ScenarioType {
   FULL_DEMO = "FULL_DEMO",
   ARENA_MELDEKORT = "ARENA_MELDEKORT",
   STOPPET_FOR_3_MANEDER = "stoppet_for_3_maneder",
+  INGEN_MELDEKORT = "ingen_meldekort",
 }
 
 export interface IScenario {

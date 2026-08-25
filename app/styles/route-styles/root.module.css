@@ -19,12 +19,19 @@
 .mainContent {
   position: relative;
   display: flex;
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
   padding: 1rem;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 .contentWrapper {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;

@@ -1,8 +1,10 @@
+import { ExclamationmarkTriangleIcon } from "@navikt/aksel-icons";
 import {
   Alert,
   BodyShort,
   Button,
   DatePicker,
+  InfoCard,
   Modal,
   Skeleton,
   useRangeDatepicker,
@@ -13,6 +15,7 @@ import { useFetcher, useRouteLoaderData } from "react-router";
 
 import { sanityTekst } from "~/sanity/utils";
 import { getTodayIsoDate } from "~/utils/dato.utils";
+import type { IRapporteringsperiode } from "~/utils/types";
 
 import { OpprettMeldekortInfoBoks } from "./components/OpprettMeldekortInfoBoks";
 import {
@@ -33,6 +36,7 @@ interface OpprettMeldekortModalProps {
   onBekreft?: () => void;
   brukerNavn?: string;
   personId?: string;
+  perioder?: IRapporteringsperiode[];
 }
 
 export function OpprettMeldekortModal({
@@ -41,6 +45,7 @@ export function OpprettMeldekortModal({
   onBekreft,
   brukerNavn,
   personId,
+  perioder = [],
 }: OpprettMeldekortModalProps) {
   let rootData;
   try {
@@ -184,6 +189,18 @@ export function OpprettMeldekortModal({
       </Modal.Header>
       <Modal.Body>
         <div className={styles.content}>
+          {perioder.length === 0 && (
+            <InfoCard data-color="warning" size="small">
+              <InfoCard.Header icon={<ExclamationmarkTriangleIcon aria-hidden />}>
+                <InfoCard.Title id="ingen-meldekort-tittel">
+                  Sjekk med brukerstøtte før du oppretter meldekort
+                </InfoCard.Title>
+              </InfoCard.Header>
+              <InfoCard.Content>
+                Det har skjedd en feil. Ta kontakt med brukerstøtte.
+              </InfoCard.Content>
+            </InfoCard>
+          )}
           <DatePicker {...datepickerProps}>
             <div className={styles.datepickers}>
               <DatePicker.Input

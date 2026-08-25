@@ -26,6 +26,18 @@ const personData: Array<IPerson & { id: string; scenario?: ScenarioType }> = [
     fodselsdato: "1985-03-03",
     scenario: ScenarioType.STOPPET_FOR_3_MANEDER,
   },
+  {
+    ident: "04049012347",
+    id: "2277732",
+    fornavn: "Per",
+    mellomnavn: "",
+    etternavn: "Utenkort",
+    statsborgerskap: "Norsk",
+    ansvarligSystem: ANSVARLIG_SYSTEM.DP,
+    kjonn: KJONN.MANN,
+    fodselsdato: "1990-04-04",
+    scenario: ScenarioType.INGEN_MELDEKORT,
+  },
 ];
 
 export const mockPersons: Array<IPerson & { id: string; scenario?: ScenarioType }> = personData;

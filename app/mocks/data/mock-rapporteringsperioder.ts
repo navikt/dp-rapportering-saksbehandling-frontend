@@ -1114,6 +1114,8 @@ const SCENARIO_CONFIGS: Record<ScenarioType, PeriodeConfig[]> = {
       ukerFraIDag: 0,
     },
   ],
+
+  [ScenarioType.INGEN_MELDEKORT]: [],
 };
 
 // TODO: Legg til klokkeslett på innsendtTidspunkt
