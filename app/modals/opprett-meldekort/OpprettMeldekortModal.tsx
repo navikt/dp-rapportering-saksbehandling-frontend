@@ -165,7 +165,7 @@ export function OpprettMeldekortModal({
   );
 
   const lasterSimulering =
-    Boolean(personId) && valgtPeriode !== null && !erSammePeriode(simulertRange, valgtPeriode);
+    Boolean(personId) && valgtPeriode !== null && simuleringFetcher.state !== "idle";
 
   const simulertePerioder =
     erSammePeriode(simulertRange, valgtPeriode) && simuleringFetcher.data?.success
