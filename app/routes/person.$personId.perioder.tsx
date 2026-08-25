@@ -11,8 +11,14 @@ import styles from "~/styles/route-styles/perioder.module.css";
 import { getABTestVariant } from "~/utils/ab-test.server";
 import { QUERY_PARAMS } from "~/utils/constants";
 import { DEFAULT_PERSON } from "~/utils/constants";
-import { sortYearsDescending, ukenummer } from "~/utils/dato.utils";
+import { sortYearsDescending } from "~/utils/dato.utils";
 import { byggFulltNavn } from "~/utils/person.utils";
+import {
+  byggOppdateringsmelding,
+  finnOppdaterteAar,
+  finnOppdatertePerioder,
+  hentOppdaterteNokler,
+} from "~/utils/personPerioder.helpers";
 
 import type { Route } from "./+types/person.$personId.perioder";
 
@@ -43,44 +49,33 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
 
   // Håndter announcement for skjermlesere når en periode er oppdatert
   useEffect(() => {
-    const oppdaterteIder = searchParams.get(QUERY_PARAMS.OPPDATERT)?.split(",") ?? [];
-    if (oppdaterteIder.length > 0) {
-      const periode = perioder.find(
-        (p) =>
-          oppdaterteIder.includes(p.id) ||
-          oppdaterteIder.includes(`${p.periode.fraOgMed}_${p.periode.tilOgMed}`),
-      );
+    const oppdaterteNokler = hentOppdaterteNokler(searchParams);
+    const oppdatertePerioder = finnOppdatertePerioder(perioder, oppdaterteNokler);
+    const melding = byggOppdateringsmelding(
+      oppdatertePerioder,
+      searchParams.get(QUERY_PARAMS.OPPRETTET) === "true",
+    );
 
-      if (periode) {
-        const erKorrigering = periode.originalMeldekortId;
-        const melding = erKorrigering
-          ? `Meldekort for uke ${ukenummer(periode)} ble korrigert og oppdatert`
-          : `Meldekort for uke ${ukenummer(periode)} ble sendt inn`;
-        setAnnounceUpdate(melding);
+    if (melding) {
+      setAnnounceUpdate(melding);
+      const paramTimeout = setTimeout(() => {
+        if (isMountedRef.current) {
+          const newSearchParams = new URLSearchParams(searchParams);
+          newSearchParams.delete(QUERY_PARAMS.OPPDATERT);
+          newSearchParams.delete(QUERY_PARAMS.OPPRETTET);
+          setSearchParams(newSearchParams, { replace: true });
+        }
+      }, 100);
 
-        // fjern parametere etter melding er satt
-        const paramTimeout = setTimeout(() => {
-          if (isMountedRef.current) {
-            const newSearchParams = new URLSearchParams(searchParams);
-            newSearchParams.delete(QUERY_PARAMS.OPPDATERT);
-            setSearchParams(newSearchParams, { replace: true });
-          }
-        }, 100);
-
-        // fjern melding etter 5 sekunder
-        const messageTimeout = setTimeout(() => {
-          if (isMountedRef.current) {
-            setAnnounceUpdate("");
-          }
-        }, 8000);
-
-        return () => {
-          clearTimeout(paramTimeout);
-          clearTimeout(messageTimeout);
-        };
-      }
+      return () => clearTimeout(paramTimeout);
     }
   }, [searchParams, setSearchParams, perioder]);
+
+  useEffect(() => {
+    if (!announceUpdate) return;
+    const timeout = setTimeout(() => setAnnounceUpdate(""), 8000);
+    return () => clearTimeout(timeout);
+  }, [announceUpdate]);
 
   const groupedPeriods = groupPeriodsByYear(perioder);
   const years = sortYearsDescending(groupedPeriods);
@@ -95,6 +90,17 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
     }
     return years.length > 0 ? [years[0]] : [];
   });
+
+  useEffect(() => {
+    const oppdaterteAar = finnOppdaterteAar(perioder, hentOppdaterteNokler(searchParams));
+
+    if (oppdaterteAar.length > 0) {
+      setValgteAar((forrige) => {
+        const nyeAar = oppdaterteAar.filter((aar) => !forrige.includes(aar));
+        return nyeAar.length > 0 ? [...forrige, ...nyeAar] : forrige;
+      });
+    }
+  }, [perioder, searchParams]);
 
   useEffect(() => {
     const newParams = new URLSearchParams(searchParams);

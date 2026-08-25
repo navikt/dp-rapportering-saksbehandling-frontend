@@ -149,20 +149,20 @@
 
 @keyframes highlightBlinkAndFade {
   0% {
-    background-color: var(--ax-bg-accent-moderate-hover);
+    box-shadow: inset 0 0 0 9999px transparent;
   }
   8% {
-    background-color: transparent;
+    box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
   }
   16% {
-    background-color: var(--ax-bg-accent-moderate-hover);
+    box-shadow: inset 0 0 0 9999px transparent;
   }
   24% {
-    background-color: transparent;
+    box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
   }
   32%,
   100% {
-    background-color: var(--ax-bg-accent-moderate-hover);
+    box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
   }
 }
 
@@ -174,10 +174,13 @@
 
   @keyframes highlightSimple {
     0% {
-      background-color: var(--ax-bg-accent-moderate-hover);
+      box-shadow: inset 0 0 0 9999px transparent;
+    }
+    50% {
+      box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
     }
     100% {
-      background-color: var(--ax-bg-accent-moderate-hover);
+      box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
     }
   }
 }

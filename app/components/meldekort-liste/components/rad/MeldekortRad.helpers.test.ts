@@ -108,7 +108,7 @@ describe("MeldekortRad.helpers", () => {
       const result = getStatusConfig(periode, undefined, statuser);
 
       expect(result).toEqual({
-        text: "Meldekort opprettet",
+        text: "Meldekort manuelt opprettet",
         variant: "neutral",
       });
     });

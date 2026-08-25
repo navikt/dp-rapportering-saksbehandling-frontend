@@ -80,11 +80,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
     const url = new URL(`/person/${input.personId}/perioder`, request.url);
     const oppdatertePerioder = result.perioder
-      .map((periode) => periode.id)
-      .filter((id): id is string => Boolean(id))
+      .map(({ id, fraOgMed, tilOgMed }) => id ?? `${fraOgMed}_${tilOgMed}`)
       .join(",");
-    if (oppdatertePerioder) {
+    if (oppdatertePerioder && !input.simulering) {
       url.searchParams.set(QUERY_PARAMS.OPPDATERT, oppdatertePerioder);
+      url.searchParams.set(QUERY_PARAMS.OPPRETTET, "true");
     }
     addDemoParamsToURL(url, request);
 

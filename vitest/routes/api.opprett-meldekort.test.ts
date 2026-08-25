@@ -108,7 +108,7 @@ describe("api.opprett-meldekort", () => {
     await expect(response.json()).resolves.toEqual({
       success: true,
       perioder,
-      redirectUrl: "/person/123/perioder?oppdatert=periode-1",
+      redirectUrl: "/person/123/perioder?oppdatert=periode-1&opprettet=true",
     });
   });
 

@@ -60,6 +60,7 @@ export const QUERY_PARAMS = {
   AAR: "aar",
   RAPPORTERINGSID: "rapporteringsid",
   OPPDATERT: "oppdatert",
+  OPPRETTET: "opprettet",
   MELDEKORT_ID: "meldekortId",
 } as const;
 

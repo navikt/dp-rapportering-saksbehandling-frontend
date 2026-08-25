@@ -63,6 +63,7 @@ export function MeldekortRad({
   const [isOpen, setIsOpen] = useState<boolean | undefined>(undefined);
   const rowRef = useRef<HTMLTableRowElement>(null);
   const hasAutoOpenedRef = useRef(false);
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // States
   const erOpprettet = erPeriodeOpprettet(periode);
@@ -90,12 +91,30 @@ export function MeldekortRad({
   useEffect(() => {
     const oppdaterteIder = searchParams.get(QUERY_PARAMS.OPPDATERT)?.split(",") ?? [];
     const periodeNokkel = `${periode.periode.fraOgMed}_${periode.periode.tilOgMed}`;
-    if (oppdaterteIder.includes(periode.id) || oppdaterteIder.includes(periodeNokkel)) {
-      setIsHighlighted(true);
-      const timer = setTimeout(() => setIsHighlighted(false), HIGHLIGHT_DURATION_MS);
-      return () => clearTimeout(timer);
+    const skalHighlightes =
+      oppdaterteIder.includes(periode.id) || oppdaterteIder.includes(periodeNokkel);
+
+    if (!skalHighlightes) {
+      return;
     }
+
+    setIsHighlighted(true);
+    if (highlightTimerRef.current) {
+      clearTimeout(highlightTimerRef.current);
+    }
+    highlightTimerRef.current = setTimeout(() => {
+      setIsHighlighted(false);
+      highlightTimerRef.current = null;
+    }, HIGHLIGHT_DURATION_MS);
   }, [searchParams, periode.id, periode.periode.fraOgMed, periode.periode.tilOgMed]);
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimerRef.current) {
+        clearTimeout(highlightTimerRef.current);
+      }
+    };
+  }, []);
 
   // Auto-åpne, scroll og highlight når meldekort matcher URL (kun ved første lasting)
   useEffect(() => {

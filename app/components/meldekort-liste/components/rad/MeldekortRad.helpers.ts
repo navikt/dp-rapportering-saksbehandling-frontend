@@ -39,7 +39,10 @@ export function getStatusConfig(
 
   if (periode.opprettetAvNavIdent) {
     return {
-      text: sanityTekst(statuser?.meldekortOpprettet, "statuser.meldekortOpprettet"),
+      text: sanityTekst(
+        statuser?.meldekortOpprettetManuelt ?? "Meldekort manuelt opprettet",
+        "statuser.meldekortOpprettetManuelt",
+      ),
       variant: "neutral",
     };
   }
