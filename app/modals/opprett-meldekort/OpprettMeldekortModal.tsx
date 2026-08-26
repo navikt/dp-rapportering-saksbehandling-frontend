@@ -11,7 +11,7 @@ import {
 } from "@navikt/ds-react";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
-import { useFetcher, useRouteLoaderData } from "react-router";
+import { useFetcher, useNavigate, useRouteLoaderData } from "react-router";
 
 import { sanityTekst } from "~/sanity/utils";
 import { getTodayIsoDate } from "~/utils/dato.utils";
@@ -33,7 +33,7 @@ import styles from "./opprettMeldekortModal.module.css";
 interface OpprettMeldekortModalProps {
   open: boolean;
   onClose: () => void;
-  onBekreft?: () => void;
+  onBekreft?: (perioder: IOpprettMeldekortResponse["perioder"]) => void;
   brukerNavn?: string;
   personId?: string;
   perioder?: IRapporteringsperiode[];
@@ -59,6 +59,7 @@ export function OpprettMeldekortModal({
   const [visDatoFeil, setVisDatoFeil] = useState(false);
   const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
   const fetcher = useFetcher<IOpprettMeldekortResponse>();
+  const navigate = useNavigate();
   const simuleringFetcher = useFetcher<IOpprettMeldekortResponse>();
 
   const [simulertRange, setSimulertRange] = useState<IPeriodeIntervall | null>(null);
@@ -87,7 +88,10 @@ export function OpprettMeldekortModal({
     setHasPendingSubmission(false);
 
     if (fetcher.data.success) {
-      onBekreft?.();
+      onBekreft?.(fetcher.data.perioder ?? []);
+      if (fetcher.data.redirectUrl) {
+        navigate(fetcher.data.redirectUrl);
+      }
       resetFormState();
       onClose();
       return;
@@ -192,9 +196,7 @@ export function OpprettMeldekortModal({
           {perioder.length === 0 && (
             <InfoCard data-color="warning" size="small">
               <InfoCard.Header icon={<ExclamationmarkTriangleIcon aria-hidden />}>
-                <InfoCard.Title id="ingen-meldekort-tittel">
-                  Sjekk med brukerstøtte før du oppretter meldekort
-                </InfoCard.Title>
+                <InfoCard.Title>Sjekk med brukerstøtte før du oppretter meldekort</InfoCard.Title>
               </InfoCard.Header>
               <InfoCard.Content>
                 Det har skjedd en feil. Ta kontakt med brukerstøtte.

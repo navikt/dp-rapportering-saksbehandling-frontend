@@ -15,7 +15,9 @@ export function OpprettMeldekortInfoBoks({
   tekst,
   perioder,
 }: OpprettMeldekortInfoBoksProps) {
-  const [tekstFor, tekstEtter] = tekst.split("{{antall}}");
+  const [tekstFor, tekstEtter] = tekst.includes("{{antall}}")
+    ? tekst.split("{{antall}}")
+    : [tekst, ""];
 
   return (
     <InfoCard data-color="info" size="small">

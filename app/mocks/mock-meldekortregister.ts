@@ -2,7 +2,6 @@ import { addDays } from "date-fns";
 import { http, HttpResponse } from "msw";
 
 import { logger } from "~/models/logger.server";
-import { OPPRETTET_AV } from "~/utils/constants";
 import { getDemoAction, getDemoStatus } from "~/utils/demo-params.utils";
 import { getEnv } from "~/utils/env.utils";
 import type { IPeriode, IRapporteringsperiode } from "~/utils/types";
@@ -88,21 +87,30 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           periode = lagPeriodeDatoFor(addDays(new Date(periode.tilOgMed), 1));
         }
 
+        const opprettedePerioder: IRapporteringsperiode[] = [];
         if (!body.simulering) {
           for (const nyPeriode of perioder) {
-            db.opprettPeriode(
+            const opprettetPeriode = (await db.opprettPeriode(
               lagRapporteringsperiode(
                 {
                   periode: nyPeriode,
-                  opprettetAv: OPPRETTET_AV.Dagpenger,
+                  opprettetAvNavIdent: "Z993298",
                 },
                 person,
               ),
-            );
+            )) as IRapporteringsperiode;
+            opprettedePerioder.push(opprettetPeriode);
           }
         }
 
-        return HttpResponse.json({ perioder });
+        return HttpResponse.json({
+          perioder: body.simulering
+            ? perioder
+            : opprettedePerioder.map(({ id, periode }) => ({
+                id,
+                ...periode,
+              })),
+        });
       },
     ),
 

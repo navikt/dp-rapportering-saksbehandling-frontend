@@ -26,6 +26,10 @@
   justify-content: center;
 }
 
+.perioder-container > section[aria-label="Meldekort gruppert etter år"] {
+  width: 100%;
+}
+
 @media (min-width: 1400px) {
   .perioder-container {
     padding: 0 var(--ax-space-24) var(--ax-space-40);

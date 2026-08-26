@@ -63,6 +63,7 @@ export function MeldekortRad({
   const [isOpen, setIsOpen] = useState<boolean | undefined>(undefined);
   const rowRef = useRef<HTMLTableRowElement>(null);
   const hasAutoOpenedRef = useRef(false);
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // States
   const erOpprettet = erPeriodeOpprettet(periode);
@@ -88,32 +89,48 @@ export function MeldekortRad({
 
   // Highlight-effekt når meldekort er oppdatert
   useEffect(() => {
-    const oppdatertId = searchParams.get(QUERY_PARAMS.OPPDATERT);
-    if (oppdatertId === periode.id) {
-      setIsHighlighted(true);
-      const timer = setTimeout(() => setIsHighlighted(false), HIGHLIGHT_DURATION_MS);
-      return () => clearTimeout(timer);
-    }
-  }, [searchParams, periode.id]);
+    const oppdaterteIder = searchParams.get(QUERY_PARAMS.OPPDATERT)?.split(",") ?? [];
+    const periodeNokkel = `${periode.periode.fraOgMed}_${periode.periode.tilOgMed}`;
+    const skalHighlightes =
+      oppdaterteIder.includes(periode.id) || oppdaterteIder.includes(periodeNokkel);
 
-  // Auto-åpne, scroll og highlight når meldekort matcher URL (kun ved første lasting)
+    if (!skalHighlightes) {
+      return;
+    }
+
+    setIsHighlighted(true);
+    if (highlightTimerRef.current) {
+      clearTimeout(highlightTimerRef.current);
+    }
+    highlightTimerRef.current = setTimeout(() => {
+      setIsHighlighted(false);
+      highlightTimerRef.current = null;
+    }, HIGHLIGHT_DURATION_MS);
+  }, [searchParams, periode.id, periode.periode.fraOgMed, periode.periode.tilOgMed]);
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimerRef.current) {
+        clearTimeout(highlightTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Scroll og highlight når meldekort matcher URL (kun ved første lasting)
   useEffect(() => {
     const rapporteringsId = searchParams.get(QUERY_PARAMS.RAPPORTERINGSID);
     const meldekortId = searchParams.get(QUERY_PARAMS.MELDEKORT_ID);
     const shouldAutoOpen = rapporteringsId === periode.id || meldekortId === periode.id;
 
-    // Kun kjør auto-open logikk hvis vi ikke allerede har åpnet denne raden
+    // Kun kjør logikken hvis vi ikke allerede har håndtert denne raden
     if (!shouldAutoOpen || hasAutoOpenedRef.current) {
       return;
     }
 
-    // Marker at vi har auto-åpnet denne raden
+    // Marker at vi har håndtert denne raden
     hasAutoOpenedRef.current = true;
 
-    // Åpne raden umiddelbart
-    setIsOpen(true);
-
-    // Hvis rowRef ikke er tilgjengelig ennå, bare åpne raden (uten scroll/fokus)
+    // Hvis rowRef ikke er tilgjengelig ennå, avslutt uten scroll/fokus
     if (!rowRef.current) {
       return;
     }

@@ -15,6 +15,7 @@
 .forhandsvisning-meldekort > :first-child {
   flex: 2;
 }
+
 .forhandsvisning-meldekort > :last-child {
   flex: 1;
 }
@@ -38,7 +39,7 @@
 }
 
 .periodeListe__row--highlighted {
-  animation: highlightBlinkAndFade 3.5s ease-out;
+  animation: highlightBlinkAndFade 3.6s ease-in-out;
 }
 
 /* === Aksel Overrides === */
@@ -148,28 +149,20 @@
 
 @keyframes highlightBlinkAndFade {
   0% {
-    background-color: var(--ax-accent-100);
+    box-shadow: inset 0 0 0 9999px transparent;
   }
-  10% {
-    background-color: transparent;
+  8% {
+    box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
   }
-  20% {
-    background-color: var(--ax-accent-100);
+  16% {
+    box-shadow: inset 0 0 0 9999px transparent;
   }
-  30% {
-    background-color: transparent;
+  24% {
+    box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
   }
-  40% {
-    background-color: var(--ax-accent-100);
-  }
-  50% {
-    background-color: var(--ax-accent-100);
-  }
-  75% {
-    background-color: var(--ax-bg-accent-soft);
-  }
+  32%,
   100% {
-    background-color: transparent;
+    box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
   }
 }
 
@@ -181,13 +174,13 @@
 
   @keyframes highlightSimple {
     0% {
-      background-color: var(--ax-accent-100);
+      box-shadow: inset 0 0 0 9999px transparent;
     }
     50% {
-      background-color: var(--ax-accent-100);
+      box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
     }
     100% {
-      background-color: transparent;
+      box-shadow: inset 0 0 0 9999px var(--ax-bg-accent-moderate-hover);
     }
   }
 }

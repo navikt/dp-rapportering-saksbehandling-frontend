@@ -55,7 +55,7 @@ class SessionRecord {
 
       await Promise.all(
         periods.map((rapporteringsperiode) => {
-          db.rapporteringsperioder.create(rapporteringsperiode);
+          return db.rapporteringsperioder.create(rapporteringsperiode);
         }),
       );
 
@@ -113,6 +113,7 @@ class SessionRecord {
           kanSendesFra: z.string(),
           sisteFristForTrekk: z.string().nullable(),
           opprettetAv: z.string().nullable(),
+          opprettetAvNavIdent: z.string().nullable().optional(),
           originalMeldekortId: z.uuid().nullable(),
           kilde: z
             .object({

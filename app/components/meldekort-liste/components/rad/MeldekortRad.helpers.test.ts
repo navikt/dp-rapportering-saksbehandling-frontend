@@ -81,17 +81,34 @@ describe("MeldekortRad.helpers", () => {
       });
     });
 
-    it("skal returnere 'Meldekort opprettet' for ikke-innsendt periode som ikke kan sendes", () => {
+    it("skal returnere 'Klar til utfylling' for manuelt opprettet periode som kan sendes", () => {
       const periode: IRapporteringsperiode = {
         ...basePeriode,
-        kanSendes: false,
+        kanSendes: true,
         status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+        opprettetAvNavIdent: "Z123456",
       };
 
       const result = getStatusConfig(periode, undefined, statuser);
 
       expect(result).toEqual({
-        text: "Meldekort opprettet",
+        text: "Klar til utfylling",
+        variant: "info",
+      });
+    });
+
+    it("skal returnere 'Meldekort opprettet' for manuelt opprettet periode som ikke kan sendes", () => {
+      const periode: IRapporteringsperiode = {
+        ...basePeriode,
+        kanSendes: false,
+        status: RAPPORTERINGSPERIODE_STATUS.TilUtfylling,
+        opprettetAvNavIdent: "Z123456",
+      };
+
+      const result = getStatusConfig(periode, undefined, statuser);
+
+      expect(result).toEqual({
+        text: "Meldekort manuelt opprettet",
         variant: "neutral",
       });
     });

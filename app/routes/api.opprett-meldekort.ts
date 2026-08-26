@@ -3,7 +3,9 @@ import { z } from "zod";
 
 import { logger } from "~/models/logger.server";
 import { opprettMeldekort } from "~/models/rapporteringsperiode.server";
+import { QUERY_PARAMS } from "~/utils/constants";
 import { getTodayIsoDate } from "~/utils/dato.utils";
+import { addDemoParamsToURL } from "~/utils/demo-params.utils";
 
 const requestSchema = z.object({
   personId: z.string().min(1),
@@ -76,7 +78,17 @@ export async function action({ request }: ActionFunctionArgs) {
       simulering: input.simulering,
     });
 
-    return Response.json({ success: true, ...result });
+    const url = new URL(`/person/${input.personId}/perioder`, request.url);
+    const oppdatertePerioder = result.perioder
+      .map(({ id, fraOgMed, tilOgMed }) => id ?? `${fraOgMed}_${tilOgMed}`)
+      .join(",");
+    if (oppdatertePerioder && !input.simulering) {
+      url.searchParams.set(QUERY_PARAMS.OPPDATERT, oppdatertePerioder);
+      url.searchParams.set(QUERY_PARAMS.OPPRETTET, "true");
+    }
+    addDemoParamsToURL(url, request);
+
+    return Response.json({ success: true, redirectUrl: url.pathname + url.search, ...result });
   } catch (error) {
     if (error instanceof Response) {
       const data = await error.json().catch(() => ({}));

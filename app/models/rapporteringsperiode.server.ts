@@ -22,6 +22,7 @@ export interface IOpprettMeldekortRequest {
 
 export interface IOpprettMeldekortResponse {
   perioder: Array<{
+    id?: string;
     fraOgMed: string;
     tilOgMed: string;
   }>;

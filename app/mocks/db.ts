@@ -101,6 +101,7 @@ async function oppdaterRapporteringsperiode(db: Database, oppdatertPeriode: IRap
       periode.kanSendesFra = oppdatertPeriode.kanSendesFra;
       periode.sisteFristForTrekk = oppdatertPeriode.sisteFristForTrekk;
       periode.opprettetAv = oppdatertPeriode.opprettetAv;
+      periode.opprettetAvNavIdent = oppdatertPeriode.opprettetAvNavIdent;
       periode.originalMeldekortId = oppdatertPeriode.originalMeldekortId;
       periode.kilde = oppdatertPeriode.kilde;
       periode.innsendtTidspunkt = oppdatertPeriode.innsendtTidspunkt;
