@@ -62,4 +62,10 @@ describe("personPerioder.helpers", () => {
       "Meldekort for uke 2 - 3 ble sendt inn",
     );
   });
+
+  it("bygger melding for korrigert meldekort", () => {
+    expect(
+      byggOppdateringsmelding([{ ...perioder[0], originalMeldekortId: "original-1" }], false),
+    ).toBe("Meldekort for uke 2 - 3 ble korrigert og oppdatert");
+  });
 });

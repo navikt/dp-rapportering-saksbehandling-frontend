@@ -1,11 +1,11 @@
 # AB Testing System
 
-Dette er et fleksibelt AB-testing system for demo-miljøet som lar oss teste ulike UI-varianter side-om-side.
+Dette er et fleksibelt AB-testing system for demo-miljøet som lar oss teste ulike UI-varianter.
 
 ## Oversikt
 
 AB-testing systemet lar deg teste ulike UI-varianter i demo-miljøet. Varianter kan velges på to måter:
-1. Via lenker på forsiden (`/`) som automatisk legger til `?variant=A` eller `?variant=B` i URL-en
+1. Via `VariantSwitcher` i verktøymenyen
 2. Ved å legge til `?variant=A/B` manuelt i URL-en
 
 **Varianter:**
@@ -22,27 +22,20 @@ AB-testing systemet lar deg teste ulike UI-varianter i demo-miljøet. Varianter 
 
 ## Demo-forsiden
 
-I demo-miljøet viser forsiden (`/`) en liste over testpersoner. For hver person vises to lenker:
+I demo-miljøet viser forsiden (`/`) en liste over testpersoner. Hver person har én lenke, og siden starter i standardvarianten A:
 
 ```typescript
 // app/routes/_index.tsx
-{data.personer.flatMap((person) => [
-  <LinkCard key={`${person.id}-A`}>
-    <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=A`}>
-      {navn}
-    </LinkCard.Anchor>
-    <LinkCard.Description>Variant A</LinkCard.Description>
-  </LinkCard>,
-  <LinkCard key={`${person.id}-B`}>
-    <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=B`}>
-      {navn}
-    </LinkCard.Anchor>
-    <LinkCard.Description>Variant B</LinkCard.Description>
-  </LinkCard>,
-])}
+{data.personer.map((person) => (
+  <LinkCard key={person.id}>
+    <LinkCard.Title>
+      <LinkCard.Anchor href={`/person/${person.id}/perioder`}>{navn}</LinkCard.Anchor>
+    </LinkCard.Title>
+  </LinkCard>
+))}
 ```
 
-Dette gjør det enkelt å åpne samme testperson i ulike varianter for sammenligning.
+VariantSwitcher kan brukes til å bytte variant etter at testpersonen er åpnet.
 
 ## Hvordan det fungerer
 

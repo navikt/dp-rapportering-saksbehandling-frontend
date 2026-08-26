@@ -26,7 +26,7 @@ export function finnOppdaterteAar(
   oppdaterteNokler: string[],
 ): number[] {
   return finnOppdatertePerioder(perioder, oppdaterteNokler).map((periode) =>
-    new Date(periode.periode.fraOgMed).getFullYear(),
+    Number(periode.periode.fraOgMed.slice(0, 4)),
   );
 }
 

@@ -196,9 +196,7 @@ export function OpprettMeldekortModal({
           {perioder.length === 0 && (
             <InfoCard data-color="warning" size="small">
               <InfoCard.Header icon={<ExclamationmarkTriangleIcon aria-hidden />}>
-                <InfoCard.Title id="ingen-meldekort-tittel">
-                  Sjekk med brukerstøtte før du oppretter meldekort
-                </InfoCard.Title>
+                <InfoCard.Title>Sjekk med brukerstøtte før du oppretter meldekort</InfoCard.Title>
               </InfoCard.Header>
               <InfoCard.Content>
                 Det har skjedd en feil. Ta kontakt med brukerstøtte.

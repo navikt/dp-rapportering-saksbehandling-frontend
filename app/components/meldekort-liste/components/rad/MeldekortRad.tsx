@@ -116,24 +116,21 @@ export function MeldekortRad({
     };
   }, []);
 
-  // Auto-åpne, scroll og highlight når meldekort matcher URL (kun ved første lasting)
+  // Scroll og highlight når meldekort matcher URL (kun ved første lasting)
   useEffect(() => {
     const rapporteringsId = searchParams.get(QUERY_PARAMS.RAPPORTERINGSID);
     const meldekortId = searchParams.get(QUERY_PARAMS.MELDEKORT_ID);
     const shouldAutoOpen = rapporteringsId === periode.id || meldekortId === periode.id;
 
-    // Kun kjør auto-open logikk hvis vi ikke allerede har åpnet denne raden
+    // Kun kjør logikken hvis vi ikke allerede har håndtert denne raden
     if (!shouldAutoOpen || hasAutoOpenedRef.current) {
       return;
     }
 
-    // Marker at vi har auto-åpnet denne raden
+    // Marker at vi har håndtert denne raden
     hasAutoOpenedRef.current = true;
 
-    // Åpne raden umiddelbart
-    setIsOpen(true);
-
-    // Hvis rowRef ikke er tilgjengelig ennå, bare åpne raden (uten scroll/fokus)
+    // Hvis rowRef ikke er tilgjengelig ennå, avslutt uten scroll/fokus
     if (!rowRef.current) {
       return;
     }
