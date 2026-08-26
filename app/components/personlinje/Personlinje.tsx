@@ -214,6 +214,7 @@ export default function Personlinje({
         onBekreft={() => revalidator.revalidate()}
         brukerNavn={fulltNavn}
         personId={personId}
+        perioder={perioder}
       />
     </section>
   );

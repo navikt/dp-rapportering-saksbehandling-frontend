@@ -1,4 +1,5 @@
-import { Accordion, Heading } from "@navikt/ds-react";
+import { ExclamationmarkTriangleIcon } from "@navikt/aksel-icons";
+import { Accordion, Heading, InfoCard } from "@navikt/ds-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 
@@ -119,44 +120,61 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
       <Heading level="1" size="large" spacing>
         {sidetittel}
       </Heading>
-      <div className={styles.perioderContainer}>
-        <section aria-label="Meldekort gruppert etter år">
-          {/* Screen reader announcement for oppdaterte meldekort */}
-          {announceUpdate && (
-            <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
-              {announceUpdate}
-            </div>
-          )}
-          <Accordion size="small" indent={false}>
-            {years.map((year) => {
-              const aarOverskrift = sanityTekst(
-                hovedsideData?.listeOverskrift,
-                "hovedside.listeOverskrift",
-              ).replace("{{aar}}", String(year));
-              return (
-                <Accordion.Item
-                  key={year}
-                  defaultOpen={year === years[0]}
-                  open={valgteAar.includes(year)}
-                >
-                  <Accordion.Header onClick={() => toggleAr(year)}>
-                    {aarOverskrift}
-                  </Accordion.Header>
-                  <Accordion.Content className={styles.accordionContent}>
-                    <MeldekortListe
-                      perioder={groupedPeriods[year]}
-                      personId={params.personId}
-                      ansvarligSystem={person.ansvarligSystem}
-                      variant={variant}
-                      behandlinger={data?.behandlingerPerPeriode}
-                      hovedsideData={hovedsideData}
-                    />
-                  </Accordion.Content>
-                </Accordion.Item>
-              );
-            })}
-          </Accordion>
-        </section>
+      <div
+        className={`${styles.perioderContainer} ${perioder.length === 0 ? styles.tomTilstand : ""}`}
+      >
+        {/* Screen reader announcement for oppdaterte meldekort */}
+        {announceUpdate && (
+          <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
+            {announceUpdate}
+          </div>
+        )}
+        {perioder.length === 0 ? (
+          <section aria-labelledby="ingen-meldekort-tittel">
+            <InfoCard data-color="warning" size="small">
+              <InfoCard.Header icon={<ExclamationmarkTriangleIcon aria-hidden />}>
+                <InfoCard.Title id="ingen-meldekort-tittel">
+                  Her har det skjedd en feil
+                </InfoCard.Title>
+              </InfoCard.Header>
+              <InfoCard.Content>
+                Her mangler det meldekort. Ta kontakt med brukerstøtte.
+              </InfoCard.Content>
+            </InfoCard>
+          </section>
+        ) : (
+          <section aria-label="Meldekort gruppert etter år">
+            <Accordion size="small" indent={false}>
+              {years.map((year) => {
+                const aarOverskrift = sanityTekst(
+                  hovedsideData?.listeOverskrift,
+                  "hovedside.listeOverskrift",
+                ).replace("{{aar}}", String(year));
+                return (
+                  <Accordion.Item
+                    key={year}
+                    defaultOpen={year === years[0]}
+                    open={valgteAar.includes(year)}
+                  >
+                    <Accordion.Header onClick={() => toggleAr(year)}>
+                      {aarOverskrift}
+                    </Accordion.Header>
+                    <Accordion.Content className={styles.accordionContent}>
+                      <MeldekortListe
+                        perioder={groupedPeriods[year]}
+                        personId={params.personId}
+                        ansvarligSystem={person.ansvarligSystem}
+                        variant={variant}
+                        behandlinger={data?.behandlingerPerPeriode}
+                        hovedsideData={hovedsideData}
+                      />
+                    </Accordion.Content>
+                  </Accordion.Item>
+                );
+              })}
+            </Accordion>
+          </section>
+        )}
       </div>
     </div>
   );

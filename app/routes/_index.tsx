@@ -65,24 +65,15 @@ export default function Rapportering() {
                   person.etternavn
                 }`;
 
-                return [
-                  <LinkCard key={`${person.id}-A`}>
+                return (
+                  <LinkCard key={person.id}>
                     <LinkCard.Title>
-                      <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=A`}>
+                      <LinkCard.Anchor href={`/person/${person.id}/perioder`}>
                         {navn}
                       </LinkCard.Anchor>
                     </LinkCard.Title>
-                    <LinkCard.Description>Variant A</LinkCard.Description>
-                  </LinkCard>,
-                  <LinkCard key={`${person.id}-B`}>
-                    <LinkCard.Title>
-                      <LinkCard.Anchor href={`/person/${person.id}/perioder?variant=B`}>
-                        {navn}
-                      </LinkCard.Anchor>
-                    </LinkCard.Title>
-                    <LinkCard.Description>Variant B</LinkCard.Description>
-                  </LinkCard>,
-                ];
+                  </LinkCard>
+                );
               })}
             </VStack>
           </VStack>
