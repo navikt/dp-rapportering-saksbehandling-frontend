@@ -148,17 +148,18 @@ describe("OpprettMeldekortModal", () => {
     expect(onCloseMock).not.toHaveBeenCalled();
   });
 
-  it("skal vise valideringsfeil når personId mangler", async () => {
+  it("skal ikke opprette meldekort når personId mangler", async () => {
     const user = userEvent.setup();
     const onCloseMock = vi.fn();
+    const actionMock = vi.fn(() => ({ success: true }));
 
-    renderWithProviders(<OpprettMeldekortModal open={true} onClose={onCloseMock} />);
+    renderWithProviders(<OpprettMeldekortModal open={true} onClose={onCloseMock} />, actionMock);
 
     await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
     await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
     await user.click(screen.getByRole("button", { name: "Opprett" }));
 
-    expect(await screen.findByText("Mangler personId.")).toBeInTheDocument();
+    expect(actionMock).not.toHaveBeenCalled();
     expect(onCloseMock).not.toHaveBeenCalled();
   });
 

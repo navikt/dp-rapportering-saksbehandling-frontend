@@ -73,7 +73,6 @@ export function OpprettMeldekortModal({
   }
 
   const tekster = rootData?.sanityData?.opprettMeldekortModal;
-  const [actionError, setActionError] = useState<string | undefined>();
   const [opprettelseFeilet, setOpprettelseFeilet] = useState(false);
   const [visDatoFeil, setVisDatoFeil] = useState(false);
   const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
@@ -91,7 +90,6 @@ export function OpprettMeldekortModal({
     });
 
   function resetFormState() {
-    setActionError(undefined);
     setOpprettelseFeilet(false);
     setVisDatoFeil(false);
     setHasPendingSubmission(false);
@@ -127,7 +125,6 @@ export function OpprettMeldekortModal({
       return;
     }
 
-    setActionError(undefined);
     setOpprettelseFeilet(false);
     ventendeRangeRef.current = valgtPeriode;
 
@@ -156,24 +153,20 @@ export function OpprettMeldekortModal({
 
     if (!selectedRange?.from || !selectedRange.to) {
       setVisDatoFeil(true);
-      setActionError(undefined);
       return;
     }
 
     setVisDatoFeil(false);
 
     if (!personId) {
-      setActionError("Mangler personId.");
       return;
     }
 
-    setActionError(undefined);
     const fraOgMed = format(selectedRange.from, "yyyy-MM-dd");
     const tilOgMed = format(selectedRange.to, "yyyy-MM-dd");
     const today = getTodayIsoDate();
 
     if (fraOgMed > today || tilOgMed > today) {
-      setActionError("Fra-dato og til-dato kan ikke være frem i tid.");
       return;
     }
 
@@ -281,7 +274,6 @@ export function OpprettMeldekortModal({
               perioder={simulertePerioder}
             />
           )}
-          {actionError && <OpprettMeldekortAlert innhold={actionError} />}
           {opprettelseFeilet && (
             <OpprettMeldekortAlert
               tittel="Kunne ikke opprette meldekort"
