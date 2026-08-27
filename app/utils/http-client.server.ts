@@ -17,12 +17,16 @@ interface SafeFetchOptions {
   headers: HeadersInit;
   body?: string;
   parseJson?: boolean;
+  includeErrorData?: boolean;
 }
 
 /**
  * Parser HttpProblem fra backend response
  */
-async function parseHttpProblem(response: Response): Promise<IHttpProblem | null> {
+async function parseHttpProblem(
+  response: Response,
+  includeErrorData: boolean,
+): Promise<IHttpProblem | null> {
   try {
     const contentType = response.headers.get("content-type");
     const isJson =
@@ -32,7 +36,14 @@ async function parseHttpProblem(response: Response): Promise<IHttpProblem | null
     if (!isJson) return null;
 
     const data = await response.json();
-    return data.title && data.status && data.correlationId ? (data as IHttpProblem) : null;
+    if (!data.title && !(includeErrorData && data.perioder)) return null;
+
+    return {
+      ...data,
+      title: data.title ?? "Kunne ikke opprette meldekort.",
+      status: data.status ?? response.status,
+      correlationId: data.correlationId ?? uuidv7(),
+    } as IHttpProblem;
   } catch {
     return null;
   }
@@ -61,6 +72,7 @@ function throwHttpProblem(
       details: httpProblem.detail,
       correlationId: httpProblem.correlationId,
       errorType: httpProblem.errorType,
+      perioder: httpProblem.perioder,
     },
     { status: httpProblem.status },
   );
@@ -112,8 +124,9 @@ async function handleErrorResponse(
   response: Response,
   context: string,
   metadata?: Record<string, unknown>,
+  includeErrorData = false,
 ): Promise<never> {
-  const httpProblem = await parseHttpProblem(response);
+  const httpProblem = await parseHttpProblem(response, includeErrorData);
   return httpProblem
     ? throwHttpProblem(httpProblem, context, metadata)
     : throwFallbackError(response, context, metadata);
@@ -135,7 +148,7 @@ export async function httpRequest<T>(
   const response = await fetch(url, options);
 
   if (!response.ok) {
-    await handleErrorResponse(response, context, metadata);
+    await handleErrorResponse(response, context, metadata, options.includeErrorData ?? false);
   }
 
   // Response er OK (200-299), parse JSON

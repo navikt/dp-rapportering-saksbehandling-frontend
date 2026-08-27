@@ -12,6 +12,7 @@ export interface IOpprettMeldekortResponse {
     id?: string;
     fraOgMed: string;
     tilOgMed: string;
+    overlapperEksisterendeMeldekort?: boolean;
   }>;
 }
 

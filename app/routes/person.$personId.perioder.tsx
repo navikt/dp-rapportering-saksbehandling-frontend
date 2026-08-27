@@ -1,5 +1,4 @@
-import { ExclamationmarkTriangleIcon } from "@navikt/aksel-icons";
-import { Accordion, Heading, InfoCard } from "@navikt/ds-react";
+import { Accordion, Heading, LocalAlert } from "@navikt/ds-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouteLoaderData, useSearchParams } from "react-router";
 
@@ -141,16 +140,16 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
         )}
         {perioder.length === 0 ? (
           <section aria-labelledby="ingen-meldekort-tittel">
-            <InfoCard data-color="warning" size="small">
-              <InfoCard.Header icon={<ExclamationmarkTriangleIcon aria-hidden />}>
-                <InfoCard.Title id="ingen-meldekort-tittel">
+            <LocalAlert status="error">
+              <LocalAlert.Header>
+                <LocalAlert.Title id="ingen-meldekort-tittel">
                   Her har det skjedd en feil
-                </InfoCard.Title>
-              </InfoCard.Header>
-              <InfoCard.Content>
+                </LocalAlert.Title>
+              </LocalAlert.Header>
+              <LocalAlert.Content>
                 Her mangler det meldekort. Ta kontakt med brukerstøtte.
-              </InfoCard.Content>
-            </InfoCard>
+              </LocalAlert.Content>
+            </LocalAlert>
           </section>
         ) : (
           <section aria-label="Meldekort gruppert etter år">

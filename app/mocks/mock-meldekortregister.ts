@@ -1,4 +1,4 @@
-import { addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 import { http, HttpResponse } from "msw";
 
 import { logger } from "~/models/logger.server";
@@ -87,6 +87,58 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           periode = lagPeriodeDatoFor(addDays(new Date(periode.tilOgMed), 1));
         }
 
+        const eksisterendePerioder = db
+          .hentAlleRapporteringsperioder()
+          .filter((eksisterende) => eksisterende.ident === person.ident);
+
+        const sisteEksisterendePeriode = eksisterendePerioder.reduce<
+          IRapporteringsperiode | undefined
+        >((siste, eksisterende) => {
+          if (!siste || eksisterende.periode.tilOgMed > siste.periode.tilOgMed) {
+            return eksisterende;
+          }
+          return siste;
+        }, undefined);
+
+        const perioderMedOverlapp = perioder.map((nyPeriode) => {
+          const eksisterendePeriode = eksisterendePerioder.find(
+            (eksisterende) =>
+              nyPeriode.fraOgMed <= eksisterende.periode.tilOgMed &&
+              nyPeriode.tilOgMed >= eksisterende.periode.fraOgMed,
+          );
+
+          return {
+            ...nyPeriode,
+            id: eksisterendePeriode?.id,
+            overlapperEksisterendeMeldekort: Boolean(eksisterendePeriode),
+          };
+        });
+
+        if (perioderMedOverlapp.some((nyPeriode) => nyPeriode.overlapperEksisterendeMeldekort)) {
+          return HttpResponse.json(
+            {
+              perioder: perioderMedOverlapp,
+              title: "Overlappende meldekort",
+              detail: "Ett eller flere meldekort overlapper eksisterende meldekort.",
+            },
+            { status: 422 },
+          );
+        }
+
+        if (
+          sisteEksisterendePeriode &&
+          body.fraOgMed !==
+            format(addDays(new Date(sisteEksisterendePeriode.periode.tilOgMed), 1), "yyyy-MM-dd")
+        ) {
+          return HttpResponse.json(
+            {
+              title: "Ugyldig startdato",
+              detail: "Fra-dato må være dagen etter siste eksisterende meldekort.",
+            },
+            { status: 422 },
+          );
+        }
+
         const opprettedePerioder: IRapporteringsperiode[] = [];
         if (!body.simulering) {
           for (const nyPeriode of perioder) {
@@ -105,7 +157,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
 
         return HttpResponse.json({
           perioder: body.simulering
-            ? perioder
+            ? perioderMedOverlapp
             : opprettedePerioder.map(({ id, periode }) => ({
                 id,
                 ...periode,
