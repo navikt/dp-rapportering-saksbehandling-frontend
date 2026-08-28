@@ -49,7 +49,7 @@ export interface IHttpProblem {
   instance: string;
   errorType?: string;
   correlationId: string;
-  perioder?: unknown;
+  perioder?: unknown[];
 }
 
 export type TAktivitetType = (typeof AKTIVITET_TYPE)[keyof typeof AKTIVITET_TYPE];

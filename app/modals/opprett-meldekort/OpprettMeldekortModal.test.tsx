@@ -233,6 +233,27 @@ describe("OpprettMeldekortModal", () => {
     ).toBeInTheDocument();
   });
 
+  it("skal deaktivere opprett-knappen og markere perioden ved overlapp", async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />, {
+      success: false,
+      perioder: [
+        { fraOgMed: "2024-01-01", tilOgMed: "2024-01-14", overlapperEksisterendeMeldekort: true },
+      ],
+    });
+
+    await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
+    await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Opprett" })).toBeDisabled();
+    });
+
+    expect(screen.getByLabelText("Overlapper eksisterende meldekort")).toBeInTheDocument();
+    expect(screen.queryByText("Kan ikke forhåndsvise meldekort")).not.toBeInTheDocument();
+  });
+
   it("skal vise brukernavn i tittel når det er oppgitt", () => {
     renderWithProviders(
       <OpprettMeldekortModal open={true} onClose={vi.fn()} brukerNavn="Ola Nordmann" />,

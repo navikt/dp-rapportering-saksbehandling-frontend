@@ -35,15 +35,25 @@ async function parseHttpProblem(
 
     if (!isJson) return null;
 
-    const data = await response.json();
-    if (!data.title && !(includeErrorData && data.perioder)) return null;
+    const data: unknown = await response.json();
+    if (typeof data !== "object" || data === null) return null;
+
+    const problem = data as Record<string, unknown>;
+    const perioder = Array.isArray(problem.perioder) ? problem.perioder : undefined;
+    const title = typeof problem.title === "string" ? problem.title : undefined;
+
+    if (!title && !(includeErrorData && perioder)) return null;
 
     return {
-      ...data,
-      title: data.title ?? "Kunne ikke opprette meldekort.",
-      status: data.status ?? response.status,
-      correlationId: data.correlationId ?? uuidv7(),
-    } as IHttpProblem;
+      ...problem,
+      type: typeof problem.type === "string" ? problem.type : "about:blank",
+      title: title ?? "Kunne ikke opprette meldekort.",
+      status: typeof problem.status === "number" ? problem.status : response.status,
+      instance: typeof problem.instance === "string" ? problem.instance : response.url,
+      errorType: typeof problem.errorType === "string" ? problem.errorType : undefined,
+      correlationId: typeof problem.correlationId === "string" ? problem.correlationId : uuidv7(),
+      perioder,
+    };
   } catch {
     return null;
   }
@@ -145,10 +155,11 @@ export async function httpRequest<T>(
   context: string,
   metadata?: Record<string, unknown>,
 ): Promise<T> {
-  const response = await fetch(url, options);
+  const { includeErrorData = false, ...fetchOptions } = options;
+  const response = await fetch(url, fetchOptions);
 
   if (!response.ok) {
-    await handleErrorResponse(response, context, metadata, options.includeErrorData ?? false);
+    await handleErrorResponse(response, context, metadata, includeErrorData);
   }
 
   // Response er OK (200-299), parse JSON
