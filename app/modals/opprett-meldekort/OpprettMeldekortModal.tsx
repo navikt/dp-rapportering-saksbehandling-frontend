@@ -1,15 +1,16 @@
 import { ExclamationmarkTriangleIcon } from "@navikt/aksel-icons";
 import {
-  Alert,
   BodyShort,
   Button,
   DatePicker,
   InfoCard,
+  LocalAlert,
   Modal,
   Skeleton,
   useRangeDatepicker,
 } from "@navikt/ds-react";
 import { format } from "date-fns";
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useFetcher, useNavigate, useRouteLoaderData } from "react-router";
 
@@ -25,10 +26,27 @@ import {
   type IOpprettMeldekortPayload,
   type IOpprettMeldekortResponse,
   type IPeriodeIntervall,
-  toOpprettMeldekortErrorMessage,
   utledGyldigPeriode,
 } from "./opprettMeldekortModal.helpers";
 import styles from "./opprettMeldekortModal.module.css";
+
+interface OpprettMeldekortAlertProps {
+  tittel?: string;
+  innhold: ReactNode;
+}
+
+function OpprettMeldekortAlert({ tittel, innhold }: OpprettMeldekortAlertProps) {
+  return (
+    <LocalAlert status="error">
+      {tittel && (
+        <LocalAlert.Header>
+          <LocalAlert.Title>{tittel}</LocalAlert.Title>
+        </LocalAlert.Header>
+      )}
+      <LocalAlert.Content>{innhold}</LocalAlert.Content>
+    </LocalAlert>
+  );
+}
 
 interface OpprettMeldekortModalProps {
   open: boolean;
@@ -55,7 +73,7 @@ export function OpprettMeldekortModal({
   }
 
   const tekster = rootData?.sanityData?.opprettMeldekortModal;
-  const [actionError, setActionError] = useState<string | undefined>();
+  const [opprettelseFeilet, setOpprettelseFeilet] = useState(false);
   const [visDatoFeil, setVisDatoFeil] = useState(false);
   const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
   const fetcher = useFetcher<IOpprettMeldekortResponse>();
@@ -72,7 +90,7 @@ export function OpprettMeldekortModal({
     });
 
   function resetFormState() {
-    setActionError(undefined);
+    setOpprettelseFeilet(false);
     setVisDatoFeil(false);
     setHasPendingSubmission(false);
     reset();
@@ -88,6 +106,7 @@ export function OpprettMeldekortModal({
     setHasPendingSubmission(false);
 
     if (fetcher.data.success) {
+      setOpprettelseFeilet(false);
       onBekreft?.(fetcher.data.perioder ?? []);
       if (fetcher.data.redirectUrl) {
         navigate(fetcher.data.redirectUrl);
@@ -97,7 +116,7 @@ export function OpprettMeldekortModal({
       return;
     }
 
-    setActionError(toOpprettMeldekortErrorMessage(fetcher.data));
+    setOpprettelseFeilet(true);
   }, [hasPendingSubmission, fetcher.state, fetcher.data, onBekreft, onClose]);
 
   function startSimuleringAvMeldekortOpprettelse() {
@@ -106,6 +125,7 @@ export function OpprettMeldekortModal({
       return;
     }
 
+    setOpprettelseFeilet(false);
     ventendeRangeRef.current = valgtPeriode;
 
     simuleringFetcher.submit(
@@ -129,26 +149,24 @@ export function OpprettMeldekortModal({
   }, [simuleringFetcher.state, simuleringFetcher.data]);
 
   function handleBekreft() {
+    setOpprettelseFeilet(false);
+
     if (!selectedRange?.from || !selectedRange.to) {
       setVisDatoFeil(true);
-      setActionError(undefined);
       return;
     }
 
     setVisDatoFeil(false);
 
     if (!personId) {
-      setActionError("Mangler personId.");
       return;
     }
 
-    setActionError(undefined);
     const fraOgMed = format(selectedRange.from, "yyyy-MM-dd");
     const tilOgMed = format(selectedRange.to, "yyyy-MM-dd");
     const today = getTodayIsoDate();
 
     if (fraOgMed > today || tilOgMed > today) {
-      setActionError("Fra-dato og til-dato kan ikke være frem i tid.");
       return;
     }
 
@@ -177,9 +195,18 @@ export function OpprettMeldekortModal({
     Boolean(personId) && valgtPeriode !== null && simuleringFetcher.state !== "idle";
 
   const simulertePerioder =
-    erSammePeriode(simulertRange, valgtPeriode) && simuleringFetcher.data?.success
+    erSammePeriode(simulertRange, valgtPeriode) && simuleringFetcher.data
       ? (simuleringFetcher.data.perioder ?? [])
       : [];
+
+  const simuleringHarOverlapp =
+    erSammePeriode(simulertRange, valgtPeriode) &&
+    Boolean(simuleringFetcher.data && !simuleringFetcher.data.success) &&
+    simulertePerioder.some((periode) => periode.overlapperEksisterendeMeldekort);
+
+  const simuleringHarFeil =
+    erSammePeriode(simulertRange, valgtPeriode) &&
+    Boolean(simuleringFetcher.data && !simuleringFetcher.data.success);
 
   const infoBoksTekst = sanityTekst(
     tekster?.infoBoks?.tekst,
@@ -227,7 +254,6 @@ export function OpprettMeldekortModal({
               />
             </div>
           </DatePicker>
-          {actionError && <Alert variant="error">{actionError}</Alert>}
           <BodyShort>{forklaringstekst}</BodyShort>
           {lasterSimulering && (
             <Skeleton
@@ -244,7 +270,20 @@ export function OpprettMeldekortModal({
                 "opprettMeldekortModal.infoBoks.tittel",
               )}
               tekst={infoBoksTekst}
+              attention={simuleringHarOverlapp}
               perioder={simulertePerioder}
+            />
+          )}
+          {opprettelseFeilet && (
+            <OpprettMeldekortAlert
+              tittel="Kunne ikke opprette meldekort"
+              innhold="Meldekort kunne ikke opprettes. Prøv igjen, og hvis du fortsatt har problemer kontakt brukerstøtte."
+            />
+          )}
+          {simuleringHarFeil && !simuleringHarOverlapp && (
+            <OpprettMeldekortAlert
+              tittel="Kan ikke forhåndsvise meldekort"
+              innhold="Forhåndsvisningen funker ikke som den skal. En mulig årsak er at datoene du har valgt ikke stemmer overens med brukers meldesyklus. Prøv å justere datoene, eller ta kontakt med brukerstøtte."
             />
           )}
         </div>
@@ -255,6 +294,11 @@ export function OpprettMeldekortModal({
           onClick={handleBekreft}
           size="small"
           loading={hasPendingSubmission && fetcher.state !== "idle"}
+          disabled={
+            simuleringHarFeil ||
+            simuleringHarOverlapp ||
+            (hasPendingSubmission && fetcher.state !== "idle")
+          }
         >
           {sanityTekst(tekster?.submitKnapp, "opprettMeldekortModal.submitKnapp")}
         </Button>

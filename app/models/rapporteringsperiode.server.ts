@@ -25,6 +25,7 @@ export interface IOpprettMeldekortResponse {
     id?: string;
     fraOgMed: string;
     tilOgMed: string;
+    overlapperEksisterendeMeldekort?: boolean;
   }>;
 }
 
@@ -134,6 +135,7 @@ export async function opprettMeldekort({
         tilOgMed,
         simulering,
       } satisfies IOpprettMeldekortRequest),
+      includeErrorData: true,
     },
     "Opprettelse av meldekort",
     { personId, fraOgMed, tilOgMed, simulering },

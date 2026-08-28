@@ -17,12 +17,16 @@ interface SafeFetchOptions {
   headers: HeadersInit;
   body?: string;
   parseJson?: boolean;
+  includeErrorData?: boolean;
 }
 
 /**
  * Parser HttpProblem fra backend response
  */
-async function parseHttpProblem(response: Response): Promise<IHttpProblem | null> {
+async function parseHttpProblem(
+  response: Response,
+  includeErrorData: boolean,
+): Promise<IHttpProblem | null> {
   try {
     const contentType = response.headers.get("content-type");
     const isJson =
@@ -31,8 +35,25 @@ async function parseHttpProblem(response: Response): Promise<IHttpProblem | null
 
     if (!isJson) return null;
 
-    const data = await response.json();
-    return data.title && data.status && data.correlationId ? (data as IHttpProblem) : null;
+    const data: unknown = await response.json();
+    if (typeof data !== "object" || data === null) return null;
+
+    const problem = data as Record<string, unknown>;
+    const perioder = Array.isArray(problem.perioder) ? problem.perioder : undefined;
+    const title = typeof problem.title === "string" ? problem.title : undefined;
+
+    if (!title && !(includeErrorData && perioder)) return null;
+
+    return {
+      ...problem,
+      type: typeof problem.type === "string" ? problem.type : "about:blank",
+      title: title ?? "Kunne ikke opprette meldekort.",
+      status: typeof problem.status === "number" ? problem.status : response.status,
+      instance: typeof problem.instance === "string" ? problem.instance : response.url,
+      errorType: typeof problem.errorType === "string" ? problem.errorType : undefined,
+      correlationId: typeof problem.correlationId === "string" ? problem.correlationId : uuidv7(),
+      perioder,
+    };
   } catch {
     return null;
   }
@@ -61,6 +82,7 @@ function throwHttpProblem(
       details: httpProblem.detail,
       correlationId: httpProblem.correlationId,
       errorType: httpProblem.errorType,
+      perioder: httpProblem.perioder,
     },
     { status: httpProblem.status },
   );
@@ -112,8 +134,9 @@ async function handleErrorResponse(
   response: Response,
   context: string,
   metadata?: Record<string, unknown>,
+  includeErrorData = false,
 ): Promise<never> {
-  const httpProblem = await parseHttpProblem(response);
+  const httpProblem = await parseHttpProblem(response, includeErrorData);
   return httpProblem
     ? throwHttpProblem(httpProblem, context, metadata)
     : throwFallbackError(response, context, metadata);
@@ -132,10 +155,11 @@ export async function httpRequest<T>(
   context: string,
   metadata?: Record<string, unknown>,
 ): Promise<T> {
-  const response = await fetch(url, options);
+  const { includeErrorData = false, ...fetchOptions } = options;
+  const response = await fetch(url, fetchOptions);
 
   if (!response.ok) {
-    await handleErrorResponse(response, context, metadata);
+    await handleErrorResponse(response, context, metadata, includeErrorData);
   }
 
   // Response er OK (200-299), parse JSON

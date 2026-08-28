@@ -48,7 +48,11 @@ mockUseRouteLoaderData.mockReturnValue({
 
 function renderWithProviders(
   ui: React.ReactElement,
-  actionResponse: IOpprettMeldekortResponse = { success: true },
+  actionResponse:
+    | IOpprettMeldekortResponse
+    | ((request: Request) => IOpprettMeldekortResponse | Promise<IOpprettMeldekortResponse>) = {
+    success: true,
+  },
 ) {
   const Stub = createRoutesStub([
     {
@@ -57,7 +61,8 @@ function renderWithProviders(
     },
     {
       path: "/api/opprett-meldekort",
-      action: () => actionResponse,
+      action: ({ request }) =>
+        typeof actionResponse === "function" ? actionResponse(request) : actionResponse,
     },
   ]);
 
@@ -143,17 +148,18 @@ describe("OpprettMeldekortModal", () => {
     expect(onCloseMock).not.toHaveBeenCalled();
   });
 
-  it("skal vise valideringsfeil når personId mangler", async () => {
+  it("skal ikke opprette meldekort når personId mangler", async () => {
     const user = userEvent.setup();
     const onCloseMock = vi.fn();
+    const actionMock = vi.fn(() => ({ success: true }));
 
-    renderWithProviders(<OpprettMeldekortModal open={true} onClose={onCloseMock} />);
+    renderWithProviders(<OpprettMeldekortModal open={true} onClose={onCloseMock} />, actionMock);
 
     await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
     await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
     await user.click(screen.getByRole("button", { name: "Opprett" }));
 
-    expect(await screen.findByText("Mangler personId.")).toBeInTheDocument();
+    expect(actionMock).not.toHaveBeenCalled();
     expect(onCloseMock).not.toHaveBeenCalled();
   });
 
@@ -190,22 +196,62 @@ describe("OpprettMeldekortModal", () => {
 
     renderWithProviders(
       <OpprettMeldekortModal open={true} onClose={onCloseMock} personId="123" />,
-      {
-        error: "Kunne ikke opprette meldekort",
-        detail: "Ugyldig periode",
-      },
+      async (request) =>
+        (await request.formData()).get("simulering") === "true"
+          ? { success: true, perioder: [] }
+          : { error: "Kunne ikke opprette meldekort", detail: "Ugyldig periode" },
     );
 
     await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
     await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
     await user.click(screen.getByRole("button", { name: "Opprett" }));
 
+    expect(await screen.findByText("Kunne ikke opprette meldekort")).toBeInTheDocument();
     expect(
-      await screen.findByText("Kunne ikke opprette meldekort: Ugyldig periode", undefined, {
-        timeout: 5000,
-      }),
+      screen.getByText(
+        "Meldekort kunne ikke opprettes. Prøv igjen, og hvis du fortsatt har problemer kontakt brukerstøtte.",
+      ),
     ).toBeInTheDocument();
     expect(onCloseMock).not.toHaveBeenCalled();
+  });
+
+  it("skal vise generell feilmelding når forhåndsvisningen feiler", async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />, {
+      error: "Forhåndsvisning feilet",
+    });
+
+    await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
+    await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
+
+    expect(await screen.findByText("Kan ikke forhåndsvise meldekort")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Forhåndsvisningen funker ikke som den skal. En mulig årsak er at datoene du har valgt ikke stemmer overens med brukers meldesyklus. Prøv å justere datoene, eller ta kontakt med brukerstøtte.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("skal deaktivere opprett-knappen og markere perioden ved overlapp", async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<OpprettMeldekortModal open={true} onClose={vi.fn()} personId="123" />, {
+      success: false,
+      perioder: [
+        { fraOgMed: "2024-01-01", tilOgMed: "2024-01-14", overlapperEksisterendeMeldekort: true },
+      ],
+    });
+
+    await user.type(screen.getByLabelText("Fra dato"), "01.01.2024");
+    await user.type(screen.getByLabelText("Til dato"), "14.01.2024");
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Opprett" })).toBeDisabled();
+    });
+
+    expect(screen.getByLabelText("Overlapper eksisterende meldekort")).toBeInTheDocument();
+    expect(screen.queryByText("Kan ikke forhåndsvise meldekort")).not.toBeInTheDocument();
   });
 
   it("skal vise brukernavn i tittel når det er oppgitt", () => {

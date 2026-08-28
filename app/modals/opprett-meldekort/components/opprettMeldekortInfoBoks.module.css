@@ -4,10 +4,13 @@
 }
 
 .periodeTabellWrapper {
+  max-width: 100%;
+  overflow-x: auto;
   padding: var(--ax-space-6) var(--ax-space-12);
 }
 
 .periodeTabell {
+  min-width: 28rem;
   width: 100%;
   border-collapse: collapse;
 }
@@ -31,5 +34,26 @@
 }
 
 .periodeKolonne {
-  width: 67%;
+  width: 62%;
+}
+
+.varselskolonne {
+  width: 5%;
+}
+
+.overlappendePeriode {
+  color: var(--ax-text-warning-subtle);
+}
+
+.varselcelle {
+  text-align: right !important;
+  vertical-align: middle;
+  color: var(--ax-text-warning-subtle);
+}
+
+.varselikon {
+  display: flex;
+  min-height: 100%;
+  align-items: center;
+  justify-content: flex-end;
 }
