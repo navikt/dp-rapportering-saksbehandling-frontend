@@ -50,9 +50,14 @@ export function OpprettMeldekortInfoBoks({
     tekster?.overlappAriaLabel,
     "opprettMeldekortModal.meldekortoversikt.overlappAriaLabel",
   );
-  const arsskifteTilleggstekst = tekster?.arsskifteTilleggstekst;
-  const overlappendePerioderTekst = tekster?.overlappendePerioderTekst;
-
+  const arsskifteTilleggstekst = sanityTekst(
+    tekster?.arsskifteTilleggstekst,
+    "opprettMeldekortModal.meldekortoversikt.arsskifteTilleggstekst",
+  );
+  const overlappendePerioderTekst = sanityTekst(
+    tekster?.overlappendePerioderTekst,
+    "opprettMeldekortModal.meldekortoversikt.overlappendePerioderTekst",
+  );
   const varslingOmOverlappendePerioder = interpolerAntallIPortableText(
     tekster?.tekst ?? [],
     perioder.length,
