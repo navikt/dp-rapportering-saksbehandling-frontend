@@ -90,7 +90,7 @@ export function interpolerAntallIPortableText(
         child._type === "span" && typeof (child as PortableTextSpan).text === "string"
           ? {
               ...child,
-              text: (child as PortableTextSpan).text.replace("{{antall}}", String(antall)),
+              text: (child as PortableTextSpan).text.replace(/{{antall}}/g, String(antall)),
             }
           : child,
       ),
