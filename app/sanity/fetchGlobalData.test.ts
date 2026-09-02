@@ -111,21 +111,56 @@ describe("fetchGlobalSanityData", () => {
     fraDato: {
       label: "Fra dato",
       helpText: "Velg startdato",
+      feilmelding: "Du må velge dato",
     },
     tilDato: {
       label: "Til dato",
       helpText: "Velg sluttdato",
+      feilmelding: "Du må velge dato",
     },
     forklaringstekst: "Basert på valgt dato, vil det opprettes {{antall}} nye meldekort.",
     submitKnapp: "Opprett",
     avbrytKnapp: "Avbryt",
-    infoBoks: {
+    meldekortoversikt: {
       tittel: "Info",
-      tekst: "Nye meldekort opprettes hver 14. dag.",
+      tekst: [
+        {
+          _type: "block",
+          _key: "block1",
+          style: "normal",
+          markDefs: [],
+          children: [
+            {
+              _type: "span",
+              _key: "span1",
+              text: "Nye meldekort opprettes hver 14. dag.",
+              marks: [],
+            },
+          ],
+        },
+      ],
+      ukenummerKolonne: "Ukenummer",
+      periodeKolonne: "Periode",
+      varselKolonne: "Varsel",
+      overlappAriaLabel: "Overlapper eksisterende meldekort",
     },
-    feilmelding: {
-      tittel: "Feil",
-      tekst: "Kunne ikke opprette meldekort.",
+    feilmeldinger: {
+      simulering: {
+        tittel: "Feil ved forhåndsvisning",
+        tekst: "Kunne ikke forhåndsvise meldekort.",
+      },
+      opprettelse: {
+        tittel: "Feil",
+        tekst: "Kunne ikke opprette meldekort.",
+      },
+      overlappendeMeldekort: {
+        tittel: "Overlapper",
+        tekst: "Perioden overlapper med et eksisterende meldekort.",
+      },
+      ingenPerioder: {
+        tittel: "Sjekk med brukerstøtte før du oppretter meldekort",
+        tekst: "Det har skjedd en feil. Ta kontakt med brukerstøtte.",
+      },
     },
   };
 
@@ -192,6 +227,10 @@ describe("fetchGlobalSanityData", () => {
       generalErrorTitle: "Noe gikk galt",
       defaultDescription: "Vi klarte ikke å laste siden",
       errorText: "Om du trenger hjelp kan du oppgi feil-ID: {{id}}",
+    },
+    ingenMeldekort: {
+      tittel: "Her har det skjedd en feil",
+      tekst: "Her mangler det meldekort. Ta kontakt med brukerstøtte.",
     },
   };
 

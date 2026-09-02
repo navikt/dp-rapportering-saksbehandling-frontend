@@ -1,3 +1,4 @@
+import type { PortableTextBlock, PortableTextSpan } from "@portabletext/types";
 import { format } from "date-fns";
 
 import { getTodayIsoDate } from "~/utils/dato.utils";
@@ -72,4 +73,33 @@ export function byggOpprettMeldekortActionUrl(): string {
   const actionUrl = new URL("/api/opprett-meldekort", window.location.origin);
   addDemoParamsToURL(actionUrl);
   return actionUrl.pathname + actionUrl.search;
+}
+
+export function interpolerAntallIPortableText(
+  blocks: PortableTextBlock[],
+  antall: number,
+): PortableTextBlock[] {
+  return blocks.map((block) => {
+    if (block._type !== "block" || !Array.isArray(block.children)) {
+      return block;
+    }
+
+    return {
+      ...block,
+      children: block.children.map((child) =>
+        child._type === "span" && typeof (child as PortableTextSpan).text === "string"
+          ? {
+              ...child,
+              text: (child as PortableTextSpan).text.replace("{{antall}}", String(antall)),
+            }
+          : child,
+      ),
+    };
+  });
+}
+
+export function harPeriodeMedArsskifte(
+  perioder: Array<{ fraOgMed: string; tilOgMed: string }>,
+): boolean {
+  return perioder.some((periode) => periode.fraOgMed.slice(0, 4) !== periode.tilOgMed.slice(0, 4));
 }

@@ -208,9 +208,13 @@ export function OpprettMeldekortModal({
     erSammePeriode(simulertRange, valgtPeriode) &&
     Boolean(simuleringFetcher.data && !simuleringFetcher.data.success);
 
-  const infoBoksTekst = sanityTekst(
-    tekster?.infoBoks?.tekst,
-    "opprettMeldekortModal.infoBoks.tekst",
+  const fraDatoFeilmelding = sanityTekst(
+    tekster?.fraDato?.feilmelding,
+    "opprettMeldekortModal.fraDato.feilmelding",
+  );
+  const tilDatoFeilmelding = sanityTekst(
+    tekster?.tilDato?.feilmelding,
+    "opprettMeldekortModal.tilDato.feilmelding",
   );
 
   return (
@@ -223,10 +227,18 @@ export function OpprettMeldekortModal({
           {perioder.length === 0 && (
             <InfoCard data-color="warning" size="small">
               <InfoCard.Header icon={<ExclamationmarkTriangleIcon aria-hidden />}>
-                <InfoCard.Title>Sjekk med brukerstøtte før du oppretter meldekort</InfoCard.Title>
+                <InfoCard.Title>
+                  {sanityTekst(
+                    tekster?.feilmeldinger?.ingenPerioder?.tittel,
+                    "opprettMeldekortModal.feilmeldinger.ingenPerioder.tittel",
+                  )}
+                </InfoCard.Title>
               </InfoCard.Header>
               <InfoCard.Content>
-                Det har skjedd en feil. Ta kontakt med brukerstøtte.
+                {sanityTekst(
+                  tekster?.feilmeldinger?.ingenPerioder?.tekst,
+                  "opprettMeldekortModal.feilmeldinger.ingenPerioder.tekst",
+                )}
               </InfoCard.Content>
             </InfoCard>
           )}
@@ -240,7 +252,7 @@ export function OpprettMeldekortModal({
                   tekster?.fraDato?.helpText,
                   "opprettMeldekortModal.fraDato.helpText",
                 )}
-                error={visDatoFeil && !selectedRange?.from ? "Du må velge dato" : undefined}
+                error={visDatoFeil && !selectedRange?.from ? fraDatoFeilmelding : undefined}
               />
               <DatePicker.Input
                 size="small"
@@ -250,7 +262,7 @@ export function OpprettMeldekortModal({
                   tekster?.tilDato?.helpText,
                   "opprettMeldekortModal.tilDato.helpText",
                 )}
-                error={visDatoFeil && !selectedRange?.to ? "Du må velge dato" : undefined}
+                error={visDatoFeil && !selectedRange?.to ? tilDatoFeilmelding : undefined}
               />
             </div>
           </DatePicker>
@@ -266,24 +278,65 @@ export function OpprettMeldekortModal({
           {simulertePerioder.length > 0 && (
             <OpprettMeldekortInfoBoks
               tittel={sanityTekst(
-                tekster?.infoBoks?.tittel,
-                "opprettMeldekortModal.infoBoks.tittel",
+                tekster?.meldekortoversikt?.tittel,
+                "opprettMeldekortModal.meldekortoversikt.tittel",
               )}
-              tekst={infoBoksTekst}
+              tekst={tekster?.meldekortoversikt?.tekst ?? []}
+              arsskifteTilleggstekst={tekster?.meldekortoversikt?.arsskifteTilleggstekst}
+              ukenummerKolonne={sanityTekst(
+                tekster?.meldekortoversikt?.ukenummerKolonne,
+                "opprettMeldekortModal.meldekortoversikt.ukenummerKolonne",
+              )}
+              periodeKolonne={sanityTekst(
+                tekster?.meldekortoversikt?.periodeKolonne,
+                "opprettMeldekortModal.meldekortoversikt.periodeKolonne",
+              )}
+              varselKolonne={sanityTekst(
+                tekster?.meldekortoversikt?.varselKolonne,
+                "opprettMeldekortModal.meldekortoversikt.varselKolonne",
+              )}
+              overlappAriaLabel={sanityTekst(
+                tekster?.meldekortoversikt?.overlappAriaLabel,
+                "opprettMeldekortModal.meldekortoversikt.overlappAriaLabel",
+              )}
               attention={simuleringHarOverlapp}
               perioder={simulertePerioder}
             />
           )}
           {opprettelseFeilet && (
             <OpprettMeldekortAlert
-              tittel="Kunne ikke opprette meldekort"
-              innhold="Meldekort kunne ikke opprettes. Prøv igjen, og hvis du fortsatt har problemer kontakt brukerstøtte."
+              tittel={sanityTekst(
+                tekster?.feilmeldinger?.opprettelse?.tittel,
+                "opprettMeldekortModal.feilmeldinger.opprettelse.tittel",
+              )}
+              innhold={sanityTekst(
+                tekster?.feilmeldinger?.opprettelse?.tekst,
+                "opprettMeldekortModal.feilmeldinger.opprettelse.tekst",
+              )}
+            />
+          )}
+          {simuleringHarOverlapp && (
+            <OpprettMeldekortAlert
+              tittel={sanityTekst(
+                tekster?.feilmeldinger?.overlappendeMeldekort?.tittel,
+                "opprettMeldekortModal.feilmeldinger.overlappendeMeldekort.tittel",
+              )}
+              innhold={sanityTekst(
+                tekster?.feilmeldinger?.overlappendeMeldekort?.tekst,
+                "opprettMeldekortModal.feilmeldinger.overlappendeMeldekort.tekst",
+              )}
             />
           )}
           {simuleringHarFeil && !simuleringHarOverlapp && (
             <OpprettMeldekortAlert
-              tittel="Kan ikke forhåndsvise meldekort"
-              innhold="Forhåndsvisningen funker ikke som den skal. En mulig årsak er at datoene du har valgt ikke stemmer overens med brukers meldesyklus. Prøv å justere datoene, eller ta kontakt med brukerstøtte."
+              tittel={sanityTekst(
+                tekster?.feilmeldinger?.simulering?.tittel,
+                "opprettMeldekortModal.feilmeldinger.simulering.tittel",
+              )}
+              innhold={sanityTekst(
+                tekster?.feilmeldinger?.simulering?.tekst,
+                "opprettMeldekortModal.feilmeldinger.simulering.tekst",
+              )}
             />
           )}
         </div>

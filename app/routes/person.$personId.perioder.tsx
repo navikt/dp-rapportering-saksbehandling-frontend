@@ -32,6 +32,8 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
   const perioder = data?.perioder ?? [];
   const person = data?.person ?? DEFAULT_PERSON;
   const hovedsideData = data?.hovedsideData;
+  const rootData = useRouteLoaderData("root");
+  const varslerData = rootData?.sanityData?.varsler;
   const { variant } = loaderData;
   const [searchParams, setSearchParams] = useSearchParams();
   const [announceUpdate, setAnnounceUpdate] = useState("");
@@ -143,11 +145,14 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
             <LocalAlert status="error">
               <LocalAlert.Header>
                 <LocalAlert.Title id="ingen-meldekort-tittel">
-                  Her har det skjedd en feil
+                  {sanityTekst(
+                    varslerData?.ingenMeldekort?.tittel,
+                    "varsler.ingenMeldekort.tittel",
+                  )}
                 </LocalAlert.Title>
               </LocalAlert.Header>
               <LocalAlert.Content>
-                Her mangler det meldekort. Ta kontakt med brukerstøtte.
+                {sanityTekst(varslerData?.ingenMeldekort?.tekst, "varsler.ingenMeldekort.tekst")}
               </LocalAlert.Content>
             </LocalAlert>
           </section>

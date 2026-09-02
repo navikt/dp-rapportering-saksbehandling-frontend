@@ -1,16 +1,31 @@
+import type { PortableTextBlock } from "@portabletext/types";
+
 export interface IDatoFelt {
   label: string;
   helpText: string;
+  feilmelding: string;
 }
 
-export interface IInfoBoks {
+export interface IMeldekortoversikt {
   tittel: string;
-  tekst: string;
+  tekst: PortableTextBlock[];
+  arsskifteTilleggstekst?: string;
+  ukenummerKolonne: string;
+  periodeKolonne: string;
+  varselKolonne: string;
+  overlappAriaLabel: string;
 }
 
 export interface IFeilmelding {
   tittel: string;
   tekst: string;
+}
+
+export interface IFeilmeldinger {
+  simulering: IFeilmelding;
+  opprettelse: IFeilmelding;
+  overlappendeMeldekort: IFeilmelding;
+  ingenPerioder: IFeilmelding;
 }
 
 export interface IMeldekortOpprettMeldekortModal {
@@ -20,6 +35,6 @@ export interface IMeldekortOpprettMeldekortModal {
   forklaringstekst: string;
   submitKnapp: string;
   avbrytKnapp: string;
-  infoBoks: IInfoBoks;
-  feilmelding: IFeilmelding;
+  meldekortoversikt: IMeldekortoversikt;
+  feilmeldinger: IFeilmeldinger;
 }
