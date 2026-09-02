@@ -10,6 +10,7 @@ export interface IMeldekortoversikt {
   tittel: string;
   tekst: PortableTextBlock[];
   arsskifteTilleggstekst?: string;
+  overlappendePerioderTekst?: string;
   ukenummerKolonne: string;
   periodeKolonne: string;
   varselKolonne: string;
@@ -24,8 +25,6 @@ export interface IFeilmelding {
 export interface IFeilmeldinger {
   simulering: IFeilmelding;
   opprettelse: IFeilmelding;
-  overlappendeMeldekort: IFeilmelding;
-  ingenPerioder: IFeilmelding;
 }
 
 export interface IMeldekortOpprettMeldekortModal {

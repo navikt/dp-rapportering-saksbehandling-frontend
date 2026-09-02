@@ -139,6 +139,7 @@ describe("fetchGlobalSanityData", () => {
           ],
         },
       ],
+      overlappendePerioderTekst: "Perioden overlapper med et eksisterende meldekort.",
       ukenummerKolonne: "Ukenummer",
       periodeKolonne: "Periode",
       varselKolonne: "Varsel",
@@ -152,14 +153,6 @@ describe("fetchGlobalSanityData", () => {
       opprettelse: {
         tittel: "Feil",
         tekst: "Kunne ikke opprette meldekort.",
-      },
-      overlappendeMeldekort: {
-        tittel: "Overlapper",
-        tekst: "Perioden overlapper med et eksisterende meldekort.",
-      },
-      ingenPerioder: {
-        tittel: "Sjekk med brukerstøtte før du oppretter meldekort",
-        tekst: "Det har skjedd en feil. Ta kontakt med brukerstøtte.",
       },
     },
   };

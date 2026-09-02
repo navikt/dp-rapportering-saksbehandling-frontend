@@ -1,6 +1,5 @@
 import { ExclamationmarkTriangleIcon } from "@navikt/aksel-icons";
 import {
-  BodyShort,
   Button,
   DatePicker,
   InfoCard,
@@ -73,6 +72,7 @@ export function OpprettMeldekortModal({
   }
 
   const tekster = rootData?.sanityData?.opprettMeldekortModal;
+  const varsler = rootData?.sanityData?.varsler;
   const [opprettelseFeilet, setOpprettelseFeilet] = useState(false);
   const [visDatoFeil, setVisDatoFeil] = useState(false);
   const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
@@ -186,10 +186,6 @@ export function OpprettMeldekortModal({
 
   const tittel = sanityTekst(tekster?.tittel, "opprettMeldekortModal.tittel");
   const tittelMedNavn = brukerNavn ? tittel.replace("{{navn}}", brukerNavn) : tittel;
-  const forklaringstekst = sanityTekst(
-    tekster?.forklaringstekst,
-    "opprettMeldekortModal.forklaringstekst",
-  );
 
   const lasterSimulering =
     Boolean(personId) && valgtPeriode !== null && simuleringFetcher.state !== "idle";
@@ -228,17 +224,11 @@ export function OpprettMeldekortModal({
             <InfoCard data-color="warning" size="small">
               <InfoCard.Header icon={<ExclamationmarkTriangleIcon aria-hidden />}>
                 <InfoCard.Title>
-                  {sanityTekst(
-                    tekster?.feilmeldinger?.ingenPerioder?.tittel,
-                    "opprettMeldekortModal.feilmeldinger.ingenPerioder.tittel",
-                  )}
+                  {sanityTekst(varsler?.ingenMeldekort?.tittel, "varsler.ingenMeldekort.tittel")}
                 </InfoCard.Title>
               </InfoCard.Header>
               <InfoCard.Content>
-                {sanityTekst(
-                  tekster?.feilmeldinger?.ingenPerioder?.tekst,
-                  "opprettMeldekortModal.feilmeldinger.ingenPerioder.tekst",
-                )}
+                {sanityTekst(varsler?.ingenMeldekort?.tekst, "varsler.ingenMeldekort.tekst")}
               </InfoCard.Content>
             </InfoCard>
           )}
@@ -266,7 +256,6 @@ export function OpprettMeldekortModal({
               />
             </div>
           </DatePicker>
-          <BodyShort>{forklaringstekst}</BodyShort>
           {lasterSimulering && (
             <Skeleton
               variant="rounded"
@@ -277,28 +266,7 @@ export function OpprettMeldekortModal({
           )}
           {simulertePerioder.length > 0 && (
             <OpprettMeldekortInfoBoks
-              tittel={sanityTekst(
-                tekster?.meldekortoversikt?.tittel,
-                "opprettMeldekortModal.meldekortoversikt.tittel",
-              )}
-              tekst={tekster?.meldekortoversikt?.tekst ?? []}
-              arsskifteTilleggstekst={tekster?.meldekortoversikt?.arsskifteTilleggstekst}
-              ukenummerKolonne={sanityTekst(
-                tekster?.meldekortoversikt?.ukenummerKolonne,
-                "opprettMeldekortModal.meldekortoversikt.ukenummerKolonne",
-              )}
-              periodeKolonne={sanityTekst(
-                tekster?.meldekortoversikt?.periodeKolonne,
-                "opprettMeldekortModal.meldekortoversikt.periodeKolonne",
-              )}
-              varselKolonne={sanityTekst(
-                tekster?.meldekortoversikt?.varselKolonne,
-                "opprettMeldekortModal.meldekortoversikt.varselKolonne",
-              )}
-              overlappAriaLabel={sanityTekst(
-                tekster?.meldekortoversikt?.overlappAriaLabel,
-                "opprettMeldekortModal.meldekortoversikt.overlappAriaLabel",
-              )}
+              tekster={tekster?.meldekortoversikt}
               attention={simuleringHarOverlapp}
               perioder={simulertePerioder}
             />
@@ -312,18 +280,6 @@ export function OpprettMeldekortModal({
               innhold={sanityTekst(
                 tekster?.feilmeldinger?.opprettelse?.tekst,
                 "opprettMeldekortModal.feilmeldinger.opprettelse.tekst",
-              )}
-            />
-          )}
-          {simuleringHarOverlapp && (
-            <OpprettMeldekortAlert
-              tittel={sanityTekst(
-                tekster?.feilmeldinger?.overlappendeMeldekort?.tittel,
-                "opprettMeldekortModal.feilmeldinger.overlappendeMeldekort.tittel",
-              )}
-              innhold={sanityTekst(
-                tekster?.feilmeldinger?.overlappendeMeldekort?.tekst,
-                "opprettMeldekortModal.feilmeldinger.overlappendeMeldekort.tekst",
               )}
             />
           )}

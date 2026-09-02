@@ -19,6 +19,7 @@ export const opprettMeldekortModalQuery = groq`*[_type == "opprettMeldekortModal
     tittel,
     tekst,
     arsskifteTilleggstekst,
+    overlappendePerioderTekst,
     ukenummerKolonne,
     periodeKolonne,
     varselKolonne,
@@ -30,14 +31,6 @@ export const opprettMeldekortModalQuery = groq`*[_type == "opprettMeldekortModal
       tekst
     },
     opprettelse {
-      tittel,
-      tekst
-    },
-    overlappendeMeldekort {
-      tittel,
-      tekst
-    },
-    ingenPerioder {
       tittel,
       tekst
     }
