@@ -21,5 +21,9 @@ export const varslerQuery = groq`*[_type == "meldekortVarsler"][0]{
     generalErrorTitle,
     defaultDescription,
     errorText
+  },
+  ingenMeldekort {
+    tittel,
+    tekst
   }
 }`;

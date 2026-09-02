@@ -1,13 +1,25 @@
-import { ExclamationmarkTriangleIcon } from "@navikt/aksel-icons";
+import { ExclamationmarkTriangleIcon, InformationSquareIcon } from "@navikt/aksel-icons";
 import { BodyShort, InfoCard } from "@navikt/ds-react";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 
+import type { IMeldekortoversikt } from "~/sanity/modaler/opprett-meldekort-modal/types";
+import { sanityTekst } from "~/sanity/utils";
 import { DatoFormat, formaterPeriodeTilUkenummer, formatterDato } from "~/utils/dato.utils";
 
+import {
+  harPeriodeMedArsskifte,
+  interpolerAntallIPortableText,
+} from "../opprettMeldekortModal.helpers";
 import styles from "./opprettMeldekortInfoBoks.module.css";
 
+const portableTextComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <BodyShort>{children}</BodyShort>,
+  },
+};
+
 interface OpprettMeldekortInfoBoksProps {
-  tittel: string;
-  tekst: string;
+  tekster?: IMeldekortoversikt;
   attention?: boolean;
   perioder: Array<{
     fraOgMed: string;
@@ -17,26 +29,59 @@ interface OpprettMeldekortInfoBoksProps {
 }
 
 export function OpprettMeldekortInfoBoks({
-  tittel,
-  tekst,
+  tekster,
   attention = false,
   perioder,
 }: OpprettMeldekortInfoBoksProps) {
-  const [tekstFor, tekstEtter] = tekst.includes("{{antall}}")
-    ? tekst.split("{{antall}}")
-    : [tekst, ""];
+  const tittel = sanityTekst(tekster?.tittel, "opprettMeldekortModal.meldekortoversikt.tittel");
+  const ukenummerKolonne = sanityTekst(
+    tekster?.ukenummerKolonne,
+    "opprettMeldekortModal.meldekortoversikt.ukenummerKolonne",
+  );
+  const periodeKolonne = sanityTekst(
+    tekster?.periodeKolonne,
+    "opprettMeldekortModal.meldekortoversikt.periodeKolonne",
+  );
+  const varselKolonne = sanityTekst(
+    tekster?.varselKolonne,
+    "opprettMeldekortModal.meldekortoversikt.varselKolonne",
+  );
+  const overlappAriaLabel = sanityTekst(
+    tekster?.overlappAriaLabel,
+    "opprettMeldekortModal.meldekortoversikt.overlappAriaLabel",
+  );
+  const arsskifteTilleggstekst = sanityTekst(
+    tekster?.arsskifteTilleggstekst,
+    "opprettMeldekortModal.meldekortoversikt.arsskifteTilleggstekst",
+  );
+  const overlappendePerioderTekst = sanityTekst(
+    tekster?.overlappendePerioderTekst,
+    "opprettMeldekortModal.meldekortoversikt.overlappendePerioderTekst",
+  );
+  const varslingOmOverlappendePerioder = interpolerAntallIPortableText(
+    tekster?.tekst ?? [],
+    perioder.length,
+  );
+  const visArsskifteTilleggstekst =
+    Boolean(arsskifteTilleggstekst) && harPeriodeMedArsskifte(perioder);
+  const visOverlappendePerioderTekst = attention && Boolean(overlappendePerioderTekst);
 
   return (
     <InfoCard data-color={attention ? "warning" : "info"} size="small">
-      <InfoCard.Header>
+      <InfoCard.Header
+        icon={
+          attention ? (
+            <ExclamationmarkTriangleIcon aria-hidden />
+          ) : (
+            <InformationSquareIcon aria-hidden />
+          )
+        }
+      >
         <InfoCard.Title>{tittel}</InfoCard.Title>
       </InfoCard.Header>
       <InfoCard.Content className={styles.informationContent}>
-        <BodyShort>
-          {tekstFor}
-          <strong>{perioder.length}</strong>
-          {tekstEtter}
-        </BodyShort>
+        {visOverlappendePerioderTekst && <BodyShort>{overlappendePerioderTekst}</BodyShort>}
+        <PortableText value={varslingOmOverlappendePerioder} components={portableTextComponents} />
         <div className={styles.periodeTabellWrapper}>
           <table className={styles.periodeTabell}>
             <colgroup>
@@ -46,9 +91,9 @@ export function OpprettMeldekortInfoBoks({
             </colgroup>
             <thead>
               <tr>
-                <th scope="col">Ukenummer</th>
-                <th scope="col">Periode</th>
-                <th scope="col" aria-label="Varsel" />
+                <th scope="col">{ukenummerKolonne}</th>
+                <th scope="col">{periodeKolonne}</th>
+                <th scope="col" aria-label={varselKolonne} />
               </tr>
             </thead>
             <tbody>
@@ -67,9 +112,7 @@ export function OpprettMeldekortInfoBoks({
                   <td
                     className={styles.varselcelle}
                     aria-label={
-                      periode.overlapperEksisterendeMeldekort
-                        ? "Overlapper eksisterende meldekort"
-                        : undefined
+                      periode.overlapperEksisterendeMeldekort ? overlappAriaLabel : undefined
                     }
                   >
                     <span className={styles.varselikon}>
@@ -83,6 +126,7 @@ export function OpprettMeldekortInfoBoks({
             </tbody>
           </table>
         </div>
+        {visArsskifteTilleggstekst && <BodyShort>{arsskifteTilleggstekst}</BodyShort>}
       </InfoCard.Content>
     </InfoCard>
   );

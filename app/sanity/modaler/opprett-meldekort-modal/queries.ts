@@ -4,21 +4,35 @@ export const opprettMeldekortModalQuery = groq`*[_type == "opprettMeldekortModal
   tittel,
   fraDato {
     label,
-    helpText
+    helpText,
+    feilmelding
   },
   tilDato {
     label,
-    helpText
+    helpText,
+    feilmelding
   },
   forklaringstekst,
   submitKnapp,
   avbrytKnapp,
-  infoBoks {
+  meldekortoversikt {
     tittel,
-    tekst
+    tekst,
+    arsskifteTilleggstekst,
+    overlappendePerioderTekst,
+    ukenummerKolonne,
+    periodeKolonne,
+    varselKolonne,
+    overlappAriaLabel
   },
-  feilmelding {
-    tittel,
-    tekst
+  feilmeldinger {
+    simulering {
+      tittel,
+      tekst
+    },
+    opprettelse {
+      tittel,
+      tekst
+    }
   }
 }`;

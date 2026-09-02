@@ -26,21 +26,56 @@ mockUseRouteLoaderData.mockReturnValue({
       fraDato: {
         label: "Fra dato",
         helpText: "Velg startdato for perioden du vil opprette meldekort for",
+        feilmelding: "Du må velge dato",
       },
       tilDato: {
         label: "Til dato",
         helpText: "Velg sluttdato for perioden du vil opprette meldekort for",
+        feilmelding: "Du må velge dato",
       },
       forklaringstekst: "Basert på valgt dato, vil det opprettes {{antall}} nye meldekort.",
       submitKnapp: "Opprett",
       avbrytKnapp: "Avbryt",
-      infoBoks: {
+      meldekortoversikt: {
         tittel: "Info om meldekortsyklus",
-        tekst: "Dette vil opprette {{antall}} meldekort.",
+        tekst: [
+          {
+            _type: "block",
+            _key: "block1",
+            style: "normal",
+            markDefs: [],
+            children: [
+              { _type: "span", _key: "span1", text: "Dette vil opprette ", marks: [] },
+              { _type: "span", _key: "span2", text: "{{antall}}", marks: ["strong"] },
+              { _type: "span", _key: "span3", text: " meldekort.", marks: [] },
+            ],
+          },
+        ],
+        ukenummerKolonne: "Ukenummer",
+        periodeKolonne: "Periode",
+        varselKolonne: "Varsel",
+        overlappAriaLabel: "Overlapper eksisterende meldekort",
       },
-      feilmelding: {
-        tittel: "Kunne ikke opprette meldekort",
-        tekst: "Noe gikk galt ved opprettelse av meldekort. Prøv igjen senere.",
+      feilmeldinger: {
+        simulering: {
+          tittel: "Kan ikke forhåndsvise meldekort",
+          tekst:
+            "Forhåndsvisningen funker ikke som den skal. En mulig årsak er at datoene du har valgt ikke stemmer overens med brukers meldesyklus. Prøv å justere datoene, eller ta kontakt med brukerstøtte.",
+        },
+        opprettelse: {
+          tittel: "Kunne ikke opprette meldekort",
+          tekst:
+            "Meldekort kunne ikke opprettes. Prøv igjen, og hvis du fortsatt har problemer kontakt brukerstøtte.",
+        },
+        overlappendeMeldekort: {
+          tittel: "Kan ikke opprette meldekort",
+          tekst:
+            "Perioden du har valgt overlapper med et eller flere eksisterende meldekort, og kan derfor ikke opprettes.",
+        },
+        ingenPerioder: {
+          tittel: "Sjekk med brukerstøtte før du oppretter meldekort",
+          tekst: "Det har skjedd en feil. Ta kontakt med brukerstøtte.",
+        },
       },
     },
   },

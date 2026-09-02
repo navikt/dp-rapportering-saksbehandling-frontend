@@ -23,9 +23,15 @@ export interface IErrorBoundary {
   errorText: string;
 }
 
+export interface IVarselmelding {
+  tittel: string;
+  tekst: string;
+}
+
 export interface IMeldekortVarsler {
   skjermleserStatus: ISkjermleserStatus;
   suksess: ISuksessmeldinger;
   feil: IFeilmeldinger;
   errorBoundary: IErrorBoundary;
+  ingenMeldekort: IVarselmelding;
 }
