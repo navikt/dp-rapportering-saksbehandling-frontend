@@ -1,6 +1,8 @@
 import path from "path";
 import { configDefaults, defineConfig } from "vitest/config";
 
+const __dirname = import.meta.dirname;
+
 export default defineConfig({
   test: {
     exclude: [...configDefaults.exclude, "playwright/**"],

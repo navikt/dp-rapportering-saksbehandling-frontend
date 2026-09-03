@@ -2,6 +2,8 @@ import { reactRouter } from "@react-router/dev/vite";
 import path from "path";
 import { defineConfig } from "vite";
 
+const __dirname = import.meta.dirname;
+
 const base =
   process.env.NODE_ENV === "production"
     ? "https://cdn.nav.no/teamdagpenger/dp-rapportering-saksbehandling-frontend/client/"
