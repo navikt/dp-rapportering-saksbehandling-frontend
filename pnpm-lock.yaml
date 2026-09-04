@@ -36,8 +36,8 @@ importers:
         specifier: ^8.0.1
         version: 8.0.1(react@19.2.8)
       '@react-router/fs-routes':
-        specifier: 8.3.0
-        version: 8.3.0(@react-router/dev@8.3.0(@react-router/serve@8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3))(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3)(vite@8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0)))(typescript@6.0.3)
+        specifier: 8.3.1
+        version: 8.3.1(@react-router/dev@8.3.0(@react-router/serve@8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3))(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3)(vite@8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0)))(typescript@6.0.3)
       '@react-router/node':
         specifier: 8.3.0
         version: 8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
@@ -787,11 +787,11 @@ packages:
       typescript:
         optional: true
 
-  '@react-router/fs-routes@8.3.0':
-    resolution: {integrity: sha512-rElHqQQr4XO0bh2VXEBWtJvVWc2340EoZNL29qwLeZPvUTgAZDI2x/x/VnHNSiEYIMvKTJQziKM7krzWCydN8A==}
+  '@react-router/fs-routes@8.3.1':
+    resolution: {integrity: sha512-bAIk7cvs9ie+Lu0WkznmEPZTLmaocrdg/DrSM7P01UkTG16VTlWP7TDRY8yszLGm6DnR1fbf0sOaa2L7/8QBzg==}
     engines: {node: '>=22.22.0'}
     peerDependencies:
-      '@react-router/dev': ^8.3.0
+      '@react-router/dev': ^8.3.1
       typescript: ^5.1.0 || ^6.0.0 || ^7.0.0
     peerDependenciesMeta:
       typescript:
@@ -3905,7 +3905,7 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
-  '@react-router/fs-routes@8.3.0(@react-router/dev@8.3.0(@react-router/serve@8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3))(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3)(vite@8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0)))(typescript@6.0.3)':
+  '@react-router/fs-routes@8.3.1(@react-router/dev@8.3.0(@react-router/serve@8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3))(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3)(vite@8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0)))(typescript@6.0.3)':
     dependencies:
       '@react-router/dev': 8.3.0(@react-router/serve@8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3))(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@7.2.0)(typescript@6.0.3)(vite@8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0))
       minimatch: 10.2.6
