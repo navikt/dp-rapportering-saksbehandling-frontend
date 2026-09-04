@@ -15,6 +15,7 @@ export default defineConfig({
   build: {
     cssMinify: true,
     ssr: true,
+    sourcemap: true,
   },
   css: {
     modules: {
