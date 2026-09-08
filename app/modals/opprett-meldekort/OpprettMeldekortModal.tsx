@@ -304,6 +304,7 @@ export function OpprettMeldekortModal({
           size="small"
           loading={hasPendingSubmission && fetcher.state !== "idle"}
           disabled={
+            lasterSimulering ||
             simuleringHarFeil ||
             simuleringHarOverlapp ||
             (hasPendingSubmission && fetcher.state !== "idle")
