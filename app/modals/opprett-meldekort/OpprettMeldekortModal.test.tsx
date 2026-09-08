@@ -429,6 +429,7 @@ describe("OpprettMeldekortModal", () => {
       expect(
         await screen.findByTestId("opprett-meldekort-simulering-skeleton"),
       ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Opprett" })).toBeDisabled();
       expect(
         screen.queryByText(harTekst("Dette vil opprette 1 meldekort.")),
       ).not.toBeInTheDocument();
