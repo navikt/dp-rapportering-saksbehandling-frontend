@@ -28,6 +28,7 @@ jobs:
       contents: 'read'
       id-token: 'write'
       packages: write
+    environment: demo-gcp
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: nais/deploy/actions/deploy@v2
@@ -46,6 +47,7 @@ jobs:
       contents: 'read'
       id-token: 'write'
       packages: write
+    environment: dev-gcp
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: nais/deploy/actions/deploy@v2
@@ -64,6 +66,7 @@ jobs:
       contents: 'read'
       id-token: 'write'
       packages: write
+    environment: prod-gcp
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: nais/deploy/actions/deploy@v2
