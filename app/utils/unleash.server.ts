@@ -6,6 +6,7 @@ import { getEnv, isLocalOrDemo } from "./env.utils";
 
 export const FEATURE_TOGGLES = {
   opprettMeldekortManuelt: "dp-rapportering-saksbehandling-frontend.opprett-meldekort-manuelt",
+  justeringAvSpm5: "dp-rapportering-saksbehandler-frontend-disableSpm5",
 } as const;
 
 export type FeatureToggle = (typeof FEATURE_TOGGLES)[keyof typeof FEATURE_TOGGLES];
