@@ -35,7 +35,7 @@ jobs:
     environment: ${{ inputs.environment }}-gcp
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v3
         env:
           VAR: image=${{ needs.build-test.outputs.image }},githubSha=${{ github.sha }}
           CLUSTER: dev-gcp
