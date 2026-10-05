@@ -180,7 +180,7 @@ importers:
         version: 1.1.8
       '@navikt/aksel-icons':
         specifier: ^8.16.1
-        version: 8.16.2
+        version: 8.17.2
       '@navikt/ds-css':
         specifier: ^8.16.1
         version: 8.17.2
