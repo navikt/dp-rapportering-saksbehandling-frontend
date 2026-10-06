@@ -176,7 +176,7 @@ test("skal kunne fylle ut og sende inn meldekort", async ({ page }) => {
 **Setup**:
 ```typescript
 // vitest/helpers/setup.ts
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 ```
