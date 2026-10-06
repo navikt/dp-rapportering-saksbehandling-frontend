@@ -32,7 +32,10 @@ export function startMockServer(server: SetupServer) {
         const url = new URL(request.url);
 
         // Ignorer Sanity API requests
-        if (url.hostname.includes("sanity.io")) {
+        if (
+          url.hostname === "sanity.io" ||
+          url.hostname.endsWith(".sanity.io")
+        ) {
           return;
         }
 
