@@ -26,16 +26,23 @@ export function startMockServer(server: SetupServer) {
   isMockServerStarted = true;
 
   server.listen({
-    onUnhandledRequest(request, print) {
-      const url = new URL(request.url);
+    onUnhandledFrame({ frame, defaults }) {
+      if (frame.protocol === "http") {
+        const request = frame.data.request;
+        const url = new URL(request.url);
 
-      // Ignorer Sanity API requests
-      if (url.hostname.includes("sanity.io")) {
-        return;
+        // Ignorer Sanity API requests
+        if (
+          url.hostname === "sanity.io" ||
+          url.hostname.endsWith(".sanity.io")
+        ) {
+          return;
+        }
+
+        logger.warn(`Unhandled request: ${request.url}`);
       }
 
-      logger.warn(`Unhandled request: ${request.url}`);
-      print.warning();
+      defaults.warn();
     },
   });
 
