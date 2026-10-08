@@ -41,7 +41,7 @@ COPY --from=app-build /app/build /
 
 
 # runtime
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:26@sha256:2c87fba9feba40a909cd4e2188d74a45042883a56e4a99f6ee4d1f893491f708 AS runtime
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:26@sha256:5ba3f56ca196ab2eca6e07f9932c740db1146d7f46e9f560088140c485384744 AS runtime
 WORKDIR /app
 
 ARG NODE_ENV=production
