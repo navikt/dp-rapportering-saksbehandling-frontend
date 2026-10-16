@@ -28,14 +28,11 @@ export function startMockServer(server: SetupServer) {
   server.listen({
     onUnhandledFrame({ frame, defaults }) {
       if (frame.protocol === "http") {
-        const request = frame.data.request;
+        const { request } = frame.data as { request: { url: string } };
         const url = new URL(request.url);
 
         // Ignorer Sanity API requests
-        if (
-          url.hostname === "sanity.io" ||
-          url.hostname.endsWith(".sanity.io")
-        ) {
+        if (url.hostname === "sanity.io" || url.hostname.endsWith(".sanity.io")) {
           return;
         }
 
