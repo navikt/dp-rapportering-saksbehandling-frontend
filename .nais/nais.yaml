@@ -7,6 +7,9 @@ metadata:
     team: "teamdagpenger"
     app: "{{name}}"
     subteam: "ramp"
+    fagsystem: "DAGPENGER"
+    domene: "meldekort"
+    okonomisystem: "true"
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "64M"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
