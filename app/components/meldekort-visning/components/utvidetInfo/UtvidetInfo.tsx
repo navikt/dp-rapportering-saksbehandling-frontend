@@ -1,6 +1,7 @@
 import { Alert, BodyLong, Button, Link, Table, Tag } from "@navikt/ds-react";
 import { format } from "date-fns";
 import { useLayoutEffect, useRef, useState } from "react";
+import { Link as RouterLink } from "react-router";
 
 import {
   erPeriodeEtterregistrert,
@@ -359,15 +360,15 @@ export function UtvidetInfo({
       {/* Korriger-knapp */}
       {(useVariantLabels || kanEndres) && (
         <div>
-          <Button
-            as="a"
-            href={korrigerUrl}
-            className={styles.korrigerKnapp}
-            size="small"
-            disabled={useVariantLabels && !kanEndres}
-          >
-            {korrigerKnapp}
-          </Button>
+          {useVariantLabels && !kanEndres ? (
+            <Button className={styles.korrigerKnapp} size="small" disabled>
+              {korrigerKnapp}
+            </Button>
+          ) : (
+            <Button as={RouterLink} to={korrigerUrl} className={styles.korrigerKnapp} size="small">
+              {korrigerKnapp}
+            </Button>
+          )}
         </div>
       )}
     </div>
