@@ -32,7 +32,7 @@ import {
 } from "~/utils/korrigering.utils";
 import type { IRapporteringsperiode } from "~/utils/types";
 
-import type { Route } from "../+types/root";
+import type { Route } from "./+types/person.$personId.periode.$periodeId.korriger";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
