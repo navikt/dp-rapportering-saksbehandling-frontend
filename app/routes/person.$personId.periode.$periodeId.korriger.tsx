@@ -35,6 +35,7 @@ import type { IRapporteringsperiode } from "~/utils/types";
 import type { Route } from "./+types/person.$personId.periode.$periodeId.korriger";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
+  invariant(params.personId, "rapportering-feilmelding-person-id-mangler-i-url");
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
   const personId = params.personId;
 
