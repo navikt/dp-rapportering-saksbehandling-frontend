@@ -70,6 +70,54 @@ describe("validering av api.rapportering", () => {
 
   beforeEach(() => vi.clearAllMocks());
 
+  it.each([400, 403, 409, 422, 500, 503])(
+    "bevarer backendstatus %i og feilinformasjon",
+    async (status) => {
+      vi.mocked(korrigerPeriode).mockRejectedValueOnce(
+        Response.json(
+          { title: "Korrigering feilet", details: "Detaljer fra backend", correlationId: "abc" },
+          { status },
+        ),
+      );
+
+      const response = await kjorAction(lagRequest());
+
+      expect(response.status).toBe(status);
+      await expect(response.json()).resolves.toEqual({
+        error: true,
+        title: "Korrigering feilet",
+        detail: "Detaljer fra backend",
+        correlationId: "abc",
+      });
+    },
+  );
+
+  it("bevarer backendstatus og bruker statusText når feilresponsen ikke er JSON", async () => {
+    vi.mocked(korrigerPeriode).mockRejectedValueOnce(
+      new Response("Utilgjengelig", { status: 503, statusText: "Service Unavailable" }),
+    );
+
+    const response = await kjorAction(lagRequest());
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      error: true,
+      title: "Service Unavailable",
+    });
+  });
+
+  it("returnerer 500 ved uventet feil", async () => {
+    vi.mocked(korrigerPeriode).mockRejectedValueOnce(new Error("Korrigering feilet"));
+
+    const response = await kjorAction(lagRequest());
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toEqual({
+      error: true,
+      title: "Korrigering feilet",
+    });
+  });
+
   it("avviser GET med 405 og Allow: POST", () => {
     const response = loader();
     expect(response.status).toBe(405);

@@ -135,11 +135,14 @@ export async function action({ request }: ActionFunctionArgs) {
       errorTitle = error.message;
     }
 
-    return Response.json({
-      error: true,
-      title: errorTitle,
-      detail: errorDetail,
-      correlationId,
-    });
+    return Response.json(
+      {
+        error: true,
+        title: errorTitle,
+        detail: errorDetail,
+        correlationId,
+      },
+      { status: error instanceof Response ? error.status : 500 },
+    );
   }
 }
