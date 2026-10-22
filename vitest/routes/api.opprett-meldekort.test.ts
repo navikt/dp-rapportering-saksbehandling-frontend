@@ -61,6 +61,29 @@ describe("api.opprett-meldekort", () => {
     expect(opprettMeldekort).not.toHaveBeenCalled();
   });
 
+  it("returnerer 400 ved uleselige skjemadata", async () => {
+    const response = await kjorAction(
+      new Request("http://localhost/api/opprett-meldekort", {
+        method: "POST",
+        body: "ikke skjemadata",
+      }),
+    );
+    expect(response.status).toBe(400);
+    expect(opprettMeldekort).not.toHaveBeenCalled();
+  });
+
+  it.each<Record<string, string>>([
+    { personId: " " },
+    { simulering: "kanskje" },
+    { fraOgMed: "2025-02-30" },
+  ])("returnerer 422 ved ugyldige felter %j", async (felter) => {
+    const response = await kjorAction(
+      lagRequest({ personId: "123", fraOgMed: "2025-01-06", tilOgMed: "2025-01-19", ...felter }),
+    );
+    expect(response.status).toBe(422);
+    expect(opprettMeldekort).not.toHaveBeenCalled();
+  });
+
   it("returnerer 422 ved ugyldig datoformat", async () => {
     const response = await kjorAction(
       lagRequest({ personId: "123", fraOgMed: "06.01.2025", tilOgMed: "2025-01-19" }),

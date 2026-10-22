@@ -1,4 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { render as testingLibraryRender, screen } from "@testing-library/react";
+import type { ReactElement } from "react";
+import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
 
 import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
@@ -6,6 +8,10 @@ import { ANSVARLIG_SYSTEM, MELDEKORT_TYPE, OPPRETTET_AV, ROLLE } from "~/utils/c
 import type { IRapporteringsperiode } from "~/utils/types";
 
 import { UtvidetInfo } from "./UtvidetInfo";
+
+function render(ui: ReactElement) {
+  return testingLibraryRender(ui, { wrapper: MemoryRouter });
+}
 
 // Mock Sanity data for testing
 const mockHovedsideData: IMeldekortHovedside = {

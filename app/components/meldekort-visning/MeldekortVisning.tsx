@@ -1,4 +1,5 @@
 import { BodyLong, BodyShort, Button, Heading } from "@navikt/ds-react";
+import { Link as RouterLink } from "react-router";
 
 import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
 import { sanityTekst } from "~/sanity/utils";
@@ -77,7 +78,12 @@ export function MeldekortVisning({
             </div>
             {kanSendes && (
               <div>
-                <Button as="a" href={fyllUtUrl} className={styles.korrigerKnapp} size="small">
+                <Button
+                  as={RouterLink}
+                  to={fyllUtUrl}
+                  className={styles.korrigerKnapp}
+                  size="small"
+                >
                   {fyllUtKnapp}
                 </Button>
               </div>
