@@ -17,7 +17,7 @@ Applikasjonen er bygget med moderne webteknologier og følger NAVs designsystem.
 
 ## Teknisk stack
 
-- **Framework**: React Router v7 (framework mode)
+- **Framework**: React Router v8 (Framework Mode, se `package.json` for eksakt versjon)
 - **Frontend**: React 19 med TypeScript
 - **Styling**: NAV Aksel designsystem (@navikt/ds-react)
 - **CMS**: Sanity (innholdshåndtering)
@@ -146,7 +146,7 @@ app/
 
 - **Faglig dokumentasjon**: [dp-dokumentasjon](https://dagpenger-dokumentasjon.ansatt.nav.no/innbyggerflate/ramp/losninger/rapportering/saksbehandlerflate)
 - **Design**: [Figma - Saksbehandlerflate dagpenger](https://www.figma.com/design/uQm809LGIjlDRt0kBrvBVl/Behandlingsl%C3%B8sningen?node-id=14138-57188&p=f&t=HJ4yDUkUNOCI48KW-0)
-- **React Router v7**: [Offisiell dokumentasjon](https://reactrouter.com/start/framework/installation)
+- **React Router (Framework Mode)**: [Offisiell dokumentasjon](https://reactrouter.com/start/framework/installation)
 
 ## Deployment
 

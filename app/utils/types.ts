@@ -11,6 +11,17 @@ import type {
   ROLLE,
 } from "./constants";
 import { ARBEIDSSOKERPERIODE_STATUS, RAPPORTERINGSPERIODE_STATUS } from "./constants";
+import type { IRapporteringsperiode, ISendInnMeldekort } from "./meldekort.schema";
+
+export type {
+  IAktivitet,
+  IKilde,
+  IKorrigerMeldekort,
+  IPeriode,
+  IRapporteringsperiode,
+  IRapporteringsperiodeDag,
+  ISendInnMeldekort,
+} from "./meldekort.schema";
 
 declare global {
   interface Window {
@@ -82,81 +93,8 @@ export interface IArbeidssokerperiode {
   status: TArbeidssokerperiodeStatus;
 }
 
-export interface IPeriode {
-  fraOgMed: string;
-  tilOgMed: string;
-}
-
-export interface IAktivitet {
-  id?: string;
-  type: TAktivitetType;
-  dato: string;
-  timer?: string | null; // string er ISO8601 varighet, null for ikke-arbeidsaktiviteter
-}
-
-export interface IRapporteringsperiodeDag {
-  type: string;
-  dagIndex: number;
-  dato: string;
-  aktiviteter: IAktivitet[];
-}
-
-export interface IKilde {
-  rolle: TRolle;
-  ident: string;
-}
-
-export interface IRapporteringsperiode {
-  id: string;
-  ident: string;
-  status: TRapporteringsperiodeStatus;
-  type: TMeldekortType;
-  periode: IPeriode;
-  dager: IRapporteringsperiodeDag[];
-  kanSendes: boolean;
-  kanEndres: boolean;
-  kanSendesFra: string;
-  sisteFristForTrekk: string | null;
-  opprettetAv: TOpprettetAv;
-  opprettetAvNavIdent?: string | null;
-  begrunnelse?: string;
-  kilde: IKilde | null;
-  originalMeldekortId: string | null;
-  /** InnsendtTidspunkt er et ISO timestamp, og settes av backend hvis ikke frontend gjør det */
-  innsendtTidspunkt: string | null;
-  /** yyyy-mm-dd, dato for når meldekortet skal regnes som registrert, kan settes av saksbehandler ellers følger det av innsendtTidspunkt */
-  meldedato: string | null;
-  registrertArbeidssoker: boolean | null;
-}
-
 export interface ITilUtfyllingMeldekort extends IRapporteringsperiode {
   status: (typeof RAPPORTERINGSPERIODE_STATUS)["TilUtfylling"];
-}
-
-export interface ISendInnMeldekort {
-  ident: string;
-  id: string;
-  periode: IPeriode;
-  dager: IRapporteringsperiodeDag[];
-  kanSendesFra: string;
-  sisteFristForTrekk: string | null;
-  opprettetAv: TOpprettetAv;
-  status: (typeof RAPPORTERINGSPERIODE_STATUS)["Innsendt"];
-  kilde: IKilde;
-  begrunnelse: string;
-  innsendtTidspunkt?: string | null;
-  registrertArbeidssoker: boolean;
-  meldedato: string | null;
-}
-
-export interface IKorrigerMeldekort {
-  ident: string;
-  originalMeldekortId: string;
-  periode: IPeriode;
-  dager: IRapporteringsperiodeDag[];
-  kilde: IKilde;
-  begrunnelse: string;
-  meldedato: string;
 }
 
 export interface IBrukerInnsendtMeldekort extends IRapporteringsperiode {

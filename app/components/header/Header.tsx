@@ -1,7 +1,7 @@
 import { LeaveIcon, MoonIcon, SunIcon } from "@navikt/aksel-icons";
 import { Button, Dropdown, InternalHeader, Spacer, Switch } from "@navikt/ds-react";
 import { useState } from "react";
-import { useRevalidator } from "react-router";
+import { Link as RouterLink, useRevalidator } from "react-router";
 
 import { useSaksbehandler } from "~/hooks/useSaksbehandler";
 import type { IMeldekortHeader } from "~/sanity/fellesKomponenter/header/types";
@@ -56,7 +56,8 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
         className={styles.header}
       >
         <InternalHeader.Title
-          href={"/"}
+          as={RouterLink}
+          to="/"
           aria-label={a11yText(
             headerData?.homeLinkAriaLabel,
             "header.homeLinkAriaLabel",
