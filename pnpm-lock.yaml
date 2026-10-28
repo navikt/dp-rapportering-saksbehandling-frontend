@@ -204,7 +204,7 @@ importers:
         version: 8.3.0(react-router@8.3.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(supports-color@7.2.0)(typescript@6.0.3)
       '@sanity/client':
         specifier: ^8.9.0
-        version: 8.10.0(vitest@5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(jsdom@30.1.3)(msw@3.0.3(@types/node@26.6.5)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))
+        version: 8.10.1(vitest@5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(jsdom@30.1.3)(msw@3.0.3(@types/node@26.6.5)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -1121,8 +1121,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@sanity/client@8.10.0':
-    resolution: {integrity: sha512-GIhfkSa4n1p1pmjfSIej7WyeEMYK26YaGbFnr7ORjHaWJ0L/KPHv+dEHTMxkE+BY4XlvILuKMLm1wPbny0yYKA==}
+  '@sanity/client@8.10.1':
+    resolution: {integrity: sha512-6LvBQymm2ErkqD9VY+VQt3IJKFm9vr3drWIEu2WmVzjoyh15zSJWxpLOGRELoEopETQsua9GQedHt5w3OOg1Xg==}
     engines: {node: '>=22.12.0'}
 
   '@so-ric/colorspace@1.1.6':
@@ -1981,8 +1981,8 @@ packages:
     resolution: {integrity: sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==}
     engines: {node: '>= 0.4'}
 
-  get-it@9.6.1:
-    resolution: {integrity: sha512-uxMgcolbhJTz8f/cOHLcgde3A0gwqv5p6m8OJ2WJqn7NBi79krofZdp95FD0+7N9UUpmAe76vIEX3kDFijRahg==}
+  get-it@9.6.2:
+    resolution: {integrity: sha512-eAg+xPVjPXbmFL/ahF08LKmuVVC+ixXCSrb0gtaWOZ9aIsMoa0QATttbtoSoqnVSBV6nh9jCdsOk5pLhN2qUOA==}
     engines: {node: '>=22.12.0'}
     peerDependencies:
       vitest: '>=2.0.0'
@@ -4237,10 +4237,10 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@sanity/client@8.10.0(vitest@5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(jsdom@30.1.3)(msw@3.0.3(@types/node@26.6.5)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))':
+  '@sanity/client@8.10.1(vitest@5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(jsdom@30.1.3)(msw@3.0.3(@types/node@26.6.5)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))':
     dependencies:
       eventsource: 5.1.3
-      get-it: 9.6.1(vitest@5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(jsdom@30.1.3)(msw@3.0.3(@types/node@26.6.5)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))
+      get-it: 9.6.2(vitest@5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(jsdom@30.1.3)(msw@3.0.3(@types/node@26.6.5)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))
       obug: 3.0.0
       rxjs: 7.8.2
     transitivePeerDependencies:
@@ -5319,7 +5319,7 @@ snapshots:
       hasown: 2.0.4
       math-intrinsics: 1.1.0
 
-  get-it@9.6.1(vitest@5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(jsdom@30.1.3)(msw@3.0.3(@types/node@26.6.5)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1))):
+  get-it@9.6.2(vitest@5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(jsdom@30.1.3)(msw@3.0.3(@types/node@26.6.5)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1))):
     dependencies:
       undici: 7.30.1
     optionalDependencies:
