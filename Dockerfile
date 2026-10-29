@@ -1,7 +1,7 @@
 FROM node:26-alpine@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS node
 RUN npm install -g corepack@latest --force && \
     corepack enable && \
-    corepack prepare pnpm@12.14.0 --activate
+    corepack prepare pnpm@12.15.0 --activate
 RUN pnpm config set @navikt:registry=https://npm.pkg.github.com
 
 
