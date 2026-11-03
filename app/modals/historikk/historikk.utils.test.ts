@@ -4,6 +4,7 @@ import { MELDEKORT_TYPE, OPPRETTET_AV, RAPPORTERINGSPERIODE_STATUS } from "~/uti
 import type { IArbeidssokerperiode, IRapporteringsperiode } from "~/utils/types";
 
 import {
+  buildHistoryEvents,
   transformArbeidssokerperioderToHistoryEvents,
   transformPerioderToHistoryEvents,
 } from "./historikk.utils";
@@ -33,6 +34,102 @@ function lagTestPeriode(overrides: Partial<IRapporteringsperiode>): IRapporterin
     ...overrides,
   };
 }
+
+function lagArbeidssokerperiode(
+  periodeId: string,
+  startDato: string,
+  sluttDato: string | null,
+): IArbeidssokerperiode {
+  return {
+    periodeId,
+    ident: "synthetic-ident",
+    startDato,
+    sluttDato,
+    status: sluttDato ? "Avsluttet" : "Startet",
+  };
+}
+
+describe("buildHistoryEvents", () => {
+  it("skal holde arbeidssokerhendelser samlet etter startdato og beholde meldekortets kronologiske plass", () => {
+    const arbeidssokerperioder = [
+      lagArbeidssokerperiode("older", "2026-08-19T10:38:04.629Z", "2026-10-29T09:51:29.604Z"),
+      lagArbeidssokerperiode("newer", "2026-10-29T09:51:29.370Z", null),
+      lagArbeidssokerperiode("oldest", "2026-07-01T10:00:00.000Z", "2026-09-01T10:00:00.000Z"),
+    ];
+    const perioder = [lagTestPeriode({ innsendtTidspunkt: "2026-10-29T09:51:29.500Z" })];
+
+    const events = buildHistoryEvents(arbeidssokerperioder, perioder);
+
+    expect(
+      events
+        .filter((event) => event.kategori === "System")
+        .map((event) => `${event.event}:${event.innsendtDato}:${event.time}`),
+    ).toEqual([
+      "Registrert som arbeidssøker:29.10.2026:09:51",
+      "Avregistrert som arbeidssøker:29.10.2026:09:51",
+      "Registrert som arbeidssøker:19.08.2026:10:38",
+      "Avregistrert som arbeidssøker:01.09.2026:10:00",
+      "Registrert som arbeidssøker:01.07.2026:10:00",
+    ]);
+    expect(events.map((event) => event.kategori)).toEqual([
+      "System",
+      "Meldekort",
+      "System",
+      "System",
+      "System",
+      "System",
+    ]);
+    expect(events[1].dato.toISOString()).toBe("2026-10-29T09:51:29.500Z");
+  });
+
+  it("skal behandle like startdatoer stabilt og ikke endre inndata", () => {
+    const arbeidssokerperioder = [
+      lagArbeidssokerperiode("first", "2026-10-29T09:51:29.370Z", null),
+      lagArbeidssokerperiode("second", "2026-10-29T09:51:29.370Z", null),
+    ];
+    const perioder = [lagTestPeriode({ innsendtTidspunkt: "2026-10-29T09:51:29.370Z" })];
+    const originalArbeidssokerperioder = structuredClone(arbeidssokerperioder);
+    const originalPerioder = structuredClone(perioder);
+
+    const events = buildHistoryEvents(arbeidssokerperioder, perioder);
+
+    expect(events.map((event) => event.kategori)).toEqual(["System", "System", "Meldekort"]);
+    expect(events.slice(0, 2).every((event) => event.event === "Registrert som arbeidssøker")).toBe(
+      true,
+    );
+    expect(arbeidssokerperioder).toEqual(originalArbeidssokerperioder);
+    expect(perioder).toEqual(originalPerioder);
+  });
+
+  it("skal bevare kronologisk rekkefølge for perioder som ikke overlapper", () => {
+    const events = buildHistoryEvents(
+      [
+        lagArbeidssokerperiode("older", "2026-08-19T10:38:04.629Z", "2026-08-25T10:00:00.000Z"),
+        lagArbeidssokerperiode("newer", "2026-10-29T09:51:29.370Z", null),
+      ],
+      [],
+    );
+
+    expect(events.map((event) => event.event)).toEqual([
+      "Registrert som arbeidssøker",
+      "Avregistrert som arbeidssøker",
+      "Registrert som arbeidssøker",
+    ]);
+    expect(events.map((event) => event.dato.toISOString())).toEqual([
+      "2026-10-29T09:51:29.370Z",
+      "2026-08-25T10:00:00.000Z",
+      "2026-08-19T10:38:04.629Z",
+    ]);
+  });
+
+  it("skal håndtere tomme inndata", () => {
+    expect(buildHistoryEvents([], [])).toEqual([]);
+    expect(buildHistoryEvents([], [lagTestPeriode({ innsendtTidspunkt: null })])).toEqual([]);
+    expect(
+      buildHistoryEvents([lagArbeidssokerperiode("active", "2026-10-29T09:51:29.370Z", null)], []),
+    ).toHaveLength(1);
+  });
+});
 
 describe("transformPerioderToHistoryEvents", () => {
   it("skal transformere innsendte perioder til hendelser", () => {

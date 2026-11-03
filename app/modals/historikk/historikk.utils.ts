@@ -74,3 +74,25 @@ export const transformArbeidssokerperioderToHistoryEvents = (
     };
   });
 };
+
+export const buildHistoryEvents = (
+  arbeidssokerperioder: IArbeidssokerperiode[],
+  perioder: IRapporteringsperiode[],
+): IHendelse[] => {
+  const chronologicalEvents = [
+    ...transformArbeidssokerperioderToHistoryEvents(arbeidssokerperioder),
+    ...transformPerioderToHistoryEvents(perioder),
+  ].sort((a, b) => b.dato.getTime() - a.dato.getTime());
+
+  const workerEvents = [...arbeidssokerperioder]
+    .sort((a, b) => new Date(b.startDato).getTime() - new Date(a.startDato).getTime())
+    .flatMap((periode) => {
+      const events = transformArbeidssokerperioderToHistoryEvents([periode]);
+      return periode.sluttDato ? events.reverse() : events;
+    });
+
+  let workerEventIndex = 0;
+  return chronologicalEvents.map((event) =>
+    event.kategori === "System" ? workerEvents[workerEventIndex++]! : event,
+  );
+};
