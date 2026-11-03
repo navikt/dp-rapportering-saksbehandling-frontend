@@ -81,6 +81,7 @@ export function MeldekortVisning({
                 <Button
                   as={RouterLink}
                   to={fyllUtUrl}
+                  reloadDocument
                   className={styles.korrigerKnapp}
                   size="small"
                 >

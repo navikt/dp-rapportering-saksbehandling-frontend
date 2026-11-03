@@ -365,7 +365,13 @@ export function UtvidetInfo({
               {korrigerKnapp}
             </Button>
           ) : (
-            <Button as={RouterLink} to={korrigerUrl} className={styles.korrigerKnapp} size="small">
+            <Button
+              as={RouterLink}
+              to={korrigerUrl}
+              reloadDocument
+              className={styles.korrigerKnapp}
+              size="small"
+            >
               {korrigerKnapp}
             </Button>
           )}
