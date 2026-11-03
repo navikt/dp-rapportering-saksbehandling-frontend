@@ -58,6 +58,7 @@ const Header = ({ saksbehandler, headerData }: HeaderProps) => {
         <InternalHeader.Title
           as={RouterLink}
           to="/"
+          reloadDocument
           aria-label={a11yText(
             headerData?.homeLinkAriaLabel,
             "header.homeLinkAriaLabel",
