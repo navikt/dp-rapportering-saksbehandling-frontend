@@ -8,7 +8,7 @@ import { getTodayIsoDate } from "~/utils/dato.utils";
 import { addDemoParamsToURL } from "~/utils/demo-params.utils";
 
 const requestSchema = z.object({
-  personId: z.string().min(1),
+  personId: z.string().trim().min(1),
   fraOgMed: z.iso.date(),
   tilOgMed: z.iso.date(),
   simulering: z.literal(["true", "false"]).transform((value) => value === "true"),
@@ -16,24 +16,31 @@ const requestSchema = z.object({
 
 export async function loader() {
   return Response.json(
-    { error: "Endpointet krever POST.", status: 405 },
+    { error: "Endepunktet krever POST.", status: 405 },
     { status: 405, headers: { Allow: "POST" } },
   );
 }
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== "POST") {
-    return Response.json(
-      { error: "Endpointet krever POST.", status: 405 },
-      { status: 405, headers: { Allow: "POST" } },
-    );
+    return loader();
   }
 
   try {
-    const formData = await request.formData();
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch (error) {
+      if (!(error instanceof TypeError)) throw error;
+      logger.warn("[api.opprett-meldekort] Kunne ikke lese skjemadata");
+      return Response.json({ error: "Ugyldige skjemadata.", status: 400 }, { status: 400 });
+    }
     const parsed = requestSchema.safeParse(Object.fromEntries(formData));
 
     if (!parsed.success) {
+      logger.warn("[api.opprett-meldekort] Ugyldig forespørsel", {
+        paths: parsed.error.issues.map((issue) => issue.path.join(".")),
+      });
       return Response.json(
         { error: "Ugyldig forespørsel.", detail: parsed.error.issues[0]?.message, status: 422 },
         { status: 422 },

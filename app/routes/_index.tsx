@@ -1,6 +1,6 @@
 import { BodyShort, Box, GuidePanel, Heading, LinkCard, VStack } from "@navikt/ds-react";
 import { PortableText } from "@portabletext/react";
-import { useLoaderData } from "react-router";
+import { Link as RouterLink, useLoaderData } from "react-router";
 
 import { mockPersons } from "~/mocks/data/mock-persons";
 import { logger } from "~/models/logger.server";
@@ -68,8 +68,8 @@ export default function Rapportering() {
                 return (
                   <LinkCard key={person.id}>
                     <LinkCard.Title>
-                      <LinkCard.Anchor href={`/person/${person.id}/perioder`}>
-                        {navn}
+                      <LinkCard.Anchor asChild>
+                        <RouterLink to={`/person/${person.id}/perioder`}>{navn}</RouterLink>
                       </LinkCard.Anchor>
                     </LinkCard.Title>
                   </LinkCard>

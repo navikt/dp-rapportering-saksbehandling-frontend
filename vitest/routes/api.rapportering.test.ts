@@ -1,7 +1,8 @@
 import { RouterContextProvider } from "react-router";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { action } from "~/routes/api.rapportering";
+import { korrigerPeriode, oppdaterPeriode } from "~/models/rapporteringsperiode.server";
+import { action as routeAction, loader } from "~/routes/api.rapportering";
 import { OPPRETTET_AV } from "~/utils/constants";
 import type { IKorrigerMeldekort, ISendInnMeldekort } from "~/utils/types";
 
@@ -14,6 +15,276 @@ vi.mock("~/models/rapporteringsperiode.server", () => ({
 vi.mock("~/utils/ab-test.server", () => ({
   getABTestVariant: vi.fn().mockReturnValue(null),
 }));
+
+vi.mock("~/models/logger.server", () => ({
+  logger: { error: vi.fn(), warn: vi.fn() },
+}));
+
+function actionArgs(request: Request): Parameters<typeof routeAction>[0] {
+  return {
+    request,
+    params: {},
+    context: new RouterContextProvider(),
+    pattern: "",
+    url: new URL(request.url),
+  };
+}
+
+function kjorAction(request: Request) {
+  return routeAction(actionArgs(request));
+}
+
+async function action(args: Parameters<typeof routeAction>[0]) {
+  const response = await routeAction(args);
+  return response instanceof Response ? response.json() : response;
+}
+
+function kjorActionData(request: Request) {
+  return action(actionArgs(request));
+}
+
+describe("validering av api.rapportering", () => {
+  const gyldigPeriode: IKorrigerMeldekort = {
+    ident: "12345678901",
+    originalMeldekortId: "original-id",
+    periode: { fraOgMed: "2025-08-18", tilOgMed: "2025-08-31" },
+    dager: [
+      {
+        type: "Arbeidsdag",
+        dagIndex: 0,
+        dato: "2025-08-18",
+        aktiviteter: [{ id: "aktivitet-id", type: "Arbeid", dato: "2025-08-18", timer: "PT8H" }],
+      },
+    ],
+    kilde: { rolle: "Saksbehandler", ident: "Z123456" },
+    begrunnelse: "Korrigering",
+    meldedato: "2025-09-01",
+  };
+
+  function lagRequest(payload: unknown = gyldigPeriode, personId = "person-id") {
+    const formData = new FormData();
+    formData.set("personId", personId);
+    formData.set("rapporteringsperiode", JSON.stringify(payload));
+    return new Request("http://localhost/api/rapportering", { method: "POST", body: formData });
+  }
+
+  beforeEach(() => vi.clearAllMocks());
+
+  it.each([400, 403, 409, 422, 500, 503])(
+    "bevarer backendstatus %i og feilinformasjon",
+    async (status) => {
+      vi.mocked(korrigerPeriode).mockRejectedValueOnce(
+        Response.json(
+          { title: "Korrigering feilet", details: "Detaljer fra backend", correlationId: "abc" },
+          { status },
+        ),
+      );
+
+      const response = await kjorAction(lagRequest());
+
+      expect(response.status).toBe(status);
+      await expect(response.json()).resolves.toEqual({
+        error: true,
+        title: "Korrigering feilet",
+        detail: "Detaljer fra backend",
+        correlationId: "abc",
+      });
+    },
+  );
+
+  it("bevarer backendstatus og bruker statusText når feilresponsen ikke er JSON", async () => {
+    vi.mocked(korrigerPeriode).mockRejectedValueOnce(
+      new Response("Utilgjengelig", { status: 503, statusText: "Service Unavailable" }),
+    );
+
+    const response = await kjorAction(lagRequest());
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      error: true,
+      title: "Service Unavailable",
+    });
+  });
+
+  it("returnerer 500 ved uventet feil", async () => {
+    vi.mocked(korrigerPeriode).mockRejectedValueOnce(new Error("Korrigering feilet"));
+
+    const response = await kjorAction(lagRequest());
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toEqual({
+      error: true,
+      title: "Korrigering feilet",
+    });
+  });
+
+  it("avviser GET med 405 og Allow: POST", () => {
+    const response = loader();
+    expect(response.status).toBe(405);
+    expect(response.headers.get("Allow")).toBe("POST");
+  });
+
+  it.each(["PUT", "PATCH", "DELETE"])("avviser %s uten backend-kall", async (method) => {
+    const response = await kjorAction(new Request("http://localhost/api/rapportering", { method }));
+    expect(response.status).toBe(405);
+    expect(response.headers.get("Allow")).toBe("POST");
+    expect(oppdaterPeriode).not.toHaveBeenCalled();
+    expect(korrigerPeriode).not.toHaveBeenCalled();
+  });
+
+  it("returnerer 400 for uleselige skjemadata", async () => {
+    const response = await kjorAction(
+      new Request("http://localhost/api/rapportering", { method: "POST", body: "ikke skjemadata" }),
+    );
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({ error: true });
+    expect(oppdaterPeriode).not.toHaveBeenCalled();
+    expect(korrigerPeriode).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["manglende felter", new FormData()],
+    ["ugyldig JSON", new URLSearchParams({ personId: "123", rapporteringsperiode: "{" })],
+  ])("returnerer 422 for %s", async (_navn, body) => {
+    const response = await kjorAction(
+      new Request("http://localhost/api/rapportering", { method: "POST", body }),
+    );
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toMatchObject({ error: true });
+    expect(oppdaterPeriode).not.toHaveBeenCalled();
+    expect(korrigerPeriode).not.toHaveBeenCalled();
+  });
+
+  it("returnerer 422 for fil i stedet for JSON", async () => {
+    const formData = new FormData();
+    formData.set("personId", "123");
+    formData.set("rapporteringsperiode", new Blob(["{}"]), "periode.json");
+    const request = lagRequest();
+    vi.spyOn(request, "formData").mockResolvedValue(formData);
+
+    const response = await kjorAction(request);
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toMatchObject({ error: true });
+    expect(oppdaterPeriode).not.toHaveBeenCalled();
+    expect(korrigerPeriode).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["null", null],
+    ["liste", []],
+    ["manglende felter", {}],
+    ["tom ident", { ...gyldigPeriode, ident: " " }],
+    ["tom original-ID", { ...gyldigPeriode, originalMeldekortId: "" }],
+    ["ugyldig original-ID", { ...gyldigPeriode, originalMeldekortId: 123 }],
+    ["ugyldig meldedato", { ...gyldigPeriode, meldedato: "2025-02-30" }],
+    ["null meldedato for korrigering", { ...gyldigPeriode, meldedato: null }],
+    ["ugyldig rolle", { ...gyldigPeriode, kilde: { rolle: "ukjent", ident: "Z123456" } }],
+    ["ugyldig begrunnelse", { ...gyldigPeriode, begrunnelse: null }],
+    [
+      "ugyldig periode",
+      { ...gyldigPeriode, periode: { fraOgMed: "feil", tilOgMed: "2025-08-31" } },
+    ],
+    [
+      "omvendt periode",
+      { ...gyldigPeriode, periode: { fraOgMed: "2025-08-31", tilOgMed: "2025-08-18" } },
+    ],
+    ["manglende dager", { ...gyldigPeriode, dager: null }],
+    [
+      "ugyldig dagindeks",
+      { ...gyldigPeriode, dager: [{ ...gyldigPeriode.dager[0], dagIndex: -1 }] },
+    ],
+    ["ugyldig dagdato", { ...gyldigPeriode, dager: [{ ...gyldigPeriode.dager[0], dato: "feil" }] }],
+    [
+      "ugyldige aktiviteter",
+      { ...gyldigPeriode, dager: [{ ...gyldigPeriode.dager[0], aktiviteter: null }] },
+    ],
+    ...[
+      { type: "ukjent", dato: "2025-08-18" },
+      { type: "Arbeid", dato: "feil" },
+      { type: "Arbeid", dato: "2025-08-18", timer: "8" },
+      { type: "Arbeid", dato: "2025-08-18", timer: 8 },
+    ].map((aktivitet): [string, unknown] => [
+      `ugyldig aktivitet ${JSON.stringify(aktivitet)}`,
+      { ...gyldigPeriode, dager: [{ ...gyldigPeriode.dager[0], aktiviteter: [aktivitet] }] },
+    ]),
+  ])("returnerer 422 uten backend-kall for %s", async (_navn, payload) => {
+    const response = await kjorAction(lagRequest(payload));
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toMatchObject({ error: true });
+    expect(oppdaterPeriode).not.toHaveBeenCalled();
+    expect(korrigerPeriode).not.toHaveBeenCalled();
+  });
+
+  it("avviser personId som bare inneholder mellomrom", async () => {
+    const response = await kjorAction(lagRequest(gyldigPeriode, " "));
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toMatchObject({ error: true });
+    expect(korrigerPeriode).not.toHaveBeenCalled();
+  });
+
+  const gyldigOppdatering: ISendInnMeldekort = {
+    ...gyldigPeriode,
+    id: "periode-id",
+    kanSendesFra: "2025-08-30T00:00:00",
+    sisteFristForTrekk: null,
+    opprettetAv: OPPRETTET_AV.Dagpenger,
+    status: "Innsendt",
+    registrertArbeidssoker: false,
+    meldedato: null,
+  };
+
+  it.each([
+    { id: "" },
+    { kanSendesFra: "feil" },
+    { sisteFristForTrekk: 123 },
+    { opprettetAv: "ukjent" },
+    { status: "TilUtfylling" },
+    { registrertArbeidssoker: "false" },
+    { innsendtTidspunkt: "feil" },
+  ])("avviser ugyldige oppdateringsfelter %j", async (felter) => {
+    const response = await kjorAction(
+      lagRequest({ ...gyldigOppdatering, originalMeldekortId: undefined, ...felter }),
+    );
+    expect(response.status).toBe(422);
+    expect(oppdaterPeriode).not.toHaveBeenCalled();
+    expect(korrigerPeriode).not.toHaveBeenCalled();
+  });
+
+  it("godtar oppdatering med null meldedato og false arbeidssoker", async () => {
+    const payload = { ...gyldigOppdatering, originalMeldekortId: undefined };
+    expect(await kjorActionData(lagRequest(payload))).toHaveProperty("success", true);
+    expect(oppdaterPeriode).toHaveBeenCalledWith(
+      expect.objectContaining({
+        periode: expect.objectContaining({ registrertArbeidssoker: false, meldedato: null }),
+      }),
+    );
+  });
+
+  it("bevarer dagdata og genererer nye aktivitet-IDer ved korrigering", async () => {
+    expect(await kjorActionData(lagRequest())).toHaveProperty("success", true);
+    expect(korrigerPeriode).toHaveBeenCalledWith(
+      expect.objectContaining({
+        periode: {
+          ...gyldigPeriode,
+          dager: [
+            {
+              ...gyldigPeriode.dager[0],
+              aktiviteter: [
+                {
+                  ...gyldigPeriode.dager[0].aktiviteter[0],
+                  id: expect.any(String),
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    );
+    const nyAktivitetId =
+      vi.mocked(korrigerPeriode).mock.calls[0][0].periode.dager[0].aktiviteter[0].id;
+    expect(nyAktivitetId).not.toBe("aktivitet-id");
+  });
+});
 
 /**
  * Integration tests for api.rapportering action

@@ -2,13 +2,14 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { type IMeldekortSkjemaSubmitData, useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
+import { useNavigationWarning } from "~/hooks/useNavigationWarning";
 import { MODAL_ACTION_TYPE } from "~/utils/constants";
 import type { IKorrigertDag, SetKorrigerteDager } from "~/utils/korrigering.utils";
 import type { IRapporteringsperiodeDag } from "~/utils/types";
 
 // Mock navigation warning hook
 vi.mock("~/hooks/useNavigationWarning", () => ({
-  useNavigationWarning: () => ({ disableWarning: vi.fn() }),
+  useNavigationWarning: vi.fn(() => ({ disableWarning: vi.fn() })),
 }));
 
 // Mock date-fns
@@ -29,9 +30,16 @@ vi.mock("date-fns", async (importOriginal) => {
 // Mock NAV DS datepicker
 vi.mock("@navikt/ds-react", () => ({
   useDatepicker: (config: unknown) => {
-    const typedConfig = config as { defaultSelected?: Date };
+    const typedConfig = config as {
+      defaultSelected?: Date;
+      onDateChange: (date: Date | undefined) => void;
+    };
     return {
-      inputProps: { value: typedConfig.defaultSelected?.toISOString().split("T")[0] || "" },
+      inputProps: {
+        value: typedConfig.defaultSelected?.toISOString().split("T")[0] || "",
+        onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
+          typedConfig.onDateChange(event.target.value ? new Date(event.target.value) : undefined),
+      },
       datepickerProps: { selected: typedConfig.defaultSelected },
     };
   },
@@ -107,6 +115,62 @@ describe("useMeldekortSkjema", () => {
 
       expect(result.current.state.valgtDato).toBe(initialDate);
       expect(result.current.state.begrunnelse).toBe(initialBegrunnelse);
+    });
+  });
+
+  describe("unsaved changes", () => {
+    it("should detect activity changes and reset when they are reverted", () => {
+      const { result, rerender } = renderHook(
+        ({ dager }) => useMeldekortSkjema({ ...getDefaultProps(), dager }),
+        { initialProps: { dager: mockKorrigerteDager } },
+      );
+
+      expect(result.current.state.hasChanges).toBe(false);
+
+      rerender({
+        dager: mockKorrigerteDager.map((dag) => ({
+          ...dag,
+          aktiviteter: dag.aktiviteter.map((aktivitet) => ({ ...aktivitet, timer: "4" })),
+        })),
+      });
+
+      expect(result.current.state.hasChanges).toBe(true);
+      expect(useNavigationWarning).toHaveBeenLastCalledWith({ hasChanges: true });
+
+      rerender({ dager: mockKorrigerteDager });
+
+      expect(result.current.state.hasChanges).toBe(false);
+      expect(useNavigationWarning).toHaveBeenLastCalledWith({ hasChanges: false });
+    });
+
+    it("should not treat prefilled correction values as changes", () => {
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({
+          ...getDefaultProps(),
+          isKorrigering: true,
+          initialMeldedato: new Date("2024-01-15"),
+          initialBegrunnelse: "Opprinnelig begrunnelse",
+        }),
+      );
+
+      expect(result.current.state.hasChanges).toBe(false);
+
+      act(() => result.current.handlers.handleBegrunnelseChange("Endret begrunnelse"));
+
+      expect(result.current.state.hasChanges).toBe(true);
+
+      act(() => result.current.handlers.handleBegrunnelseChange("Opprinnelig begrunnelse"));
+
+      expect(result.current.state.hasChanges).toBe(false);
+    });
+
+    it("should not treat the default arbeidssoker value for etterregistrering as a change", () => {
+      const { result } = renderHook(() =>
+        useMeldekortSkjema({ ...getDefaultProps(), meldekortType: "Etterregistrert" }),
+      );
+
+      expect(result.current.state.registrertArbeidssoker).toBe(true);
+      expect(result.current.state.hasChanges).toBe(false);
     });
   });
 
@@ -390,26 +454,31 @@ describe("useMeldekortSkjema", () => {
       expect(result.current.state.hasChanges).toBe(true);
     });
 
-    it("should detect changes when valgtDato is set", () => {
-      const { result } = renderHook(() => useMeldekortSkjema(getDefaultProps()));
-
-      expect(result.current.state.hasChanges).toBe(false);
-
-      // Simulate date change through the datepicker (this would normally come from useDatepicker)
-      act(() => {
-        result.current.handlers.openModal(MODAL_ACTION_TYPE.FULLFOR);
-      });
-
-      // Since we can't directly set valgtDato (it's controlled by useDatepicker),
-      // we test the logic indirectly through the initial values
-      const { result: resultWithInitialDate } = renderHook(() =>
+    it("should detect date changes and reset when they are reverted", () => {
+      const { result } = renderHook(() =>
         useMeldekortSkjema({
           ...getDefaultProps(),
           initialMeldedato: new Date("2024-01-15"),
         }),
       );
 
-      expect(resultWithInitialDate.current.state.hasChanges).toBe(true);
+      expect(result.current.state.hasChanges).toBe(false);
+
+      act(() => {
+        result.current.datepicker.inputProps.onChange?.({
+          target: { value: "2024-01-16" },
+        } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      expect(result.current.state.hasChanges).toBe(true);
+
+      act(() => {
+        result.current.datepicker.inputProps.onChange?.({
+          target: { value: "2024-01-15" },
+        } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      expect(result.current.state.hasChanges).toBe(false);
     });
   });
 

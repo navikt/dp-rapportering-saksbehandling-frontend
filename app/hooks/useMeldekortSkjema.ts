@@ -140,8 +140,17 @@ export function useMeldekortSkjema({
   });
 
   // Navigation warning
+  const [initialValues] = useState(() => ({
+    dager: JSON.stringify(dager),
+    registrertArbeidssoker: initialRegistrertArbeidssoker,
+    begrunnelse: initialBegrunnelse,
+    meldedato: initialMeldedato?.getTime(),
+  }));
   const hasChanges =
-    registrertArbeidssoker !== null || begrunnelse.trim() !== "" || valgtDato !== undefined;
+    JSON.stringify(dager) !== initialValues.dager ||
+    registrertArbeidssoker !== initialValues.registrertArbeidssoker ||
+    begrunnelse !== initialValues.begrunnelse ||
+    valgtDato?.getTime() !== initialValues.meldedato;
   const { disableWarning } = useNavigationWarning({ hasChanges });
 
   // Date picker
