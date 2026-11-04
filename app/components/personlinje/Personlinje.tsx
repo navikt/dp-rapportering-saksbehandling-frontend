@@ -15,10 +15,7 @@ import { ANSVARLIG_SYSTEM } from "~/utils/constants";
 import { byggFulltNavn } from "~/utils/person.utils";
 import type { IArbeidssokerperiode, IPerson, IRapporteringsperiode } from "~/utils/types";
 
-import {
-  transformArbeidssokerperioderToHistoryEvents,
-  transformPerioderToHistoryEvents,
-} from "../../modals/historikk/historikk.utils";
+import { buildHistoryEvents } from "../../modals/historikk/historikk.utils";
 import { HistorikkModal } from "../../modals/historikk/HistorikkModal";
 import { OpprettMeldekortModal } from "../../modals/opprett-meldekort/OpprettMeldekortModal";
 import { beregnAlder, erKvinne, erMann, getKjonnKlasse } from "./Personlinje.helpers";
@@ -53,10 +50,7 @@ export default function Personlinje({
   const texts = personlinjeData;
 
   const events = useMemo(() => {
-    return [
-      ...transformArbeidssokerperioderToHistoryEvents(arbeidssokerperioder),
-      ...transformPerioderToHistoryEvents(perioder),
-    ].sort((a, b) => (a.dato < b.dato ? 1 : -1));
+    return buildHistoryEvents(arbeidssokerperioder, perioder);
   }, [perioder, arbeidssokerperioder]);
 
   const erArenaBruker = person.ansvarligSystem === ANSVARLIG_SYSTEM.ARENA;
