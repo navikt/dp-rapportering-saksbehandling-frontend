@@ -79,20 +79,54 @@ export const buildHistoryEvents = (
   arbeidssokerperioder: IArbeidssokerperiode[],
   perioder: IRapporteringsperiode[],
 ): IHendelse[] => {
-  const chronologicalEvents = [
-    ...transformArbeidssokerperioderToHistoryEvents(arbeidssokerperioder),
-    ...transformPerioderToHistoryEvents(perioder),
-  ].sort((a, b) => b.dato.getTime() - a.dato.getTime());
-
-  const workerEvents = [...arbeidssokerperioder]
-    .sort((a, b) => new Date(b.startDato).getTime() - new Date(a.startDato).getTime())
-    .flatMap((periode) => {
-      const events = transformArbeidssokerperioderToHistoryEvents([periode]);
-      return periode.sluttDato ? events.reverse() : events;
-    });
-
-  let workerEventIndex = 0;
-  return chronologicalEvents.map((event) =>
-    event.kategori === "System" ? workerEvents[workerEventIndex++]! : event,
+  const arbeidssokerperioderSortert = [...arbeidssokerperioder].sort(
+    (a, b) => new Date(b.startDato).getTime() - new Date(a.startDato).getTime(),
   );
+
+  const hendelser: {
+    event: IHendelse;
+    periodeId?: string;
+    erAvregistrering?: boolean;
+  }[] = [
+    ...arbeidssokerperioderSortert.flatMap((periode) =>
+      transformArbeidssokerperioderToHistoryEvents([periode]).map((event, index) => ({
+        event,
+        periodeId: periode.periodeId,
+        erAvregistrering: index === 1,
+      })),
+    ),
+    ...transformPerioderToHistoryEvents(perioder).map((event) => ({ event })),
+  ].sort((a, b) => b.event.dato.getTime() - a.event.dato.getTime());
+
+  for (let index = arbeidssokerperioderSortert.length - 1; index > 0; index--) {
+    const eldrePeriode = arbeidssokerperioderSortert[index];
+    const nyerePeriode = arbeidssokerperioderSortert[index - 1];
+    if (!nyerePeriode || !eldrePeriode?.sluttDato) continue;
+
+    const eldreSlutt = new Date(eldrePeriode.sluttDato);
+    const nyereStart = new Date(nyerePeriode.startDato);
+    if (
+      eldreSlutt.getTime() < nyereStart.getTime() ||
+      eldreSlutt.toISOString().slice(0, 10) !== nyereStart.toISOString().slice(0, 10)
+    ) {
+      continue;
+    }
+
+    const avregistreringIndex = hendelser.findIndex(
+      (hendelse) =>
+        hendelse.periodeId === eldrePeriode.periodeId && hendelse.erAvregistrering === true,
+    );
+    const registreringIndex = hendelser.findIndex(
+      (hendelse) =>
+        hendelse.periodeId === nyerePeriode.periodeId && hendelse.erAvregistrering === false,
+    );
+
+    if (avregistreringIndex < 0 || avregistreringIndex >= registreringIndex) continue;
+
+    const [avregistrering] = hendelser.splice(avregistreringIndex, 1);
+    // Fjerning før registreringen forskyver den ett hakk, så originalindeksen er plassen etter den.
+    hendelser.splice(registreringIndex, 0, avregistrering!);
+  }
+
+  return hendelser.map(({ event }) => event);
 };

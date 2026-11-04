@@ -50,13 +50,16 @@ function lagArbeidssokerperiode(
 }
 
 describe("buildHistoryEvents", () => {
-  it("skal holde arbeidssokerhendelser samlet etter startdato og beholde meldekortets kronologiske plass", () => {
+  it("skal korrigere avregistreringer ved samme-dags overlapp uten å endre kronologien ellers", () => {
     const arbeidssokerperioder = [
       lagArbeidssokerperiode("older", "2026-08-19T10:38:04.629Z", "2026-10-29T09:51:29.604Z"),
       lagArbeidssokerperiode("newer", "2026-10-29T09:51:29.370Z", null),
       lagArbeidssokerperiode("oldest", "2026-07-01T10:00:00.000Z", "2026-09-01T10:00:00.000Z"),
     ];
-    const perioder = [lagTestPeriode({ innsendtTidspunkt: "2026-10-29T09:51:29.500Z" })];
+    const perioder = [
+      lagTestPeriode({ innsendtTidspunkt: "2026-10-29T09:51:29.500Z" }),
+      lagTestPeriode({ id: "2", innsendtTidspunkt: "2026-08-25T10:00:00.000Z" }),
+    ];
 
     const events = buildHistoryEvents(arbeidssokerperioder, perioder);
 
@@ -67,19 +70,32 @@ describe("buildHistoryEvents", () => {
     ).toEqual([
       "Registrert som arbeidssøker:29.10.2026:09:51",
       "Avregistrert som arbeidssøker:29.10.2026:09:51",
-      "Registrert som arbeidssøker:19.08.2026:10:38",
       "Avregistrert som arbeidssøker:01.09.2026:10:00",
+      "Registrert som arbeidssøker:19.08.2026:10:38",
       "Registrert som arbeidssøker:01.07.2026:10:00",
     ]);
     expect(events.map((event) => event.kategori)).toEqual([
-      "System",
       "Meldekort",
       "System",
       "System",
       "System",
+      "Meldekort",
+      "System",
       "System",
     ]);
-    expect(events[1].dato.toISOString()).toBe("2026-10-29T09:51:29.500Z");
+    expect(events.map((event) => event.dato.toISOString())).toEqual([
+      "2026-10-29T09:51:29.500Z",
+      "2026-10-29T09:51:29.370Z",
+      "2026-10-29T09:51:29.604Z",
+      "2026-09-01T10:00:00.000Z",
+      "2026-08-25T10:00:00.000Z",
+      "2026-08-19T10:38:04.629Z",
+      "2026-07-01T10:00:00.000Z",
+    ]);
+    expect(events[2].innsendtDato).toBe("29.10.2026");
+    expect(events[2].time).toBe("09:51");
+    expect(events[3].dato.getTime()).toBeGreaterThan(events[4].dato.getTime());
+    expect(events[4].dato.getTime()).toBeGreaterThan(events[5].dato.getTime());
   });
 
   it("skal behandle like startdatoer stabilt og ikke endre inndata", () => {
@@ -104,8 +120,8 @@ describe("buildHistoryEvents", () => {
   it("skal bevare kronologisk rekkefølge for perioder som ikke overlapper", () => {
     const events = buildHistoryEvents(
       [
-        lagArbeidssokerperiode("older", "2026-08-19T10:38:04.629Z", "2026-08-25T10:00:00.000Z"),
         lagArbeidssokerperiode("newer", "2026-10-29T09:51:29.370Z", null),
+        lagArbeidssokerperiode("older", "2026-08-19T10:38:04.629Z", "2026-08-25T10:00:00.000Z"),
       ],
       [],
     );
@@ -128,6 +144,62 @@ describe("buildHistoryEvents", () => {
     expect(
       buildHistoryEvents([lagArbeidssokerperiode("active", "2026-10-29T09:51:29.370Z", null)], []),
     ).toHaveLength(1);
+  });
+
+  it("skal håndtere bare innsendte meldekort", () => {
+    const events = buildHistoryEvents(
+      [],
+      [lagTestPeriode({ innsendtTidspunkt: "2026-10-29T09:51:29.370Z" })],
+    );
+
+    expect(events).toHaveLength(1);
+    expect(events[0].kategori).toBe("Meldekort");
+  });
+
+  it("skal beholde stabil rekkefølge ved eksakt overleveringstidspunkt", () => {
+    const events = buildHistoryEvents(
+      [
+        lagArbeidssokerperiode("older", "2026-10-29T08:00:00.000Z", "2026-10-29T09:00:00.000Z"),
+        lagArbeidssokerperiode("newer", "2026-10-29T09:00:00.000Z", null),
+      ],
+      [lagTestPeriode({ innsendtTidspunkt: "2026-10-29T09:00:00.000Z" })],
+    );
+
+    expect(events.map((event) => event.event)).toEqual([
+      "Registrert som arbeidssøker",
+      "Avregistrert som arbeidssøker",
+      expect.stringContaining("Meldekort uke"),
+      "Registrert som arbeidssøker",
+    ]);
+    expect(events.map((event) => event.dato.toISOString())).toEqual([
+      "2026-10-29T09:00:00.000Z",
+      "2026-10-29T09:00:00.000Z",
+      "2026-10-29T09:00:00.000Z",
+      "2026-10-29T08:00:00.000Z",
+    ]);
+  });
+
+  it("skal koble avregistreringer til riktig periode gjennom flere samme-dags overganger", () => {
+    const arbeidssokerperioder = [
+      lagArbeidssokerperiode("oldest", "2026-10-29T09:00:00.000Z", "2026-10-29T10:00:00.002Z"),
+      lagArbeidssokerperiode("middle", "2026-10-29T10:00:00.001Z", "2026-10-29T10:00:00.004Z"),
+      lagArbeidssokerperiode("newest", "2026-10-29T10:00:00.003Z", null),
+    ];
+    const originalArbeidssokerperioder = structuredClone(arbeidssokerperioder);
+
+    const events = buildHistoryEvents(arbeidssokerperioder, []);
+
+    expect(events.map((event) => event.dato.toISOString())).toEqual([
+      "2026-10-29T10:00:00.003Z",
+      "2026-10-29T10:00:00.004Z",
+      "2026-10-29T10:00:00.001Z",
+      "2026-10-29T10:00:00.002Z",
+      "2026-10-29T09:00:00.000Z",
+    ]);
+    expect(events.every((event) => !("periodeId" in event) && !("erAvregistrering" in event))).toBe(
+      true,
+    );
+    expect(arbeidssokerperioder).toEqual(originalArbeidssokerperioder);
   });
 });
 
