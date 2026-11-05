@@ -6,7 +6,6 @@ import type { IRapporteringsperiodeDag } from "~/utils/types";
 
 describe("Dag", () => {
   const mockDag: IRapporteringsperiodeDag = {
-    type: "UKJENT",
     dagIndex: 0,
     dato: "2024-01-15",
     aktiviteter: [],
@@ -47,7 +46,6 @@ describe("Dag", () => {
   describe("enkeltaktivitet", () => {
     it("skal vise arbeidstimer", () => {
       const dagMedArbeid: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-15", timer: "PT7H30M" }],
@@ -68,7 +66,6 @@ describe("Dag", () => {
 
     it("skal vise syk aktivitet", () => {
       const dagMedSyk: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [{ type: "Syk", dato: "2024-01-15" }],
@@ -89,7 +86,6 @@ describe("Dag", () => {
 
     it("skal vise ferie aktivitet", () => {
       const dagMedFerie: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [{ type: "Fravaer", dato: "2024-01-15" }],
@@ -110,7 +106,6 @@ describe("Dag", () => {
 
     it("skal vise utdanning aktivitet", () => {
       const dagMedUtdanning: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [{ type: "Utdanning", dato: "2024-01-15" }],
@@ -131,7 +126,6 @@ describe("Dag", () => {
 
     it("skal vise dag-wrapper for arbeid", () => {
       const dagMedArbeid: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-15", timer: "PT7H30M" }],
@@ -156,7 +150,6 @@ describe("Dag", () => {
   describe("flere aktiviteter", () => {
     it("skal vise alle aktiviteter sortert i riktig rekkefølge", () => {
       const dagMedFlereAktiviteter: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [
@@ -185,7 +178,6 @@ describe("Dag", () => {
 
     it("skal vise aktiviteter-wrapper når det er flere enn én aktivitet", () => {
       const dagMedFlereAktiviteter: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [
@@ -210,7 +202,6 @@ describe("Dag", () => {
 
     it("skal ha aktiviteter-wrapper når det er flere aktiviteter", () => {
       const dagMedFlereAktiviteter: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [
@@ -237,7 +228,6 @@ describe("Dag", () => {
   describe("prioritering av farger", () => {
     it("skal vise begge aktiviteter når både Syk og Arbeid finnes", () => {
       const dagMedSykOgArbeid: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [
@@ -262,7 +252,6 @@ describe("Dag", () => {
 
     it("skal vise begge aktiviteter når både Fravaer og Utdanning finnes", () => {
       const dagMedFerieOgUtdanning: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [
@@ -289,7 +278,6 @@ describe("Dag", () => {
   describe("arbeidstimer formatering", () => {
     it("skal vise arbeid uten timer hvis timer mangler", () => {
       const dagMedArbeidUtenTimer: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-15" }],
@@ -310,7 +298,6 @@ describe("Dag", () => {
 
     it("skal formatere hele timer korrekt", () => {
       const dagMedHeleTimer: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-15", timer: "PT8H" }],
@@ -331,7 +318,6 @@ describe("Dag", () => {
 
     it("skal formatere desimaltimer korrekt", () => {
       const dagMedDesimalTimer: IRapporteringsperiodeDag = {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-15",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-15", timer: "PT3H45M" }],

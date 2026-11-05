@@ -50,7 +50,6 @@ describe("validering av api.rapportering", () => {
     periode: { fraOgMed: "2025-08-18", tilOgMed: "2025-08-31" },
     dager: [
       {
-        type: "Arbeidsdag",
         dagIndex: 0,
         dato: "2025-08-18",
         aktiviteter: [{ id: "aktivitet-id", type: "Arbeid", dato: "2025-08-18", timer: "PT8H" }],

@@ -55,7 +55,6 @@ describe("useMeldekortSkjema", () => {
 
   const mockDager: IRapporteringsperiodeDag[] = [
     {
-      type: "dag",
       dagIndex: 0,
       dato: "2024-01-01",
       aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "PT8H" }],
@@ -63,7 +62,6 @@ describe("useMeldekortSkjema", () => {
   ];
   const mockKorrigerteDager: IKorrigertDag[] = [
     {
-      type: "dag",
       dagIndex: 0,
       dato: "2024-01-01",
       aktiviteter: [{ id: "1", type: "Arbeid", dato: "2024-01-01", timer: "8" }],
@@ -536,7 +534,6 @@ describe("useMeldekortSkjema", () => {
       const datoMedFeil = "2024-01-01";
       const dager: IKorrigertDag[] = [
         {
-          type: "dag",
           dagIndex: 0,
           dato: datoMedFeil,
           aktiviteter: [
@@ -580,7 +577,6 @@ describe("useMeldekortSkjema", () => {
       const datoMedFeil = "2024-01-01";
       const dager: IKorrigertDag[] = [
         {
-          type: "dag",
           dagIndex: 0,
           dato: datoMedFeil,
           aktiviteter: [
@@ -631,43 +627,36 @@ describe("useMeldekortSkjema", () => {
 
       const dager: IKorrigertDag[] = [
         {
-          type: "dag",
           dagIndex: 0,
           dato: datoMedFeil1,
           aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil1, timer: null }],
         },
         {
-          type: "dag",
           dagIndex: 1,
           dato: datoMedFeil2,
           aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil2, timer: "" }],
         },
         {
-          type: "dag",
           dagIndex: 2,
           dato: datoMedFeil3,
           aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil3, timer: "   " }],
         },
         {
-          type: "dag",
           dagIndex: 3,
           dato: datoMedFeil4,
           aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil4, timer: "-1" }],
         },
         {
-          type: "dag",
           dagIndex: 4,
           dato: datoMedFeil5,
           aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil5, timer: "25" }],
         },
         {
-          type: "dag",
           dagIndex: 5,
           dato: datoMedFeil6,
           aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil6, timer: "0.3" }],
         },
         {
-          type: "dag",
           dagIndex: 6,
           dato: datoMedFeil7,
           aktiviteter: [{ id: "1", type: "Syk", dato: datoMedFeil7, timer: "5" }],
@@ -734,7 +723,6 @@ describe("useMeldekortSkjema", () => {
       const datoMedFeil = "2024-01-01";
       const dager: IKorrigertDag[] = [
         {
-          type: "dag",
           dagIndex: 0,
           dato: datoMedFeil,
           aktiviteter: [{ id: "1", type: "Arbeid", dato: datoMedFeil, timer: "0.3" }],

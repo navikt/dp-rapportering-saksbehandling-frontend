@@ -26,7 +26,6 @@ export const aktivitetSchema = z.object({
 });
 
 export const rapporteringsperiodeDagSchema = z.object({
-  type: nonEmptyString,
   dagIndex: z.number().int().nonnegative(),
   dato: z.iso.date(),
   aktiviteter: z.array(aktivitetSchema),

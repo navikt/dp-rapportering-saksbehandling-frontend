@@ -31,19 +31,16 @@ describe("MeldekortRad", () => {
     },
     dager: [
       {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-01",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-01", timer: "PT7H30M" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 1,
         dato: "2024-01-02",
         aktiviteter: [{ type: "Syk", dato: "2024-01-02" }],
       },
       ...Array.from({ length: 12 }, (_, i) => ({
-        type: "UKJENT" as const,
         dagIndex: i + 2,
         dato: `2024-01-${String(i + 3).padStart(2, "0")}`,
         aktiviteter: [],
@@ -187,31 +184,26 @@ describe("MeldekortRad", () => {
         ...basePeriode,
         dager: [
           {
-            type: "UKJENT",
             dagIndex: 0,
             dato: "2024-01-01",
             aktiviteter: [{ type: "Utdanning", dato: "2024-01-01" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 1,
             dato: "2024-01-02",
             aktiviteter: [{ type: "Arbeid", dato: "2024-01-02", timer: "PT7H30M" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 2,
             dato: "2024-01-03",
             aktiviteter: [{ type: "Syk", dato: "2024-01-03" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 3,
             dato: "2024-01-04",
             aktiviteter: [{ type: "Fravaer", dato: "2024-01-04" }],
           },
           ...Array.from({ length: 10 }, (_, i) => ({
-            type: "UKJENT" as const,
             dagIndex: i + 4,
             dato: `2024-01-${String(i + 5).padStart(2, "0")}`,
             aktiviteter: [],
@@ -242,7 +234,6 @@ describe("MeldekortRad", () => {
       const periodeUtenAktiviteter: IRapporteringsperiode = {
         ...basePeriode,
         dager: Array.from({ length: 14 }, (_, i) => ({
-          type: "UKJENT" as const,
           dagIndex: i,
           dato: `2024-01-${String(i + 1).padStart(2, "0")}`,
           aktiviteter: [],

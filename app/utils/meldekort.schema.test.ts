@@ -16,7 +16,6 @@ const periode: IRapporteringsperiode = {
   periode: { fraOgMed: "2025-08-18", tilOgMed: "2025-08-31" },
   dager: [
     {
-      type: "Arbeidsdag",
       dagIndex: 0,
       dato: "2025-08-18",
       aktiviteter: [{ type: "Arbeid", dato: "2025-08-18", timer: "PT8H" }],
@@ -82,7 +81,7 @@ describe("meldekortskjemaer", () => {
     meldedato: "2025-09-01",
   };
 
-  it("godtar innsending og korrigering uten ekstra responsfelter", () => {
+  it("godtar innsending og korrigering uten type på dagene eller ekstra responsfelter", () => {
     expect(sendInnMeldekortSchema.parse(innsending)).toEqual(innsending);
     expect(korrigerMeldekortSchema.parse(korrigering)).toEqual(korrigering);
   });
