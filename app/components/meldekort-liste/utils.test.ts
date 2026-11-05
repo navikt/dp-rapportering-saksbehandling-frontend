@@ -48,13 +48,11 @@ describe("meldekort-liste utils", () => {
         ...basePeriode,
         dager: [
           {
-            type: "dag",
             dato: "2024-01-01",
             aktiviteter: [],
             dagIndex: 0,
           },
           {
-            type: "dag",
             dato: "2024-01-02",
             aktiviteter: [],
             dagIndex: 1,
@@ -70,13 +68,11 @@ describe("meldekort-liste utils", () => {
         ...basePeriode,
         dager: [
           {
-            type: "dag",
             dato: "2024-01-01",
             aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT7H30M" }],
             dagIndex: 0,
           },
           {
-            type: "dag",
             dato: "2024-01-02",
             aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-02", timer: "PT8H" }],
             dagIndex: 1,
@@ -94,25 +90,21 @@ describe("meldekort-liste utils", () => {
         ...basePeriode,
         dager: [
           {
-            type: "dag",
             dato: "2024-01-01",
             aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT7H30M" }],
             dagIndex: 0,
           },
           {
-            type: "dag",
             dato: "2024-01-02",
             aktiviteter: [{ type: AKTIVITET_TYPE.Syk, dato: "2024-01-02" }],
             dagIndex: 1,
           },
           {
-            type: "dag",
             dato: "2024-01-03",
             aktiviteter: [{ type: AKTIVITET_TYPE.Fravaer, dato: "2024-01-03" }],
             dagIndex: 2,
           },
           {
-            type: "dag",
             dato: "2024-01-04",
             aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-04", timer: "PT8H" }],
             dagIndex: 3,
@@ -132,7 +124,6 @@ describe("meldekort-liste utils", () => {
         ...basePeriode,
         dager: [
           {
-            type: "dag",
             dato: "2024-01-01",
             aktiviteter: [
               { type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT4H" },
@@ -141,7 +132,6 @@ describe("meldekort-liste utils", () => {
             dagIndex: 0,
           },
           {
-            type: "dag",
             dato: "2024-01-02",
             aktiviteter: [
               { type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-02", timer: "PT8H" },
@@ -164,19 +154,16 @@ describe("meldekort-liste utils", () => {
         ...basePeriode,
         dager: [
           {
-            type: "dag",
             dato: "2024-01-01",
             aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-01", timer: "PT7H" }],
             dagIndex: 0,
           },
           {
-            type: "dag",
             dato: "2024-01-02",
             aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-02", timer: "PT8H" }],
             dagIndex: 1,
           },
           {
-            type: "dag",
             dato: "2024-01-03",
             aktiviteter: [{ type: AKTIVITET_TYPE.Arbeid, dato: "2024-01-03", timer: "PT6H" }],
             dagIndex: 2,

@@ -17,70 +17,60 @@ describe("Kalender", () => {
     dager: [
       // Første uke (7 dager)
       {
-        type: "UKJENT",
         dagIndex: 0,
         dato: "2024-01-01",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-01", timer: "PT7H30M" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 1,
         dato: "2024-01-02",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-02", timer: "PT7H30M" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 2,
         dato: "2024-01-03",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-03", timer: "PT7H30M" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 3,
         dato: "2024-01-04",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-04", timer: "PT7H30M" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 4,
         dato: "2024-01-05",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-05", timer: "PT7H30M" }],
       },
-      { type: "UKJENT", dagIndex: 5, dato: "2024-01-06", aktiviteter: [] },
-      { type: "UKJENT", dagIndex: 6, dato: "2024-01-07", aktiviteter: [] },
+      { dagIndex: 5, dato: "2024-01-06", aktiviteter: [] },
+      { dagIndex: 6, dato: "2024-01-07", aktiviteter: [] },
       // Andre uke (7 dager)
       {
-        type: "UKJENT",
         dagIndex: 7,
         dato: "2024-01-08",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-08", timer: "PT7H30M" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 8,
         dato: "2024-01-09",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-09", timer: "PT7H30M" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 9,
         dato: "2024-01-10",
         aktiviteter: [{ type: "Arbeid", dato: "2024-01-10", timer: "PT7H30M" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 10,
         dato: "2024-01-11",
         aktiviteter: [{ type: "Syk", dato: "2024-01-11" }],
       },
       {
-        type: "UKJENT",
         dagIndex: 11,
         dato: "2024-01-12",
         aktiviteter: [{ type: "Syk", dato: "2024-01-12" }],
       },
-      { type: "UKJENT", dagIndex: 12, dato: "2024-01-13", aktiviteter: [] },
-      { type: "UKJENT", dagIndex: 13, dato: "2024-01-14", aktiviteter: [] },
+      { dagIndex: 12, dato: "2024-01-13", aktiviteter: [] },
+      { dagIndex: 13, dato: "2024-01-14", aktiviteter: [] },
     ],
     kanSendes: true,
     kanEndres: true,
@@ -187,7 +177,6 @@ describe("Kalender", () => {
       const periodeUtenAktiviteter: IRapporteringsperiode = {
         ...mockPeriode,
         dager: Array.from({ length: 14 }, (_, i) => ({
-          type: "UKJENT",
           dagIndex: i,
           dato: `2024-01-${String(i + 1).padStart(2, "0")}`,
           aktiviteter: [],
@@ -205,7 +194,6 @@ describe("Kalender", () => {
         dager: Array.from({ length: 14 }, (_, i) => {
           const dato = `2024-01-${String(i + 1).padStart(2, "0")}`;
           return {
-            type: "UKJENT",
             dagIndex: i,
             dato,
             aktiviteter: [{ type: "Arbeid", dato, timer: "PT7H30M" }],
@@ -224,31 +212,26 @@ describe("Kalender", () => {
         ...mockPeriode,
         dager: [
           {
-            type: "UKJENT",
             dagIndex: 0,
             dato: "2024-01-01",
             aktiviteter: [{ type: "Arbeid", dato: "2024-01-01", timer: "PT7H30M" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 1,
             dato: "2024-01-02",
             aktiviteter: [{ type: "Syk", dato: "2024-01-02" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 2,
             dato: "2024-01-03",
             aktiviteter: [{ type: "Fravaer", dato: "2024-01-03" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 3,
             dato: "2024-01-04",
             aktiviteter: [{ type: "Utdanning", dato: "2024-01-04" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 4,
             dato: "2024-01-05",
             aktiviteter: [
@@ -256,40 +239,35 @@ describe("Kalender", () => {
               { type: "Syk", dato: "2024-01-05" },
             ],
           },
-          { type: "UKJENT", dagIndex: 5, dato: "2024-01-06", aktiviteter: [] },
-          { type: "UKJENT", dagIndex: 6, dato: "2024-01-07", aktiviteter: [] },
+          { dagIndex: 5, dato: "2024-01-06", aktiviteter: [] },
+          { dagIndex: 6, dato: "2024-01-07", aktiviteter: [] },
           {
-            type: "UKJENT",
             dagIndex: 7,
             dato: "2024-01-08",
             aktiviteter: [{ type: "Arbeid", dato: "2024-01-08", timer: "PT7H30M" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 8,
             dato: "2024-01-09",
             aktiviteter: [{ type: "Arbeid", dato: "2024-01-09", timer: "PT7H30M" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 9,
             dato: "2024-01-10",
             aktiviteter: [{ type: "Arbeid", dato: "2024-01-10", timer: "PT7H30M" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 10,
             dato: "2024-01-11",
             aktiviteter: [{ type: "Arbeid", dato: "2024-01-11", timer: "PT7H30M" }],
           },
           {
-            type: "UKJENT",
             dagIndex: 11,
             dato: "2024-01-12",
             aktiviteter: [{ type: "Arbeid", dato: "2024-01-12", timer: "PT7H30M" }],
           },
-          { type: "UKJENT", dagIndex: 12, dato: "2024-01-13", aktiviteter: [] },
-          { type: "UKJENT", dagIndex: 13, dato: "2024-01-14", aktiviteter: [] },
+          { dagIndex: 12, dato: "2024-01-13", aktiviteter: [] },
+          { dagIndex: 13, dato: "2024-01-14", aktiviteter: [] },
         ],
       };
 

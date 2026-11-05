@@ -44,7 +44,6 @@ describe("kalenderOgAktiviteter.helpers", () => {
         ...basePeriode,
         dager: [
           {
-            type: "UKJENT",
             dagIndex: 0,
             dato: "2024-01-01",
             aktiviteter: [{ type: "Syk", dato: "2024-01-01" }],
@@ -62,19 +61,16 @@ describe("kalenderOgAktiviteter.helpers", () => {
           ...basePeriode,
           dager: [
             {
-              type: "UKJENT",
               dagIndex: 0,
               dato: "2024-01-01",
               aktiviteter: [{ type: "Arbeid", dato: "2024-01-01", timer: "PT7H30M" }],
             },
             {
-              type: "UKJENT",
               dagIndex: 1,
               dato: "2024-01-02",
               aktiviteter: [{ type: "Arbeid", dato: "2024-01-02", timer: "PT5H" }],
             },
             {
-              type: "UKJENT",
               dagIndex: 2,
               dato: "2024-01-03",
               aktiviteter: [{ type: "Arbeid", dato: "2024-01-03", timer: "PT8H" }],
@@ -91,7 +87,6 @@ describe("kalenderOgAktiviteter.helpers", () => {
           ...basePeriode,
           dager: [
             {
-              type: "UKJENT",
               dagIndex: 0,
               dato: "2024-01-01",
               aktiviteter: [{ type: "Arbeid", dato: "2024-01-01" }],
@@ -107,7 +102,6 @@ describe("kalenderOgAktiviteter.helpers", () => {
         const periode: IRapporteringsperiode = {
           ...basePeriode,
           dager: Array.from({ length: 5 }, (_, i) => ({
-            type: "UKJENT" as const,
             dagIndex: i,
             dato: `2024-01-${String(i + 1).padStart(2, "0")}`,
             aktiviteter: [
@@ -131,19 +125,16 @@ describe("kalenderOgAktiviteter.helpers", () => {
           ...basePeriode,
           dager: [
             {
-              type: "UKJENT",
               dagIndex: 0,
               dato: "2024-01-01",
               aktiviteter: [{ type: "Syk", dato: "2024-01-01" }],
             },
             {
-              type: "UKJENT",
               dagIndex: 1,
               dato: "2024-01-02",
               aktiviteter: [{ type: "Syk", dato: "2024-01-02" }],
             },
             {
-              type: "UKJENT",
               dagIndex: 2,
               dato: "2024-01-03",
               aktiviteter: [{ type: "Syk", dato: "2024-01-03" }],
@@ -160,13 +151,11 @@ describe("kalenderOgAktiviteter.helpers", () => {
           ...basePeriode,
           dager: [
             {
-              type: "UKJENT",
               dagIndex: 0,
               dato: "2024-01-01",
               aktiviteter: [{ type: "Fravaer", dato: "2024-01-01" }],
             },
             {
-              type: "UKJENT",
               dagIndex: 1,
               dato: "2024-01-02",
               aktiviteter: [{ type: "Fravaer", dato: "2024-01-02" }],
@@ -183,7 +172,6 @@ describe("kalenderOgAktiviteter.helpers", () => {
           ...basePeriode,
           dager: [
             {
-              type: "UKJENT",
               dagIndex: 0,
               dato: "2024-01-01",
               aktiviteter: [{ type: "Utdanning", dato: "2024-01-01" }],
@@ -202,7 +190,6 @@ describe("kalenderOgAktiviteter.helpers", () => {
           ...basePeriode,
           dager: [
             {
-              type: "UKJENT",
               dagIndex: 0,
               dato: "2024-01-01",
               aktiviteter: [
@@ -211,7 +198,6 @@ describe("kalenderOgAktiviteter.helpers", () => {
               ],
             },
             {
-              type: "UKJENT",
               dagIndex: 1,
               dato: "2024-01-02",
               aktiviteter: [{ type: "Syk", dato: "2024-01-02" }],
@@ -231,19 +217,16 @@ describe("kalenderOgAktiviteter.helpers", () => {
           ...basePeriode,
           dager: [
             {
-              type: "UKJENT",
               dagIndex: 0,
               dato: "2024-01-01",
               aktiviteter: [{ type: "Arbeid", dato: "2024-01-01", timer: "PT7H30M" }],
             },
             {
-              type: "UKJENT",
               dagIndex: 1,
               dato: "2024-01-02",
               aktiviteter: [{ type: "Syk", dato: "2024-01-02" }],
             },
             {
-              type: "UKJENT",
               dagIndex: 2,
               dato: "2024-01-03",
               aktiviteter: [],
@@ -261,7 +244,6 @@ describe("kalenderOgAktiviteter.helpers", () => {
         const periode: IRapporteringsperiode = {
           ...basePeriode,
           dager: Array.from({ length: 14 }, (_, i) => ({
-            type: "UKJENT" as const,
             dagIndex: i,
             dato: `2024-01-${String(i + 1).padStart(2, "0")}`,
             aktiviteter: [],
@@ -277,7 +259,6 @@ describe("kalenderOgAktiviteter.helpers", () => {
           ...basePeriode,
           dager: [
             {
-              type: "UKJENT",
               dagIndex: 0,
               dato: "2024-01-01",
               aktiviteter: [{ type: "Arbeid", dato: "2024-01-01", timer: "PT7H30M" }],

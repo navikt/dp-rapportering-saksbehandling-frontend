@@ -95,7 +95,6 @@ class SessionRecord {
           }),
           dager: z.array(
             z.object({
-              type: z.string(),
               dagIndex: z.number(),
               dato: z.string(),
               aktiviteter: z.array(

@@ -15,7 +15,6 @@ import {
 
 describe("AktivitetsTabell.helpers", () => {
   const baseDag: IKorrigertDag = {
-    type: "dag",
     dato: "2024-01-01",
     dagIndex: 0,
     aktiviteter: [],
