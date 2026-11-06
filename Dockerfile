@@ -1,4 +1,4 @@
-FROM node:26-alpine@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS node
+FROM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS node
 RUN npm install -g corepack@latest --force && \
     corepack enable && \
     corepack prepare pnpm@12.16.0 --activate
@@ -41,7 +41,7 @@ COPY --from=app-build /app/build /
 
 
 # runtime
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:26@sha256:40b0b73a2d7740197ca4d4d9db1785ab3de0a7a89152c063d271e91610f79b15 AS runtime
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:26@sha256:71c8d5e6bd23bdcbfcf185528e2dfa52d7d1823342e9ef04fe7e75db3faa1465 AS runtime
 WORKDIR /app
 
 ARG NODE_ENV=production
