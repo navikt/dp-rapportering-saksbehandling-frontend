@@ -11,8 +11,8 @@ const fallbackToken =
 
 const localMeldekortregisterToken = process.env.DP_MELDEKORTREGISTER_TOKEN ?? fallbackToken;
 
-export const DP_MELDEKORTREGISTER_AUDIENCE = `api://${process.env.NAIS_CLUSTER_NAME}.teamdagpenger.dp-meldekortregister/.default`;
-export const DP_PERSONREGISTER_AUDIENCE = `api://${process.env.NAIS_CLUSTER_NAME}.teamdagpenger.dp-rapportering-personregister/.default`;
+export const DP_MELDEKORTREGISTER_AUDIENCE = `${getEnv("DP_MELDEKORTREGISTER_AUDIENCE")}`;
+export const DP_PERSONREGISTER_AUDIENCE = `${getEnv("DP_PERSONREGISTER_AUDIENCE")}`;
 export const DP_BEHANDLING_AUDIENCE = `api://${process.env.NAIS_CLUSTER_NAME}.teamdagpenger.dp-behandling/.default`;
 
 export function sessionExpiresIn(request: Request) {
