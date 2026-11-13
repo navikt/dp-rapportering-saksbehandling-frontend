@@ -32,7 +32,10 @@ export function getEnv<T>(key: keyof IEnv): T {
     IS_LOCALHOST: "false",
     USE_MSW: env.NODE_ENV === "test" ? "true" : "false",
     DP_MELDEKORTREGISTER_URL: "https://dp-meldekortregister.intern.dev.nav.no",
+    DP_MELDEKORTREGISTER_AUDIENCE: "api://dev-gcp.teamdagpenger.dp-meldekortregister/.default",
     DP_PERSONREGISTER_URL: "https://dp-rapportering-personregister.intern.dev.nav.no",
+    DP_PERSONREGISTER_AUDIENCE:
+      "api://dev-gcp.teamdagpenger.dp-rapportering-personregister/.default",
     DP_BEHANDLING_URL: "https://dp-behandling.intern.dev.nav.no",
     FARO_URL: "http://localhost:12347/collect",
     GITHUB_SHA: "local",
@@ -40,8 +43,7 @@ export function getEnv<T>(key: keyof IEnv): T {
     SANITY_DATASETT: "production",
   };
 
-  const value = (env[key] || env[`VITE_${key}`] || defaultEnv[key] || "") as unknown as T;
-  return value;
+  return (env[key] || env[`VITE_${key}`] || defaultEnv[key] || "") as unknown as T;
 }
 
 export const isLocalhost = getEnv("IS_LOCALHOST") === "true";

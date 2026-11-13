@@ -78,17 +78,24 @@ For å teste mot faktisk backend i dev-miljø:
 
 1. **Sett opp miljøvariabler**:
 
+I dev er kall til `dp-meldekortregister` og `dp-rapportering-personregister` erstattet med kall til `dp-meldekort`, men 
+konfigurasjonen er ikke konsolidert fordi appen fortsatt skal kommunisere med `dp-meldekortregister` og 
+`dp-rapportering-personregister` i prod en stund til. 
+
    ```bash
    DP_MELDEKORTREGISTER_TOKEN="[token]"
-   DP_MELDEKORTREGISTER_URL="https://dp-meldekortregister.intern.dev.nav.no"
+   DP_MELDEKORTREGISTER_URL="https://dp-meldekort.intern.dev.nav.no"
+   DP_MELDEKORTREGISTER_AUDIENCE="api://dev-gcp.teamdagpenger.dp-meldekort/.default"
+   DP_PERSONREGISTER_TOKEN="[token]"
+   DP_PERSONREGISTER_URL="https://dp-meldekort.intern.dev.nav.no"
+   DP_PERSONREGISTER_AUDIENCE="api://dev-gcp.teamdagpenger.dp-meldekort/.default"
    NAIS_CLUSTER_NAME="dev-gcp"
    MICROSOFT_TOKEN="[token]"
    VITE_USE_MSW="false"
    ```
 
 2. **Hent nødvendige tokens** (krever naisdevice):
-   - [Meldekortregister token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp.teamdagpenger.dp-meldekortregister)
-   - [Personregister token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp.teamdagpenger.dp-rapportering-personregister)
+   - [dp-meldekort token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp.teamdagpenger.dp-meldekort)
    - [Microsoft token](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=https://graph.microsoft.com/.default)
 
    **Merk**: Tokens er gyldige i 1 time.
