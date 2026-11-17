@@ -114,7 +114,7 @@ jobs:
           project_id: ${{ inputs.project_id }}
       - name: docker-build-push
         if: ${{ inputs.push_image }}
-        uses: nais/docker-build-push@v0
+        uses: nais/docker-build-push@v1
         id: docker-build-push
         with:
           team: teamdagpenger
