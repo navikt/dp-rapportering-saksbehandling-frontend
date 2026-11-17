@@ -222,7 +222,7 @@ importers:
         version: 4.4.0
       groq:
         specifier: ^6.19.0
-        version: 6.22.0
+        version: 6.23.0
       isbot:
         specifier: ^5.2.2
         version: 5.2.3
@@ -1984,8 +1984,8 @@ packages:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
 
-  groq@6.22.0:
-    resolution: {integrity: sha512-ZzyqGaWBl5lMfjCCdPdOXltTWlEI0fIUbPUNMxbwtMOulcGj01bHWoAOeofLP+ERh9fwLvTsmYqh4V0InNVZWg==}
+  groq@6.23.0:
+    resolution: {integrity: sha512-+c6jmcfauaBagcSjqSq0Gx5ohyJNfrD9YJJTFH7jrwKsr2ZC2AhvrUfI/u8gmUVi6q6mANb41DgC8Q4ySYbnSw==}
     engines: {node: '>=22.12'}
 
   has-bigints@1.1.0:
@@ -5289,7 +5289,7 @@ snapshots:
 
   gopd@1.2.0: {}
 
-  groq@6.22.0: {}
+  groq@6.23.0: {}
 
   has-bigints@1.1.0: {}
 
