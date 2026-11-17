@@ -145,6 +145,7 @@ class SessionRecord {
           displayName: z.string(),
           givenName: z.string(),
           mail: z.email(),
+          groups: z.array(z.string()),
         }),
       }),
       arbeidssokerperioder: new Collection({

@@ -157,6 +157,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const serverTema = loaderData?.tema;
   const sanityData = loaderData?.sanityData;
 
+  console.debug("Saksbehandler:", saksbehandler);
+
   return (
     <html lang="nb" suppressHydrationWarning data-theme={serverTema || undefined}>
       <head>

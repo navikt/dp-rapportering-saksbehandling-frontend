@@ -1,10 +1,11 @@
-import { expiresIn, getToken, validateToken } from "@navikt/oasis";
+import { expiresIn, getToken, parseAzureUserToken, validateToken } from "@navikt/oasis";
 
 import { getEnv, isLocalhost, usesMsw } from "~/utils/env.utils";
 import type { INetworkResponse } from "~/utils/types";
 
 export interface ISessionData {
   expiresIn: number;
+  groups: string[];
 }
 
 export async function getSession(req: Request): Promise<INetworkResponse<ISessionData>> {
@@ -13,6 +14,7 @@ export async function getSession(req: Request): Promise<INetworkResponse<ISessio
       status: "success",
       data: {
         expiresIn: 18000,
+        groups: [],
       },
     };
   }
@@ -22,6 +24,7 @@ export async function getSession(req: Request): Promise<INetworkResponse<ISessio
       status: "success",
       data: {
         expiresIn: expiresIn(getEnv("DP_MELDEKORTREGISTER_TOKEN")),
+        groups: [],
       },
     };
   }
@@ -39,7 +42,20 @@ export async function getSession(req: Request): Promise<INetworkResponse<ISessio
   }
 
   const validation = await validateToken(token);
+
   if (!validation.ok) {
+    return {
+      status: "error",
+      error: {
+        statusCode: 401,
+        statusText: "rapportering-feilmelding-ugyldig-token",
+      },
+    };
+  }
+
+  const parsed = parseAzureUserToken(token);
+
+  if (!parsed.ok || parsed.groups === undefined) {
     return {
       status: "error",
       error: {
@@ -53,6 +69,7 @@ export async function getSession(req: Request): Promise<INetworkResponse<ISessio
     status: "success",
     data: {
       expiresIn: expiresIn(token),
+      groups: parsed.groups,
     },
   };
 }

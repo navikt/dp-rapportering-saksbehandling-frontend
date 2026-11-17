@@ -154,4 +154,5 @@ export interface ISaksbehandler {
   givenName: string;
   displayName: string;
   mail: string;
+  groups: string[];
 }
