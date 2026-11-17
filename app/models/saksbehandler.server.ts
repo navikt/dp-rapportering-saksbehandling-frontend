@@ -7,6 +7,16 @@ import type { ISaksbehandler } from "~/utils/types";
 import { getSession } from "./getSession.server";
 import { logger } from "./logger.server";
 
+export function krevSaksbehandlerTilgang(saksbehandler: ISaksbehandler, message: string): void {
+  const gruppe = getEnv<string>("SAKSBEHANDLER_GRUPPE");
+
+  if (!gruppe || !saksbehandler.groups.includes(gruppe)) {
+    const errorId = uuidv7();
+    logger.warn("Mangler saksbehandlertilgang", { errorId });
+    throw Response.json({ errorId, message }, { status: 403, statusText: "Forbidden" });
+  }
+}
+
 export async function hentSaksbehandler(request: Request): Promise<ISaksbehandler> {
   try {
     const url =

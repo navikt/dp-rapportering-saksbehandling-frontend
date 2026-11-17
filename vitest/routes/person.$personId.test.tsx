@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { useLoaderData, useRouteLoaderData } from "react-router";
+import { MemoryRouter, useLoaderData, useRouteLoaderData } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
 import Rapportering, { ErrorBoundary } from "~/routes/person.$personId";
@@ -15,6 +15,32 @@ vi.mock("~/components/personlinje/Personlinje", () => ({
   default: ({ visOpprettMeldekort }: { visOpprettMeldekort: boolean }) =>
     visOpprettMeldekort ? <button>Opprett meldekort</button> : null,
 }));
+
+describe("ErrorBoundary", () => {
+  it.each([
+    { status: 403, title: "Ingen tilgang" },
+    { status: 404, title: "Fant ikke det du leter etter" },
+    { status: 500, title: "Beklager, det har skjedd en feil" },
+  ])("viser riktig overskrift for $status", ({ status, title }) => {
+    vi.mocked(useRouteLoaderData).mockReturnValue({});
+
+    render(
+      <ErrorBoundary
+        params={{ personId: "person-1" }}
+        error={{
+          status,
+          statusText: "",
+          internal: false,
+          data: { message: "Du har ikke tilgang til å korrigere meldekort" },
+        }}
+      />,
+      { wrapper: MemoryRouter },
+    );
+
+    expect(screen.getByRole("heading", { level: 1, name: title })).toBeInTheDocument();
+    expect(screen.getByText("Du har ikke tilgang til å korrigere meldekort")).toBeInTheDocument();
+  });
+});
 
 describe("Tilgang til oppretting av meldekort", () => {
   it.each([

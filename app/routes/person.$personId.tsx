@@ -188,8 +188,13 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       };
     };
 
-    title =
-      error.status === 404 ? "Fant ikke det du leter etter" : "Beklager, det har skjedd en feil";
+    if (error.status === 403) {
+      title = "Ingen tilgang";
+    } else if (error.status === 404) {
+      title = "Fant ikke det du leter etter";
+    } else {
+      title = "Beklager, det har skjedd en feil";
+    }
     // Støtt både 'message' og 'error' som hovedmelding
     description = errorData.message || errorData.error || description;
     // Støtt både 'detail' og 'details' som detaljmelding

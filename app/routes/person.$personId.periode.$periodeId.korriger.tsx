@@ -13,7 +13,7 @@ import { useMeldekortSkjema } from "~/hooks/useMeldekortSkjema";
 import { BekreftModal } from "~/modals/BekreftModal";
 import { logger } from "~/models/logger.server";
 import { hentPeriode } from "~/models/rapporteringsperiode.server";
-import { hentSaksbehandler } from "~/models/saksbehandler.server";
+import { hentSaksbehandler, krevSaksbehandlerTilgang } from "~/models/saksbehandler.server";
 import { sanityClient } from "~/sanity/client";
 import { korrigerQuery } from "~/sanity/sider/korriger/queries";
 import type { IMeldekortKorriger } from "~/sanity/sider/korriger/types";
@@ -39,8 +39,10 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.periodeId, "rapportering-feilmelding-periode-id-mangler-i-url");
   const personId = params.personId;
 
-  const periode = await hentPeriode<IRapporteringsperiode>(request, personId, params.periodeId);
   const saksbehandler = await hentSaksbehandler(request);
+  krevSaksbehandlerTilgang(saksbehandler, "Du har ikke tilgang til å korrigere meldekort");
+
+  const periode = await hentPeriode<IRapporteringsperiode>(request, personId, params.periodeId);
   const variant = getABTestVariant(request);
 
   let korrigerData: IMeldekortKorriger | null = null;
