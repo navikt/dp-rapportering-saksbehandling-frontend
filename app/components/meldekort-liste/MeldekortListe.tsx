@@ -11,6 +11,7 @@ import { MeldekortRad } from "./components/rad/MeldekortRad";
 import styles from "./meldekortListe.module.css";
 
 interface IProps {
+  kanRedigere: boolean;
   perioder: IRapporteringsperiode[];
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
@@ -20,6 +21,7 @@ interface IProps {
 }
 
 export function MeldekortListe({
+  kanRedigere,
   perioder,
   personId,
   ansvarligSystem,
@@ -81,6 +83,7 @@ export function MeldekortListe({
           {perioder.map((periode) => {
             return (
               <MeldekortRad
+                kanRedigere={kanRedigere}
                 key={periode.id}
                 periode={periode}
                 personId={personId}

@@ -84,10 +84,30 @@ describe("UtvidetInfo", () => {
     registrertArbeidssoker: null,
   };
 
+  it.each([null, "B"] as const)(
+    "skjuler korriger-knappen uten redigeringstilgang i variant %s",
+    (variant) => {
+      render(
+        <UtvidetInfo
+          kanRedigere={false}
+          periode={{ ...basePeriode, kanEndres: true }}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          variant={variant}
+          hovedsideData={mockHovedsideData}
+        />,
+      );
+
+      expect(screen.queryByRole("link", { name: "Korriger meldekort" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Korriger meldekort" })).not.toBeInTheDocument();
+    },
+  );
+
   describe("Rendering av detaljer", () => {
     it("skal ha tilgjengelig caption for skjermlesere", () => {
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={basePeriode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -107,6 +127,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -126,6 +147,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -145,6 +167,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -165,6 +188,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -183,6 +207,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -207,6 +232,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -230,6 +256,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -253,6 +280,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -276,6 +304,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -297,6 +326,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -317,6 +347,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -336,6 +367,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -356,6 +388,7 @@ describe("UtvidetInfo", () => {
 
       const { container } = render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -377,6 +410,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -396,6 +430,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -415,6 +450,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -435,6 +471,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -458,6 +495,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -478,6 +516,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -497,6 +536,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -517,6 +557,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -537,6 +578,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -557,6 +599,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -575,6 +618,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.ARENA}
@@ -594,6 +638,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="789"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -625,6 +670,7 @@ describe("UtvidetInfo", () => {
 
       render(
         <UtvidetInfo
+          kanRedigere={true}
           periode={periode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}

@@ -17,6 +17,7 @@ import {
   hentArbeidssokerperioder,
   hentRapporteringsperioder,
 } from "~/models/rapporteringsperiode.server";
+import type { loader as rootLoader } from "~/root";
 import { sanityClient } from "~/sanity/client";
 import { hovedsideQuery } from "~/sanity/sider/hovedside/queries";
 import type { IMeldekortHovedside } from "~/sanity/sider/hovedside/types";
@@ -130,7 +131,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 export default function Rapportering() {
   const { personId, person, perioder, arbeidssokerperioder, showDemoTools, visOpprettMeldekort } =
     useLoaderData<typeof loader>();
-  const rootData = useRouteLoaderData("root");
+  const rootData = useRouteLoaderData<typeof rootLoader>("root");
   const personlinjeData = rootData?.sanityData?.personlinje;
 
   return (
@@ -142,7 +143,7 @@ export default function Rapportering() {
           perioder={perioder}
           arbeidssokerperioder={arbeidssokerperioder}
           personlinjeData={personlinjeData}
-          visOpprettMeldekort={visOpprettMeldekort}
+          visOpprettMeldekort={visOpprettMeldekort && rootData?.kanRedigere === true}
         />
       </aside>
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
@@ -160,7 +161,7 @@ export default function Rapportering() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  const rootData = useRouteLoaderData("root");
+  const rootData = useRouteLoaderData<typeof rootLoader>("root");
   const personlinjeData = rootData?.sanityData?.personlinje;
 
   let title: string = "Det har skjedd en feil";
@@ -217,7 +218,9 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             perioder={[]}
             arbeidssokerperioder={[]}
             personlinjeData={personlinjeData}
-            visOpprettMeldekort={personContext.visOpprettMeldekort ?? false}
+            visOpprettMeldekort={
+              personContext.visOpprettMeldekort === true && rootData?.kanRedigere === true
+            }
           />
         </aside>
       )}

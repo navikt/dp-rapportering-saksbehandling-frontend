@@ -139,6 +139,8 @@ export interface IEnv {
   DP_PERSONREGISTER_TOKEN?: string;
   DP_BEHANDLING_URL: string;
   MICROSOFT_TOKEN?: string;
+  SAKSBEHANDLER_GRUPPE?: string;
+  LES_GRUPPE?: string;
   IS_LOCALHOST: TrueOrFalse;
   USE_MSW: TrueOrFalse;
   NODE_ENV?: "development" | "test" | "production";
