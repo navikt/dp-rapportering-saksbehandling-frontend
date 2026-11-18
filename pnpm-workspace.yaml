@@ -3,3 +3,9 @@ allowBuilds:
   msw: true
   protobufjs: true
 engineStrict: true
+minimumReleaseAgeExclude:
+  - '@vitest/mocker@5.1.1'
+  - '@vitest/spy@5.1.1'
+  - groq@6.24.0
+  - msw@3.0.7
+  - vitest@5.1.1
