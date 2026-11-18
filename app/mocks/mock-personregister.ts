@@ -32,7 +32,7 @@ export function mockPersonregister(database?: ReturnType<typeof withDb>) {
           );
         }
 
-        const person = db.hentArbeidssokerperioder();
+        const person = db.hentPerson(personId);
 
         if (!person) {
           logger.error(`[mock personregister]: Fant ikke person ${personId}`);
@@ -51,7 +51,11 @@ export function mockPersonregister(database?: ReturnType<typeof withDb>) {
 
         logger.info(`[mock personregister]: Hentet person ${personId}`);
 
-        return HttpResponse.json(person);
+        const arbeidssokerperioder = db
+          .hentArbeidssokerperioder()
+          .filter((periode) => periode.ident === person.ident);
+
+        return HttpResponse.json(arbeidssokerperioder);
       },
     ),
   ];

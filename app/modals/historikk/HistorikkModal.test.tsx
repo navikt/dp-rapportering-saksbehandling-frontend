@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { SaksbehandlerProvider } from "~/context/saksbehandler-context";
 
@@ -41,6 +41,10 @@ function renderWithProviders(ui: React.ReactElement) {
 }
 
 describe("HistorikkModal", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   const mockHendelser: IHendelse[] = [
     {
       dato: new Date("2024-01-15T10:30:00"),
@@ -250,7 +254,9 @@ describe("HistorikkModal", () => {
     expect(allProcessLists[1]).toHaveAttribute("aria-label", "Meldekort for 2023");
   });
 
-  it("skal håndtere hendelser som kun er i ett år", () => {
+  it("skal kunne lukke og åpne ett år uten Aksel-advarsler", async () => {
+    const warnSpy = vi.spyOn(console, "warn");
+    const user = userEvent.setup();
     const enkelÅrHendelser: IHendelse[] = [
       {
         dato: new Date("2024-01-01T00:00:00"),
@@ -275,6 +281,18 @@ describe("HistorikkModal", () => {
     const yearLabels = screen.getAllByText(/^\d{4}$/);
     expect(yearLabels).toHaveLength(1);
     expect(yearLabels[0]).toHaveTextContent("2024");
+
+    const yearButton = within(screen.getByRole("region", { name: "2024" })).getByRole("button");
+    expect(yearButton).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("list", { name: "Meldekort for 2024" })).toBeVisible();
+
+    await user.click(yearButton);
+    expect(yearButton).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("list", { name: "Meldekort for 2024" })).not.toBeInTheDocument();
+
+    await user.click(yearButton);
+    expect(screen.getByRole("list", { name: "Meldekort for 2024" })).toBeVisible();
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 
   it("skal håndtere mange år med hendelser", () => {

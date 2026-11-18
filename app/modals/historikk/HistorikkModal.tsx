@@ -1,5 +1,14 @@
 import { CheckmarkIcon, XMarkIcon } from "@navikt/aksel-icons";
-import { Accordion, Alert, BodyShort, Heading, Modal, Process, Tag } from "@navikt/ds-react";
+import {
+  Accordion,
+  Alert,
+  BodyShort,
+  ExpansionCard,
+  Heading,
+  Modal,
+  Process,
+  Tag,
+} from "@navikt/ds-react";
 import { useRouteLoaderData } from "react-router";
 
 import { sanityTekst } from "~/sanity/utils";
@@ -70,6 +79,106 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
             "historikkModal.feilmeldinger.ingenStatus",
           );
 
+  const aarsvisninger = sortedYears.map((year, index) => {
+    const innhold = (
+      <Process
+        aria-label={sanityTekst(
+          tekster?.prosessAriaLabel,
+          "historikkModal.prosessAriaLabel",
+        ).replace("{{aar}}", String(year))}
+      >
+        {hendelserEtterAar[year].map((hendelse, id) => {
+          const visningDatoTekst =
+            hendelse.kategori === "Meldekort"
+              ? sanityTekst(tekster?.innsendt, "historikkModal.innsendt")
+                  .replace("{{dato}}", hendelse.innsendtDato)
+                  .replace("{{tid}}", hendelse.time)
+              : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
+
+          const bullet = getBullet(
+            hendelse.event,
+            sanityTekst(
+              tekster?.hendelsetyper?.registrert,
+              "historikkModal.hendelsetyper.registrert",
+            ),
+            sanityTekst(
+              tekster?.hendelsetyper?.avregistrert,
+              "historikkModal.hendelsetyper.avregistrert",
+            ),
+          );
+
+          // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
+          const srEventText =
+            hendelse.kategori === "Meldekort"
+              ? hendelse.event.replace("Meldekort ", "")
+              : hendelse.event;
+
+          return (
+            <Process.Event
+              key={`${hendelse.innsendtDato}-${id}`}
+              title={hendelse.event}
+              timestamp={visningDatoTekst}
+              status="completed"
+              bullet={bullet}
+              aria-label={srEventText}
+            >
+              {hendelse.type && (
+                <BodyShort size="small">
+                  {hendelse.type === "Elektronisk"
+                    ? sanityTekst(
+                        tekster?.typeLabels?.elektronisk,
+                        "historikkModal.typeLabels.elektronisk",
+                      )
+                    : hendelse.type === "Manuell"
+                      ? sanityTekst(
+                          tekster?.typeLabels?.manuell,
+                          "historikkModal.typeLabels.manuell",
+                        )
+                      : hendelse.type}
+                </BodyShort>
+              )}
+              {hendelse.erSendtForSent && (
+                <>
+                  <BodyShort size="small">
+                    {sanityTekst(tekster?.fristLabel, "historikkModal.fristLabel").replace(
+                      "{{dato}}",
+                      hendelse.sisteFristForTrekk || "",
+                    )}
+                  </BodyShort>
+                  <Tag data-color="danger" variant="outline" size="xsmall">
+                    {sanityTekst(
+                      tekster?.tags?.forSentInnsendt,
+                      "historikkModal.tags.forSentInnsendt",
+                    )}
+                  </Tag>
+                </>
+              )}
+              {hendelse.hendelseType === "Korrigert" && (
+                <Tag data-color="warning" variant="outline" size="small">
+                  {sanityTekst(tekster?.tags?.korrigert, "historikkModal.tags.korrigert")}
+                </Tag>
+              )}
+            </Process.Event>
+          );
+        })}
+      </Process>
+    );
+
+    return sortedYears.length === 1 ? (
+      <ExpansionCard key={year} aria-label={String(year)} defaultOpen>
+        <ExpansionCard.Header>
+          <ExpansionCard.Title>{year}</ExpansionCard.Title>
+        </ExpansionCard.Header>
+        <ExpansionCard.Content>{innhold}</ExpansionCard.Content>
+      </ExpansionCard>
+    ) : (
+      <Accordion.Item key={year} defaultOpen={index === 0}>
+        <Accordion.Header>{year}</Accordion.Header>
+        <Accordion.Content>{innhold}</Accordion.Content>
+      </Accordion.Item>
+    );
+  });
+
   return (
     <Modal
       open={open}
@@ -86,99 +195,13 @@ export function HistorikkModal({ open, onClose, hendelser }: HistorikkModalProps
       <Modal.Body>
         <div className={styles.modalContent}>
           {harFeil && <Alert variant="error">{feilMelding}</Alert>}
-          <Accordion indent={false} className={styles.yearList}>
-            {sortedYears.map((year, index) => (
-              <Accordion.Item key={year} defaultOpen={index === 0}>
-                <Accordion.Header>{year}</Accordion.Header>
-                <Accordion.Content>
-                  <Process
-                    aria-label={sanityTekst(
-                      tekster?.prosessAriaLabel,
-                      "historikkModal.prosessAriaLabel",
-                    ).replace("{{aar}}", String(year))}
-                  >
-                    {hendelserEtterAar[year].map((hendelse, id) => {
-                      const visningDatoTekst =
-                        hendelse.kategori === "Meldekort"
-                          ? sanityTekst(tekster?.innsendt, "historikkModal.innsendt")
-                              .replace("{{dato}}", hendelse.innsendtDato)
-                              .replace("{{tid}}", hendelse.time)
-                          : `${hendelse.innsendtDato}, kl. ${hendelse.time}`;
-
-                      const bullet = getBullet(
-                        hendelse.event,
-                        sanityTekst(
-                          tekster?.hendelsetyper?.registrert,
-                          "historikkModal.hendelsetyper.registrert",
-                        ),
-                        sanityTekst(
-                          tekster?.hendelsetyper?.avregistrert,
-                          "historikkModal.hendelsetyper.avregistrert",
-                        ),
-                      );
-
-                      // For skjermlesere: fjern "Meldekort" fra event tekst siden det er i aria-label på Process
-                      const srEventText =
-                        hendelse.kategori === "Meldekort"
-                          ? hendelse.event.replace("Meldekort ", "")
-                          : hendelse.event;
-
-                      return (
-                        <Process.Event
-                          key={`${hendelse.innsendtDato}-${id}`}
-                          title={hendelse.event}
-                          timestamp={visningDatoTekst}
-                          status="completed"
-                          bullet={bullet}
-                          aria-label={srEventText}
-                        >
-                          {hendelse.type && (
-                            <BodyShort size="small">
-                              {hendelse.type === "Elektronisk"
-                                ? sanityTekst(
-                                    tekster?.typeLabels?.elektronisk,
-                                    "historikkModal.typeLabels.elektronisk",
-                                  )
-                                : hendelse.type === "Manuell"
-                                  ? sanityTekst(
-                                      tekster?.typeLabels?.manuell,
-                                      "historikkModal.typeLabels.manuell",
-                                    )
-                                  : hendelse.type}
-                            </BodyShort>
-                          )}
-                          {hendelse.erSendtForSent && (
-                            <>
-                              <BodyShort size="small">
-                                {sanityTekst(
-                                  tekster?.fristLabel,
-                                  "historikkModal.fristLabel",
-                                ).replace("{{dato}}", hendelse.sisteFristForTrekk || "")}
-                              </BodyShort>
-                              <Tag data-color="danger" variant="outline" size="xsmall">
-                                {sanityTekst(
-                                  tekster?.tags?.forSentInnsendt,
-                                  "historikkModal.tags.forSentInnsendt",
-                                )}
-                              </Tag>
-                            </>
-                          )}
-                          {hendelse.hendelseType === "Korrigert" && (
-                            <Tag data-color="warning" variant="outline" size="small">
-                              {sanityTekst(
-                                tekster?.tags?.korrigert,
-                                "historikkModal.tags.korrigert",
-                              )}
-                            </Tag>
-                          )}
-                        </Process.Event>
-                      );
-                    })}
-                  </Process>
-                </Accordion.Content>
-              </Accordion.Item>
-            ))}
-          </Accordion>
+          {sortedYears.length > 1 ? (
+            <Accordion indent={false} className={styles.yearList}>
+              {aarsvisninger}
+            </Accordion>
+          ) : (
+            <div className={styles.yearList}>{aarsvisninger}</div>
+          )}
         </div>
       </Modal.Body>
     </Modal>
