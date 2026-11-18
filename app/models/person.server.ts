@@ -80,13 +80,11 @@ export async function hentPerson(request: Request, personId: string): Promise<IP
 
     return response.json();
   } catch (error) {
-    const errorId = uuidv7();
-
     if (error instanceof Response) {
-      logger.error(`Feil ved henting av person med ID ${personId}: ${error}`, { errorId });
       throw error;
     }
 
+    const errorId = uuidv7();
     logger.error(`Feil ved henting av person: ${error}`, { errorId });
     throw Response.json({ errorId, message: "Feil ved henting av person" }, { status: 500 });
   }
