@@ -134,8 +134,10 @@ export type TrueOrFalse = (typeof boolskeVerdier)[number];
 
 export interface IEnv {
   DP_MELDEKORTREGISTER_URL: string;
+  DP_MELDEKORTREGISTER_AUDIENCE: string;
   DP_MELDEKORTREGISTER_TOKEN?: string;
   DP_PERSONREGISTER_URL: string;
+  DP_PERSONREGISTER_AUDIENCE: string;
   DP_PERSONREGISTER_TOKEN?: string;
   DP_BEHANDLING_URL: string;
   MICROSOFT_TOKEN?: string;
