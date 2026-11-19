@@ -64,6 +64,10 @@ spec:
       value: {{githubSha}}
     - name: UNLEASH_SERVER_API_URL
       value: "{{unleash.url}}"
+    - name: SAKSBEHANDLER_GRUPPE
+      value: "{{azure.grupper.saksbehandler}}"
+    - name: LES_GRUPPE
+      value: "{{azure.grupper.les}}"
   envFrom:
     - secret: "{{name}}-unleash-api-token"
   accessPolicy:
@@ -85,6 +89,7 @@ spec:
       claims:
         groups:
           - id: "{{azure.grupper.saksbehandler}}"
+          - id: "{{azure.grupper.les}}"
         extra:
           - NAVident
     sidecar:

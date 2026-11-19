@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
+import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
 import {
   ANSVARLIG_SYSTEM,
   MELDEKORT_TYPE,
@@ -15,8 +16,16 @@ import { HIGHLIGHT_DURATION_MS } from "./MeldekortRad.helpers";
 
 // Mock MeldekortVisning component since we're testing MeldekortRad in isolation
 vi.mock("~/components/meldekort-visning/MeldekortVisning", () => ({
-  MeldekortVisning: ({ perioder }: { perioder: IRapporteringsperiode[] }) => (
-    <div data-testid="meldekort-visning">Meldekort Visning for {perioder[0]?.id}</div>
+  MeldekortVisning: ({
+    perioder,
+    kanRedigere,
+  }: {
+    perioder: IRapporteringsperiode[];
+    kanRedigere: boolean;
+  }) => (
+    <div data-testid="meldekort-visning" data-kan-redigere={kanRedigere}>
+      Meldekort Visning for {perioder[0]?.id}
+    </div>
   ),
 }));
 
@@ -76,10 +85,33 @@ describe("MeldekortRad", () => {
     );
   }
 
+  it.each([false, true])("sender kanRedigere=%s fra listen til visningen", (kanRedigere) => {
+    render(
+      <MemoryRouter>
+        <MeldekortListe
+          kanRedigere={kanRedigere}
+          perioder={[basePeriode]}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId("meldekort-visning")).toHaveAttribute(
+      "data-kan-redigere",
+      String(kanRedigere),
+    );
+  });
+
   describe("grunnleggende rendering", () => {
     it("skal vise ukenummer", () => {
       renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       expect(screen.getByText(/1 - 2/)).toBeInTheDocument();
@@ -87,7 +119,12 @@ describe("MeldekortRad", () => {
 
     it("skal vise periode datoer", () => {
       renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       // Dato uten årstall vises
@@ -96,7 +133,12 @@ describe("MeldekortRad", () => {
 
     it("skal ha riktig aria-label på article", () => {
       const { container } = renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       const article = container.querySelector('article[aria-label*="Periode"]');
@@ -108,6 +150,7 @@ describe("MeldekortRad", () => {
     it("skal vise 'Klar til utfylling' når kanSendes er true", () => {
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={{ ...basePeriode, kanSendes: true }}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -120,6 +163,7 @@ describe("MeldekortRad", () => {
     it("skal vise 'Meldekort opprettet' når periode ikke kan sendes", () => {
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={{ ...basePeriode, kanSendes: false }}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -132,6 +176,7 @@ describe("MeldekortRad", () => {
     it("skal vise 'Innsendt' når periode er innsendt", () => {
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={{
             ...basePeriode,
             status: RAPPORTERINGSPERIODE_STATUS.Innsendt,
@@ -147,6 +192,7 @@ describe("MeldekortRad", () => {
     it("skal vise 'Korrigering' tag når periode er korrigert", () => {
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={{
             ...basePeriode,
             originalMeldekortId: "original-123",
@@ -161,7 +207,12 @@ describe("MeldekortRad", () => {
 
     it("skal ikke vise 'Korrigering' tag når periode ikke er korrigert", () => {
       renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       expect(screen.queryByText("[Mangler Sanity: statuser.korrigering]")).not.toBeInTheDocument();
@@ -171,7 +222,12 @@ describe("MeldekortRad", () => {
   describe("aktiviteter visning", () => {
     it("skal vise alle unike aktiviteter", () => {
       renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       // Sjekk at aktiviteter vises (aria-labels)
@@ -213,6 +269,7 @@ describe("MeldekortRad", () => {
 
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={periodeWithMultipleActivities}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -242,6 +299,7 @@ describe("MeldekortRad", () => {
 
       const { container } = renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={periodeUtenAktiviteter}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -265,6 +323,7 @@ describe("MeldekortRad", () => {
 
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={innsendtPeriode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -285,6 +344,7 @@ describe("MeldekortRad", () => {
 
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={forSentPeriode}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -300,7 +360,12 @@ describe("MeldekortRad", () => {
 
     it("skal ikke vise meldedato når periode ikke er innsendt", () => {
       renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       // Skal ikke finne noen dato i meldedato-kolonnen (kun periodedatoene)
@@ -319,6 +384,7 @@ describe("MeldekortRad", () => {
 
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={periodeWithTrekkfrist}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -330,7 +396,12 @@ describe("MeldekortRad", () => {
 
     it("skal ikke vise sisteFristForTrekk når det er null", () => {
       renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       expect(screen.queryByText(/februar/)).not.toBeInTheDocument();
@@ -340,7 +411,12 @@ describe("MeldekortRad", () => {
   describe("highlight funksjonalitet", () => {
     it("skal highlighte rad når periode id matcher oppdatert query param", async () => {
       const { container } = renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
         "/?oppdatert=test-periode-1",
       );
 
@@ -358,7 +434,12 @@ describe("MeldekortRad", () => {
 
     it("skal ikke highlighte rad når periode id ikke matcher", () => {
       const { container } = renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
         "/?oppdatert=annen-periode-id",
       );
 
@@ -371,6 +452,7 @@ describe("MeldekortRad", () => {
     it("skal være expandable når periode kan sendes", () => {
       const { container } = renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={{ ...basePeriode, kanSendes: true }}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -384,6 +466,7 @@ describe("MeldekortRad", () => {
     it("skal være disabled når periode er opprettet men ikke klar", () => {
       const { container } = renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={{ ...basePeriode, kanSendes: false }}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -397,6 +480,7 @@ describe("MeldekortRad", () => {
     it("skal vise MeldekortVisning når expandable content vises", () => {
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={{ ...basePeriode, kanSendes: true }}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -410,6 +494,7 @@ describe("MeldekortRad", () => {
     it("skal ikke vise MeldekortVisning for opprettede perioder", () => {
       renderInTable(
         <MeldekortRad
+          kanRedigere={true}
           periode={{ ...basePeriode, kanSendes: false }}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -430,6 +515,7 @@ describe("MeldekortRad", () => {
       expect(() =>
         renderInTable(
           <MeldekortRad
+            kanRedigere={true}
             periode={periodeUtenDager}
             personId="123"
             ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -440,7 +526,13 @@ describe("MeldekortRad", () => {
 
     it("skal håndtere periode uten personId", () => {
       expect(() =>
-        renderInTable(<MeldekortRad periode={basePeriode} ansvarligSystem={ANSVARLIG_SYSTEM.DP} />),
+        renderInTable(
+          <MeldekortRad
+            kanRedigere={true}
+            periode={basePeriode}
+            ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          />,
+        ),
       ).not.toThrow();
     });
 
@@ -464,6 +556,7 @@ describe("MeldekortRad", () => {
       expect(() =>
         renderInTable(
           <MeldekortRad
+            kanRedigere={true}
             periode={periodeWithManyActivities}
             personId="123"
             ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -476,7 +569,12 @@ describe("MeldekortRad", () => {
   describe("accessibility", () => {
     it("skal ha sr-only tekst for aktiviteter", () => {
       renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       const srOnlyElements = screen.getAllByText(/Jobb|Syk/, { selector: ".sr-only" });
@@ -485,7 +583,12 @@ describe("MeldekortRad", () => {
 
     it("skal ha scope='row' på første celle (th)", () => {
       const { container } = renderInTable(
-        <MeldekortRad periode={basePeriode} personId="123" ansvarligSystem={ANSVARLIG_SYSTEM.DP} />,
+        <MeldekortRad
+          kanRedigere={true}
+          periode={basePeriode}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+        />,
       );
 
       const firstCell = container.querySelector('th[scope="row"]');

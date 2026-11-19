@@ -18,6 +18,7 @@ import { erPeriodeTilUtfylling, kanMeldekortSendes } from "./MeldekortVisning.he
 import styles from "./meldekortVisning.module.css";
 
 interface IProps {
+  kanRedigere: boolean;
   perioder: IRapporteringsperiode[];
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
@@ -27,6 +28,7 @@ interface IProps {
 }
 
 export function MeldekortVisning({
+  kanRedigere,
   perioder,
   personId,
   ansvarligSystem,
@@ -76,7 +78,7 @@ export function MeldekortVisning({
             <div className={styles.tomtMeldekort}>
               <BodyShort>{tomtMeldekortTekst}</BodyShort>
             </div>
-            {kanSendes && (
+            {kanRedigere && kanSendes && (
               <div>
                 <Button
                   as={RouterLink}
@@ -109,6 +111,7 @@ export function MeldekortVisning({
                 noActivitiesText={hovedsideData?.utvidetVisning?.noActivitiesText}
               />
               <UtvidetInfo
+                kanRedigere={kanRedigere}
                 key={periode.id}
                 periode={periode}
                 personId={personId}

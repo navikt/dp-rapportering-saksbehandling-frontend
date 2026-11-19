@@ -22,6 +22,7 @@ azure:
   enabled: false
   grupper:
     saksbehandler: ""
+    les: ""
 
 DP_MELDEKORTREGISTER_URL: http://dp-meldekort
 DP_MELDEKORTREGISTER_AUDIENCE: api://dev-gcp.teamdagpenger.dp-meldekort/.default

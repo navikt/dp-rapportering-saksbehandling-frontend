@@ -30,6 +30,7 @@ import {
 import styles from "./utvidetInfo.module.css";
 
 interface IProps {
+  kanRedigere: boolean;
   periode: IRapporteringsperiode;
   originaltMeldekort?: IRapporteringsperiode;
   personId?: string;
@@ -125,6 +126,7 @@ const DetailRow = ({
 );
 
 export function UtvidetInfo({
+  kanRedigere,
   periode,
   personId,
   ansvarligSystem,
@@ -358,7 +360,7 @@ export function UtvidetInfo({
       )}
 
       {/* Korriger-knapp */}
-      {(useVariantLabels || kanEndres) && (
+      {kanRedigere && (useVariantLabels || kanEndres) && (
         <div>
           {useVariantLabels && !kanEndres ? (
             <Button className={styles.korrigerKnapp} size="small" disabled>

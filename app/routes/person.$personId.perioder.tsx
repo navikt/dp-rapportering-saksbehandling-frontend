@@ -4,6 +4,7 @@ import { useRouteLoaderData, useSearchParams } from "react-router";
 
 import { MeldekortListe } from "~/components/meldekort-liste/MeldekortListe";
 import { groupPeriodsByYear } from "~/components/meldekort-liste/utils";
+import type { loader as rootLoader } from "~/root";
 import type { loader as personLoader } from "~/routes/person.$personId";
 import { sanityTekst } from "~/sanity/utils";
 import styles from "~/styles/route-styles/perioder.module.css";
@@ -32,7 +33,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
   const perioder = data?.perioder ?? [];
   const person = data?.person ?? DEFAULT_PERSON;
   const hovedsideData = data?.hovedsideData;
-  const rootData = useRouteLoaderData("root");
+  const rootData = useRouteLoaderData<typeof rootLoader>("root");
   const varslerData = rootData?.sanityData?.varsler;
   const { variant } = loaderData;
   const [searchParams, setSearchParams] = useSearchParams();
@@ -175,6 +176,7 @@ export default function Rapportering({ params, loaderData }: Route.ComponentProp
                     </Accordion.Header>
                     <Accordion.Content className={styles.accordionContent}>
                       <MeldekortListe
+                        kanRedigere={rootData?.kanRedigere === true}
                         perioder={groupedPeriods[year]}
                         personId={params.personId}
                         ansvarligSystem={person.ansvarligSystem}

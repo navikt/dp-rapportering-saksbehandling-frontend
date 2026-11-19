@@ -4,7 +4,18 @@ import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
 import type { ISaksbehandler } from "~/utils/types";
 
+import { getSession } from "./getSession.server";
 import { logger } from "./logger.server";
+
+export function krevSaksbehandlerTilgang(saksbehandler: ISaksbehandler, message: string): void {
+  const gruppe = getEnv<string>("SAKSBEHANDLER_GRUPPE");
+
+  if (!gruppe || !saksbehandler.groups.includes(gruppe)) {
+    const errorId = uuidv7();
+    logger.warn("Mangler saksbehandlertilgang", { errorId });
+    throw Response.json({ errorId, message }, { status: 403, statusText: "Forbidden" });
+  }
+}
 
 export async function hentSaksbehandler(request: Request): Promise<ISaksbehandler> {
   try {
@@ -17,6 +28,15 @@ export async function hentSaksbehandler(request: Request): Promise<ISaksbehandle
       headers: await getHeaders({ request, audience, fallbackToken: getEnv("MICROSOFT_TOKEN") }),
     });
 
+    const session = await getSession(request);
+
+    if (session.status === "error") {
+      throw new Response(`Feil ved henting av saksbehandler`, {
+        status: session.error.statusCode,
+        statusText: session.error.statusText,
+      });
+    }
+
     if (!response.ok) {
       throw new Response(`Feil ved henting av saksbehandler`, {
         status: response.status,
@@ -24,7 +44,11 @@ export async function hentSaksbehandler(request: Request): Promise<ISaksbehandle
       });
     }
 
-    return response.json();
+    const saksbehandler = await response.json();
+    return {
+      ...saksbehandler,
+      groups: session.data?.groups ?? [],
+    };
   } catch (error) {
     const errorId = uuidv7();
 

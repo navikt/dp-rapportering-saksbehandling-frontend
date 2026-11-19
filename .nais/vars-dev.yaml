@@ -23,6 +23,8 @@ azure:
   enabled: true
   grupper:
     saksbehandler: "3e28466f-c53d-46da-8b44-a4abc2ad4593" # 0000-GA-Dagpenger-Saksbehandler
+    les: "a850742a-bda2-4334-94bc-74ecc0a3fbe0" # 0000-GA-Dagpenger-Les
+
 
 DP_MELDEKORTREGISTER_URL: http://dp-meldekort
 DP_MELDEKORTREGISTER_AUDIENCE: api://dev-gcp.teamdagpenger.dp-meldekort/.default

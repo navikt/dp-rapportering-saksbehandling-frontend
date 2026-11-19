@@ -90,6 +90,20 @@ describe("MeldekortVisning", () => {
   };
 
   describe("Rendering av tomt meldekort (TilUtfylling)", () => {
+    it("skal skjule fyll ut-knappen uten redigeringstilgang selv om kanSendes er true", () => {
+      render(
+        <MeldekortVisning
+          kanRedigere={false}
+          perioder={[{ ...basePeriode, kanSendes: true }]}
+          personId="123"
+          ansvarligSystem={ANSVARLIG_SYSTEM.DP}
+          hovedsideData={mockHovedsideData}
+        />,
+      );
+
+      expect(screen.queryByRole("button", { name: "Fyll ut meldekort" })).not.toBeInTheDocument();
+    });
+
     it("skal vise melding om at meldekortet ikke er fylt ut", () => {
       const perioder: IRapporteringsperiode[] = [
         {
@@ -100,6 +114,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -121,6 +136,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -144,6 +160,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -165,6 +182,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.ARENA}
@@ -185,6 +203,7 @@ describe("MeldekortVisning", () => {
 
       const { container } = render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -212,6 +231,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -232,6 +252,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -252,6 +273,7 @@ describe("MeldekortVisning", () => {
 
       const { container } = render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -274,6 +296,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -320,6 +343,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -348,6 +372,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -378,6 +403,7 @@ describe("MeldekortVisning", () => {
 
       render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId={undefined}
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}
@@ -406,6 +432,7 @@ describe("MeldekortVisning", () => {
 
       const { container } = render(
         <MeldekortVisning
+          kanRedigere={true}
           perioder={perioder}
           personId="123"
           ansvarligSystem={ANSVARLIG_SYSTEM.DP}

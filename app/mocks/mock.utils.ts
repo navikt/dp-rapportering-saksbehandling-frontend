@@ -141,12 +141,13 @@ export function lagArbeidssokerperiode(
   };
 }
 
-export function lagSaksbehandler(props: Partial<ISaksbehandler> = {}) {
+export function lagSaksbehandler(props: Partial<ISaksbehandler> = {}): ISaksbehandler {
   return {
     onPremisesSamAccountName: "Z993298",
     givenName: "Frans Kake Jaeger",
     displayName: "franz",
     mail: "fran@kake.jaeger",
+    groups: [],
     ...props,
   };
 }

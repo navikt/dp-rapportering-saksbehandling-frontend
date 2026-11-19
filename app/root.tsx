@@ -102,6 +102,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     tema,
     sanityData,
     env,
+    kanRedigere: saksbehandler?.groups.includes(getEnv("SAKSBEHANDLER_GRUPPE") ?? ""),
+    kanLese: saksbehandler?.groups.includes(getEnv("LES_GRUPPE") ?? ""),
   };
 }
 

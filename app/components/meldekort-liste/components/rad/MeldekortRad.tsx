@@ -37,6 +37,7 @@ import {
 import styles from "./meldekortRad.module.css";
 
 interface IProps {
+  kanRedigere: boolean;
   periode: IRapporteringsperiode;
   personId?: string;
   ansvarligSystem: TAnsvarligSystem;
@@ -48,6 +49,7 @@ interface IProps {
 }
 
 export function MeldekortRad({
+  kanRedigere,
   periode,
   personId,
   ansvarligSystem,
@@ -215,6 +217,7 @@ export function MeldekortRad({
             className={styles.visningContainer}
           >
             <MeldekortVisning
+              kanRedigere={kanRedigere}
               perioder={[periode]}
               personId={personId}
               ansvarligSystem={ansvarligSystem}

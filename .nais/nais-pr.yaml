@@ -53,6 +53,10 @@ spec:
       value: "production"
     - name: GITHUB_SHA
       value: {{githubSha}}
+    - name: SAKSBEHANDLER_GRUPPE
+      value: "{{azure.grupper.saksbehandler}}"
+    - name: LES_GRUPPE
+      value: "{{azure.grupper.les}}"
   accessPolicy:
     outbound:
       external:
