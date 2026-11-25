@@ -31,11 +31,8 @@ export function getEnv<T>(key: keyof IEnv): T {
   const defaultEnv: IEnv = {
     IS_LOCALHOST: "false",
     USE_MSW: env.NODE_ENV === "test" ? "true" : "false",
-    DP_MELDEKORTREGISTER_URL: "https://dp-meldekortregister.intern.dev.nav.no",
-    DP_MELDEKORTREGISTER_AUDIENCE: "api://dev-gcp.teamdagpenger.dp-meldekortregister/.default",
-    DP_PERSONREGISTER_URL: "https://dp-rapportering-personregister.intern.dev.nav.no",
-    DP_PERSONREGISTER_AUDIENCE:
-      "api://dev-gcp.teamdagpenger.dp-rapportering-personregister/.default",
+    DP_MELDEKORT_URL: "https://dp-meldekort.intern.dev.nav.no",
+    DP_MELDEKORT_AUDIENCE: "api://dev-gcp.teamdagpenger.dp-meldekort/.default",
     DP_BEHANDLING_URL: "https://dp-behandling.intern.dev.nav.no",
     FARO_URL: "http://localhost:12347/collect",
     GITHUB_SHA: "local",

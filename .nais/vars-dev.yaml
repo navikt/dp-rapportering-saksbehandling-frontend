@@ -26,7 +26,5 @@ azure:
     les: "a850742a-bda2-4334-94bc-74ecc0a3fbe0" # 0000-GA-Dagpenger-Les
 
 
-DP_MELDEKORTREGISTER_URL: http://dp-meldekort
-DP_MELDEKORTREGISTER_AUDIENCE: api://dev-gcp.teamdagpenger.dp-meldekort/.default
-DP_PERSONREGISTER_URL: http://dp-meldekort
-DP_PERSONREGISTER_AUDIENCE: api://dev-gcp.teamdagpenger.dp-meldekort/.default
+DP_MELDEKORT_URL: http://dp-meldekort
+DP_MELDEKORT_AUDIENCE: api://dev-gcp.teamdagpenger.dp-meldekort/.default

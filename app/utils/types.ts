@@ -133,12 +133,9 @@ export const boolskeVerdier = ["true", "false"] as const;
 export type TrueOrFalse = (typeof boolskeVerdier)[number];
 
 export interface IEnv {
-  DP_MELDEKORTREGISTER_URL: string;
-  DP_MELDEKORTREGISTER_AUDIENCE: string;
-  DP_MELDEKORTREGISTER_TOKEN?: string;
-  DP_PERSONREGISTER_URL: string;
-  DP_PERSONREGISTER_AUDIENCE: string;
-  DP_PERSONREGISTER_TOKEN?: string;
+  DP_MELDEKORT_TOKEN?: string;
+  DP_MELDEKORT_URL: string;
+  DP_MELDEKORT_AUDIENCE: string;
   DP_BEHANDLING_URL: string;
   MICROSOFT_TOKEN?: string;
   SAKSBEHANDLER_GRUPPE?: string;

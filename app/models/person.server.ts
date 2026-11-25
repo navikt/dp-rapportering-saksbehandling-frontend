@@ -1,6 +1,6 @@
 import { uuidv7 } from "uuidv7";
 
-import { DP_MELDEKORTREGISTER_AUDIENCE } from "~/utils/auth.utils.server";
+import { DP_MELDEKORT_AUDIENCE } from "~/utils/auth.utils.server";
 import { getDemoParams } from "~/utils/demo-params.utils";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
@@ -10,7 +10,7 @@ import { logger } from "./logger.server";
 
 export async function hentPerson(request: Request, personId: string): Promise<IPerson> {
   try {
-    const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}`;
+    const baseUrl = `${getEnv("DP_MELDEKORT_URL")}/sb/person/${personId}`;
 
     // Legg til demo params fra original request (for testing/demo-miljø)
     const demoParams = getDemoParams(request);
@@ -21,7 +21,7 @@ export async function hentPerson(request: Request, personId: string): Promise<IP
 
     const response = await fetch(url.toString(), {
       method: "GET",
-      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      headers: await getHeaders({ request, audience: DP_MELDEKORT_AUDIENCE }),
     });
 
     if (!response.ok) {

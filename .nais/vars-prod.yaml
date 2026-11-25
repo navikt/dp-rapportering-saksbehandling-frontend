@@ -25,7 +25,5 @@ azure:
     saksbehandler: "2e9c63d8-322e-4c1f-b500-a0abb812761c" # 0000-GA-Dagpenger-Saksbehandler
     les: "4c02342f-e979-46d6-8e04-28d4314c9a69" # 0000-GA-Dagpenger-Les
 
-DP_MELDEKORTREGISTER_URL: http://dp-meldekortregister
-DP_MELDEKORTREGISTER_AUDIENCE: api://prod-gcp.teamdagpenger.dp-meldekortregister/.default
-DP_PERSONREGISTER_URL: http://dp-rapportering-personregister
-DP_PERSONREGISTER_AUDIENCE: api://prod-gcp.teamdagpenger.dp-rapportering-personregister/.default
+DP_MELDEKORT_URL: http://dp-meldekort
+DP_MELDEKORT_AUDIENCE: api://prod-gcp.teamdagpenger.dp-meldekort/.default

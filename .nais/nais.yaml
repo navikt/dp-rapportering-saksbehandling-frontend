@@ -42,14 +42,10 @@ spec:
   env:
     - name: SELF_URL
       value: "{{ingress}}"
-    - name: DP_MELDEKORTREGISTER_URL
-      value: {{ DP_MELDEKORTREGISTER_URL }}
-    - name: DP_MELDEKORTREGISTER_AUDIENCE
-      value: {{ DP_MELDEKORTREGISTER_AUDIENCE }}
-    - name: DP_PERSONREGISTER_URL
-      value: {{ DP_PERSONREGISTER_URL }}
-    - name: DP_PERSONREGISTER_AUDIENCE
-      value: {{ DP_PERSONREGISTER_AUDIENCE }}
+    - name: DP_MELDEKORT_URL
+      value: {{ DP_MELDEKORT_URL }}
+    - name: DP_MELDEKORT_AUDIENCE
+      value: {{ DP_MELDEKORT_AUDIENCE }}
     - name: VITE_USE_MSW
       value: "{{use_msw}}"
     - name: VITE_IS_LOCALHOST
@@ -79,8 +75,6 @@ spec:
         - host: login.microsoftonline.com
         - host: teamdagpenger-unleash-api.nav.cloud.nais.io
       rules:
-        - application: dp-meldekortregister
-        - application: dp-rapportering-personregister
         - application: dp-meldekort
   azure:
     application:

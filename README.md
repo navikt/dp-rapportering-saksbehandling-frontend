@@ -78,17 +78,10 @@ For å teste mot faktisk backend i dev-miljø:
 
 1. **Sett opp miljøvariabler**:
 
-I dev er kall til `dp-meldekortregister` og `dp-rapportering-personregister` erstattet med kall til `dp-meldekort`, men 
-konfigurasjonen er ikke konsolidert fordi appen fortsatt skal kommunisere med `dp-meldekortregister` og 
-`dp-rapportering-personregister` i prod en stund til. 
-
    ```bash
-   DP_MELDEKORTREGISTER_TOKEN="[token]"
-   DP_MELDEKORTREGISTER_URL="https://dp-meldekort.intern.dev.nav.no"
-   DP_MELDEKORTREGISTER_AUDIENCE="api://dev-gcp.teamdagpenger.dp-meldekort/.default"
-   DP_PERSONREGISTER_TOKEN="[token]"
-   DP_PERSONREGISTER_URL="https://dp-meldekort.intern.dev.nav.no"
-   DP_PERSONREGISTER_AUDIENCE="api://dev-gcp.teamdagpenger.dp-meldekort/.default"
+   DP_MELDEKORT_TOKEN="[token]"
+   DP_MELDEKORT_URL="https://dp-meldekort.intern.dev.nav.no"
+   DP_MELDEKORT_AUDIENCE="api://dev-gcp.teamdagpenger.dp-meldekort/.default"
    NAIS_CLUSTER_NAME="dev-gcp"
    MICROSOFT_TOKEN="[token]"
    VITE_USE_MSW="false"

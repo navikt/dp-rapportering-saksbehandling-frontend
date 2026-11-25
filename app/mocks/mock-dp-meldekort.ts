@@ -10,10 +10,10 @@ import type { withDb } from "./db";
 import { getDatabase } from "./db.utils";
 import { lagPeriodeDatoFor, lagRapporteringsperiode } from "./mock.utils";
 
-export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
+export function mockDpMeldekort(database?: ReturnType<typeof withDb>) {
   return [
     http.post(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort`,
+      `${getEnv("DP_MELDEKORT_URL")}/sb/person/:personId/meldekort`,
       async ({ params, request, cookies }) => {
         const db = database || (await getDatabase(cookies));
         const personId = params.personId as string;
@@ -30,7 +30,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
             simulering?: boolean;
           };
         } catch (error) {
-          logger.error("[mock meldekortregister]: Klarte ikke lese request body ved oppretting", {
+          logger.error("[mock dp-meldekort]: Klarte ikke lese request body ved oppretting", {
             personId,
             error,
           });
@@ -50,7 +50,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const person = db.hentPerson(personId);
         if (!person) {
           logger.error(
-            `[mock meldekortregister]: Fant ikke person ${personId} ved oppretting av meldekort`,
+            `[mock dp-meldekort]: Fant ikke person ${personId} ved oppretting av meldekort`,
           );
           return HttpResponse.json(
             {
@@ -76,7 +76,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         }
 
         logger.info(
-          `[mock meldekortregister]: Opprett meldekort for person ${personId} (${body.fraOgMed} til ${body.tilOgMed})`,
+          `[mock dp-meldekort]: Opprett meldekort for person ${personId} (${body.fraOgMed} til ${body.tilOgMed})`,
         );
 
         const perioder: IPeriode[] = [];
@@ -167,7 +167,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
     ),
 
     http.get(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId`,
+      `${getEnv("DP_MELDEKORT_URL")}/sb/person/:personId`,
       async ({ cookies, params, request }) => {
         const db = database || (await getDatabase(cookies));
 
@@ -176,7 +176,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         // Sjekk demo status parameter for feilsimulering
         const demoStatus = getDemoStatus(request.url);
         if (demoStatus === "404-person") {
-          logger.warn(`[mock meldekortregister]: Simulerer 404-feil for person ${personId}`);
+          logger.warn(`[mock dp-meldekort]: Simulerer 404-feil for person ${personId}`);
           return HttpResponse.json(
             {
               title: "Person ikke funnet",
@@ -190,7 +190,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         }
 
         if (demoStatus === "500-person") {
-          logger.error(`[mock meldekortregister]: Simulerer 500-feil for person ${personId}`);
+          logger.error(`[mock dp-meldekort]: Simulerer 500-feil for person ${personId}`);
           return HttpResponse.json(
             {
               title: "Serverfeil ved henting av person",
@@ -207,7 +207,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const person = db.hentPerson(personId);
 
         if (!person) {
-          logger.error(`[mock meldekortregister]: Fant ikke person ${personId}`);
+          logger.error(`[mock dp-meldekort]: Fant ikke person ${personId}`);
 
           return HttpResponse.json(
             {
@@ -221,14 +221,14 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           );
         }
 
-        logger.info(`[mock meldekortregister]: Hentet person ${personId}`);
+        logger.info(`[mock dp-meldekort]: Hentet person ${personId}`);
 
         return HttpResponse.json(person);
       },
     ),
 
     http.get(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort`,
+      `${getEnv("DP_MELDEKORT_URL")}/sb/person/:personId/meldekort`,
       async ({ params, cookies, request }) => {
         const db = database || (await getDatabase(cookies));
         const personId = params.personId as string;
@@ -238,7 +238,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const demoStatus = getDemoStatus(request.url);
         if (demoStatus === "404-perioder") {
           logger.warn(
-            `[mock meldekortregister]: Simulerer 404-feil for meldekort til person ${personId}`,
+            `[mock dp-meldekort]: Simulerer 404-feil for meldekort til person ${personId}`,
           );
           return HttpResponse.json(
             {
@@ -254,7 +254,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
 
         if (demoStatus === "500-perioder") {
           logger.error(
-            `[mock meldekortregister]: Simulerer 500-feil for meldekort til person ${personId}`,
+            `[mock dp-meldekort]: Simulerer 500-feil for meldekort til person ${personId}`,
           );
           return HttpResponse.json(
             {
@@ -276,7 +276,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         );
 
         logger.info(
-          `[mock meldekortregister]: Hentet ${rapporteringsperioder.length} rapporteringsperioder for person ${personId}`,
+          `[mock dp-meldekort]: Hentet ${rapporteringsperioder.length} rapporteringsperioder for person ${personId}`,
         );
 
         return HttpResponse.json(rapporteringsperioder);
@@ -284,7 +284,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
     ),
 
     http.get(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:meldekortId`,
+      `${getEnv("DP_MELDEKORT_URL")}/sb/person/:personId/meldekort/:meldekortId`,
       async ({ params, cookies, request }) => {
         const db = database || (await getDatabase(cookies));
 
@@ -293,7 +293,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         // Sjekk demo status parameter for feilsimulering
         const demoStatus = getDemoStatus(request.url);
         if (demoStatus === "404-periode") {
-          logger.warn(`[mock meldekortregister]: Simulerer 404-feil for meldekort ${meldekortId}`);
+          logger.warn(`[mock dp-meldekort]: Simulerer 404-feil for meldekort ${meldekortId}`);
           return HttpResponse.json(
             {
               title: "Meldekort ikke funnet",
@@ -307,7 +307,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         }
 
         if (demoStatus === "500-periode") {
-          logger.error(`[mock meldekortregister]: Simulerer 500-feil for meldekort ${meldekortId}`);
+          logger.error(`[mock dp-meldekort]: Simulerer 500-feil for meldekort ${meldekortId}`);
           return HttpResponse.json(
             {
               title: "Serverfeil ved henting av rapporteringsperiode",
@@ -324,7 +324,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const rapporteringsperiode = db.hentRapporteringsperiodeMedId(meldekortId);
 
         if (!rapporteringsperiode) {
-          logger.error(`[mock meldekortregister]: Fant ikke rapporteringsperiode ${meldekortId}`);
+          logger.error(`[mock dp-meldekort]: Fant ikke rapporteringsperiode ${meldekortId}`);
           return HttpResponse.json(
             {
               title: "Meldekort ikke funnet",
@@ -337,14 +337,14 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
           );
         }
 
-        logger.info(`[mock meldekortregister]: Hentet rapporteringsperiode ${meldekortId}`);
+        logger.info(`[mock dp-meldekort]: Hentet rapporteringsperiode ${meldekortId}`);
 
         return HttpResponse.json(rapporteringsperiode);
       },
     ),
 
     http.post(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId`,
+      `${getEnv("DP_MELDEKORT_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId`,
       async ({ params, request, cookies }) => {
         const db = database || (await getDatabase(cookies));
         const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
@@ -354,7 +354,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const demoAction = getDemoAction(request.url);
         if (demoAction === "fail") {
           logger.warn(
-            `[mock meldekortregister]: Simulerer feil ved innsending av meldekort ${rapporteringsperiodeId}`,
+            `[mock dp-meldekort]: Simulerer feil ved innsending av meldekort ${rapporteringsperiodeId}`,
           );
           return HttpResponse.json(
             {
@@ -373,7 +373,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
 
         if (!eksisterendePeriode) {
           logger.error(
-            `[mock meldekortregister]: Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`,
+            `[mock dp-meldekort]: Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for oppdatering`,
           );
           return HttpResponse.json(null, { status: 404 });
         }
@@ -381,7 +381,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         await db.oppdaterPeriode(rapporteringsperiodeId, oppdateringer);
 
         logger.info(
-          `[mock meldekortregister]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
+          `[mock dp-meldekort]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
         );
 
         // Backend returnerer meldekortId for konsistens med korrigerPeriode
@@ -390,7 +390,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
     ),
 
     http.post(
-      `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId/korriger`,
+      `${getEnv("DP_MELDEKORT_URL")}/sb/person/:personId/meldekort/:rapporteringsperiodeId/korriger`,
       async ({ params, request, cookies }) => {
         const db = database || (await getDatabase(cookies));
         const rapporteringsperiodeId = params.rapporteringsperiodeId as string;
@@ -400,7 +400,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         const demoAction = getDemoAction(request.url);
         if (demoAction === "fail") {
           logger.warn(
-            `[mock meldekortregister]: Simulerer feil ved korrigering av meldekort ${rapporteringsperiodeId}`,
+            `[mock dp-meldekort]: Simulerer feil ved korrigering av meldekort ${rapporteringsperiodeId}`,
           );
           return HttpResponse.json(
             {
@@ -419,7 +419,7 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
 
         if (!eksisterendePeriode) {
           logger.error(
-            `[mock meldekortregister]: Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for korrigering`,
+            `[mock dp-meldekort]: Fant ikke rapporteringsperiode ${rapporteringsperiodeId} for korrigering`,
           );
           return HttpResponse.json(null, { status: 404 });
         }
@@ -428,10 +428,56 @@ export function mockMeldekortregister(database?: ReturnType<typeof withDb>) {
         await db.periodeKanIkkeLengerSendes(rapporteringsperiodeId);
 
         logger.info(
-          `[mock meldekortregister]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
+          `[mock dp-meldekort]: Oppdaterte rapporteringsperiode ${rapporteringsperiodeId}`,
         );
 
         return HttpResponse.json({ id: nyPeriode.id }, { status: 200 });
+      },
+    ),
+
+    http.get(
+      `${getEnv("DP_MELDEKORT_URL")}/arbeidssokerperioder/:personId`,
+      async ({ cookies, params, request }) => {
+        const db = database || (await getDatabase(cookies));
+
+        const personId = params.personId as string;
+
+        // Sjekk demo status parameter for feilsimulering
+        const demoStatus = getDemoStatus(request.url);
+        if (demoStatus === "404-person") {
+          logger.warn(`[mock dp-meldekort]: Simulerer 404-feil for person ${personId}`);
+          return HttpResponse.json(
+            {
+              title: "Person ikke funnet",
+              status: 404,
+              detail: `Fant ikke arbeidssøkerperioder for person med ID ${personId}`,
+              correlationId: "demo-404-person-error",
+              errorType: "NOT_FOUND",
+            },
+            { status: 404 },
+          );
+        }
+
+        const person = db.hentArbeidssokerperioder();
+
+        if (!person) {
+          logger.error(`[mock dp-meldekort]: Fant ikke person ${personId}`);
+
+          return HttpResponse.json(
+            {
+              title: "Person ikke funnet",
+              status: 404,
+              detail: `Fant ikke arbeidssøkerperioder for person med ID ${personId}`,
+              correlationId: "person-not-found-error",
+              errorType: "NOT_FOUND",
+            },
+            { status: 404 },
+          );
+        }
+
+        logger.info(`[mock dp-meldekort]: Hentet person ${personId}`);
+
+        return HttpResponse.json(person);
       },
     ),
   ];

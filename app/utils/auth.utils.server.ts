@@ -9,15 +9,14 @@ import { getEnv, isLocalhost, usesMsw } from "./env.utils";
 const fallbackToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
-const localMeldekortregisterToken = process.env.DP_MELDEKORTREGISTER_TOKEN ?? fallbackToken;
+const localDpMeldekortToken = process.env.DP_MELDEKORT_TOKEN ?? fallbackToken;
 
-export const DP_MELDEKORTREGISTER_AUDIENCE = `${getEnv("DP_MELDEKORTREGISTER_AUDIENCE")}`;
-export const DP_PERSONREGISTER_AUDIENCE = `${getEnv("DP_PERSONREGISTER_AUDIENCE")}`;
+export const DP_MELDEKORT_AUDIENCE = `${getEnv("DP_MELDEKORT_AUDIENCE")}`;
 export const DP_BEHANDLING_AUDIENCE = `api://${process.env.NAIS_CLUSTER_NAME}.teamdagpenger.dp-behandling/.default`;
 
 export function sessionExpiresIn(request: Request) {
   const token =
-    getEnv("IS_LOCALHOST") === "true" || usesMsw ? localMeldekortregisterToken : getToken(request);
+    getEnv("IS_LOCALHOST") === "true" || usesMsw ? localDpMeldekortToken : getToken(request);
 
   if (!token) {
     return 0;
@@ -33,7 +32,7 @@ export function sessionExpiresIn(request: Request) {
 
 export async function getOnBehalfOfToken(request: Request, audience: string, fallback?: string) {
   if (isLocalhost || usesMsw) {
-    return fallback ?? localMeldekortregisterToken;
+    return fallback ?? localDpMeldekortToken;
   }
 
   const token = getToken(request);
