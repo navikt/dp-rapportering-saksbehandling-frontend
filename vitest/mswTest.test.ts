@@ -5,7 +5,7 @@ import { getEnv } from "~/utils/env.utils";
 
 test("fetches user data", async () => {
   const response = await fetch(
-    `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${mockPersons[0].id}/meldekort`,
+    `${getEnv("DP_MELDEKORT_URL")}/sb/person/${mockPersons[0].id}/meldekort`,
   );
   expect(response.status).toBe(200);
 });

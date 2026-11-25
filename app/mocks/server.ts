@@ -4,15 +4,9 @@ import { logger } from "~/models/logger.server";
 
 import { mockAzure } from "./mock-azure";
 import { mockBehandling } from "./mock-behandling";
-import { mockMeldekortregister } from "./mock-meldekortregister";
-import { mockPersonregister } from "./mock-personregister";
+import { mockDpMeldekort } from "./mock-dp-meldekort";
 
-export const handlers = [
-  ...mockAzure(),
-  ...mockMeldekortregister(),
-  ...mockPersonregister(),
-  ...mockBehandling(),
-];
+export const handlers = [...mockAzure(), ...mockDpMeldekort(), ...mockBehandling()];
 
 export const server = setupServer(...handlers);
 

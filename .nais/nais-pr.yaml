@@ -37,10 +37,8 @@ spec:
       value: ""
     - name: SELF_URL
       value: https://dp-rapportering-saksbehandling-frontend-pr-{{prNumber}}.ekstern.dev.nav.no
-    - name: DP_MELDEKORTREGISTER_URL
-      value: http://dp-meldekortregister
-    - name: DP_PERSONREGISTER_URL
-      value: http://dp-rapportering-personregister
+    - name: DP_MELDEKORT_URL
+      value: http://dp-meldekort
     - name: VITE_USE_MSW
       value: "true"
     - name: VITE_IS_LOCALHOST
@@ -65,8 +63,7 @@ spec:
         - host: graph.microsoft.com
         - host: login.microsoftonline.com
       rules:
-        - application: dp-meldekortregister
-        - application: dp-rapportering-personregister
+        - application: dp-meldekort
   azure:
     application:
       tenant: trygdeetaten.no

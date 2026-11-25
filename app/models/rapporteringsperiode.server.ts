@@ -1,7 +1,4 @@
-import {
-  DP_MELDEKORTREGISTER_AUDIENCE,
-  DP_PERSONREGISTER_AUDIENCE,
-} from "~/utils/auth.utils.server";
+import { DP_MELDEKORT_AUDIENCE } from "~/utils/auth.utils.server";
 import { getDemoParams } from "~/utils/demo-params.utils";
 import { getEnv } from "~/utils/env.utils";
 import { getHeaders } from "~/utils/fetch.utils";
@@ -36,13 +33,13 @@ export async function hentArbeidssokerperioder(
   request: Request,
   personId: string,
 ): Promise<IArbeidssokerperiode[]> {
-  const url = `${getEnv("DP_PERSONREGISTER_URL")}/arbeidssokerperioder/${personId}`;
+  const url = `${getEnv("DP_MELDEKORT_URL")}/arbeidssokerperioder/${personId}`;
 
   return httpRequest<IArbeidssokerperiode[]>(
     url,
     {
       method: "GET",
-      headers: await getHeaders({ request, audience: DP_PERSONREGISTER_AUDIENCE }),
+      headers: await getHeaders({ request, audience: DP_MELDEKORT_AUDIENCE }),
     },
     "Henting av arbeidssokerperioder",
     { personId },
@@ -56,7 +53,7 @@ export async function hentRapporteringsperioder(
   request: Request,
   personId: string,
 ): Promise<IRapporteringsperiode[]> {
-  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort`;
+  const baseUrl = `${getEnv("DP_MELDEKORT_URL")}/sb/person/${personId}/meldekort`;
 
   // Legg til demo params fra original request (for testing/demo-miljø)
   const demoParams = getDemoParams(request);
@@ -69,7 +66,7 @@ export async function hentRapporteringsperioder(
     url.toString(),
     {
       method: "GET",
-      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      headers: await getHeaders({ request, audience: DP_MELDEKORT_AUDIENCE }),
     },
     "Henting av rapporteringsperioder",
     { personId },
@@ -86,7 +83,7 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
   personId: string,
   periodeId: string,
 ): Promise<T> {
-  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periodeId}`;
+  const baseUrl = `${getEnv("DP_MELDEKORT_URL")}/sb/person/${personId}/meldekort/${periodeId}`;
 
   // Legg til demo params fra original request (for testing/demo-miljø)
   const demoParams = getDemoParams(request);
@@ -99,7 +96,7 @@ export async function hentPeriode<T extends IRapporteringsperiode>(
     url.toString(),
     {
       method: "GET",
-      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      headers: await getHeaders({ request, audience: DP_MELDEKORT_AUDIENCE }),
     },
     "Henting av rapporteringsperiode",
     { personId, periodeId },
@@ -119,7 +116,7 @@ export async function opprettMeldekort({
   tilOgMed: string;
   simulering: boolean;
 }): Promise<IOpprettMeldekortResponse> {
-  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort`;
+  const baseUrl = `${getEnv("DP_MELDEKORT_URL")}/sb/person/${personId}/meldekort`;
   const url = new URL(baseUrl);
   Object.entries(getDemoParams(request)).forEach(([key, value]) => {
     url.searchParams.set(key, value);
@@ -129,7 +126,7 @@ export async function opprettMeldekort({
     url.toString(),
     {
       method: "POST",
-      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      headers: await getHeaders({ request, audience: DP_MELDEKORT_AUDIENCE }),
       body: JSON.stringify({
         fraOgMed,
         tilOgMed,
@@ -155,7 +152,7 @@ export async function oppdaterPeriode({
   personId: string;
   request: Request;
 }): Promise<string | null> {
-  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.id}`;
+  const baseUrl = `${getEnv("DP_MELDEKORT_URL")}/sb/person/${personId}/meldekort/${periode.id}`;
 
   // Legg til demo params fra original request (for testing/demo-miljø)
   const demoParams = getDemoParams(request);
@@ -168,7 +165,7 @@ export async function oppdaterPeriode({
     url.toString(),
     {
       method: "POST",
-      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      headers: await getHeaders({ request, audience: DP_MELDEKORT_AUDIENCE }),
       body: JSON.stringify(periode),
     },
     "Oppdatering av rapporteringsperiode",
@@ -190,7 +187,7 @@ export async function korrigerPeriode({
   personId: string;
   request: Request;
 }) {
-  const baseUrl = `${getEnv("DP_MELDEKORTREGISTER_URL")}/sb/person/${personId}/meldekort/${periode.originalMeldekortId}/korriger`;
+  const baseUrl = `${getEnv("DP_MELDEKORT_URL")}/sb/person/${personId}/meldekort/${periode.originalMeldekortId}/korriger`;
 
   // Legg til demo params fra original request (for testing/demo-miljø)
   const demoParams = getDemoParams(request);
@@ -203,7 +200,7 @@ export async function korrigerPeriode({
     url.toString(),
     {
       method: "POST",
-      headers: await getHeaders({ request, audience: DP_MELDEKORTREGISTER_AUDIENCE }),
+      headers: await getHeaders({ request, audience: DP_MELDEKORT_AUDIENCE }),
       body: JSON.stringify(periode),
     },
     "Korrigering av rapporteringsperiode",
