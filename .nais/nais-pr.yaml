@@ -41,6 +41,8 @@ spec:
       value: http://dp-meldekort
     - name: VITE_USE_MSW
       value: "true"
+    - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS
+      value: "net"
     - name: VITE_IS_LOCALHOST
       value: "false"
     - name: VITE_FARO_URL

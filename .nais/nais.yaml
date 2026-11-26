@@ -48,6 +48,10 @@ spec:
       value: {{ DP_MELDEKORT_AUDIENCE }}
     - name: VITE_USE_MSW
       value: "{{use_msw}}"
+    {{#if use_msw}}
+    - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS
+      value: "net"
+    {{/if}}
     - name: VITE_IS_LOCALHOST
       value: "{{is_localhost}}"
     - name: VITE_FARO_URL

@@ -157,6 +157,11 @@ Applikasjonen deployes automatisk til NAIS ved push til main branch. Deployment-
 - **Development**: Automatisk deployment ved PR merge
 - **Production**: Manuell deployment via GitHub Actions
 
+Demo og PR-preview bruker MSW. Her deaktiveres OpenTelemetrys `net`-instrumentering
+med `OTEL_NODE_DISABLED_INSTRUMENTATIONS=net`, fordi MSWs emulerte TLS-sockets kan
+mangle cipher-data som instrumenteringen forventer. Øvrig automatisk instrumentering
+beholdes, og vanlig dev/prod påvirkes ikke.
+
 ## Bidra til utvikling
 
 1. Opprett en feature branch fra `main`
